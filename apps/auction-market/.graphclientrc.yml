@@ -1,8 +1,3 @@
-sources:
-  - name: auctionmaker
-    handler:
-      graphql:
-        endpoint: https://api.thegraph.com/subgraphs/name/olastenberg/auctionmaker-kovan
-  - name: auctionmaker
+sources: !includes ./graph/sources
 documents:
-  - ./query.graphql
+  - ./graph/queries/*.graphql
