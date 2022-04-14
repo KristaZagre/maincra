@@ -1,41 +1,59 @@
-import Link from 'next/link'
+import { FC } from 'react'
 import { useAccount, useConnect } from 'wagmi'
+import { getBuiltGraphSDK } from '../.graphclient'
+import Layout from '../components/Layout'
 
-export default function Furo() {
-  const [{ data, error }, connect] = useConnect()
-  const [{ data: accountData }, disconnect] = useAccount({
-    fetchEns: true,
-  })
+interface AuctionProps {
+  auctions: Auction[]
+}
+interface Auction {
+  id: string
+  token: {
+    name: string
+    symbol: string
+  }
+  minTTL: string
+  maxTTL: string
+  status: string
+  bidAmount: string
+  rewardAmount: string
+  highestBidder: {
+    id: string
+  }
+}
+
+const Furo: FC<AuctionProps> = ({ auctions }) => {
   return (
-    <div className="px-2 pt-16">
-      {/* <h1 className="py-4 text-2xl font-bold">Overview</h1>
-      {data.connectors.map((connector) => (
-        <button disabled={!connector.ready} key={connector.id} onClick={() => connect(connector)}>
-          {`Connect to: ` + connector.name + ` ${accountData?.address}`}
-        </button>
-      ))}
-      {!error && accountData?.address ? (
-        <>
+    <Layout>
+      <div className="flex flex-col h-full gap-12 pt-40">
+        <h1>Auctions</h1>
+        {auctions.length ? (
+          Object.values(auctions).map((auction) => (
+            <div key={auction.id}>
+              {auction.status} {``}
+              {auction.bidAmount} {``} {auction.token.symbol} {``}
+              {auction.rewardAmount} {``}
+              {new Date(parseInt(auction.minTTL) * 1000).toLocaleString()} {``}
+              {new Date(parseInt(auction.maxTTL) * 1000).toLocaleString()} {``}
+            </div>
+          ))
+        ) : (
           <div>
-            <Link href={`/users/${accountData.address.toLowerCase()}/streams/`}>Streams</Link>
+            <i>No Auctions found..</i>
           </div>
-          <div>
-            <Link href={`/users/${accountData.address.toLowerCase()}/vestings/`}>Vestings</Link>
-          </div>
-        </>
-      ) : (
-        <div>{error?.message ?? 'Failed to connect'}</div>
-      )} */}
-
-      
-    </div>
+        )}
+      </div>
+    </Layout>
   )
 }
 
-// export async function getServerSideProps({ query }) {
-//   const sdk = await getBuiltGraphSDK()
-//   const user = (await sdk.UserVestings({ id: query.address })).vestingUser
-//   return {
-//     props: user,
-//   }
-// }
+export default Furo
+
+export async function getServerSideProps() {
+  const sdk = await getBuiltGraphSDK()
+  const auctions = await (await sdk.Auctions()).auctions
+  console.log(auctions)
+  return {
+    props: { auctions },
+  }
+}

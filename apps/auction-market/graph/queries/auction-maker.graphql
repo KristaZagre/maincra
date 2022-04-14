@@ -1,0 +1,18 @@
+query Auctions {
+  auctions {
+    id
+    token {
+      id
+      name
+      symbol
+    }
+    minTTL
+    maxTTL
+    status
+    bidAmount
+    rewardAmount
+    highestBidder {
+      id
+    }
+  }
+}
