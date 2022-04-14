@@ -16,3 +16,33 @@ query Auctions {
     }
   }
 }
+
+query Auction($id:ID!) {
+  auction(id: $id) {
+    id
+    token {
+      id
+      name
+      symbol
+    }
+    minTTL
+    maxTTL
+    status
+    bidAmount
+    rewardAmount
+    highestBidder {
+      id
+    }
+  }
+}
+
+query Bids($auctionId: ID!) {
+  auction(id: $auctionId) {
+    bids {
+      id
+      amount
+      createdAtBlock
+      createdAtTimestamp
+    }
+  }
+}
