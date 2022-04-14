@@ -11,10 +11,10 @@ interface Props {
 }
 
 const ActionPage: FC<Props> = ({ auctionRepresentation, bidRepresentations }) => {
-  //   let { auction, bids } = props
+
   const auction = useMemo(() => new Auction({ auction: auctionRepresentation }), [auctionRepresentation])
   const bids = useMemo(() => bidRepresentations.map((bid) => new Bid({ bid })), [bidRepresentations])
-  console.log(bids)
+    console.log(auction.remainingTime)
   return (
     <Layout>
       <div>
@@ -26,6 +26,7 @@ const ActionPage: FC<Props> = ({ auctionRepresentation, bidRepresentations }) =>
             {auction.leadingBid.amount.toString()} {auction.token?.symbol}
             {auction.startTime.toLocaleDateString()} {``}
             {auction.endTime?.toLocaleDateString()} {``}
+            
           </div>
         ) : (
           'No auction found'
