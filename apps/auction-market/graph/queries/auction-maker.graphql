@@ -11,13 +11,23 @@ query Auctions {
     status
     bidAmount
     rewardAmount
-    highestBidder {
+    leadingBid {
       id
+      user {
+        id
+      }
+      amount
+      createdAtBlock
+      createdAtTimestamp
     }
+    createdAtBlock
+    createdAtTimestamp
+    modifiedAtBlock
+    modifiedAtTimestamp
   }
 }
 
-query Auction($id:ID!) {
+query Auction($id: ID!) {
   auction(id: $id) {
     id
     token {
@@ -25,14 +35,24 @@ query Auction($id:ID!) {
       name
       symbol
     }
+    leadingBid {
+      id
+      user {
+        id
+      }
+      amount
+      createdAtBlock
+      createdAtTimestamp
+    }
     minTTL
     maxTTL
     status
     bidAmount
     rewardAmount
-    highestBidder {
-      id
-    }
+    createdAtBlock
+    createdAtTimestamp
+    modifiedAtBlock
+    modifiedAtTimestamp
   }
 }
 
@@ -40,6 +60,9 @@ query Bids($auctionId: ID!) {
   auction(id: $auctionId) {
     bids {
       id
+      user {
+        id
+      }
       amount
       createdAtBlock
       createdAtTimestamp

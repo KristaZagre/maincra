@@ -1,87 +1,66 @@
-import { FC } from 'react'
+import { FC, useMemo } from 'react'
 import { getBuiltGraphSDK } from '../../.graphclient'
 import Layout from '../../components/Layout'
+import { Auction } from '../../features/context/Auction'
+import { Bid } from '../../features/context/Bid'
+import { AuctionRepresentation, BidRepresentation } from '../../features/context/representations'
 
 interface Props {
-  auction: Auction
-  bids: Bid[]
+  auctionRepresentation: AuctionRepresentation
+  bidRepresentations: BidRepresentation[]
 }
 
-interface Auction {
-  id: string
-  token: {
-    name: string
-    symbol: string
-  }
-  minTTL: string
-  maxTTL: string
-  status: string
-  bidAmount: string
-  rewardAmount: string
-  highestBidder: {
-    id: string
-  }
-}
-
-interface Bid {
-  id: string
-  amount: string
-  createdAtBlock: string
-  createdAtTimestamp: string
-}
-
-const Auction: FC<Props> = (props) => {
-  let { auction, bids } = props
-  // const stream = useMemo(() => new Stream({ stream: rawStream }), [rawStream])
-
+const ActionPage: FC<Props> = ({ auctionRepresentation, bidRepresentations }) => {
+  //   let { auction, bids } = props
+  const auction = useMemo(() => new Auction({ auction: auctionRepresentation }), [auctionRepresentation])
+  const bids = useMemo(() => bidRepresentations.map((bid) => new Bid({ bid })), [bidRepresentations])
+  console.log(bids)
   return (
     <Layout>
       <div>
-    <h2>Auction</h2>
+        <h2>Auction</h2>
         {auction ? (
           <div key={auction.id}>
             {auction.status} {``}
-            {auction.bidAmount} {``} {auction.token.symbol} {``}
-            {auction.rewardAmount} {``}
-            {new Date(parseInt(auction.minTTL) * 1000).toLocaleString()} {``}
-            {new Date(parseInt(auction.maxTTL) * 1000).toLocaleString()} {``}
+            {auction.amount.toString()} {` SUSHI `}
+            {auction.leadingBid.amount.toString()} {auction.token?.symbol}
+            {auction.startTime.toLocaleDateString()} {``}
+            {auction.endTime?.toLocaleDateString()} {``}
           </div>
         ) : (
           'No auction found'
         )}
-       
-        
       </div>
       <div>
-          <h2>Bids</h2>
+        <h2>Bids</h2>
         {bids.length ? (
-          Object.values(bids).map((bid) => (
+          bids.map((bid) => (
             <div key={bid.id}>
-              {bid.amount} {``}
-              {bid.createdAtBlock} {``} 
-              {bid.createdAtTimestamp} {``}
+              {bid.amount.toString()} {``}
+              {bid.timestamp.toLocaleString()} {``}
+              {bid.user?.id} {``}
             </div>
           ))
         ) : (
           <div>
             <i>No bids found..</i>
           </div>
-        )} 
-        </div>
+        )}
+      </div>
     </Layout>
   )
 }
 
-export default Auction
+export default ActionPage
 
 export async function getServerSideProps({ query }) {
   const sdk = await getBuiltGraphSDK()
-  const auction = (await sdk.Auction({ id: query.id })).auction
-  const bids = (await sdk.Bids({ auctionId: query.id })).auction.bids
+  const auctionRepresentation = (await sdk.Auction({ id: query.id })).auction
+  const bidRepresentations = (await sdk.Bids({ auctionId: query.id })).auction.bids
   return {
     props: {
-      auction,
-      bids,
+      auctionRepresentation,
+      bidRepresentations,
     },
   }
 }
