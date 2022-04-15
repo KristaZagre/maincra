@@ -10,10 +10,12 @@ export class Auction {
   public readonly startDate: Date
   public readonly endDate: Date
   public readonly token: TokenRepresentation // TODO: replace, use Currency from package/currency?
+  public readonly bids: Bid[]
   private readonly minTTL: Date
   private readonly maxTTL: Date
 
   public constructor({ auction }: { auction: AuctionRepresentation }) {
+      console.log({auction})
     this.id = auction.id
     this.amount = BigNumber.from(auction.rewardAmount)
     this.leadingBid = new Bid({ bid: auction.leadingBid })
@@ -21,6 +23,7 @@ export class Auction {
     this.minTTL = new Date(parseInt(auction.minTTL) * 1000)
     this.maxTTL = new Date(parseInt(auction.maxTTL) * 1000)
     this.status = this.isOngoing() ? AuctionStatus.ONGOING : AuctionStatus.FINISHED
+    this.token = auction.token
 
     if (this.status === AuctionStatus.ONGOING) {
       const endTime = this.minTTL < this.maxTTL ? this.minTTL.getTime() : this.maxTTL.getTime()
@@ -28,6 +31,8 @@ export class Auction {
     } else {
       this.endDate = new Date(parseInt(auction.modifiedAtTimestamp) * 1000)
     }
+    
+    this.bids = auction.bids?.map((bid) => new Bid({ bid }))
   }
 
   public get remainingTime(): { days: number; hours: number; minutes: number; seconds: number } | undefined {

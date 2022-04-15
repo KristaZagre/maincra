@@ -11,12 +11,13 @@ export interface AuctionRepresentation {
   createdAtTimestamp: string
   modifiedAtBlock: string
   modifiedAtTimestamp: string
+  bids: BidRepresentation[]
 }
 
 export interface TokenRepresentation {
   id: string
-  symbol: string
   name: string
+  symbol: string
   decimals: string
 }
 
