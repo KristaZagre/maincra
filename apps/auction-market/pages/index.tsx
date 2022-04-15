@@ -1,6 +1,5 @@
-import { useMemo } from 'react'
-import { FC } from 'react'
-import { useAccount, useConnect } from 'wagmi'
+import Link from 'next/link'
+import { FC, useMemo } from 'react'
 import { getBuiltGraphSDK } from '../.graphclient'
 import Layout from '../components/Layout'
 import { Auction } from '../features/context/Auction'
@@ -17,7 +16,7 @@ const AuctionMarket: FC<Props> = ({ auctionRepresentations }) => {
   )
   return (
     <Layout>
-      <div className="flex flex-col h-full gap-12 pt-40">
+      <div className="px-2 pt-16">
         <h1>Auctions</h1>
 
         {auctions.length ? (
@@ -25,9 +24,11 @@ const AuctionMarket: FC<Props> = ({ auctionRepresentations }) => {
             <div key={auction.id}>
               {auction.status} {``}
               {auction.amount.toString()} {` SUSHI `}
-              {auction.leadingBid.amount.toString()} {auction.token?.symbol}
-              {auction.startDate.toLocaleDateString()} {``}
-              {auction.endDate?.toLocaleDateString()} {``}
+              {auction.leadingBid.amount.toString()} {auction.token.symbol}  {``}
+              {auction.remainingTime.hours} {'H'} {auction.remainingTime.minutes} {'M'} {auction.remainingTime.seconds}{' '}
+            {'S'}
+              <Link href={`/users/${auction.leadingBid.user.id.toLowerCase()}/auctions/`}>[User Auctions]</Link>
+              <Link href={`/auction/${auction.id}`}>[Auction Page]</Link>
             </div>
           ))
         ) : (

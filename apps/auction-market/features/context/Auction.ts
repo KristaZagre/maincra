@@ -15,7 +15,6 @@ export class Auction {
   private readonly maxTTL: Date
 
   public constructor({ auction }: { auction: AuctionRepresentation }) {
-      console.log({auction})
     this.id = auction.id
     this.amount = BigNumber.from(auction.rewardAmount)
     this.leadingBid = new Bid({ bid: auction.leadingBid })
