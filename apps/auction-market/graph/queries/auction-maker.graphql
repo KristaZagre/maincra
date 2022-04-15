@@ -69,3 +69,45 @@ query Bids($auctionId: ID!) {
     }
   }
 }
+
+query UserAuctions($id: ID!) {
+  user(id: $id) {
+    auctions {
+      auction {
+        id
+        token {
+          id
+          name
+          symbol
+        }
+        leadingBid {
+          id
+          user {
+            id
+          }
+          amount
+          createdAtBlock
+          createdAtTimestamp
+        }
+        minTTL
+        maxTTL
+        status
+        bidAmount
+        rewardAmount
+        createdAtBlock
+        createdAtTimestamp
+        modifiedAtBlock
+        modifiedAtTimestamp
+        bids(first: 1, where: { user: $id }, orderBy: createdAtTimestamp, orderDirection: desc) {
+          id
+          user {
+            id
+          }
+          amount
+          createdAtBlock
+          createdAtTimestamp
+        }
+      }
+    }
+  }
+}

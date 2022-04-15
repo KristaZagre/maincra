@@ -14,7 +14,7 @@ const ActionPage: FC<Props> = ({ auctionRepresentation, bidRepresentations }) =>
 
   const auction = useMemo(() => new Auction({ auction: auctionRepresentation }), [auctionRepresentation])
   const bids = useMemo(() => bidRepresentations.map((bid) => new Bid({ bid })), [bidRepresentations])
-    console.log(auction.remainingTime)
+
   return (
     <Layout>
       <div>
