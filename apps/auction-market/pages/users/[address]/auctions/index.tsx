@@ -39,9 +39,8 @@ export default Auctions
 
 export async function getServerSideProps({ query }) {
   const sdk = await getBuiltGraphSDK()
-  const auctionList = (await sdk.UserAuctions({ id: query.address })).user
-  console.log(auctionList)
+  const auctions = (await sdk.UserAuctions({ id: query.address })).user
   return {
-    props: auctionList,
+    props: auctions,
   }
 }

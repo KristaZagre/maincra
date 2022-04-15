@@ -1,9 +1,11 @@
+import { formatDateAgo } from 'format'
 import { FC, useMemo } from 'react'
 import { getBuiltGraphSDK } from '../../.graphclient'
 import Layout from '../../components/Layout'
 import { Auction } from '../../features/context/Auction'
 import { Bid } from '../../features/context/Bid'
 import { AuctionRepresentation, BidRepresentation } from '../../features/context/representations'
+
 
 interface Props {
   auctionRepresentation: AuctionRepresentation
@@ -38,7 +40,7 @@ const ActionPage: FC<Props> = ({ auctionRepresentation, bidRepresentations }) =>
           bids.map((bid) => (
             <div key={bid.id}>
               {bid.amount.toString()} {``}
-              {bid.timestamp.toLocaleString()} {``}
+              {formatDateAgo(bid.timestamp)} {``}
               {bid.user?.id} {``}
             </div>
           ))
