@@ -26,8 +26,8 @@ const AuctionMarket: FC<Props> = ({ auctionRepresentations }) => {
               {auction.status} {``}
               {auction.amount.toString()} {` SUSHI `}
               {auction.leadingBid.amount.toString()} {auction.token?.symbol}
-              {auction.startTime.toLocaleDateString()} {``}
-              {auction.endTime?.toLocaleDateString()} {``}
+              {auction.startDate.toLocaleDateString()} {``}
+              {auction.endDate?.toLocaleDateString()} {``}
             </div>
           ))
         ) : (
