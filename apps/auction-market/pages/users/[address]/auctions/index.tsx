@@ -1,15 +1,26 @@
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { FC, useMemo } from 'react'
 import { getBuiltGraphSDK } from '../../../../.graphclient'
 import Layout from '../../../../components/Layout'
 import { Auction } from '../../../../features/context/Auction'
-import { AuctionRepresentation } from '../../../../features/context/representations'
+import { AuctionRepresentation, UserRepresentation } from '../../../../features/context/representations'
 
 interface Props {
-  auctions: [{ auction: AuctionRepresentation }]
+  auctions: AuctionRepresentation[]
 }
 
-const Auctions: FC<Props> = ({ auctions }) => {
-  const userAuctions = useMemo(() => auctions.map((item) => new Auction({ auction: item.auction })), [auctions])
+export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) => {
+  if (typeof query.address !== 'string') return { props: {} }
+  const sdk = await getBuiltGraphSDK()
+  const auctions = (await (await sdk.UserAuctions({ id: query.address })).user) as AuctionRepresentation[]
+  return {
+    props: auctions,
+  }
+}
+
+
+const Auctions: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ auctions }) => {
+  const userAuctions = useMemo(() => auctions?.map((auction) => new Auction({ auction })), [auctions])
   return (
     <Layout>
       <h1>Auctions</h1>
@@ -22,7 +33,7 @@ const Auctions: FC<Props> = ({ auctions }) => {
             {auction.amount.toString()} {auction.token.symbol} {``}
             {auction.bids[0].amount.toString()} {auction.token.symbol} {``}
             {auction.leadingBid.amount.toString()} {auction.token.symbol} {``}
-            {auction.remainingTime.hours} {'H'} {auction.remainingTime.minutes} {'M'} {auction.remainingTime.seconds}{' '}
+            {auction.remainingTime?.hours} {'H'} {auction.remainingTime?.minutes} {'M'} {auction.remainingTime?.seconds}{' '}
             {'S'}
           </div>
         ))
@@ -36,11 +47,3 @@ const Auctions: FC<Props> = ({ auctions }) => {
 }
 
 export default Auctions
-
-export async function getServerSideProps({ query }) {
-  const sdk = await getBuiltGraphSDK()
-  const auctions = (await sdk.UserAuctions({ id: query.address })).user
-  return {
-    props: auctions,
-  }
-}

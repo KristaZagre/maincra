@@ -1,17 +1,16 @@
-import { FC } from 'react'
-// import Container from 'ui/container/Container'
-// import Glow from 'ui/glow/Glow'
-import { classNames } from 'ui/lib/classNames'
+import { Glow, Container, MaxWidth } from '@sushiswap/ui'
+import React from 'react'
 
-const Layout: FC = ({ children }) => {
+type Props = {
+  children?: React.ReactNode
+  maxWidth?: MaxWidth
+}
+
+function Layout({ children, maxWidth = '5xl' }: Props) {
   return (
-    // <Container maxWidth="5xl" className="px-2 lg:mx-auto">
-      <div className={classNames('absolute inset-0 flex flex-col items-center bg-dark-900/30')}>
-        {/* <div className={classNames('absolute inset-0 w-full h-full z-0 opacity-30')} /> */}
-        {children}
-      </div>
-      /* <Glow>{children}</Glow>
-    </Container> */
+    <Container maxWidth={maxWidth} className="h-full px-2 lg:mx-auto">
+      <Glow>{children}</Glow>
+    </Container>
   )
 }
 

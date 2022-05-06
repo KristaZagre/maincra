@@ -25,7 +25,7 @@ const AuctionMarket: FC<Props> = ({ auctionRepresentations }) => {
               {auction.status} {``}
               {auction.amount.toString()} {` SUSHI `}
               {auction.leadingBid.amount.toString()} {auction.token.symbol}  {``}
-              {auction.remainingTime.hours} {'H'} {auction.remainingTime.minutes} {'M'} {auction.remainingTime.seconds}{' '}
+              {auction.remainingTime?.hours} {'H'} {auction.remainingTime?.minutes} {'M'} {auction.remainingTime?.seconds}{' '}
             {'S'}
               <Link href={`/users/${auction.leadingBid.user.id.toLowerCase()}/auctions/`}>[User Auctions]</Link>
               <Link href={`/auction/${auction.id}`}>[Auction Page]</Link>

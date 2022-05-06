@@ -1,6 +1,6 @@
 import type { AppProps } from 'next/app'
 import { FC } from 'react'
-import { App } from 'ui'
+import { App } from '@sushiswap/ui'
 import 'ui/index.css'
 import { Provider } from 'wagmi'
 import '../index.css'

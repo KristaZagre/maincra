@@ -1,4 +1,4 @@
-import { formatDateAgo } from 'format'
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { FC, useMemo } from 'react'
 import { getBuiltGraphSDK } from '../../.graphclient'
 import Layout from '../../components/Layout'
@@ -8,14 +8,27 @@ import { AuctionRepresentation, BidRepresentation } from '../../features/context
 
 
 interface Props {
-  auctionRepresentation: AuctionRepresentation
-  bidRepresentations: BidRepresentation[]
+  auctionRepresentation?: AuctionRepresentation
+  bidRepresentations?: BidRepresentation[]
 }
 
-const ActionPage: FC<Props> = ({ auctionRepresentation, bidRepresentations }) => {
+export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) => {
+  if (typeof query.id !== 'string') return { props: {} }
+  const sdk = await getBuiltGraphSDK()
+  const auctionRepresentation = (await sdk.Auction({ id: query.id })).auction as AuctionRepresentation
+  const bidRepresentations = (await sdk.Bids({ auctionId: query.id })).auction?.bids as BidRepresentation[]
+  return {
+    props: {
+      auctionRepresentation,
+      bidRepresentations,
+    },
+  }
+}
 
-  const auction = useMemo(() => new Auction({ auction: auctionRepresentation }), [auctionRepresentation])
-  const bids = useMemo(() => bidRepresentations.map((bid) => new Bid({ bid })), [bidRepresentations])
+const ActionPage: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ auctionRepresentation, bidRepresentations }) => {
+
+  const auction = useMemo(() => auctionRepresentation ? new Auction({ auction: auctionRepresentation }) : undefined, [auctionRepresentation])
+  const bids = useMemo(() => bidRepresentations?.map((bid) => new Bid({ bid })), [bidRepresentations])
 
   return (
     <Layout>
@@ -36,12 +49,10 @@ const ActionPage: FC<Props> = ({ auctionRepresentation, bidRepresentations }) =>
       </div>
       <div>
         <h2>Bids</h2>
-        {bids.length ? (
+        {bids?.length ? (
           bids.map((bid) => (
             <div key={bid.id}>
-              {bid.amount.toString()} {``}
-              {formatDateAgo(bid.timestamp)} {``}
-              {bid.user?.id} {``}
+              {`${bid.amount.toString()} ${bid.timestamp} ${bid.user?.id}`}
             </div>
           ))
         ) : (
@@ -55,15 +66,3 @@ const ActionPage: FC<Props> = ({ auctionRepresentation, bidRepresentations }) =>
 }
 
 export default ActionPage
-
-export async function getServerSideProps({ query }) {
-  const sdk = await getBuiltGraphSDK()
-  const auctionRepresentation = (await sdk.Auction({ id: query.id })).auction
-  const bidRepresentations = (await sdk.Bids({ auctionId: query.id })).auction.bids
-  return {
-    props: {
-      auctionRepresentation,
-      bidRepresentations,
-    },
-  }
-}
