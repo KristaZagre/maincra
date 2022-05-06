@@ -6,13 +6,13 @@ import { Auction } from '../../../../features/context/Auction'
 import { AuctionRepresentation } from '../../../../features/context/representations'
 
 interface Props {
-  auctions?: AuctionRepresentation[]
+  auctions?: [{auction: AuctionRepresentation}]
 }
 
 export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) => {
   if (typeof query.address !== 'string') return { props: {} }
   const sdk = await getBuiltGraphSDK()
-  const auctions = (await sdk.UserAuctions({ id: query.address })).user// TODO: fix this type casting or flatten the response?
+  const auctions = (await sdk.UserAuctions({ id: query.address })).user // TODO: fix this type casting or flatten the response?
   return {
     props: auctions,
   }
