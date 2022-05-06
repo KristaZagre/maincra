@@ -6,20 +6,23 @@ import { Auction } from 'features/context/Auction'
 import { AuctionRepresentation } from 'features/context/representations'
 
 interface Props {
-  auctions?: [{auction: AuctionRepresentation}]
+  auctions?: AuctionRepresentation[]
 }
 
 export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) => {
   if (typeof query.address !== 'string') return { props: {} }
   const sdk = await getBuiltGraphSDK()
-  const auctions = (await sdk.UserAuctions({ id: query.address })).user // TODO: fix this type casting or flatten the response?
+  const auctions = (await sdk.UserAuctions({ id: query.address })).user?.auctions.reduce<AuctionRepresentation[]>((acc, cur) => {
+    acc.push(cur.auction)
+    return acc
+  }, [])
   return {
     props: auctions,
   }
 }
 
 const Auctions: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ auctions }) => {
-  const userAuctions = useMemo(() => auctions?.map((item) => new Auction({ auction: item.auction })), [auctions])
+  const userAuctions = useMemo(() => auctions?.map((auction) => new Auction({ auction })), [auctions])
   return (
     <Layout>
       <h1>Auctions</h1>
