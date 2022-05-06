@@ -1,9 +1,9 @@
 import type { AppProps } from 'next/app'
 import { FC } from 'react'
 import { App } from '@sushiswap/ui'
-import 'ui/index.css'
 import { Provider } from 'wagmi'
-import '../index.css'
+
+import '@sushiswap/ui/index.css'
 
 const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
   return (
