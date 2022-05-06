@@ -3,24 +3,23 @@ import { FC, useMemo } from 'react'
 import { getBuiltGraphSDK } from '../../../../.graphclient'
 import Layout from '../../../../components/Layout'
 import { Auction } from '../../../../features/context/Auction'
-import { AuctionRepresentation, UserRepresentation } from '../../../../features/context/representations'
+import { AuctionRepresentation } from '../../../../features/context/representations'
 
 interface Props {
-  auctions: AuctionRepresentation[]
+  auctions?: AuctionRepresentation[]
 }
 
 export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) => {
   if (typeof query.address !== 'string') return { props: {} }
   const sdk = await getBuiltGraphSDK()
-  const auctions = (await (await sdk.UserAuctions({ id: query.address })).user) as AuctionRepresentation[]
+  const auctions = (await sdk.UserAuctions({ id: query.address })).user// TODO: fix this type casting or flatten the response?
   return {
     props: auctions,
   }
 }
 
-
 const Auctions: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ auctions }) => {
-  const userAuctions = useMemo(() => auctions?.map((auction) => new Auction({ auction })), [auctions])
+  const userAuctions = useMemo(() => auctions?.map((item) => new Auction({ auction: item.auction })), [auctions])
   return (
     <Layout>
       <h1>Auctions</h1>
