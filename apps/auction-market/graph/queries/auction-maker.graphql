@@ -5,6 +5,7 @@ query Auctions {
       id
       name
       symbol
+      decimals
     }
     minTTL
     maxTTL
@@ -34,6 +35,7 @@ query Auction($id: ID!) {
       id
       name
       symbol
+      decimals
     }
     leadingBid {
       id
@@ -79,6 +81,7 @@ query UserAuctions($id: ID!) {
           id
           name
           symbol
+          decimals
         }
         leadingBid {
           id

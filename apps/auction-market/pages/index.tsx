@@ -4,12 +4,21 @@ import { getBuiltGraphSDK } from '../.graphclient'
 import Layout from '../components/Layout'
 import { Auction } from 'features/context/Auction'
 import { AuctionRepresentation } from 'features/context/representations'
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 
 interface Props {
   auctionRepresentations: AuctionRepresentation[]
 }
 
-const AuctionMarket: FC<Props> = ({ auctionRepresentations }) => {
+export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) => {
+  const sdk = await getBuiltGraphSDK()
+  const auctionRepresentations = (await (await sdk.Auctions()).auctions) as AuctionRepresentation[]
+  return {
+    props: { auctionRepresentations },
+  }
+}
+
+const AuctionMarket: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ auctionRepresentations }) => {
   const auctions = useMemo(
     () => auctionRepresentations.map((auction) => new Auction({ auction })),
     [auctionRepresentations],
@@ -24,9 +33,9 @@ const AuctionMarket: FC<Props> = ({ auctionRepresentations }) => {
             <div key={auction.id}>
               {auction.status} {``}
               {auction.amount.toString()} {` SUSHI `}
-              {auction.leadingBid.amount.toString()} {auction.token.symbol}  {``}
-              {auction.remainingTime?.hours} {'H'} {auction.remainingTime?.minutes} {'M'} {auction.remainingTime?.seconds}{' '}
-            {'S'}
+              {auction.leadingBid.amount.toString()} {auction.token.symbol} {``}
+              {auction.remainingTime?.hours} {'H'} {auction.remainingTime?.minutes} {'M'}{' '}
+              {auction.remainingTime?.seconds} {'S'}
               <Link href={`/users/${auction.leadingBid.user.id.toLowerCase()}/auctions/`}>[User Auctions]</Link>
               <Link href={`/auction/${auction.id}`}>[Auction Page]</Link>
             </div>
@@ -42,11 +51,3 @@ const AuctionMarket: FC<Props> = ({ auctionRepresentations }) => {
 }
 
 export default AuctionMarket
-
-export async function getServerSideProps() {
-  const sdk = await getBuiltGraphSDK()
-  const auctionRepresentations = await (await sdk.Auctions()).auctions
-  return {
-    props: { auctionRepresentations },
-  }
-}

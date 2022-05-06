@@ -17,7 +17,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) =
     return acc
   }, [])
   return {
-    props: auctions,
+    props: {auctions},
   }
 }
 
