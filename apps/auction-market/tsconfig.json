@@ -1,0 +1,23 @@
+{
+  "extends": "config/typescript/nextjs.json",
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".graphclient"],
+  "exclude": ["node_modules"],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "abis/*": ["./abis/*"],
+      "config": ["./config/index.ts"],
+      "config/*": ["./config/*"],
+      "components": ["./components/index.ts"],
+      "components/*": ["./components/*"],
+      "features": ["./features/index.ts"],
+      "features/*": ["./features/*"],
+      "functions": ["./functions/index.ts"],
+      "functions/*": ["./functions/*"],
+      "hooks": ["./hooks/index.ts"],
+      "hooks/*": ["./hooks/*"],
+      "types": ["./types/index.ts"],
+      "types/*": ["./types/*"]
+    }
+  }
+}

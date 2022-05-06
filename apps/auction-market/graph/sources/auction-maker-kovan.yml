@@ -1,0 +1,4 @@
+name: auctionmaker
+handler:
+  graphql:
+    endpoint: https://api.thegraph.com/subgraphs/name/olastenberg/auction-maker-kovan
