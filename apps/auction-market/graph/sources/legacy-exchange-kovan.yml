@@ -1,4 +1,4 @@
-name: auctionmaker
+name: legacy-exchange-kovan
 handler:
   graphql:
     endpoint: https://api.thegraph.com/subgraphs/name/olastenberg/legacy-exchange-kovan

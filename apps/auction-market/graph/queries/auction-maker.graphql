@@ -1,15 +1,117 @@
-query Pair($id: ID!) {
-  pair(id: $id) {
+query Auctions {
+  auctions {
     id
-    token0 {
+    token {
+      id
       name
       symbol
       decimals
     }
-    token1 {
+    minTTL
+    maxTTL
+    status
+    bidAmount
+    rewardAmount
+    leadingBid {
+      id
+      user {
+        id
+      }
+      amount
+      createdAtBlock
+      createdAtTimestamp
+    }
+    createdAtBlock
+    createdAtTimestamp
+    modifiedAtBlock
+    modifiedAtTimestamp
+  }
+}
+
+query Auction($id: ID!) {
+  auction(id: $id) {
+    id
+    token {
+      id
       name
       symbol
       decimals
+    }
+    leadingBid {
+      id
+      user {
+        id
+      }
+      amount
+      createdAtBlock
+      createdAtTimestamp
+    }
+    minTTL
+    maxTTL
+    status
+    bidAmount
+    rewardAmount
+    createdAtBlock
+    createdAtTimestamp
+    modifiedAtBlock
+    modifiedAtTimestamp
+  }
+}
+
+query Bids($auctionId: ID!) {
+  auction(id: $auctionId) {
+    bids {
+      id
+      user {
+        id
+      }
+      amount
+      createdAtBlock
+      createdAtTimestamp
     }
   }
 }
+
+query UserAuctions($id: ID!) {
+  user(id: $id) {
+    auctions {
+      auction {
+        id
+        token {
+          id
+          name
+          symbol
+          decimals
+        }
+        leadingBid {
+          id
+          user {
+            id
+          }
+          amount
+          createdAtBlock
+          createdAtTimestamp
+        }
+        minTTL
+        maxTTL
+        status
+        bidAmount
+        rewardAmount
+        createdAtBlock
+        createdAtTimestamp
+        modifiedAtBlock
+        modifiedAtTimestamp
+        bids(first: 1, where: { user: $id }, orderBy: createdAtTimestamp, orderDirection: desc) {
+          id
+          user {
+            id
+          }
+          amount
+          createdAtBlock
+          createdAtTimestamp
+        }
+      }
+    }
+  }
+}
+

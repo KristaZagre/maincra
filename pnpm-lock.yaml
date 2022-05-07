@@ -133,54 +133,98 @@ importers:
 
   apps/auction-market:
     specifiers:
+      '@ethersproject/address': ^5.4.0
+      '@ethersproject/bytes': ^5.4.0
+      '@ethersproject/constants': ^5.4.0
+      '@ethersproject/contracts': ^5.4.0
+      '@ethersproject/providers': ^5.4.0
+      '@ethersproject/strings': ^5.4.0
       '@ethersproject/units': ^5.6.0
       '@graphprotocol/client-cli': 0.0.7
       '@heroicons/react': ^1.0.0
+      '@reduxjs/toolkit': ^1.8.1
+      '@sushiswap/chain': workspace:*
       '@sushiswap/config': workspace:*
+      '@sushiswap/core-sdk': ^1.0.0-canary.65
+      '@sushiswap/currency': workspace:*
       '@sushiswap/format': workspace:*
+      '@sushiswap/hooks': workspace:*
       '@sushiswap/math': workspace:*
+      '@sushiswap/redux-token-lists': workspace:*
       '@sushiswap/ui': workspace:*
-      '@types/node': 17.0.21
-      '@types/react': 17.0.41
+      '@sushiswap/wallet-connector': workspace:*
+      '@types/node': 17.0.30
+      '@types/react': ^18.0.8
+      '@types/react-dom': ^18.0.3
+      '@uniswap/redux-multicall': ^1.1.1
+      '@uniswap/token-lists': ^1.0.0-beta.28
+      '@uniswap/v3-periphery': ^1.4.1
       autoprefixer: ^10.4.2
       eslint: 8.10.0
       ethers: ^5.6.1
       graphql: 16.4.0
       next: ^12.1.5
       next-transpile-modules: 9.0.0
-      postcss: ^8.4.7
+      postcss: ^8.4.12
       react: ^18.1.0
       react-dom: ^18.1.0
+      react-redux: ^8.0.1
       react-spring: ^9.4.4
       react-table: ^7.7.0
-      tailwindcss: ^3.0.23
-      typescript: 4.6.2
-      wagmi: ^0.2.24
+      react-window: ^1.8.7
+      redux-devtools-extension: ^2.13.9
+      redux-persist: ^6.0.0
+      tailwindcss: ^3.0.24
+      typechain: ^8.0.0
+      typescript: ^4.6.4
+      wagmi: ^0.3.1
     dependencies:
+      '@ethersproject/address': 5.6.0
+      '@ethersproject/bytes': 5.6.1
+      '@ethersproject/constants': 5.6.0
+      '@ethersproject/contracts': 5.6.0
+      '@ethersproject/providers': 5.6.5
+      '@ethersproject/strings': 5.6.0
       '@ethersproject/units': 5.6.0
       '@heroicons/react': 1.0.6_react@18.1.0
+      '@reduxjs/toolkit': 1.8.1_react-redux@8.0.1+react@18.1.0
+      '@sushiswap/chain': link:../../packages/chain
+      '@sushiswap/core-sdk': 1.0.0-canary.106
+      '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/format': link:../../packages/format
+      '@sushiswap/hooks': link:../../packages/hooks
       '@sushiswap/math': link:../../packages/math
+      '@sushiswap/redux-token-lists': link:../../packages/redux-token-lists
       '@sushiswap/ui': link:../../packages/ui
+      '@sushiswap/wallet-connector': link:../../packages/wallet-connector
+      '@uniswap/redux-multicall': 1.1.1_833bdd5481673211961c00d9256d6d3a
+      '@uniswap/token-lists': 1.0.0-beta.28
       ethers: 5.6.5
       graphql: 16.4.0
       next: 12.1.6_react-dom@18.1.0+react@18.1.0
       react: 18.1.0
       react-dom: 18.1.0_react@18.1.0
+      react-redux: 8.0.1_dd5346d96c16c0aadfa6cad1ff4d1193
       react-spring: 9.4.5_react-dom@18.1.0+react@18.1.0
       react-table: 7.7.0_react@18.1.0
-      wagmi: 0.2.28_ethers@5.6.5+react@18.1.0
+      react-window: 1.8.7_react-dom@18.1.0+react@18.1.0
+      redux-devtools-extension: 2.13.9
+      redux-persist: 6.0.0
+      wagmi: 0.3.2_c601194df9b17909a076104f27c56e0d
     devDependencies:
-      '@graphprotocol/client-cli': 0.0.7_ae1fc1106169d20c9c823b3bb240d351
+      '@graphprotocol/client-cli': 0.0.7_9e753b51ec84a5388c8d46edaaa49b3f
       '@sushiswap/config': link:../../packages/config
-      '@types/node': 17.0.21
-      '@types/react': 17.0.41
+      '@types/node': 17.0.30
+      '@types/react': 18.0.8
+      '@types/react-dom': 18.0.3
+      '@uniswap/v3-periphery': 1.4.1
       autoprefixer: 10.4.7_postcss@8.4.13
       eslint: 8.10.0
       next-transpile-modules: 9.0.0
       postcss: 8.4.13
       tailwindcss: 3.0.24
-      typescript: 4.6.2
+      typechain: 8.0.0_typescript@4.6.4
+      typescript: 4.6.4
 
   apps/blog:
     specifiers:
@@ -2249,32 +2293,6 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@graphprotocol/client-cli/0.0.7_ae1fc1106169d20c9c823b3bb240d351:
-    resolution: {integrity: sha512-tF4bMSkjf3F5dZ0mVVA81KysuDg6eoNc9qyIJN+deNd95wjleRRDeT+dmjGzfA7kWNNpl+oT4MoiLdn+125eyg==}
-    hasBin: true
-    peerDependencies:
-      graphql: ^15.2.0 || ^16.0.0
-    dependencies:
-      '@graphprotocol/client-auto-pagination': 0.0.2_graphql@16.4.0
-      '@graphprotocol/client-block-tracking': 0.0.2_graphql@16.4.0
-      '@graphql-mesh/cli': 0.69.2_ae1fc1106169d20c9c823b3bb240d351
-      '@graphql-mesh/graphql': 0.25.2_ae1fc1106169d20c9c823b3bb240d351
-      graphql: 16.4.0
-      tslib: 2.4.0
-    transitivePeerDependencies:
-      - '@graphql-mesh/types'
-      - '@swc/core'
-      - '@swc/wasm'
-      - '@types/node'
-      - bufferutil
-      - encoding
-      - graphql-tag
-      - react-native
-      - react-native-windows
-      - supports-color
-      - utf-8-validate
-    dev: true
-
   /@graphql-codegen/core/2.5.1_graphql@16.4.0:
     resolution: {integrity: sha512-alctBVl2hMnBXDLwkgmnFPrZVIiBDsWJSmxJcM4GKg1PB23+xuov35GE47YAyAhQItE1B1fbYnbb1PtGiDZ4LA==}
     peerDependencies:
@@ -2576,66 +2594,6 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@graphql-mesh/cli/0.69.2_ae1fc1106169d20c9c823b3bb240d351:
-    resolution: {integrity: sha512-+L3yxWjJ+pGdmqULxzezGlr+6u8lcfgF0DsThcEdSrtKYdcf8AweMy/xdUjCujEu9Qs4jH/ZfWjamW/y9AEF+A==}
-    hasBin: true
-    peerDependencies:
-      graphql: '*'
-    dependencies:
-      '@graphql-codegen/core': 2.5.1_graphql@16.4.0
-      '@graphql-codegen/typed-document-node': 2.2.8_graphql@16.4.0
-      '@graphql-codegen/typescript': 2.4.8_graphql@16.4.0
-      '@graphql-codegen/typescript-generic-sdk': 2.3.7_graphql@16.4.0
-      '@graphql-codegen/typescript-operations': 2.3.5_graphql@16.4.0
-      '@graphql-codegen/typescript-resolvers': 2.6.1_graphql@16.4.0
-      '@graphql-mesh/config': 0.36.1_graphql@16.4.0
-      '@graphql-mesh/cross-helpers': 0.1.2
-      '@graphql-mesh/runtime': 0.34.6_graphql@16.4.0
-      '@graphql-mesh/store': 0.8.4_graphql@16.4.0
-      '@graphql-mesh/types': 0.72.1_graphql@16.4.0
-      '@graphql-mesh/utils': 0.34.6_graphql@16.4.0
-      '@graphql-tools/code-file-loader': 7.2.14_graphql@16.4.0
-      '@graphql-tools/graphql-file-loader': 7.3.11_graphql@16.4.0
-      '@graphql-tools/load': 7.5.10_graphql@16.4.0
-      '@graphql-tools/utils': 8.6.9_graphql@16.4.0
-      '@graphql-tools/wrap': 8.4.16_graphql@16.4.0
-      '@graphql-yoga/node': 2.5.0_graphql@16.4.0
-      ajv: 8.11.0
-      change-case: 4.1.2
-      cookie-parser: 1.4.6
-      cors: 2.8.5
-      cosmiconfig: 7.0.1
-      dnscache: 1.0.2
-      dotenv: 16.0.0
-      express: 4.18.1
-      graphql: 16.4.0
-      graphql-import-node: 0.0.5_graphql@16.4.0
-      graphql-ws: 5.8.1_graphql@16.4.0
-      json-bigint-patch: 0.0.8
-      lodash: 4.17.21
-      mkdirp: 1.0.4
-      open: 7.4.2
-      pascal-case: 3.1.2
-      rimraf: 3.0.2
-      ts-node: 10.7.0_9f41943e95d62fa6f5ab0dfae348d529
-      tsconfig-paths: 3.14.1
-      tslib: 2.4.0
-      typescript: 4.6.4
-      ws: 8.6.0
-      yargs: 17.4.1
-    transitivePeerDependencies:
-      - '@swc/core'
-      - '@swc/wasm'
-      - '@types/node'
-      - bufferutil
-      - encoding
-      - graphql-tag
-      - react-native
-      - react-native-windows
-      - supports-color
-      - utf-8-validate
-    dev: true
-
   /@graphql-mesh/config/0.36.1_graphql@16.4.0:
     resolution: {integrity: sha512-Xnquf/fj/O/TkE7deSGc7pMKrm9SdxTm8Vf29IBcp9nqslAn+OxdnmVBFRx965SW9VqgEPtdY1UsQu5pHqBtYQ==}
     peerDependencies:
@@ -2713,30 +2671,6 @@ packages:
       '@graphql-mesh/utils': 0.34.6_graphql@16.4.0
       '@graphql-tools/delegate': 8.7.7_graphql@16.4.0
       '@graphql-tools/url-loader': 7.9.19_9e753b51ec84a5388c8d46edaaa49b3f
-      '@graphql-tools/utils': 8.6.9_graphql@16.4.0
-      '@graphql-tools/wrap': 8.4.16_graphql@16.4.0
-      graphql: 16.4.0
-      lodash: 4.17.21
-      tslib: 2.4.0
-    transitivePeerDependencies:
-      - '@types/node'
-      - bufferutil
-      - encoding
-      - react-native
-      - react-native-windows
-      - utf-8-validate
-    dev: true
-
-  /@graphql-mesh/graphql/0.25.2_ae1fc1106169d20c9c823b3bb240d351:
-    resolution: {integrity: sha512-z4YeYfB10VH8bCyKJp3gdtIT1WcXxTRruPXN6+ItQ0ZxF2uAFb6Cps5xDEHmo5ZEawiY6byF/16u7seoalH0dg==}
-    peerDependencies:
-      graphql: '*'
-    dependencies:
-      '@graphql-mesh/store': 0.8.4_graphql@16.4.0
-      '@graphql-mesh/types': 0.72.1_graphql@16.4.0
-      '@graphql-mesh/utils': 0.34.6_graphql@16.4.0
-      '@graphql-tools/delegate': 8.7.7_graphql@16.4.0
-      '@graphql-tools/url-loader': 7.9.19_ae1fc1106169d20c9c823b3bb240d351
       '@graphql-tools/utils': 8.6.9_graphql@16.4.0
       '@graphql-tools/wrap': 8.4.16_graphql@16.4.0
       graphql: 16.4.0
@@ -3273,34 +3207,6 @@ packages:
       graphql-ws: 5.8.1_graphql@16.4.0
       isomorphic-ws: 4.0.1_ws@8.6.0
       meros: 1.2.0_@types+node@17.0.30
-      sync-fetch: 0.3.1
-      tslib: 2.4.0
-      value-or-promise: 1.0.11
-      ws: 8.6.0
-    transitivePeerDependencies:
-      - '@types/node'
-      - bufferutil
-      - encoding
-      - utf-8-validate
-    dev: true
-
-  /@graphql-tools/url-loader/7.9.19_ae1fc1106169d20c9c823b3bb240d351:
-    resolution: {integrity: sha512-2jLr3gx2VvUjZGnHqfeDk8tp4mJ5/df9pMHj7NTRMh8Hp9WpIpTdxWSYg8SyJZIMbY8IlpPn5EFwZAz5okkrEw==}
-    peerDependencies:
-      graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
-    dependencies:
-      '@graphql-tools/delegate': 8.7.7_graphql@16.4.0
-      '@graphql-tools/utils': 8.6.9_graphql@16.4.0
-      '@graphql-tools/wrap': 8.4.16_graphql@16.4.0
-      '@n1ru4l/graphql-live-query': 0.9.0_graphql@16.4.0
-      '@types/ws': 8.5.3
-      cross-undici-fetch: 0.3.8
-      dset: 3.1.2
-      extract-files: 11.0.0
-      graphql: 16.4.0
-      graphql-ws: 5.8.1_graphql@16.4.0
-      isomorphic-ws: 4.0.1_ws@8.6.0
-      meros: 1.2.0_@types+node@17.0.21
       sync-fetch: 0.3.1
       tslib: 2.4.0
       value-or-promise: 1.0.11
@@ -4947,10 +4853,6 @@ packages:
     resolution: {integrity: sha512-0PJ0vg+JyU0MIan58IOIFRtSvsb7Ri+7Wltx2qAg94eMOrpg4+uuP3aUHCpxXc1i0jCXiC+zIamSZh3l9AbcQA==}
     dev: true
 
-  /@types/node/17.0.21:
-    resolution: {integrity: sha512-DBZCJbhII3r90XbQxI8Y9IjjiiOGlZ0Hr32omXIZvwwZ7p4DMMXGrKXVyPfuoBOri9XNtL0UK69jYIBIsRX3QQ==}
-    dev: true
-
   /@types/node/17.0.25:
     resolution: {integrity: sha512-wANk6fBrUwdpY4isjWrKTufkrXdu1D2YHCot2fD/DfWxF5sMrVSA+KN7ydckvaTCh0HiqX9IVl0L5/ZoXg5M7w==}
     dev: true
@@ -4989,14 +4891,6 @@ packages:
     resolution: {integrity: sha512-1RRW9kst+67gveJRYPxGmVy8eVJ05O43hg77G2j5m76/RFJtMbcfAs2viQ2UNsvvDg8F7OfQZx8qQcl6ymygaQ==}
     dependencies:
       '@types/react': 18.0.8
-
-  /@types/react/17.0.41:
-    resolution: {integrity: sha512-chYZ9ogWUodyC7VUTRBfblysKLjnohhFY9bGLwvnUFFy48+vB9DikmB3lW0qTFmBcKSzmdglcvkHK71IioOlDA==}
-    dependencies:
-      '@types/prop-types': 15.7.5
-      '@types/scheduler': 0.16.2
-      csstype: 3.0.11
-    dev: true
 
   /@types/react/18.0.8:
     resolution: {integrity: sha512-+j2hk9BzCOrrOSJASi5XiOyBbERk9jG5O73Ya4M0env5Ixi6vUNli4qy994AINcEF+1IEHISYFfIT4zwr++LKw==}
@@ -5191,6 +5085,23 @@ packages:
     dependencies:
       '@ethersproject/abi': 5.6.1
       '@ethersproject/bignumber': 5.6.0
+      '@ethersproject/contracts': 5.6.0
+      '@reduxjs/toolkit': 1.8.1_react-redux@8.0.1+react@18.1.0
+      react: 18.1.0
+      react-redux: 8.0.1_dd5346d96c16c0aadfa6cad1ff4d1193
+    dev: false
+
+  /@uniswap/redux-multicall/1.1.1_833bdd5481673211961c00d9256d6d3a:
+    resolution: {integrity: sha512-sXX2pAbxJj1OrErSc7zMEFo7j1EXqTBbllYuUDEWCZ/A12sK/4RXgXW2+zSoXOHCN6djyVUc3FmEt0v3x2jLSw==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      '@ethersproject/abi': '5'
+      '@ethersproject/bignumber': '5'
+      '@ethersproject/contracts': '5'
+      '@reduxjs/toolkit': '1'
+      react: '17'
+      react-redux: '7'
+    dependencies:
       '@ethersproject/contracts': 5.6.0
       '@reduxjs/toolkit': 1.8.1_react-redux@8.0.1+react@18.1.0
       react: 18.1.0
@@ -5568,24 +5479,6 @@ packages:
 
   /@walletconnect/environment/1.0.0:
     resolution: {integrity: sha512-4BwqyWy6KpSvkocSaV7WR3BlZfrxLbJSLkg+j7Gl6pTDE+U55lLhJvQaMuDVazXYxcjBsG09k7UlH7cGiUI5vQ==}
-
-  /@walletconnect/ethereum-provider/1.7.5:
-    resolution: {integrity: sha512-hEY7YhQSCcUccwuVgQvpL/FZB6ov07ad+FZ0NSsr8Xv54ysmgoaE8tdReVa8zrGK2LCuB6mtfSGx2E0bZ2H4Ng==}
-    dependencies:
-      '@walletconnect/client': 1.7.8
-      '@walletconnect/jsonrpc-http-connection': 1.0.0
-      '@walletconnect/jsonrpc-provider': 1.0.3
-      '@walletconnect/signer-connection': 1.7.8
-      '@walletconnect/types': 1.7.8
-      '@walletconnect/utils': 1.7.8
-      eip1193-provider: 1.0.1
-      eventemitter3: 4.0.7
-    transitivePeerDependencies:
-      - bufferutil
-      - debug
-      - encoding
-      - utf-8-validate
-    dev: false
 
   /@walletconnect/ethereum-provider/1.7.8:
     resolution: {integrity: sha512-dnl560zFMdK/LD4MD2XwHbWj7RXOaeXWPc9jzDaosLQLAXfA5mKe4XbCFFUPbVMYuyBdRI9NZv3Ci/qDb5wncQ==}
@@ -11547,18 +11440,6 @@ packages:
     resolution: {integrity: sha512-8q7VEgMJW4J8tcfVPy8g09NcQwZdbwFEqhe/WZkoIzjn/3TGDwtOCYtXGxA3O8tPzpczCCDgv+P2P5y00ZJOOg==}
     engines: {node: '>= 8'}
 
-  /meros/1.2.0_@types+node@17.0.21:
-    resolution: {integrity: sha512-3QRZIS707pZQnijHdhbttXRWwrHhZJ/gzolneoxKVz9N/xmsvY/7Ls8lpnI9gxbgxjcHsAVEW3mgwiZCo6kkJQ==}
-    engines: {node: '>=12'}
-    peerDependencies:
-      '@types/node': '>=12'
-    peerDependenciesMeta:
-      '@types/node':
-        optional: true
-    dependencies:
-      '@types/node': 17.0.21
-    dev: true
-
   /meros/1.2.0_@types+node@17.0.30:
     resolution: {integrity: sha512-3QRZIS707pZQnijHdhbttXRWwrHhZJ/gzolneoxKVz9N/xmsvY/7Ls8lpnI9gxbgxjcHsAVEW3mgwiZCo6kkJQ==}
     engines: {node: '>=12'}
@@ -14340,37 +14221,6 @@ packages:
       yn: 3.1.1
     dev: true
 
-  /ts-node/10.7.0_9f41943e95d62fa6f5ab0dfae348d529:
-    resolution: {integrity: sha512-TbIGS4xgJoX2i3do417KSaep1uRAW/Lu+WAL2doDHC0D6ummjirVOXU5/7aiZotbQ5p1Zp9tP7U6cYhA0O7M8A==}
-    hasBin: true
-    peerDependencies:
-      '@swc/core': '>=1.2.50'
-      '@swc/wasm': '>=1.2.50'
-      '@types/node': '*'
-      typescript: '>=2.7'
-    peerDependenciesMeta:
-      '@swc/core':
-        optional: true
-      '@swc/wasm':
-        optional: true
-    dependencies:
-      '@cspotcode/source-map-support': 0.7.0
-      '@tsconfig/node10': 1.0.8
-      '@tsconfig/node12': 1.0.9
-      '@tsconfig/node14': 1.0.1
-      '@tsconfig/node16': 1.0.2
-      '@types/node': 17.0.21
-      acorn: 8.7.1
-      acorn-walk: 8.2.0
-      arg: 4.1.3
-      create-require: 1.1.1
-      diff: 4.0.2
-      make-error: 1.3.6
-      typescript: 4.6.4
-      v8-compile-cache-lib: 3.0.1
-      yn: 3.1.1
-    dev: true
-
   /ts-node/8.9.1_typescript@4.3.4:
     resolution: {integrity: sha512-yrq6ODsxEFTLz0R3BX2myf0WBCSQh9A+py8PBo1dCzWIOcvisbyH6akNKqDHMgXePF2kir5mm5JXJTH3OUJYOQ==}
     engines: {node: '>=6.0.0'}
@@ -14636,12 +14486,6 @@ packages:
     engines: {node: '>=4.2.0'}
     hasBin: true
     dev: false
-
-  /typescript/4.6.2:
-    resolution: {integrity: sha512-HM/hFigTBHZhLXshn9sN37H085+hQGeJHJ/X7LpBWLID/fbc2acUMfU+lGD98X81sKP+pFa9f0DZmCwB9GnbAg==}
-    engines: {node: '>=4.2.0'}
-    hasBin: true
-    dev: true
 
   /typescript/4.6.4:
     resolution: {integrity: sha512-9ia/jWHIEbo49HfjrLGfKbZSuWo9iTMwXO+Ca3pRsSpbsMbc7/IU8NKdCZVRRBafVPGnoJeFL76ZOAA84I9fEg==}
@@ -14992,54 +14836,6 @@ packages:
       xml-name-validator: 3.0.0
     dev: true
 
-  /wagmi-core/0.1.22_117201a21f7e079999e34dd73a1047c4:
-    resolution: {integrity: sha512-Q/MjVVC31SOks6ynTxp+RQFgA1pMWUAz8g3XBZzFSMB59UUpwCpC3mjVTM5bix63HZ1CNIngo+MT2ax7HItZow==}
-    peerDependencies:
-      '@coinbase/wallet-sdk': ^3.0.8
-      '@walletconnect/ethereum-provider': 1.7.5
-      ethers: ^5.5.1
-      walletlink: ^2.5.0
-    peerDependenciesMeta:
-      '@coinbase/wallet-sdk':
-        optional: true
-      '@walletconnect/ethereum-provider':
-        optional: true
-      walletlink:
-        optional: true
-    dependencies:
-      '@coinbase/wallet-sdk': 3.0.11
-      '@ethersproject/providers': 5.6.5
-      '@walletconnect/ethereum-provider': 1.7.5
-      ethers: 5.6.5
-      eventemitter3: 4.0.7
-      walletlink: 2.5.0
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-    dev: false
-
-  /wagmi/0.2.28_ethers@5.6.5+react@18.1.0:
-    resolution: {integrity: sha512-ovB/3ULocxt4IojC7t2aqb1tPNk3Or9+hrUiLkf15yDLeUdn4murot1lpunKZHrlaIsCGwNknW8hsGY+47btCw==}
-    peerDependencies:
-      ethers: ^5.5.1
-      react: ^17.0.0
-    dependencies:
-      '@coinbase/wallet-sdk': 3.0.11
-      '@ethersproject/providers': 5.6.5
-      '@walletconnect/ethereum-provider': 1.7.5
-      ethers: 5.6.5
-      react: 18.1.0
-      wagmi-core: 0.1.22_117201a21f7e079999e34dd73a1047c4
-      walletlink: 2.5.0
-    transitivePeerDependencies:
-      - '@babel/core'
-      - bufferutil
-      - debug
-      - encoding
-      - supports-color
-      - utf-8-validate
-    dev: false
-
   /wagmi/0.3.2_c601194df9b17909a076104f27c56e0d:
     resolution: {integrity: sha512-O5NJZj+HR9RHxyw6yqyPF2Uj96DnGX4iGrG77rwq2TSFp4BUDTP/4EI6+j9kwdrcVhaM9ka1+a6AHbuWtYF3EA==}
     peerDependencies:
@@ -15069,30 +14865,6 @@ packages:
     dependencies:
       makeerror: 1.0.12
     dev: true
-
-  /walletlink/2.5.0:
-    resolution: {integrity: sha512-PBJmK5tZmonwKPABBI2/optaZ11O4kKmkmnU5eLKhk4XRlal5qJ1igZ4U5j3w6w8wxxdhCWpLMHzGWt3n/p7mw==}
-    engines: {node: '>= 10.0.0'}
-    deprecated: 'WARNING: This project has been renamed to @coinbase/wallet-sdk. Install using @coinbase/wallet-sdk instead.'
-    dependencies:
-      '@metamask/safe-event-emitter': 2.0.0
-      bind-decorator: 1.0.11
-      bn.js: 5.2.0
-      clsx: 1.1.1
-      eth-block-tracker: 4.4.3
-      eth-json-rpc-filters: 4.2.2
-      eth-rpc-errors: 4.0.2
-      js-sha256: 0.9.0
-      json-rpc-engine: 6.1.0
-      keccak: 3.0.2
-      preact: 10.7.1
-      rxjs: 6.6.7
-      stream-browserify: 3.0.0
-    transitivePeerDependencies:
-      - '@babel/core'
-      - encoding
-      - supports-color
-    dev: false
 
   /warning/4.0.3:
     resolution: {integrity: sha512-rpJyN222KWIvHJ/F53XSZv0Zl/accqHR8et1kpaMTD/fLCRxtV8iX8czMzY7sVZupTI3zcUTg8eycS2kNF9l6w==}
