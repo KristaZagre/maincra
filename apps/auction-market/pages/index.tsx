@@ -10,7 +10,7 @@ interface Props {
   auctionRepresentations: AuctionRepresentation[]
 }
 
-export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) => {
+export const getServerSideProps: GetServerSideProps<Props> = async () => {
   const sdk = await getBuiltGraphSDK()
   const auctionRepresentations = (await (await sdk.Auctions()).auctions) as AuctionRepresentation[]
   return {

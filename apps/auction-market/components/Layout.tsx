@@ -9,7 +9,9 @@ type Props = {
 function Layout({ children, maxWidth = '5xl' }: Props) {
   return (
     <Container maxWidth={maxWidth} className="h-full px-2 lg:mx-auto">
-      <Glow>{children}</Glow>
+      <>
+      {children}
+      </>
     </Container>
   )
 }
