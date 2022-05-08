@@ -140,7 +140,8 @@ importers:
       '@ethersproject/providers': ^5.4.0
       '@ethersproject/strings': ^5.4.0
       '@ethersproject/units': ^5.6.0
-      '@graphprotocol/client-cli': 0.0.7
+      '@graphprotocol/client-auto-pagination': 0.0.3
+      '@graphprotocol/client-cli': 0.0.8
       '@heroicons/react': ^1.0.0
       '@reduxjs/toolkit': ^1.8.1
       '@sushiswap/chain': workspace:*
@@ -212,7 +213,8 @@ importers:
       redux-persist: 6.0.0
       wagmi: 0.3.2_c601194df9b17909a076104f27c56e0d
     devDependencies:
-      '@graphprotocol/client-cli': 0.0.7_9e753b51ec84a5388c8d46edaaa49b3f
+      '@graphprotocol/client-auto-pagination': 0.0.3_graphql@16.4.0
+      '@graphprotocol/client-cli': 0.0.8_9e753b51ec84a5388c8d46edaaa49b3f
       '@sushiswap/config': link:../../packages/config
       '@types/node': 17.0.30
       '@types/react': 18.0.8
@@ -2230,6 +2232,17 @@ packages:
       tslib: 2.4.0
     dev: true
 
+  /@graphprotocol/client-auto-pagination/0.0.3_graphql@16.4.0:
+    resolution: {integrity: sha512-Wdl9ZY32dpRc5qlnskX55qqR+1Imk63DK95K19tjjSj/Nqca/E2oSt/w7jZ4IADEog8BF2o0RMU+qVr3E+n3HA==}
+    peerDependencies:
+      '@graphql-mesh/types': ^0.72.0
+      graphql: ^15.2.0 || ^16.0.0
+    dependencies:
+      '@graphql-tools/utils': 8.6.9_graphql@16.4.0
+      graphql: 16.4.0
+      tslib: 2.4.0
+    dev: true
+
   /@graphprotocol/client-block-tracking/0.0.2_graphql@16.4.0:
     resolution: {integrity: sha512-XVypZvH7emx4Vjqq5g62HV6mvUMkiWeuPKU06AiD+VQ09Nz6xdjRR0JKBz04pkYNHHylspROELx/fmlShUeD3w==}
     peerDependencies:
@@ -2274,6 +2287,32 @@ packages:
       graphql: ^15.2.0 || ^16.0.0
     dependencies:
       '@graphprotocol/client-auto-pagination': 0.0.2_graphql@16.4.0
+      '@graphprotocol/client-block-tracking': 0.0.2_graphql@16.4.0
+      '@graphql-mesh/cli': 0.69.2_9e753b51ec84a5388c8d46edaaa49b3f
+      '@graphql-mesh/graphql': 0.25.2_9e753b51ec84a5388c8d46edaaa49b3f
+      graphql: 16.4.0
+      tslib: 2.4.0
+    transitivePeerDependencies:
+      - '@graphql-mesh/types'
+      - '@swc/core'
+      - '@swc/wasm'
+      - '@types/node'
+      - bufferutil
+      - encoding
+      - graphql-tag
+      - react-native
+      - react-native-windows
+      - supports-color
+      - utf-8-validate
+    dev: true
+
+  /@graphprotocol/client-cli/0.0.8_9e753b51ec84a5388c8d46edaaa49b3f:
+    resolution: {integrity: sha512-RCmVv7kqFyhPuKljEyprJuR3I3bB13kxgEEzA3qNho7AXRshHtOmfwjcAsmSyKSI+B1BVUS0l4NgPy3g/txi5Q==}
+    hasBin: true
+    peerDependencies:
+      graphql: ^15.2.0 || ^16.0.0
+    dependencies:
+      '@graphprotocol/client-auto-pagination': 0.0.3_graphql@16.4.0
       '@graphprotocol/client-block-tracking': 0.0.2_graphql@16.4.0
       '@graphql-mesh/cli': 0.69.2_9e753b51ec84a5388c8d46edaaa49b3f
       '@graphql-mesh/graphql': 0.25.2_9e753b51ec84a5388c8d46edaaa49b3f

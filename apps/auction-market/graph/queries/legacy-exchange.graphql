@@ -1,15 +1,13 @@
-query Pair($id: ID!) {
-  pair(id: $id) {
+query Pairs {
+  pairs {
     id
     token0 {
       name
       symbol
-      decimals
     }
     token1 {
       name
       symbol
-      decimals
     }
   }
 }

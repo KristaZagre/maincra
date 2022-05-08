@@ -2,11 +2,15 @@ import { arrayify } from '@ethersproject/bytes'
 import { parseBytes32String } from '@ethersproject/strings'
 import { ChainTokenMap, Token } from '@sushiswap/core-sdk'
 import { isAddress, getAddress } from '@ethersproject/address'
-import { NEVER_RELOAD, useSingleCallResult } from '../lib/hooks/multicall'
+import { NEVER_RELOAD, useMultipleContractSingleData, useSingleCallResult } from '../lib/hooks/multicall'
 import { useCombinedActiveList } from '../lib/state/token-lists'
 import { useMemo } from 'react'
 import { useNetwork } from 'wagmi'
 import { useBytes32TokenContract, useTokenContract } from './useContract'
+import { Amount } from '@sushiswap/currency'
+import ERC20_ABI  from 'abis/erc20.json'
+import {JSBI} from '@sushiswap/math'
+import { Interface } from 'ethers/lib/utils'
 
 // reduce token map into standard address <-> Token mapping
 function useTokensFromMap(tokenMap: ChainTokenMap): { [address: string]: Token } {
@@ -100,4 +104,55 @@ export function useToken(tokenAddress?: string | null): Token | undefined | null
     tokenName.result,
     tokenNameBytes32.result,
   ])
+}
+
+const ERC20Interface = new Interface(ERC20_ABI)
+const tokenBalancesGasRequirement = { gasRequired: 125_000 }
+
+/**
+ * Returns a map of token addresses to their eventually consistent token balances for a single account.
+ */
+ export function useTokenBalancesWithLoadingIndicator(
+  address?: string,
+  tokens?: (Token | undefined)[]
+): [{ [tokenAddress: string]: Amount<Token> | undefined }, boolean] {
+  const validatedTokens: Token[] = useMemo(
+    () => tokens?.filter((t?: Token): t is Token => isAddress(t?.address ?? "") !== false) ?? [],
+    [tokens]
+  )
+  const validatedTokenAddresses = useMemo(() => validatedTokens.map((vt) => vt.address), [validatedTokens])
+
+  const balances = useMultipleContractSingleData(
+    validatedTokenAddresses,
+    ERC20Interface,
+    'balanceOf',
+    useMemo(() => [address], [address]),
+    tokenBalancesGasRequirement
+  )
+  const anyLoading: boolean = useMemo(() => balances.some((callState) => callState.loading), [balances])
+ console.log({anyLoading, balances})
+
+  return useMemo(
+    () => [
+      address && validatedTokens.length > 0
+        ? validatedTokens.reduce<{ [tokenAddress: string]: Amount<Token> | undefined }>((memo, token, i) => {
+            const value = balances?.[i]?.result?.[0]
+            const amount = value ? JSBI.BigInt(value.toString()) : undefined
+            if (amount) {
+              memo[token.address] = Amount.fromRawAmount(token, amount)
+            }
+            return memo
+          }, {})
+        : {},
+      anyLoading,
+    ],
+    [address, validatedTokens, anyLoading, balances]
+  )
+}
+
+export function useTokenBalances(
+  address?: string,
+  tokens?: (Token | undefined)[]
+): { [tokenAddress: string]: Amount<Token> | undefined } {
+  return useTokenBalancesWithLoadingIndicator(address, tokens)[0]
 }

@@ -22,7 +22,7 @@ export default function Index() {
             <Account.Name address={data?.address} />
             <Account.Disconnect className="ml-4" />
           </div>
-          {/* <Link href={`/users/${data?.address?.toLowerCase()}?chainId=${activeChain?.id}`}>Dashboard</Link> */}
+          <Link href={`/auctions?chainId=${activeChain?.id}`}>[Auctions]</Link>
         </>
       )}
     </div>

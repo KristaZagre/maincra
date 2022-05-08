@@ -2,3 +2,7 @@ name: legacy-exchange-kovan
 handler:
   graphql:
     endpoint: https://api.thegraph.com/subgraphs/name/olastenberg/legacy-exchange-kovan
+transforms:
+  - autoPagination:
+      # validateSchema: true # Validates that the schema source actually contains the required input filters.
+      limitOfRecords: 100 # Default is 1000, you can change if you indexer has different configuration in GRAPH_GRAPHQL_MAX_FIRST var.

@@ -10,7 +10,7 @@ import { UniswapInterfaceMulticall } from '../typechain'
 
 export function useMulticallContract(chainId: ChainId) {
   return useMemo(() => {
-    if (!MULTICALL_ADDRESS[chainId] !== undefined) return undefined
+    if (MULTICALL_ADDRESS[chainId] === undefined) return undefined
     return new Contract(
       MULTICALL_ADDRESS[chainId] as string,
       MULTICALL_ABI,

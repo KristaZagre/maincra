@@ -21,6 +21,13 @@ export interface TokenRepresentation {
   decimals: string
 }
 
+
+export interface PairRepresentation {
+  id: string
+  token0: TokenRepresentation
+  token1: TokenRepresentation
+}
+
 export interface UserRepresentation {
   id: string
 }
