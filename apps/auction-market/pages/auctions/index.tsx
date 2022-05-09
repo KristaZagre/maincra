@@ -2,9 +2,10 @@ import { ChainId } from '@sushiswap/chain'
 import { AUCTION_MAKER_ADDRESSES } from 'config/network'
 import { Auction } from 'features/context/Auction'
 import { AuctionRepresentation, PairRepresentation } from 'features/context/representations'
-import { toTokens } from 'features/LPTransformer'
+// import { toTokens } from 'features/LPTransformer'
 import { getPairs } from 'graph/graph-client'
 import { useTokenBalancesWithLoadingIndicator } from 'hooks/Tokens'
+import { useTokensFromLP } from 'hooks/useLpToken'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import Link from 'next/link'
 import { FC, useMemo } from 'react'
@@ -33,14 +34,15 @@ const AuctionMarket: FC<InferGetServerSidePropsType<typeof getServerSideProps>> 
   auctionRepresentations,
   pairsRepresentation,
 }) => {
-  const [auctions, lpTokens] = useMemo(
-    () => [auctionRepresentations?.map((auction) => new Auction({ auction })), toTokens(4, pairsRepresentation ?? [])],
-    [auctionRepresentations, pairsRepresentation],
+  const auctions = useMemo(
+    () => auctionRepresentations?.map((auction) => new Auction({ auction })),
+    [auctionRepresentations],
   )
 
-  const [tokenWithBalances, loading] = useTokenBalancesWithLoadingIndicator(
+  const tokenWithBalances = useTokensFromLP(
+    ChainId.KOVAN,
     AUCTION_MAKER_ADDRESSES[ChainId.KOVAN],
-    lpTokens,
+    pairsRepresentation,
   )
 
   return (
@@ -64,7 +66,7 @@ const AuctionMarket: FC<InferGetServerSidePropsType<typeof getServerSideProps>> 
             <i>No Auctions found..</i>
           </div>
         )}
-        <h1>LP Tokens</h1>
+        {/* <h1>LP Tokens</h1>
         Showing: {Object.values(tokenWithBalances)?.filter((token) => token?.greaterThan(0)).length} of{' '}
         {lpTokens?.length ?? 0} LP Tokens
         <div>
@@ -77,7 +79,7 @@ const AuctionMarket: FC<InferGetServerSidePropsType<typeof getServerSideProps>> 
                   </div>
                 ))
             : 'Loading..'}
-        </div>
+        </div> */}
       </div>
     </Layout>
   )

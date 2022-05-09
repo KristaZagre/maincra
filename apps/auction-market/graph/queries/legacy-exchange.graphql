@@ -2,12 +2,16 @@ query Pairs {
   pairs(first: 5000) {
     id
     token0 {
-      name
+      id
       symbol
+      name
+      decimals
     }
     token1 {
-      name
+      id
       symbol
+      name
+      decimals
     }
   }
 }
