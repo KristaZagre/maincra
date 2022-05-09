@@ -1,16 +1,15 @@
+import { ChainId } from '@sushiswap/chain'
+import { AUCTION_MAKER_ADDRESSES } from 'config/network'
+import { Auction } from 'features/context/Auction'
+import { AuctionRepresentation, PairRepresentation } from 'features/context/representations'
+import { toTokens } from 'features/LPTransformer'
+import { getPairs } from 'graph/graph-client'
+import { useTokenBalancesWithLoadingIndicator } from 'hooks/Tokens'
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import Link from 'next/link'
 import { FC, useMemo } from 'react'
 import { getBuiltGraphSDK } from '../../.graphclient'
 import Layout from '../../components/Layout'
-import { Auction } from 'features/context/Auction'
-import { AuctionRepresentation, PairRepresentation } from 'features/context/representations'
-import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
-// import { useAuctionMakerBalance } from 'hooks/useAuctionMarketContract'
-import { getPairs } from 'graph/graph-client'
-import { toTokens } from 'features/LPTransformer'
-import { useAllTokens, useTokenBalances, useTokenBalancesWithLoadingIndicator } from 'hooks/Tokens'
-import { AUCTION_MAKER_ADDRESSES } from 'config/network'
-import { ChainId } from '@sushiswap/chain'
 
 interface Props {
   auctionRepresentations?: AuctionRepresentation[]
@@ -34,7 +33,6 @@ const AuctionMarket: FC<InferGetServerSidePropsType<typeof getServerSideProps>> 
   auctionRepresentations,
   pairsRepresentation,
 }) => {
-  const tokens = useAllTokens()
   const [auctions, lpTokens] = useMemo(
     () => [auctionRepresentations?.map((auction) => new Auction({ auction })), toTokens(4, pairsRepresentation ?? [])],
     [auctionRepresentations, pairsRepresentation],
@@ -42,7 +40,6 @@ const AuctionMarket: FC<InferGetServerSidePropsType<typeof getServerSideProps>> 
 
   const [tokenWithBalances, loading] = useTokenBalancesWithLoadingIndicator(
     AUCTION_MAKER_ADDRESSES[ChainId.KOVAN],
-    // Object.values(tokens),
     lpTokens,
   )
 
@@ -68,29 +65,18 @@ const AuctionMarket: FC<InferGetServerSidePropsType<typeof getServerSideProps>> 
           </div>
         )}
         <h1>LP Tokens</h1>
-        count: {lpTokens?.length ?? 0}
-        {/* {lpTokens?.length ? (
-          lpTokens.map((token) => (
-            <div key={token.address}>
-              {token.address} {``}
-              {token.symbol} {``}
-              {token.name} {``}
-            </div>
-          ))
-        ) : (
-          <div>
-            <i>No lp tokens found..</i>
-          </div>
-        )} */}
+        Showing: {Object.values(tokenWithBalances)?.filter((token) => token?.greaterThan(0)).length} of{' '}
+        {lpTokens?.length ?? 0} LP Tokens
         <div>
           {!loading
-            ? Object.values(tokenWithBalances)?.map((token) => (
-                <div key={token?.currency.address}>
-                  {/* {balance?.quotient} */}
-                  {token?.currency.symbol} {token?.toExact()}
-                </div>
-              ))
-            : 'LoAdInG. ... ....'}
+            ? Object.values(tokenWithBalances)
+                ?.filter((token) => token?.greaterThan(0))
+                .map((token) => (
+                  <div key={token?.currency.address}>
+                    {token?.currency.symbol} {token?.toExact()}
+                  </div>
+                ))
+            : 'Loading..'}
         </div>
       </div>
     </Layout>

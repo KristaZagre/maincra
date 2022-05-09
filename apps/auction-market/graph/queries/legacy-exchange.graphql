@@ -1,5 +1,5 @@
 query Pairs {
-  pairs {
+  pairs(first: 5000) {
     id
     token0 {
       name

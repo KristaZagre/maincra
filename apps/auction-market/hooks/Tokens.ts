@@ -130,7 +130,6 @@ const tokenBalancesGasRequirement = { gasRequired: 125_000 }
     tokenBalancesGasRequirement
   )
   const anyLoading: boolean = useMemo(() => balances.some((callState) => callState.loading), [balances])
- console.log({anyLoading, balances})
 
   return useMemo(
     () => [
