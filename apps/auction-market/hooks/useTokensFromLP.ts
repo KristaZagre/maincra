@@ -11,17 +11,6 @@ import { CurrencyAmount, Pair } from '@sushiswap/core-sdk'
 
 const PAIR_INTERFACE = new Interface(IUniswapV2PairABI)
 
-interface LpToken {
-  [address: string]: Token
-}
-
-interface LpTokenAssets {
-  [address: string]: {
-    token0: Token
-    token1: Token
-  }
-}
-
 export function useTokensFromLP(
   chainId: number,
   address: string,
@@ -58,26 +47,18 @@ export function useTokensFromLP(
       const reserve0 = JSBI.BigInt(reserves?.[i]?.result?.reserve0)
       const reserve1 = JSBI.BigInt(reserves?.[i]?.result?.reserve1)
 
-      if (!supply || !token || !pair || !balance || !reserve0 || !reserve1) return []
+      if (!supply || !token || !pair || !balance || !reserve0 || !reserve1) return
 
       const token0Liquidity = Amount.fromRawAmount(pair[0], JSBI.divide(JSBI.multiply(balance, reserve0), supply))
       const token1Liquidity = Amount.fromRawAmount(pair[1], JSBI.divide(JSBI.multiply(balance, reserve1), supply))
       const tokenAddress0 = pair[0].address.toLowerCase()
       const tokenAddress1 = pair[1].address.toLowerCase()
-      if (tokens[tokenAddress0]) {
-        tokens[tokenAddress0].add(token0Liquidity)
-      } else {
-        tokens[tokenAddress0] = token0Liquidity
-      }
-
-      if (tokens[tokenAddress1]) {
-        tokens[tokenAddress1].add(token1Liquidity)
-      } else {
-        tokens[tokenAddress1] = token1Liquidity
-      }
+      tokens[tokenAddress0] ? tokens[tokenAddress0].add(token0Liquidity) : tokens[tokenAddress0] = token0Liquidity
+      tokens[tokenAddress1] ? tokens[tokenAddress1].add(token1Liquidity) : tokens[tokenAddress1] = token1Liquidity
     })
     return tokens
-  }, [anyLoading, address, filteredTokens, totalSupplies, reserves, lpTokensAssets, lpTokensWithBalance])
+  }
+  , [anyLoading, address, filteredTokens, totalSupplies, reserves, lpTokensAssets, lpTokensWithBalance])
   return [Object.values(summarizedTokens), anyLoading]
 }
 

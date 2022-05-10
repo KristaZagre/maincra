@@ -1,11 +1,12 @@
 import { ChainId } from '@sushiswap/chain'
+import { Token } from '@sushiswap/currency'
 import { AUCTION_MAKER_ADDRESSES } from 'config/network'
 import { Auction } from 'features/context/Auction'
-import { AuctionRepresentation, PairRepresentation } from 'features/context/representations'
+import { AuctionRepresentation, PairRepresentation, TokenRepresentation } from 'features/context/representations'
 // import { toTokens } from 'features/LPTransformer'
 import { getPairs } from 'graph/graph-client'
 import { useTokenBalancesWithLoadingIndicator } from 'hooks/Tokens'
-import { useTokensFromLP } from 'hooks/useLpToken'
+import { useTokensFromLP } from 'hooks/useTokensFromLP'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import Link from 'next/link'
 import { FC, useMemo } from 'react'
@@ -14,35 +15,46 @@ import Layout from '../../components/Layout'
 
 interface Props {
   auctionRepresentations?: AuctionRepresentation[]
-  pairsRepresentation?: PairRepresentation[]
+  pairRepresentations?: PairRepresentation[]
+  tokenRepresentations?: TokenRepresentation[]
 }
 
 export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) => {
   if (typeof query.chainId !== 'string') return { props: {} }
   const sdk = getBuiltGraphSDK()
   const auctionRepresentations = (await (await sdk.Auctions()).auctions) as AuctionRepresentation[]
-  const pairsRepresentation = (await getPairs(query.chainId)) as PairRepresentation[]
+  const pairRepresentations = (await getPairs(query.chainId)) as PairRepresentation[]
+  const tokenRepresentations = (await (await sdk.Tokens()).tokens) as TokenRepresentation[]
   return {
     props: {
       auctionRepresentations,
-      pairsRepresentation,
+      pairRepresentations,
+      tokenRepresentations,
     },
   }
 }
 
 const AuctionMarket: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   auctionRepresentations,
-  pairsRepresentation,
+  pairRepresentations,
+  tokenRepresentations,
 }) => {
-  const auctions = useMemo(
-    () => auctionRepresentations?.map((auction) => new Auction({ auction })),
-    [auctionRepresentations],
+  const [auctions, tokens] = useMemo(
+    () => [
+      auctionRepresentations?.map((auction) => new Auction({ auction })),
+      tokenRepresentations?.map(
+        (token) => new Token({ chainId: 4, address: token.id, decimals: Number(token.decimals), name: token.name, symbol: token.symbol }),),
+    ],
+    [auctionRepresentations, tokenRepresentations],
   )
+
+  const [balances, balanceLoading] = useTokenBalancesWithLoadingIndicator(AUCTION_MAKER_ADDRESSES[42], tokens)
+
 
   const [tokenList, loading] = useTokensFromLP(
     ChainId.KOVAN,
     AUCTION_MAKER_ADDRESSES[ChainId.KOVAN],
-    pairsRepresentation,
+    pairRepresentations,
   )
 
   return (
@@ -66,7 +78,16 @@ const AuctionMarket: FC<InferGetServerSidePropsType<typeof getServerSideProps>> 
             <i>No Auctions found..</i>
           </div>
         )}
-        <h1>LP Tokens</h1>
+        <h1>Balance</h1>
+        {/* <div>{tokenRepresentations?.length}</div> */}
+        <div>
+          {!balanceLoading ? Object.values(balances)?.filter(token => token?.greaterThan(0)).map((token) => (
+                  <div key={token?.currency.address}>
+                    {token?.currency.symbol} {token?.toExact()}
+                  </div>
+                ))
+            : 'Loading..'}
+        </div>
         <div>
           {!loading ? tokenList?.map((token) => (
                   <div key={token?.currency.address}>
