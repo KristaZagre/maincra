@@ -1,4 +1,3 @@
-import { Pair } from '.graphclient'
 import { Amount, Token } from '@sushiswap/currency'
 import { Interface } from 'ethers/lib/utils'
 import { PairRepresentation } from 'features/context/representations'
@@ -6,7 +5,11 @@ import { useMultipleContractSingleData } from 'lib/hooks/multicall'
 import { useMemo } from 'react'
 import { useTokenBalancesWithLoadingIndicator } from './Tokens'
 import ERC20_ABI from 'abis/erc20.json'
+import IUniswapV2PairABI from 'abis/IUniswapV2Pair.json'
 import { Decimal, JSBI } from '@sushiswap/math'
+import { CurrencyAmount, Pair } from '@sushiswap/core-sdk'
+
+const PAIR_INTERFACE = new Interface(IUniswapV2PairABI)
 
 interface LpToken {
   [address: string]: Token
@@ -19,58 +22,63 @@ interface LpTokenAssets {
   }
 }
 
-
-export function useTokensFromLP(chainId: number, address: string, pairs: PairRepresentation[] | undefined): Token[] {
+export function useTokensFromLP(
+  chainId: number,
+  address: string,
+  pairs: PairRepresentation[] | undefined,
+): [Amount<Token>[] | undefined, boolean] {
   const [lpTokens, lpTokensAssets] = toLpTokens(chainId, pairs)
-  const [lpTokensWithBalance, loading] = useTokenBalancesWithLoadingIndicator(address, lpTokens)
+  const [lpTokensWithBalance, loadingBalance] = useTokenBalancesWithLoadingIndicator(address, lpTokens)
 
   const filteredTokens = useMemo(
     () => Object.entries(lpTokensWithBalance).filter(([, token]) => token?.greaterThan(0)),
     [lpTokensWithBalance],
   )
-  // get total value
-//   const validatedTokenAddresses = useMemo(() => filteredTokens.map((vt) => vt[0]), [filteredTokens])
-//   const ERC20Interface = new Interface(ERC20_ABI)
-//   console.log(validatedTokenAddresses)
-//   const totalSupply = useMultipleContractSingleData(
-//     validatedTokenAddresses,
-//     ERC20Interface,
-//     'totalSupply'
-//   )
-//   console.log({totalSupply})
-//   const ratio = useMemo(() => {
-//     return [
-//       address && filteredTokens.length > 0
-//         ? filteredTokens.map(([lpAddress, token], i) => {
-//             const value = totalSupply?.[i]?.result?.[0]
-//             if (!value || !token) return
-//             const amount = Amount.fromRawAmount(token.currency, value)
-//             const ratio = amount.divide(token.quotient)
-//             return { [lpAddress]: Decimal(ratio.toExact()) }
-//           }, {})
-//         : [],
-//     ]
-//   }, [totalSupply, address, filteredTokens])
 
-  // get balance for lp 1, token a and token b
-  // get balance for lp 2, token a and token c
-//   [token a, token b]
-//   [arg: lp1]
+  const lpAddresses = useMemo(() => filteredTokens.map((vt) => vt[0]), [filteredTokens])
+  const ERC20Interface = new Interface(ERC20_ABI)
+  const totalSupplies = useMultipleContractSingleData(lpAddresses, ERC20Interface, 'totalSupply')
+  const reserves = useMultipleContractSingleData(lpAddresses, PAIR_INTERFACE, 'getReserves')
+  const anyLoading: boolean = useMemo(
+    () =>
+      totalSupplies.some((callState) => callState.loading) ||
+      reserves.some((callState) => callState.loading) ||
+      loadingBalance,
+    [totalSupplies, reserves, loadingBalance],
+  )
 
-//   console.log({ratio})
-  // filteredTokens
-    // const lpAssetsWithBalance = filteredTokens.map(([address]) => lpTokensAssets.get(address.toLowerCase()))
-  //   console.log({lpAssetsWithBalance})
+  let summarizedTokens = useMemo(() => {
+    if (anyLoading || !address || !filteredTokens.length) return []
+    let tokens: Record<string, Amount<Token>> = {}
 
-  //       console.log(address)
-  //     return lpTokensAssets.})
-  // const lpAssetsWithBalance = [...filteredTokens.v]
-  //   console.log({lpAssetsWithBalance})
+    filteredTokens.forEach(([lpAddress, token], i) => {
+      const supply = JSBI.BigInt(totalSupplies?.[i]?.result?.[0])
+      const pair = lpTokensAssets.get(lpAddress.toLowerCase())
+      const balance = lpTokensWithBalance[lpAddress]?.quotient
+      const reserve0 = JSBI.BigInt(reserves?.[i]?.result?.reserve0)
+      const reserve1 = JSBI.BigInt(reserves?.[i]?.result?.reserve1)
 
-  // Multicall
+      if (!supply || !token || !pair || !balance || !reserve0 || !reserve1) return []
 
-  // return
-  return []
+      const token0Liquidity = Amount.fromRawAmount(pair[0], JSBI.divide(JSBI.multiply(balance, reserve0), supply))
+      const token1Liquidity = Amount.fromRawAmount(pair[1], JSBI.divide(JSBI.multiply(balance, reserve1), supply))
+      const tokenAddress0 = pair[0].address.toLowerCase()
+      const tokenAddress1 = pair[1].address.toLowerCase()
+      if (tokens[tokenAddress0]) {
+        tokens[tokenAddress0].add(token0Liquidity)
+      } else {
+        tokens[tokenAddress0] = token0Liquidity
+      }
+
+      if (tokens[tokenAddress1]) {
+        tokens[tokenAddress1].add(token1Liquidity)
+      } else {
+        tokens[tokenAddress1] = token1Liquidity
+      }
+    })
+    return tokens
+  }, [anyLoading, address, filteredTokens, totalSupplies, reserves, lpTokensAssets, lpTokensWithBalance])
+  return [Object.values(summarizedTokens), anyLoading]
 }
 
 export function toLpTokens(chainId: number, pairs: PairRepresentation[] | undefined): [Token[], Map<string, Token[]>] {

@@ -39,7 +39,7 @@ const AuctionMarket: FC<InferGetServerSidePropsType<typeof getServerSideProps>> 
     [auctionRepresentations],
   )
 
-  const tokenWithBalances = useTokensFromLP(
+  const [tokenList, loading] = useTokensFromLP(
     ChainId.KOVAN,
     AUCTION_MAKER_ADDRESSES[ChainId.KOVAN],
     pairsRepresentation,
@@ -66,20 +66,15 @@ const AuctionMarket: FC<InferGetServerSidePropsType<typeof getServerSideProps>> 
             <i>No Auctions found..</i>
           </div>
         )}
-        {/* <h1>LP Tokens</h1>
-        Showing: {Object.values(tokenWithBalances)?.filter((token) => token?.greaterThan(0)).length} of{' '}
-        {lpTokens?.length ?? 0} LP Tokens
+        <h1>LP Tokens</h1>
         <div>
-          {!loading
-            ? Object.values(tokenWithBalances)
-                ?.filter((token) => token?.greaterThan(0))
-                .map((token) => (
+          {!loading ? tokenList?.map((token) => (
                   <div key={token?.currency.address}>
                     {token?.currency.symbol} {token?.toExact()}
                   </div>
                 ))
             : 'Loading..'}
-        </div> */}
+        </div>
       </div>
     </Layout>
   )
