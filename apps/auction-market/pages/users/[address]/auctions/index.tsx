@@ -12,7 +12,7 @@ interface Props {
 export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) => {
   if (typeof query.address !== 'string') return { props: {} }
   const sdk = await getBuiltGraphSDK()
-  const auctions = (await sdk.UserAuctions({ id: query.address })).user?.auctions.reduce<AuctionRepresentation[]>((acc, cur) => {
+  const auctions = (await sdk.UserAuctions({ id: query.address })).KOVAN_AUCTION_user?.auctions.reduce<AuctionRepresentation[]>((acc, cur) => {
     acc.push(cur.auction)
     return acc
   }, [])

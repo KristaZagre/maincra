@@ -138,7 +138,7 @@ const tokenBalancesGasRequirement = { gasRequired: 125_000 }
             const value = balances?.[i]?.result?.[0]
             const amount = value ? JSBI.BigInt(value.toString()) : undefined
             if (amount) {
-              memo[token.address] = Amount.fromRawAmount(token, amount)
+              memo[token.address.toLowerCase()] = Amount.fromRawAmount(token, amount)
             }
             return memo
           }, {})
