@@ -2,6 +2,7 @@ import { ChainId } from '@sushiswap/chain'
 import { Amount, Token } from '@sushiswap/currency'
 import { AUCTION_MAKER_ADDRESSES } from 'config/network'
 import { Auction } from 'features/context/Auction'
+import { AuctionMarket } from 'features/context/AuctionMarket'
 import { AuctionRepresentation, PairRepresentation, TokenRepresentation } from 'features/context/representations'
 import { RewardToken } from 'features/context/RewardToken'
 // import { toTokens } from 'features/LPTransformer'
@@ -23,9 +24,16 @@ interface Props {
 export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) => {
   if (typeof query.chainId !== 'string') return { props: {} }
   const sdk = getBuiltGraphSDK()
-  const auctionRepresentations = (await (await sdk.Auctions()).auctions) as AuctionRepresentation[]
+  const auctionRepresentations = (await (await sdk.Auctions())).KOVAN_AUCTION_tokens
+    .reduce<AuctionRepresentation[]>((acc, cur) => {
+    if (cur.auctions) {
+    acc.push(cur.auctions[0])
+    }
+    return acc
+  }, []) 
+  
   const pairRepresentations = (await getPairs(query.chainId)) as PairRepresentation[]
-  const tokenRepresentations = (await (await sdk.Tokens()).tokens) as TokenRepresentation[]
+  const tokenRepresentations = (await (await sdk.Tokens()).KOVAN_EXCHANGE_tokens) as TokenRepresentation[]
   return {
     props: {
       auctionRepresentations,
@@ -35,7 +43,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) =
   }
 }
 
-const AuctionMarket: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
+const Auctions: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   auctionRepresentations,
   pairRepresentations,
   tokenRepresentations,
@@ -95,9 +103,18 @@ const AuctionMarket: FC<InferGetServerSidePropsType<typeof getServerSideProps>> 
     )
   }, [lpBalances, tokenList])
 
+  const auctionMarket = useMemo( () => new AuctionMarket({auctions, rewardTokens}), [auctions, rewardTokens])
+
   return (
     <Layout>
       <div className="px-2 pt-16">
+        
+      <h1>STATUSES</h1>
+      <div>
+        <div>LIVE: {auctionMarket.live}</div>
+        <div>NOT STARTED: {auctionMarket.notStarted}</div>
+        <div>FINALIZED: {auctionMarket.finalised}</div>
+      </div>
         <h1>Auctions</h1>
         {auctions?.length ? (
           auctions.map((auction) => (
@@ -132,4 +149,4 @@ const AuctionMarket: FC<InferGetServerSidePropsType<typeof getServerSideProps>> 
   )
 }
 
-export default AuctionMarket
+export default Auctions

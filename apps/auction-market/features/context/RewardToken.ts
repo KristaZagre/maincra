@@ -1,4 +1,5 @@
 import { Amount, Token } from '@sushiswap/currency'
+import { Decimal } from '@sushiswap/math'
 
 export enum RewardTokenStatus {
   READY = "READY", // available for auction, RewardToken has balance/lpBalance and is NOT in an active auction
@@ -26,4 +27,9 @@ export class RewardToken {
     this.liquidity = liquidity
     this.status = isUsedInLiveAuction ? RewardTokenStatus.PENDING : RewardTokenStatus.READY
   }
+
+  public get totalBalance(): string {
+    return Decimal(this.balance?.toExact()).add(this.liquidity?.toExact()).toString()
+  }
+
 }

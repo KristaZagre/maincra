@@ -141,7 +141,7 @@ importers:
       '@ethersproject/strings': ^5.4.0
       '@ethersproject/units': ^5.6.0
       '@graphprotocol/client-auto-pagination': 0.0.3
-      '@graphprotocol/client-cli': 0.0.8
+      '@graphprotocol/client-cli': 0.0.9-canary-22437f0.0
       '@heroicons/react': ^1.0.0
       '@reduxjs/toolkit': ^1.8.1
       '@sushiswap/chain': workspace:*
@@ -214,7 +214,7 @@ importers:
       wagmi: 0.3.2_c601194df9b17909a076104f27c56e0d
     devDependencies:
       '@graphprotocol/client-auto-pagination': 0.0.3_graphql@16.4.0
-      '@graphprotocol/client-cli': 0.0.8_9e753b51ec84a5388c8d46edaaa49b3f
+      '@graphprotocol/client-cli': 0.0.9-canary-22437f0.0_9e753b51ec84a5388c8d46edaaa49b3f
       '@sushiswap/config': link:../../packages/config
       '@types/node': 17.0.30
       '@types/react': 18.0.8
@@ -2243,6 +2243,20 @@ packages:
       tslib: 2.4.0
     dev: true
 
+  /@graphprotocol/client-auto-pagination/0.0.4-canary-22437f0.0_graphql@16.4.0:
+    resolution: {integrity: sha512-9kp4fqLVdUM6UgKrF1JyZpy+s/I+DIp7ESO1HoSl68m0mrnXnHZm1gJ+LhJS+NEHWSKImUgMxexpJib4C7b0kQ==}
+    peerDependencies:
+      '@graphql-mesh/types': ^0.72.0
+      graphql: ^15.2.0 || ^16.0.0
+    dependencies:
+      '@graphql-tools/delegate': 8.7.7_graphql@16.4.0
+      '@graphql-tools/utils': 8.6.9_graphql@16.4.0
+      '@graphql-tools/wrap': 8.4.16_graphql@16.4.0
+      graphql: 16.4.0
+      lodash: 4.17.21
+      tslib: 2.4.0
+    dev: true
+
   /@graphprotocol/client-block-tracking/0.0.2_graphql@16.4.0:
     resolution: {integrity: sha512-XVypZvH7emx4Vjqq5g62HV6mvUMkiWeuPKU06AiD+VQ09Nz6xdjRR0JKBz04pkYNHHylspROELx/fmlShUeD3w==}
     peerDependencies:
@@ -2306,13 +2320,13 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@graphprotocol/client-cli/0.0.8_9e753b51ec84a5388c8d46edaaa49b3f:
-    resolution: {integrity: sha512-RCmVv7kqFyhPuKljEyprJuR3I3bB13kxgEEzA3qNho7AXRshHtOmfwjcAsmSyKSI+B1BVUS0l4NgPy3g/txi5Q==}
+  /@graphprotocol/client-cli/0.0.9-canary-22437f0.0_9e753b51ec84a5388c8d46edaaa49b3f:
+    resolution: {integrity: sha512-WK7UNIjNCna/Vp7++8rv69+AneIzdfnBQHsErhFKhMiQN5V7I8MBvZvVFs/4Se5l9FaUAfUZj+xzXNgLq3owig==}
     hasBin: true
     peerDependencies:
       graphql: ^15.2.0 || ^16.0.0
     dependencies:
-      '@graphprotocol/client-auto-pagination': 0.0.3_graphql@16.4.0
+      '@graphprotocol/client-auto-pagination': 0.0.4-canary-22437f0.0_graphql@16.4.0
       '@graphprotocol/client-block-tracking': 0.0.2_graphql@16.4.0
       '@graphql-mesh/cli': 0.69.2_9e753b51ec84a5388c8d46edaaa49b3f
       '@graphql-mesh/graphql': 0.25.2_9e753b51ec84a5388c8d46edaaa49b3f

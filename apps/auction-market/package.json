@@ -45,7 +45,7 @@
     "wagmi": "^0.3.1"
   },
   "devDependencies": {
-    "@graphprotocol/client-cli": "0.0.8",
+    "@graphprotocol/client-cli": "0.0.9-canary-22437f0.0", 
     "@graphprotocol/client-auto-pagination": "0.0.3",
     "@types/node": "17.0.30",
     "@types/react": "^18.0.8",

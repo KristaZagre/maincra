@@ -11,6 +11,6 @@ export const getPairs = async (chainId: string) => {
   // if (!isNetworkSupported(network)) return {}
   const sdk = await getBuiltGraphSDK()
   // if (network === ChainId.KOVAN) {
-    return (await (await sdk.Pairs()).pairs) ?? {}
+    return (await (await sdk.Pairs()).KOVAN_EXCHANGE_pairs) ?? {}
   // }
 }

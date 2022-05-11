@@ -1,4 +1,14 @@
-name: auctionmaker
+name: auctionmaker-kovan
 handler:
   graphql:
     endpoint: https://api.thegraph.com/subgraphs/name/olastenberg/auction-maker-kovan
+transforms:
+  - prefix:
+      value: KOVAN_AUCTION_
+      includeRootOperations: true
+      includeTypes: false
+      ignore: 
+        - _SubgraphErrorPolicy_
+# transforms:
+#   - autoPagination:
+#       validateSchema: true # Validates that the schema source actually contains the required input filters.

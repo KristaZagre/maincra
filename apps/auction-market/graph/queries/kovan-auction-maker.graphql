@@ -1,35 +1,39 @@
 query Auctions {
-  auctions {
-    id
-    token {
+  KOVAN_AUCTION_tokens {
+    auctions(first: 1, orderBy: createdAtBlock, orderDirection: desc) {
+      __typename
       id
-      name
-      symbol
-      decimals
-    }
-    minTTL
-    maxTTL
-    status
-    bidAmount
-    rewardAmount
-    leadingBid {
-      id
-      user {
+      token {
         id
+        name
+        symbol
+        decimals
       }
-      amount
+      minTTL
+      maxTTL
+      status
+      bidAmount
+      rewardAmount
+      leadingBid {
+        id
+        user {
+          id
+        }
+        amount
+        createdAtBlock
+        createdAtTimestamp
+      }
       createdAtBlock
       createdAtTimestamp
+      modifiedAtBlock
+      modifiedAtTimestamp
     }
-    createdAtBlock
-    createdAtTimestamp
-    modifiedAtBlock
-    modifiedAtTimestamp
   }
 }
 
+
 query Auction($id: ID!) {
-  auction(id: $id) {
+  KOVAN_AUCTION_auction(id: $id) {
     id
     token {
       id
@@ -59,7 +63,7 @@ query Auction($id: ID!) {
 }
 
 query Bids($auctionId: ID!) {
-  auction(id: $auctionId) {
+  KOVAN_AUCTION_auction(id: $auctionId) {
     bids {
       id
       user {
@@ -73,7 +77,7 @@ query Bids($auctionId: ID!) {
 }
 
 query UserAuctions($id: ID!) {
-  user(id: $id) {
+  KOVAN_AUCTION_user(id: $id) {
     auctions {
       auction {
         id

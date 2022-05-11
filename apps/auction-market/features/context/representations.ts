@@ -11,7 +11,7 @@ export interface AuctionRepresentation {
   createdAtTimestamp: string
   modifiedAtBlock: string
   modifiedAtTimestamp: string
-  bids: BidRepresentation[]
+  bids?: BidRepresentation[]
 }
 
 export interface TokenRepresentation {

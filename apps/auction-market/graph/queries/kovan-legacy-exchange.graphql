@@ -1,5 +1,5 @@
 query Pairs {
-  pairs(first: 5000) {
+  KOVAN_EXCHANGE_pairs(first: 1000) {
     id
     token0 {
       id
@@ -16,7 +16,7 @@ query Pairs {
   }
 }
 query Tokens {
-  tokens(first: 5000) {
+  KOVAN_EXCHANGE_tokens(first: 1000) {
     id
     symbol
     name
