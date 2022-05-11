@@ -1,20 +1,29 @@
-query Pairs {
-  KOVAN_EXCHANGE_pairs(first: 1000) {
-    id
-    token0 {
-      id
-      symbol
-      name
-      decimals
+query LiquidityPositions($id: ID!) {
+ KOVAN_EXCHANGE_user(id: $id) {
+  liquidityPositions {
+      liquidityTokenBalance
+      pair {
+        id
+        totalSupply
+        reserve0
+        reserve1
+        token0 {
+          id
+          symbol
+          name
+          decimals
+        }
+        token1 {
+          id
+          symbol
+          name
+          decimals
+        }
+      }
     }
-    token1 {
-      id
-      symbol
-      name
-      decimals
-    }
-  }
+	}
 }
+
 query Tokens {
   KOVAN_EXCHANGE_tokens(first: 1000) {
     id

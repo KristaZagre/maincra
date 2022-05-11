@@ -21,9 +21,16 @@ export interface TokenRepresentation {
   decimals: string
 }
 
+export interface LiquidityPositionRepresentation {
+  liquidityTokenBalance: string
+  pair: PairRepresentation
+}
 
 export interface PairRepresentation {
   id: string
+  totalSupply: string
+  reserve0: string
+  reserve1: string
   token0: TokenRepresentation
   token1: TokenRepresentation
 }

@@ -8,7 +8,6 @@ export class AuctionMarket {
   public readonly finalised: number
 
   public constructor({ auctions, rewardTokens }: { auctions?: Auction[]; rewardTokens: RewardToken[] }) {
-    // for tokens,
     let live = 0
     let finalised = 0
     auctions?.forEach((auction) => {
