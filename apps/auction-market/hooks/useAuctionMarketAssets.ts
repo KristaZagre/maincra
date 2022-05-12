@@ -9,7 +9,6 @@ import {
   LiquidityPositionRepresentation,
   TokenRepresentation,
 } from 'features/context/representations'
-import { RewardToken } from 'features/context/RewardToken'
 import { useMemo } from 'react'
 import { useContract, useNetwork, useSigner } from 'wagmi'
 import AUCTION_MAKER_ABI from '../abis/auction-maker.json'

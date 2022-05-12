@@ -1,27 +1,18 @@
 import { ChainId } from '@sushiswap/chain'
-import { CurrencyAmount, Pair } from '@sushiswap/core-sdk'
-import { Amount, Token } from '@sushiswap/currency'
-import { AUCTION_MAKER_ADDRESSES } from 'config/network'
 import { Auction } from 'features/context/Auction'
 import { AuctionMarket } from 'features/context/AuctionMarket'
 import {
   AuctionRepresentation,
   LiquidityPositionRepresentation,
-  PairRepresentation,
   TokenRepresentation,
 } from 'features/context/representations'
-import { RewardToken } from 'features/context/RewardToken'
-// import { toTokens } from 'features/LPTransformer'
 import { getLiquidityPositions } from 'graph/graph-client'
-import { useTokenBalancesWithLoadingIndicator } from 'hooks/Tokens'
-import { useTokensFromLP } from 'hooks/useTokensFromLP'
+import { useAuctionMakerBalance, useLiquidityPositionedPairs } from 'hooks/useAuctionMarketAssets'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import Link from 'next/link'
 import { FC, useMemo } from 'react'
 import { getBuiltGraphSDK } from '../../.graphclient'
 import Layout from '../../components/Layout'
-import { parseUnits } from 'ethers/lib/utils'
-import { useAuctionMakerBalance, useLiquidityPositionedPairs } from 'hooks/useAuctionMarketAssets'
 interface Props {
   auctionRepresentations?: AuctionRepresentation[]
   lpRepresentations?: LiquidityPositionRepresentation[]
@@ -40,7 +31,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) =
     },
     [],
   )
-
   const lpRepresentations = (await getLiquidityPositions(query.chainId)) as LiquidityPositionRepresentation[]
   const tokenRepresentations = (await (await sdk.Tokens()).KOVAN_EXCHANGE_tokens) as TokenRepresentation[]
   return {
@@ -57,14 +47,16 @@ const Auctions: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   lpRepresentations,
   tokenRepresentations,
 }) => {
-  // const router = useRou()
   const auctions = useMemo(
     () => auctionRepresentations?.map((auction) => new Auction({ auction })),
     [auctionRepresentations],
   )
   const [balances, loading] = useAuctionMakerBalance(ChainId.KOVAN, tokenRepresentations)
   const liquidityPositions = useLiquidityPositionedPairs(lpRepresentations)
-  const auctionMarket = useMemo(() => new AuctionMarket({ auctions, liquidityPositions, balances}), [auctions, liquidityPositions, balances])
+  const auctionMarket = useMemo(
+    () => new AuctionMarket({ auctions, liquidityPositions, balances }),
+    [auctions, liquidityPositions, balances],
+  )
 
   return (
     <Layout>
@@ -72,7 +64,7 @@ const Auctions: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
         <h1>STATUSES</h1>
         <div>
           <div>LIVE: {auctionMarket.live.size}</div>
-          <div>NOT STARTED: {auctionMarket.waiting.size}</div>
+          <div>NOT STARTED: {Object.keys(auctionMarket.waiting).length}</div>
           <div>FINALIZED: {auctionMarket.finalised.size}</div>
         </div>
         <h1>Auctions</h1>
@@ -93,16 +85,13 @@ const Auctions: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
             <i>No Auctions found..</i>
           </div>
         )}
-        <h1>Balance</h1>
-        {/* <div>{tokenRepresentations?.length}</div> */}
+        <h1>AVAILABLE FOR START:</h1>
         <div>
-          {/* {!balanceLoading
-            ? rewardTokens.map((token) => (
-                <div key={token?.token.address}>
-                 {token.token.address} {token.token.symbol} - {token.status}, Balance: {token.balance?.toExact() ?? 0} Liquidity: {token.liquidity?.toExact() ?? 0} 
-                </div>
-              ))
-            : 'Loading..'} */}
+          {Object.entries(auctionMarket.waiting).map(([address, token]) => (
+            <div key={address}>
+              {token?.currency.symbol}, Balance: {token.toExact()}
+            </div>
+          ))}
         </div>
       </div>
     </Layout>

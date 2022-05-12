@@ -5,7 +5,7 @@ import { AuctionStatus } from './representations'
 
 export class AuctionMarket {
   public readonly live: Set<string> = new Set()
-  public readonly waiting: Set<string> = new Set()
+  public readonly waiting: Record<string, Amount<Token>> = {}
   public readonly finalised: Set<string> = new Set()
 
   public constructor({
@@ -24,24 +24,32 @@ export class AuctionMarket {
         this.live.add(auction.token.id)
       }
     })
-    
+
     balances.forEach((balance) => {
       const address = balance?.currency.address.toLowerCase()
-      if (address && this.hasNotBeenIncluded(address)) {
-        this.waiting.add(address)
+      if (balance && address && this.hasNotBeenIncluded(address)) {
+        this.waiting[address] = balance
       }
     })
     liquidityPositions.forEach((lp) => {
       if (this.hasNotBeenIncluded(lp.pair.token0.address.toLowerCase())) {
-        this.waiting.add(lp.pair.token0.address.toLowerCase())
+        const liquidity = Amount.fromRawAmount(
+          lp.pair.token0,
+          lp.pair.getLiquidityValue(lp.pair.token0, lp.totalSupply, lp.balance).quotient.toString(),
+        )
+        this.waiting[lp.pair.token0.address.toLowerCase()] = liquidity
       }
       if (this.hasNotBeenIncluded(lp.pair.token1.address.toLowerCase())) {
-        this.waiting.add(lp.pair.token1.address.toLowerCase())
+        const liquidity = Amount.fromRawAmount(
+          lp.pair.token1,
+          lp.pair.getLiquidityValue(lp.pair.token1, lp.totalSupply, lp.balance).quotient.toString(),
+        )
+        this.waiting[lp.pair.token1.address.toLowerCase()] = liquidity
       }
     })
   }
 
   private hasNotBeenIncluded(address: string): boolean {
-    return !this.live.has(address) || !this.waiting.has(address) || !this.finalised.has(address)
+    return !this.live.has(address) || !this.waiting[address] || !this.finalised.has(address)
   }
 }
