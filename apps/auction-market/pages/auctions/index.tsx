@@ -21,6 +21,7 @@ import { FC, useMemo } from 'react'
 import { getBuiltGraphSDK } from '../../.graphclient'
 import Layout from '../../components/Layout'
 import { parseUnits } from 'ethers/lib/utils'
+import { useAuctionMakerBalance, useLiquidityPositionedPairs } from 'hooks/useAuctionMarketAssets'
 interface Props {
   auctionRepresentations?: AuctionRepresentation[]
   lpRepresentations?: LiquidityPositionRepresentation[]
@@ -61,102 +62,18 @@ const Auctions: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
     () => auctionRepresentations?.map((auction) => new Auction({ auction })),
     [auctionRepresentations],
   )
-  const tokens = useMemo(
-    () =>
-      tokenRepresentations?.map(
-        (token) =>
-          new Token({
-            chainId: ChainId.KOVAN,
-            address: token.id,
-            decimals: Number(token.decimals),
-            name: token.name,
-            symbol: token.symbol,
-          }),
-      ),
-
-    [tokenRepresentations],
-  )
-  const lpTokens = useMemo(
-    () =>
-      lpRepresentations
-        ?.map((lp) => {
-          const token0 = new Token({
-            chainId: ChainId.KOVAN,
-            address: lp.pair.token0.id,
-            decimals: Number(lp.pair.token0.decimals),
-            symbol: lp.pair.token0.symbol,
-            name: lp.pair.token0.name,
-          })
-          const token1 = new Token({
-            chainId: ChainId.KOVAN,
-            address: lp.pair.token1.id,
-            decimals: Number(lp.pair.token1.decimals),
-            symbol: lp.pair.token1.symbol,
-            name: lp.pair.token1.name,
-          })
-          const LP_DECIMALS = 18
-          const lpTokenValue0 = parseUnits(lp.liquidityTokenBalance, LP_DECIMALS)
-            .mul(parseUnits(lp.pair.reserve0, LP_DECIMALS))
-            .div(parseUnits(lp.pair.totalSupply, LP_DECIMALS))
-
-          const lpTokenValue1 = parseUnits(lp.liquidityTokenBalance, LP_DECIMALS)
-            .mul(parseUnits(lp.pair.reserve1, LP_DECIMALS))
-            .div(parseUnits(lp.pair.totalSupply, LP_DECIMALS))
-            console.log({token0, lpTokenValue0, token1, lpTokenValue1})
-          return [
-            Amount.fromRawAmount(token0, lpTokenValue0.toString()),
-            Amount.fromRawAmount(token1, lpTokenValue1.toString()),
-          ]
-        })
-        .flat(),
-
-    [lpRepresentations],
-  )
-
-  const [tokenBalances, balanceLoading] = useTokenBalancesWithLoadingIndicator(AUCTION_MAKER_ADDRESSES[42], tokens)
-
-  const rewardTokens = useMemo(() => {
-    let tokens: Record<
-      string,
-      { token: Token; balance: Amount<Token> | undefined; lpBalance: Amount<Token> | undefined }
-    > = {}
-    // TODO: clean up this logic
-    Object.entries(tokenBalances)
-      .filter(([, token]) => token?.greaterThan(0))
-      .forEach(([address, amount]) => {
-        if (amount?.currency) {
-          tokens[address] = { token: amount?.currency, balance: amount, lpBalance: undefined }
-        }
-      })
-    lpTokens?.forEach((amount) => {
-      if (tokens[amount.currency.address]) {
-        tokens[amount.currency.address].lpBalance = amount
-      } else {
-        tokens[amount.currency.address] = { token: amount?.currency, balance: undefined, lpBalance: amount }
-      }
-    })
-    
-    return Object.values(tokens).map(
-      (value) =>
-        new RewardToken({
-          token: value.token,
-          balance: value.balance,
-          liquidity: value.lpBalance,
-          isUsedInLiveAuction: false,
-        }),
-    )
-  }, [tokenBalances, lpTokens])
-
-  const auctionMarket = useMemo(() => new AuctionMarket({ auctions, rewardTokens }), [auctions, rewardTokens])
+  const [balances, loading] = useAuctionMakerBalance(ChainId.KOVAN, tokenRepresentations)
+  const liquidityPositions = useLiquidityPositionedPairs(lpRepresentations)
+  const auctionMarket = useMemo(() => new AuctionMarket({ auctions, liquidityPositions, balances}), [auctions, liquidityPositions, balances])
 
   return (
     <Layout>
       <div className="px-2 pt-16">
         <h1>STATUSES</h1>
         <div>
-          <div>LIVE: {auctionMarket.live}</div>
-          <div>NOT STARTED: {auctionMarket.notStarted}</div>
-          <div>FINALIZED: {auctionMarket.finalised}</div>
+          <div>LIVE: {auctionMarket.live.size}</div>
+          <div>NOT STARTED: {auctionMarket.waiting.size}</div>
+          <div>FINALIZED: {auctionMarket.finalised.size}</div>
         </div>
         <h1>Auctions</h1>
         {auctions?.length ? (
@@ -179,13 +96,13 @@ const Auctions: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
         <h1>Balance</h1>
         {/* <div>{tokenRepresentations?.length}</div> */}
         <div>
-          {!balanceLoading
+          {/* {!balanceLoading
             ? rewardTokens.map((token) => (
                 <div key={token?.token.address}>
                  {token.token.address} {token.token.symbol} - {token.status}, Balance: {token.balance?.toExact() ?? 0} Liquidity: {token.liquidity?.toExact() ?? 0} 
                 </div>
               ))
-            : 'Loading..'}
+            : 'Loading..'} */}
         </div>
       </div>
     </Layout>

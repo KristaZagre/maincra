@@ -1,26 +1,47 @@
+import { Amount, Token } from '@sushiswap/currency'
+import { LiquidityPosition } from 'features/LiquidityPosition'
 import { Auction } from './Auction'
-import { AuctionRepresentation, AuctionStatus } from './representations'
-import { RewardToken } from './RewardToken'
+import { AuctionStatus } from './representations'
 
 export class AuctionMarket {
-  public readonly live: number
-  public readonly notStarted: number
-  public readonly finalised: number
+  public readonly live: Set<string> = new Set()
+  public readonly waiting: Set<string> = new Set()
+  public readonly finalised: Set<string> = new Set()
 
-  public constructor({ auctions, rewardTokens }: { auctions?: Auction[]; rewardTokens: RewardToken[] }) {
-    let live = 0
-    let finalised = 0
+  public constructor({
+    auctions,
+    liquidityPositions,
+    balances,
+  }: {
+    auctions?: Auction[]
+    liquidityPositions: LiquidityPosition[]
+    balances: (Amount<Token> | undefined)[]
+  }) {
     auctions?.forEach((auction) => {
       if (auction.status === AuctionStatus.FINISHED) {
-        finalised++
+        this.finalised.add(auction.token.id)
       } else {
-        live++
+        this.live.add(auction.token.id)
       }
     })
-    this.live = live
-    this.finalised = finalised
-    this.notStarted = rewardTokens.filter((token) =>
-      auctions?.some((auction) => auction.token.id !== token.token.address),
-    ).length
+    
+    balances.forEach((balance) => {
+      const address = balance?.currency.address.toLowerCase()
+      if (address && this.hasNotBeenIncluded(address)) {
+        this.waiting.add(address)
+      }
+    })
+    liquidityPositions.forEach((lp) => {
+      if (this.hasNotBeenIncluded(lp.pair.token0.address.toLowerCase())) {
+        this.waiting.add(lp.pair.token0.address.toLowerCase())
+      }
+      if (this.hasNotBeenIncluded(lp.pair.token1.address.toLowerCase())) {
+        this.waiting.add(lp.pair.token1.address.toLowerCase())
+      }
+    })
+  }
+
+  private hasNotBeenIncluded(address: string): boolean {
+    return !this.live.has(address) || !this.waiting.has(address) || !this.finalised.has(address)
   }
 }
