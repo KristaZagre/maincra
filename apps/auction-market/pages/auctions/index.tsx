@@ -12,33 +12,54 @@ import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FC, useMemo } from 'react'
+import useSWR, { SWRConfig } from 'swr'
 
 import Layout from '../../components/Layout'
+
+const fetcher = (params: any) =>
+  fetch(params)
+    .then((res) => res.json())
+    .catch((e) => console.log(JSON.stringify(e)))
+
 interface Props {
-  auctionRepresentations?: AuctionRepresentation[]
-  lpRepresentations?: LiquidityPositionRepresentation[]
-  tokenRepresentations?: TokenRepresentation[]
+  fallback?: Record<string, any>
 }
 
 export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) => {
   if (typeof query.chainId !== 'string') return { props: {} }
   return {
     props: {
-      auctionRepresentations: await getAuctions(query.chainId),
-      lpRepresentations:  await getLiquidityPositions(query.chainId),
-      tokenRepresentations:  await getExchangeTokens(query.chainId),
+      fallback: {
+        [`/api/auctions/${query.chainId}`]: await getAuctions(query.chainId),
+        [`/api/liquidity-positions/${query.chainId}`]: await getLiquidityPositions(query.chainId),
+        [`/api/tokens/${query.chainId}`]: await getExchangeTokens(query.chainId),
+      },
     },
   }
 }
 
-const Auctions: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
-  auctionRepresentations,
-  lpRepresentations,
-  tokenRepresentations,
-}) => {
+const _AuctionsPage: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ fallback }) => {
   const router = useRouter()
-  const chainId = router.query.chainId as string
-  
+  const chainId = Number(router.query.chainId)
+  return (
+    <SWRConfig value={{ fallback }}>
+      <AuctionsPage chainId={chainId} />
+    </SWRConfig>
+  )
+}
+const AuctionsPage: FC<{ chainId: number }> = ({ chainId }) => {
+  const { data: auctionRepresentations, isValidating: isValidatingAuctions } = useSWR<AuctionRepresentation[]>(
+    `/auction-market/api/auctions/${chainId}`,
+    fetcher,
+  )
+  const { data: lpRepresentations, isValidating: isValidatingLPs } = useSWR<LiquidityPositionRepresentation[]>(
+    `/auction-market/api/liquidity-positions/${chainId}`,
+    fetcher,
+  )
+  const { data: tokenRepresentations, isValidating: isValidatingTokens } = useSWR<TokenRepresentation[]>(
+    `/auction-market/api/tokens/${chainId}`,
+    fetcher,
+  )
   const auctions = useMemo(
     () => auctionRepresentations?.map((auction) => new Auction({ auction })),
     [auctionRepresentations],
@@ -68,7 +89,9 @@ const Auctions: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
               {auction.leadingBid.amount.toString()} {auction.token.symbol} {``}
               {auction.remainingTime?.hours} {'H'} {auction.remainingTime?.minutes} {'M'}{' '}
               {auction.remainingTime?.seconds} {'S'}
-              <Link href={`/users/${auction.leadingBid.user.id.toLowerCase()}/auctions?chainId=${chainId}`}>[User Auctions]</Link>
+              <Link href={`/users/${auction.leadingBid.user.id.toLowerCase()}/auctions?chainId=${chainId}`}>
+                [User Auctions]
+              </Link>
               <Link href={`/auction/${auction.id}?chainId=${chainId}`}>[Auction Page]</Link>
             </div>
           ))
@@ -79,15 +102,17 @@ const Auctions: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
         )}
         <h1>AVAILABLE FOR START:</h1>
         <div>
-          {Object.entries(auctionMarket.waiting).map(([address, token]) => (
-            <div key={address}>
-              {token?.currency.symbol}, Balance: {token.toExact()}
-            </div>
-          ))}
+          {!isValidatingAuctions || !isValidatingLPs || !isValidatingTokens
+            ? Object.entries(auctionMarket.waiting).map(([address, token]) => (
+                <div key={address}>
+                  {token?.currency.symbol}, Balance: {token.toExact()}
+                </div>
+              ))
+            : 'Loading..'}
         </div>
       </div>
     </Layout>
   )
 }
 
-export default Auctions
+export default _AuctionsPage

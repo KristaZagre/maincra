@@ -3,29 +3,58 @@ import { Bid } from 'features/context/Bid'
 import { AuctionRepresentation, BidRepresentation } from 'features/context/representations'
 import { getAuction, getBids } from 'graph/graph-client'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+import { useRouter } from 'next/router'
 import { FC, useMemo } from 'react'
+import useSWR, { SWRConfig } from 'swr'
 
 import Layout from '../../components/Layout'
 
+const fetcher = (params: any) =>
+  fetch(params)
+    .then((res) => res.json())
+    .catch((e) => console.log(JSON.stringify(e)))
 
 interface Props {
-  auctionRepresentation?: AuctionRepresentation
-  bidRepresentations?: BidRepresentation[]
+  fallback?: Record<string, any>
 }
 
 export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) => {
   if (typeof query.chainId !== 'string' || typeof query.id !== 'string') return { props: {} }
   return {
     props: {
-      auctionRepresentation: await getAuction(query.id, query.chainId),
-      bidRepresentations: await getBids(query.id, query.chainId),
+      fallback: {
+        [`/api/auction/${query.chainId}/${query.id}`]: await getAuction(query.id, query.chainId),
+        [`/api/bids/${query.chainId}/${query.id}`]: await getBids(query.id, query.chainId),
+      },
     },
   }
 }
 
-const ActionPage: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ auctionRepresentation, bidRepresentations }) => {
+const _AuctionPage: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ fallback }) => {
+  const router = useRouter()
+  const chainId = Number(router.query.chainId)
+  const id = router.query.id as string
 
-  const auction = useMemo(() => auctionRepresentation ? new Auction({ auction: auctionRepresentation }) : undefined, [auctionRepresentation])
+  return (
+    <SWRConfig value={{ fallback }}>
+      <AuctionPage chainId={chainId} id={id} />
+    </SWRConfig>
+  )
+}
+
+const AuctionPage: FC<{ chainId: number; id: string }> = ({ chainId, id }) => {
+  const { data: auctionRepresentation, isValidating: isValidatingAuction } = useSWR<AuctionRepresentation>(
+    `/auction-market/api/auction/${chainId}/${id}`,
+    fetcher,
+  )
+  const { data: bidRepresentations, isValidating: isValidatingBids } = useSWR<BidRepresentation[]>(
+    `/auction-market/api/bids/${chainId}/${id}`,
+    fetcher,
+  )
+  const auction = useMemo(
+    () => (auctionRepresentation ? new Auction({ auction: auctionRepresentation }) : undefined),
+    [auctionRepresentation],
+  )
   const bids = useMemo(() => bidRepresentations?.map((bid) => new Bid({ bid })), [bidRepresentations])
 
   return (
@@ -39,7 +68,6 @@ const ActionPage: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = (
             {auction.leadingBid.amount.toString()} {auction.token?.symbol}
             {auction.startDate.toLocaleDateString()} {``}
             {auction.endDate?.toLocaleDateString()} {``}
-            
           </div>
         ) : (
           'No auction found'
@@ -48,11 +76,7 @@ const ActionPage: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       <div>
         <h2>Bids</h2>
         {bids?.length ? (
-          bids.map((bid) => (
-            <div key={bid.id}>
-              {`${bid.amount.toString()} ${bid.timestamp} ${bid.user?.id}`}
-            </div>
-          ))
+          bids.map((bid) => <div key={bid.id}>{`${bid.amount.toString()} ${bid.timestamp} ${bid.user?.id}`}</div>)
         ) : (
           <div>
             <i>No bids found..</i>
@@ -63,4 +87,4 @@ const ActionPage: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   )
 }
 
-export default ActionPage
+export default _AuctionPage

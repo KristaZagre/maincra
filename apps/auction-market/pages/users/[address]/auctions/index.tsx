@@ -2,31 +2,60 @@ import { Auction } from 'features/context/Auction'
 import { AuctionRepresentation } from 'features/context/representations'
 import { getUserAuctions } from 'graph/graph-client'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+import { useRouter } from 'next/router'
 import { FC, useMemo } from 'react'
+import useSWR, { SWRConfig } from 'swr'
 
 import Layout from '../../../../components/Layout'
 
+const fetcher = (params: any) =>
+  fetch(params)
+    .then((res) => res.json())
+    .catch((e) => console.log(JSON.stringify(e)))
+
 interface Props {
-  auctions?: AuctionRepresentation[]
+  fallback?: Record<string, any>
 }
 
 export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) => {
   if (typeof query.chainId !== 'string' || typeof query.address !== 'string') return { props: {} }
   return {
     props: {
-      auctions: await getUserAuctions(query.address, query.chainId),
+      fallback: {
+        [`/api/user/${query.address}/auctions/${query.chainId}`]: await getUserAuctions(query.address, query.chainId),
+      },
     },
   }
 }
 
-const Auctions: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ auctions }) => {
-  const userAuctions = useMemo(() => auctions?.map((auction) => new Auction({ auction })), [auctions])
+const _UserAuctionsPage: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ fallback }) => {
+  const router = useRouter()
+  const chainId = Number(router.query.chainId)
+  const address = router.query.address as string
+
+  return (
+    <SWRConfig value={{ fallback }}>
+      <UserAuctionsPage chainId={chainId} address={address} />
+    </SWRConfig>
+  )
+}
+
+export const UserAuctionsPage: FC<{ chainId: number; address: string }> = ({ chainId, address }) => {
+  const { data: auctionRepresentations, isValidating } = useSWR<AuctionRepresentation[]>(
+    `/auction-market/api/user/${address}/auctions/${chainId}`,
+    fetcher,
+  )
+
+  const auctions = useMemo(
+    () => auctionRepresentations?.map((auction) => new Auction({ auction })),
+    [auctionRepresentations],
+  )
   return (
     <Layout>
       <h1>Auctions</h1>
 
-      {userAuctions?.length ? (
-        userAuctions.map((auction) => (
+      {auctions?.length ? (
+        auctions.map((auction) => (
           <div key={auction.id}>
             {auction.startDate.toISOString().substring(0, 10)} {``}
             {auction.token.name} {``}
@@ -46,4 +75,4 @@ const Auctions: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ 
   )
 }
 
-export default Auctions
+export default _UserAuctionsPage
