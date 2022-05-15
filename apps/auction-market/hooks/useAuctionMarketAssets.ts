@@ -1,20 +1,16 @@
-import { AddressZero } from '@ethersproject/constants'
 import { ChainId } from '@sushiswap/chain'
+import { CurrencyAmount, Pair } from '@sushiswap/core-sdk'
 import { Amount, Token } from '@sushiswap/currency'
 import { AUCTION_MAKER_ADDRESSES } from 'config/network'
-import { CurrencyAmount, Pair } from '@sushiswap/core-sdk'
-import { Contract } from 'ethers'
+import { parseUnits } from 'ethers/lib/utils'
 import {
-  AuctionRepresentation,
   LiquidityPositionRepresentation,
   TokenRepresentation,
 } from 'features/context/representations'
-import { useMemo } from 'react'
-import { useContract, useNetwork, useSigner } from 'wagmi'
-import AUCTION_MAKER_ABI from '../abis/auction-maker.json'
-import { useTokenBalancesWithLoadingIndicator } from './Tokens'
-import { parseUnits } from 'ethers/lib/utils'
 import { LiquidityPosition } from 'features/LiquidityPosition'
+import { useMemo } from 'react'
+
+import { useTokenBalancesWithLoadingIndicator } from './Tokens'
 
 const LP_DECIMALS = 18
 

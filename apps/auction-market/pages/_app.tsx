@@ -1,20 +1,21 @@
-import { FC, useEffect } from 'react'
-import type { AppProps } from 'next/app'
-import { Provider as ReduxProvider } from 'react-redux'
-import { App } from '@sushiswap/ui'
-import { ChainId } from '@sushiswap/chain'
-import { Updater as MulticallUpdater } from '../lib/state/MulticallUpdater'
-import { Updater as TokenListUpdater } from '../lib/state/TokenListsUpdater'
-import { useLatestBlock } from '../lib/hooks/useLatestBlock'
-import { getProvider } from 'functions'
-import { client } from '@sushiswap/wallet-connector'
-import { WagmiProvider } from 'wagmi'
-import store from '../store'
-
 import '@sushiswap/ui/index.css'
 import 'react-toastify/dist/ReactToastify.css'
+
+import { ChainId } from '@sushiswap/chain'
+import { App } from '@sushiswap/ui'
+import { client } from '@sushiswap/wallet-connector'
+import { getProvider } from 'functions'
+import type { AppProps } from 'next/app'
 import { useRouter } from 'next/router'
 import Script from 'next/script'
+import { FC, useEffect } from 'react'
+import { Provider as ReduxProvider } from 'react-redux'
+import { WagmiProvider } from 'wagmi'
+
+import { useLatestBlock } from '../lib/hooks/useLatestBlock'
+import { Updater as MulticallUpdater } from '../lib/state/MulticallUpdater'
+import { Updater as TokenListUpdater } from '../lib/state/TokenListsUpdater'
+import store from '../store'
 declare global {
   interface Window {
     dataLayer: Record<string, any>[]

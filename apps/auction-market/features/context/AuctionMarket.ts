@@ -1,5 +1,6 @@
 import { Amount, Token } from '@sushiswap/currency'
 import { LiquidityPosition } from 'features/LiquidityPosition'
+
 import { Auction } from './Auction'
 import { AuctionStatus } from './representations'
 

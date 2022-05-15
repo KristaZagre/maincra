@@ -1,16 +1,17 @@
+import { getAddress,isAddress } from '@ethersproject/address'
 import { arrayify } from '@ethersproject/bytes'
 import { parseBytes32String } from '@ethersproject/strings'
 import { ChainTokenMap, Token } from '@sushiswap/core-sdk'
-import { isAddress, getAddress } from '@ethersproject/address'
-import { NEVER_RELOAD, useMultipleContractSingleData, useSingleCallResult } from '../lib/hooks/multicall'
-import { useCombinedActiveList } from '../lib/state/token-lists'
+import { Amount } from '@sushiswap/currency'
+import {JSBI} from '@sushiswap/math'
+import ERC20_ABI  from 'abis/erc20.json'
+import { Interface } from 'ethers/lib/utils'
 import { useMemo } from 'react'
 import { useNetwork } from 'wagmi'
+
+import { NEVER_RELOAD, useMultipleContractSingleData, useSingleCallResult } from '../lib/hooks/multicall'
+import { useCombinedActiveList } from '../lib/state/token-lists'
 import { useBytes32TokenContract, useTokenContract } from './useContract'
-import { Amount } from '@sushiswap/currency'
-import ERC20_ABI  from 'abis/erc20.json'
-import {JSBI} from '@sushiswap/math'
-import { Interface } from 'ethers/lib/utils'
 
 // reduce token map into standard address <-> Token mapping
 function useTokensFromMap(tokenMap: ChainTokenMap): { [address: string]: Token } {

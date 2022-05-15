@@ -1,7 +1,7 @@
+import { useIsMounted } from '@sushiswap/hooks'
 import { Account, Wallet } from '@sushiswap/wallet-connector'
 import Link from 'next/link'
 import { useAccount, useConnect, useNetwork } from 'wagmi'
-import { useIsMounted } from '@sushiswap/hooks'
 
 export default function Index() {
   const { data } = useAccount()

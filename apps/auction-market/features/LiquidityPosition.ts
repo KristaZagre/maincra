@@ -1,5 +1,5 @@
 import { CurrencyAmount, Pair } from '@sushiswap/core-sdk'
-import { Amount, Token } from '@sushiswap/currency'
+import { Token } from '@sushiswap/currency'
 
 export interface LiquidityPosition {
   pair: Pair

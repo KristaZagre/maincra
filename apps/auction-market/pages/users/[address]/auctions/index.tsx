@@ -1,9 +1,10 @@
-import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
-import { FC, useMemo } from 'react'
-import { getBuiltGraphSDK } from '../../../../.graphclient'
-import Layout from '../../../../components/Layout'
 import { Auction } from 'features/context/Auction'
 import { AuctionRepresentation } from 'features/context/representations'
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+import { FC, useMemo } from 'react'
+
+import { getBuiltGraphSDK } from '../../../../.graphclient'
+import Layout from '../../../../components/Layout'
 
 interface Props {
   auctions?: AuctionRepresentation[]

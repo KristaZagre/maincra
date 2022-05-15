@@ -11,6 +11,7 @@ import { useAuctionMakerBalance, useLiquidityPositionedPairs } from 'hooks/useAu
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import Link from 'next/link'
 import { FC, useMemo } from 'react'
+
 import { getBuiltGraphSDK } from '../../.graphclient'
 import Layout from '../../components/Layout'
 interface Props {

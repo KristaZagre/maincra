@@ -1,13 +1,13 @@
 import { Amount, Token } from '@sushiswap/currency'
+import { JSBI } from '@sushiswap/math'
+import ERC20_ABI from 'abis/erc20.json'
+import IUniswapV2PairABI from 'abis/IUniswapV2Pair.json'
 import { Interface } from 'ethers/lib/utils'
 import { PairRepresentation } from 'features/context/representations'
 import { useMultipleContractSingleData } from 'lib/hooks/multicall'
 import { useMemo } from 'react'
+
 import { useTokenBalancesWithLoadingIndicator } from './Tokens'
-import ERC20_ABI from 'abis/erc20.json'
-import IUniswapV2PairABI from 'abis/IUniswapV2Pair.json'
-import { Decimal, JSBI } from '@sushiswap/math'
-import { CurrencyAmount, Pair } from '@sushiswap/core-sdk'
 
 const PAIR_INTERFACE = new Interface(IUniswapV2PairABI)
 

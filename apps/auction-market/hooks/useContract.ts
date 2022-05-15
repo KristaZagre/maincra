@@ -1,10 +1,11 @@
-import { AddressZero } from '@ethersproject/constants'
 import { isAddress } from '@ethersproject/address'
-import { BaseProvider } from '@ethersproject/providers'
+import { AddressZero } from '@ethersproject/constants'
 import { Contract } from '@ethersproject/contracts'
+import { BaseProvider } from '@ethersproject/providers'
 import { useMemo } from 'react'
-import { ERC20_BYTES32_ABI } from '../abis/erc20'
 import { erc20ABI, useAccount, useNetwork, useProvider } from 'wagmi'
+
+import { ERC20_BYTES32_ABI } from '../abis/erc20'
 
 // returns null on errors
 export function useContract<T extends Contract = Contract>(

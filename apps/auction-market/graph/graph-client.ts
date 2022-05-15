@@ -1,7 +1,7 @@
-import { getBuiltGraphSDK } from '.graphclient'
 import { ChainId } from '@sushiswap/chain'
 import { AUCTION_MAKER_ADDRESSES } from 'config/network'
-import { LiquidityPositionRepresentation } from 'features/context/representations'
+
+import { getBuiltGraphSDK } from '.graphclient'
 
 const SUPPORTED_CHAINS = [ChainId.KOVAN]
 

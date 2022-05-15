@@ -1,4 +1,5 @@
 import { BigNumber } from 'ethers'
+
 import { Bid } from './Bid'
 import { AuctionRepresentation, AuctionStatus, TokenRepresentation } from './representations'
 

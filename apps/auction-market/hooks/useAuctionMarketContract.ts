@@ -2,6 +2,7 @@ import { AddressZero } from '@ethersproject/constants'
 import { AUCTION_MAKER_ADDRESSES } from 'config/network'
 import { Contract } from 'ethers'
 import { useContract, useNetwork, useSigner } from 'wagmi'
+
 import AUCTION_MAKER_ABI from '../abis/auction-maker.json'
 
 export function useAuctionMakerContract(): Contract | null {
