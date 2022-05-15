@@ -1,10 +1,10 @@
 import { Auction } from 'features/context/Auction'
 import { Bid } from 'features/context/Bid'
 import { AuctionRepresentation, BidRepresentation } from 'features/context/representations'
+import { getAuction, getBids } from 'graph/graph-client'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { FC, useMemo } from 'react'
 
-import { getBuiltGraphSDK } from '../../.graphclient'
 import Layout from '../../components/Layout'
 
 
@@ -14,14 +14,11 @@ interface Props {
 }
 
 export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) => {
-  if (typeof query.id !== 'string') return { props: {} }
-  const sdk = await getBuiltGraphSDK()
-  const auctionRepresentation = (await sdk.Auction({ id: query.id })).auction as AuctionRepresentation
-  const bidRepresentations = (await sdk.Bids({ auctionId: query.id })).auction?.bids as BidRepresentation[]
+  if (typeof query.chainId !== 'string' || typeof query.id !== 'string') return { props: {} }
   return {
     props: {
-      auctionRepresentation,
-      bidRepresentations,
+      auctionRepresentation: await getAuction(query.id, query.chainId),
+      bidRepresentations: await getBids(query.id, query.chainId),
     },
   }
 }

@@ -1,4 +1,4 @@
-query Auctions {
+query KovanAuctions {
   KOVAN_AUCTION_tokens {
     auctions(first: 1, orderBy: createdAtBlock, orderDirection: desc) {
       __typename
@@ -32,7 +32,7 @@ query Auctions {
 }
 
 
-query Auction($id: ID!) {
+query KovanAuction($id: ID!) {
   KOVAN_AUCTION_auction(id: $id) {
     id
     token {
@@ -62,7 +62,7 @@ query Auction($id: ID!) {
   }
 }
 
-query Bids($auctionId: ID!) {
+query KovanBids($auctionId: ID!) {
   KOVAN_AUCTION_auction(id: $auctionId) {
     bids {
       id
@@ -76,7 +76,7 @@ query Bids($auctionId: ID!) {
   }
 }
 
-query UserAuctions($id: ID!) {
+query KovanUserAuctions($id: ID!) {
   KOVAN_AUCTION_user(id: $id) {
     auctions {
       auction {

@@ -6,13 +6,13 @@ import {
   LiquidityPositionRepresentation,
   TokenRepresentation,
 } from 'features/context/representations'
-import { getLiquidityPositions } from 'graph/graph-client'
+import { getAuctions, getExchangeTokens, getLiquidityPositions } from 'graph/graph-client'
 import { useAuctionMakerBalance, useLiquidityPositionedPairs } from 'hooks/useAuctionMarketAssets'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { FC, useMemo } from 'react'
 
-import { getBuiltGraphSDK } from '../../.graphclient'
 import Layout from '../../components/Layout'
 interface Props {
   auctionRepresentations?: AuctionRepresentation[]
@@ -22,23 +22,11 @@ interface Props {
 
 export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) => {
   if (typeof query.chainId !== 'string') return { props: {} }
-  const sdk = getBuiltGraphSDK()
-  const auctionRepresentations = (await await sdk.Auctions()).KOVAN_AUCTION_tokens.reduce<AuctionRepresentation[]>(
-    (acc, cur) => {
-      if (cur.auctions) {
-        acc.push(cur.auctions[0])
-      }
-      return acc
-    },
-    [],
-  )
-  const lpRepresentations = (await getLiquidityPositions(query.chainId)) as LiquidityPositionRepresentation[]
-  const tokenRepresentations = (await (await sdk.Tokens()).KOVAN_EXCHANGE_tokens) as TokenRepresentation[]
   return {
     props: {
-      auctionRepresentations,
-      lpRepresentations,
-      tokenRepresentations,
+      auctionRepresentations: await getAuctions(query.chainId),
+      lpRepresentations:  await getLiquidityPositions(query.chainId),
+      tokenRepresentations:  await getExchangeTokens(query.chainId),
     },
   }
 }
@@ -48,6 +36,9 @@ const Auctions: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   lpRepresentations,
   tokenRepresentations,
 }) => {
+  const router = useRouter()
+  const chainId = router.query.chainId as string
+  
   const auctions = useMemo(
     () => auctionRepresentations?.map((auction) => new Auction({ auction })),
     [auctionRepresentations],
@@ -77,8 +68,8 @@ const Auctions: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
               {auction.leadingBid.amount.toString()} {auction.token.symbol} {``}
               {auction.remainingTime?.hours} {'H'} {auction.remainingTime?.minutes} {'M'}{' '}
               {auction.remainingTime?.seconds} {'S'}
-              <Link href={`/users/${auction.leadingBid.user.id.toLowerCase()}/auctions/`}>[User Auctions]</Link>
-              <Link href={`/auction/${auction.id}`}>[Auction Page]</Link>
+              <Link href={`/users/${auction.leadingBid.user.id.toLowerCase()}/auctions?chainId=${chainId}`}>[User Auctions]</Link>
+              <Link href={`/auction/${auction.id}?chainId=${chainId}`}>[Auction Page]</Link>
             </div>
           ))
         ) : (

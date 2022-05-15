@@ -1,9 +1,9 @@
 import { Auction } from 'features/context/Auction'
 import { AuctionRepresentation } from 'features/context/representations'
+import { getUserAuctions } from 'graph/graph-client'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { FC, useMemo } from 'react'
 
-import { getBuiltGraphSDK } from '../../../../.graphclient'
 import Layout from '../../../../components/Layout'
 
 interface Props {
@@ -11,14 +11,11 @@ interface Props {
 }
 
 export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) => {
-  if (typeof query.address !== 'string') return { props: {} }
-  const sdk = await getBuiltGraphSDK()
-  const auctions = (await sdk.UserAuctions({ id: query.address })).KOVAN_AUCTION_user?.auctions.reduce<AuctionRepresentation[]>((acc, cur) => {
-    acc.push(cur.auction)
-    return acc
-  }, [])
+  if (typeof query.chainId !== 'string' || typeof query.address !== 'string') return { props: {} }
   return {
-    props: {auctions},
+    props: {
+      auctions: await getUserAuctions(query.address, query.chainId),
+    },
   }
 }
 

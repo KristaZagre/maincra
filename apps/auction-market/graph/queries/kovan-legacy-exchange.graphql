@@ -1,4 +1,4 @@
-query LiquidityPositions($id: ID!) {
+query KovanLiquidityPositions($id: ID!) {
  KOVAN_EXCHANGE_user(id: $id) {
   liquidityPositions {
       liquidityTokenBalance
@@ -24,7 +24,7 @@ query LiquidityPositions($id: ID!) {
 	}
 }
 
-query Tokens {
+query KovanExchangeTokens {
   KOVAN_EXCHANGE_tokens(first: 1000) {
     id
     symbol
