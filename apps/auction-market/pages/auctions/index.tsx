@@ -2,6 +2,7 @@ import { AddressZero } from '@ethersproject/constants'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Token } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
+import { BID_TOKEN_ADDRESS } from 'config'
 // import { Button } from '@sushiswap/ui'
 // import AuctionWaitingTable from 'features/AuctionWaitingTable'
 import BidModal from 'features/BidModal'
@@ -22,7 +23,6 @@ import useSWR, { SWRConfig } from 'swr'
 import { useAccount, useBalance, useNetwork } from 'wagmi'
 
 import Layout from '../../components/Layout'
-import { BID_TOKEN_ADDRESS } from '../../config/network'
 
 const fetcher = (params: any) =>
   fetch(params)
@@ -78,6 +78,7 @@ const AuctionsPage: FC<{ chainId: number }> = ({ chainId }) => {
     () => new AuctionMarket({ auctions, liquidityPositions, balances }),
     [auctions, liquidityPositions, balances],
   )
+  console.log({auctionMarket})
 
   const { activeChain } = useNetwork()
   const address = useAccount()
@@ -139,17 +140,19 @@ const AuctionsPage: FC<{ chainId: number }> = ({ chainId }) => {
           <h1>AVAILABLE FOR START:</h1>
           {!isValidatingAuctions || !isValidatingLPs || !isValidatingTokens
             ? Object.entries(auctionMarket.waiting).map(([address, token]) => (
-                <div key={address} className="flex flex-row gap-5">
-                  {token?.currency.symbol}, Balance: {token.toExact()}
-                  {/* <Button 
-                       variant="filled"
-                       disabled={token.toExact() === "0"}
-                       onClick={() => {
-                        //  setOpen(true)
-                       }}
-                  > Start bid </Button> */}
-                  <BidModal bidToken={bidToken} rewardAmount={token}/>
+              <>
+              <div key={address} className="flex flex-row gap-5">
+                {`${token?.symbol}, Balance: ${token.getTotalBalance()}`}
+                {/* <Button 
+                     variant="filled"
+                     disabled={token.toExact() === "0"}
+                     onClick={() => {
+                      //  setOpen(true)
+                     }}
+                > Start bid </Button> */}
                 </div>
+                <BidModal bidToken={bidToken} rewardToken={token}/>
+              </>
               ))
             : 'Loading..'}
         </div>

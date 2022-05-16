@@ -11,7 +11,7 @@ export class Auction {
   public readonly startDate: Date
   public readonly endDate: Date
   public readonly token: TokenRepresentation // TODO: replace, use Currency from package/currency?
-  public readonly bids: Bid[]
+  public readonly bids?: Bid[]
   private readonly minTTL: Date
   private readonly maxTTL: Date
 

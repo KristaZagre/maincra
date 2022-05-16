@@ -1,5 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
-import { AUCTION_MAKER_ADDRESSES } from 'config/network'
+import { AUCTION_MAKER_ADDRESSES } from 'config'
 import {
   AuctionRepresentation,
   BidRepresentation,

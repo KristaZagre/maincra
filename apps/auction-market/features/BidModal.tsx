@@ -5,18 +5,19 @@ import { Amount, Token } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
 import { Button, Dialog, Dots, Typography } from '@sushiswap/ui'
 import AUCTION_MAKER_ABI from 'abis/auction-maker.json'
+import { AUCTION_MAKER_ADDRESSES } from 'config'
 // import { createToast } from 'components'
 import { ChangeEvent, FC, useCallback, useRef, useState } from 'react'
 import { useContractWrite, useNetwork } from 'wagmi'
 
-import { AUCTION_MAKER_ADDRESSES } from '../config/network'
+import { RewardToken } from './context/RewardToken'
 
 interface BidModalProps {
   bidToken?: Amount<Token>
-  rewardAmount?: Amount<Token>
+  rewardToken: RewardToken
 }
 
-const BidModal: FC<BidModalProps> = ({ bidToken, rewardAmount }) => {
+const BidModal: FC<BidModalProps> = ({ bidToken, rewardToken }) => {
   const [open, setOpen] = useState(false)
   const [amount, setAmount] = useState<Amount<Token>>()
   const inputRef = useRef<HTMLInputElement>(null)
@@ -90,7 +91,7 @@ const BidModal: FC<BidModalProps> = ({ bidToken, rewardAmount }) => {
             onClick={() => inputRef.current?.focus()}
           >
             <div>You must bid at least 25 {bidToken?.currency.symbol}.</div>
-            <div>Reward amount: {`${rewardAmount?.toExact()} ${rewardAmount?.currency.symbol}`}.</div>
+            <div>Reward amount: {`${rewardToken.getTotalBalance()} ${rewardToken.symbol}`}.</div>
             <div className="flex justify-between gap-3">
               <Typography variant="sm" weight={400}>
                 Bid Amount

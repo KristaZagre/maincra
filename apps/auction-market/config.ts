@@ -10,3 +10,6 @@ export const BID_TOKEN_ADDRESS: AddressMap = {
   [ChainId.KOVAN]: '0xb7a4f3e9097c08da09517b5ab877f7a917224ede', // USDC
   [ChainId.GÖRLI]: '0x0000000000000000000000000000000000000000',
 }
+
+export const MINIMUM_LP_BALANCE_THRESHOLD = '' // threshold value in ETH to to determine wether or not the lp should be unwinded 
+// map chainId value, probably want different threshold on kovan for testing purposes

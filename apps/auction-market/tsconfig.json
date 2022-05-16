@@ -6,8 +6,7 @@
     "baseUrl": ".",
     "paths": {
       "abis/*": ["./abis/*"],
-      "config": ["./config/index.ts"],
-      "config/*": ["./config/*"],
+      "config": ["./config.ts"],
       "components": ["./components/index.ts"],
       "components/*": ["./components/*"],
       "features": ["./features/index.ts"],

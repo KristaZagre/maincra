@@ -60,7 +60,7 @@ export const UserAuctionsPage: FC<{ chainId: number; address: string }> = ({ cha
             {auction.startDate.toISOString().substring(0, 10)} {``}
             {auction.token.name} {``}
             {auction.amount.toString()} {auction.token.symbol} {``}
-            {auction.bids[0].amount.toString()} {auction.token.symbol} {``}
+            {auction.bids ? auction.bids[0].amount.toString() : ''} {auction.token.symbol} {``}
             {auction.leadingBid.amount.toString()} {auction.token.symbol} {``}
             {auction.remainingTime?.hours} {'H'} {auction.remainingTime?.minutes} {'M'} {auction.remainingTime?.seconds}{' '}
             {'S'}

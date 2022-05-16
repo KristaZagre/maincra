@@ -1,7 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 import { CurrencyAmount, Pair } from '@sushiswap/core-sdk'
 import { Amount, Token } from '@sushiswap/currency'
-import { AUCTION_MAKER_ADDRESSES } from 'config/network'
+import { AUCTION_MAKER_ADDRESSES } from 'config'
 import { parseUnits } from 'ethers/lib/utils'
 import {
   LiquidityPositionRepresentation,

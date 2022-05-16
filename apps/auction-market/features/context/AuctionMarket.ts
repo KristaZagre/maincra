@@ -3,10 +3,11 @@ import { LiquidityPosition } from 'features/LiquidityPosition'
 
 import { Auction } from './Auction'
 import { AuctionStatus } from './representations'
+import { RewardToken } from './RewardToken'
 
 export class AuctionMarket {
   public readonly live: Set<string> = new Set()
-  public readonly waiting: Record<string, Amount<Token>> = {}
+  public readonly waiting: Record<string, RewardToken> = {}
   public readonly finalised: Set<string> = new Set()
 
   public constructor({
@@ -20,37 +21,50 @@ export class AuctionMarket {
   }) {
     auctions?.forEach((auction) => {
       if (auction.status === AuctionStatus.FINISHED) {
-        this.finalised.add(auction.token.id)
+        this.finalised.add(auction.token.id.toLowerCase())
       } else {
-        this.live.add(auction.token.id)
+        this.live.add(auction.token.id.toLowerCase())
       }
+    })
+    liquidityPositions.forEach((lp) => {
+      this.addLpBalance(lp.pair.token0, lp.pair.token1, lp)
+      this.addLpBalance(lp.pair.token1, lp.pair.token0, lp)
     })
 
     balances.forEach((balance) => {
       const address = balance?.currency.address.toLowerCase()
-      if (balance && address && this.hasNotBeenIncluded(address)) {
-        this.waiting[address] = balance
-      }
-    })
-    liquidityPositions.forEach((lp) => {
-      if (this.hasNotBeenIncluded(lp.pair.token0.address.toLowerCase())) {
-        const liquidity = Amount.fromRawAmount(
-          lp.pair.token0,
-          lp.pair.getLiquidityValue(lp.pair.token0, lp.totalSupply, lp.balance).quotient.toString(),
-        )
-        this.waiting[lp.pair.token0.address.toLowerCase()] = liquidity
-      }
-      if (this.hasNotBeenIncluded(lp.pair.token1.address.toLowerCase())) {
-        const liquidity = Amount.fromRawAmount(
-          lp.pair.token1,
-          lp.pair.getLiquidityValue(lp.pair.token1, lp.totalSupply, lp.balance).quotient.toString(),
-        )
-        this.waiting[lp.pair.token1.address.toLowerCase()] = liquidity
+      console.log({balance, address})
+      if (balance && address && this.isValidToken(address)) {
+        if (!this.waiting[address]) {
+          this.waiting[address] = new RewardToken({ token: balance.currency, tokenBalance: balance })
+        } else {
+          this.waiting[address].updateTokenBalance(balance)
+        }
       }
     })
   }
 
-  private hasNotBeenIncluded(address: string): boolean {
+  private addLpBalance(token0: Token, token1: Token, lp: LiquidityPosition) {
+    if (this.isValidToken(token0.address.toLowerCase())) {
+      if (this.waiting[token0.address.toLowerCase()]) {
+        this.waiting[token0.address.toLowerCase()].addLpBalance(
+          lp.pair.getLiquidityValue(token0, lp.totalSupply, lp.balance) as unknown as Amount<Token>, // TODO: refactor ugly hack when Pair is extracted to monrepo
+        )
+        this.waiting[token0.address.toLowerCase()].addTokenToUnwind(token1.address.toLowerCase())
+      } else {
+        this.waiting[token0.address.toLowerCase()] = new RewardToken({
+          token: token0,
+          lpBalance: Amount.fromRawAmount(
+            token0,
+            lp.pair.getLiquidityValue(token0, lp.totalSupply, lp.balance).quotient.toString(),
+          ),
+        })
+        this.waiting[token0.address.toLowerCase()].addTokenToUnwind(token1.address.toLocaleLowerCase())
+      }
+    } 
+  }
+
+  private isValidToken(address: string): boolean {
     return !this.live.has(address) || !this.waiting[address] || !this.finalised.has(address)
   }
 }

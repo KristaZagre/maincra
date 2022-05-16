@@ -1,5 +1,5 @@
 import { AddressZero } from '@ethersproject/constants'
-import { AUCTION_MAKER_ADDRESSES } from 'config/network'
+import { AUCTION_MAKER_ADDRESSES } from 'config'
 import { Contract } from 'ethers'
 import { useContract, useNetwork, useSigner } from 'wagmi'
 
