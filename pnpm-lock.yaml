@@ -152,6 +152,7 @@ importers:
       '@sushiswap/redux-token-lists': workspace:*
       '@sushiswap/ui': workspace:*
       '@sushiswap/wallet-connector': workspace:*
+      '@tanstack/react-table': 8.0.0-alpha.72
       '@types/node': 17.0.30
       '@types/react': ^18.0.8
       '@types/react-dom': ^18.0.3
@@ -169,7 +170,6 @@ importers:
       react-dom: ^18.1.0
       react-redux: ^8.0.1
       react-spring: ^9.4.4
-      react-table: ^7.7.0
       react-window: ^1.8.7
       redux-devtools-extension: ^2.13.9
       redux-persist: ^6.0.0
@@ -197,6 +197,7 @@ importers:
       '@sushiswap/redux-token-lists': link:../../packages/redux-token-lists
       '@sushiswap/ui': link:../../packages/ui
       '@sushiswap/wallet-connector': link:../../packages/wallet-connector
+      '@tanstack/react-table': 8.0.0-alpha.72_react-dom@18.1.0+react@18.1.0
       '@uniswap/redux-multicall': 1.1.1_833bdd5481673211961c00d9256d6d3a
       '@uniswap/token-lists': 1.0.0-beta.28
       ethers: 5.6.5
@@ -206,7 +207,6 @@ importers:
       react-dom: 18.1.0_react@18.1.0
       react-redux: 8.0.1_dd5346d96c16c0aadfa6cad1ff4d1193
       react-spring: 9.4.5_react-dom@18.1.0+react@18.1.0
-      react-table: 7.7.0_react@18.1.0
       react-window: 1.8.7_react-dom@18.1.0+react@18.1.0
       redux-devtools-extension: 2.13.9
       redux-persist: 6.0.0
@@ -6443,7 +6443,7 @@ packages:
       unload: 2.2.0
 
   /brorand/1.1.0:
-    resolution: {integrity: sha1-EsJe/kCkXjwyPrhnWgoM5XsiNx8=}
+    resolution: {integrity: sha512-cKV8tMCEpQs4hK/ik71d6LrPOnpkpGBR0wzxqr68g2m/LB2GxVYQroAjMJZRVM1Y4BCjCKc3vAamxSzOY2RP+w==}
 
   /browser-process-hrtime/1.0.0:
     resolution: {integrity: sha512-9o5UecI3GhkpM6DrXr69PblIuWxPKk9Y0jHBRhdocZ2y7YECBFCsHm79Pr3OyR2AvjhDkabFJaDJMYRazHgsow==}
@@ -6477,7 +6477,7 @@ packages:
       fast-json-stable-stringify: 2.1.0
 
   /bs58/4.0.1:
-    resolution: {integrity: sha1-vhYedsNU9veIrkBx9j806MTwpCo=}
+    resolution: {integrity: sha512-Ok3Wdf5vOIlBrgCvTq96gBkJw+JUEzdBgyaza5HLtPm7yTHkjRy8+JzNyHF7BHa0bNWOQIp3m5YF0nnFcOIKLw==}
     dependencies:
       base-x: 3.0.9
 
@@ -6515,7 +6515,7 @@ packages:
     resolution: {integrity: sha512-E+XQCRwSbaaiChtv6k6Dwgc+bx+Bs6vuKJHHl5kox/BaKbhiXzqQOwK4cO22yElGp2OCmjwVhT3HmxgyPGnJfQ==}
 
   /buffer-xor/1.0.3:
-    resolution: {integrity: sha1-JuYe0UIvtw3ULm42cp7VHYVf6Nk=}
+    resolution: {integrity: sha512-571s0T7nZWK6vB67HI5dyUF7wXiNcfaPPPTl6zYCNApANjIvYJTg7hlud/+cJpdAhS7dVzqMLmfhfHR3rAcOjQ==}
 
   /buffer/5.7.1:
     resolution: {integrity: sha512-EHcyIPBQ4BSGlvjB16k5KgAJ27CIsHY/2JBmCRReo48y9rQ3MaUzWX3KVlBa4U7MyX02HdVj0K7C3WaB3ju7FQ==}

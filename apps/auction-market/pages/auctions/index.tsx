@@ -1,4 +1,10 @@
+import { AddressZero } from '@ethersproject/constants'
 import { ChainId } from '@sushiswap/chain'
+import { Amount, Token } from '@sushiswap/currency'
+import { JSBI } from '@sushiswap/math'
+// import { Button } from '@sushiswap/ui'
+// import AuctionWaitingTable from 'features/AuctionWaitingTable'
+import BidModal from 'features/BidModal'
 import { Auction } from 'features/context/Auction'
 import { AuctionMarket } from 'features/context/AuctionMarket'
 import {
@@ -13,8 +19,10 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FC, useMemo } from 'react'
 import useSWR, { SWRConfig } from 'swr'
+import { useAccount, useBalance, useNetwork } from 'wagmi'
 
 import Layout from '../../components/Layout'
+import { BID_TOKEN_ADDRESS } from '../../config/network'
 
 const fetcher = (params: any) =>
   fetch(params)
@@ -71,41 +79,76 @@ const AuctionsPage: FC<{ chainId: number }> = ({ chainId }) => {
     [auctions, liquidityPositions, balances],
   )
 
+  const { activeChain } = useNetwork()
+  const address = useAccount()
+  const bidTokenData = useBalance({
+    addressOrName: address?.data ? address.data?.address : AddressZero,
+    token: activeChain?.id ? BID_TOKEN_ADDRESS[activeChain.id] : AddressZero,
+    watch: true
+  })
+
+  const bidToken = useMemo(() => {
+    if (!bidTokenData.data || !activeChain) return
+    return Amount.fromRawAmount(
+      new Token({
+        chainId: activeChain.id,
+        address: BID_TOKEN_ADDRESS[activeChain.id],
+        decimals: bidTokenData.data.decimals,
+        symbol: bidTokenData.data.symbol,
+      }),
+      JSBI.BigInt(bidTokenData.data.value),
+    )
+  }, [bidTokenData, activeChain])
+
   return (
     <Layout>
-      <div className="px-2 pt-16">
-        <h1>STATUSES</h1>
-        <div>
+      <div className="flex flex-col gap-10 px-2 pt-16">
+        <div className="flex flex-row gap-5">
           <div>LIVE: {auctionMarket.live.size}</div>
           <div>NOT STARTED: {Object.keys(auctionMarket.waiting).length}</div>
           <div>FINALIZED: {auctionMarket.finalised.size}</div>
         </div>
-        <h1>Auctions</h1>
-        {auctions?.length ? (
-          auctions.map((auction) => (
-            <div key={auction.id}>
-              {auction.status} {``}
-              {auction.amount.toString()} {` SUSHI `}
-              {auction.leadingBid.amount.toString()} {auction.token.symbol} {``}
-              {auction.remainingTime?.hours} {'H'} {auction.remainingTime?.minutes} {'M'}{' '}
-              {auction.remainingTime?.seconds} {'S'}
-              <Link href={`/users/${auction.leadingBid.user.id.toLowerCase()}/auctions?chainId=${chainId}`}>
-                [User Auctions]
-              </Link>
-              <Link href={`/auction/${auction.id}?chainId=${chainId}`}>[Auction Page]</Link>
-            </div>
-          ))
-        ) : (
-          <div>
-            <i>No Auctions found..</i>
-          </div>
-        )}
-        <h1>AVAILABLE FOR START:</h1>
         <div>
+          <h1>Auctions</h1>
+          {auctions?.length ? (
+            auctions.map((auction) => (
+              <div key={auction.id}>
+                {auction.status} {``}
+                {auction.amount.toString()} {` SUSHI `}
+                {auction.leadingBid.amount.toString()} {auction.token.symbol} {``}
+                {auction.remainingTime?.hours} {'H'} {auction.remainingTime?.minutes} {'M'}{' '}
+                {auction.remainingTime?.seconds} {'S'}
+                <Link href={`/users/${auction.leadingBid.user.id.toLowerCase()}/auctions?chainId=${chainId}`}>
+                  [User Auctions]
+                </Link>
+                <Link href={`/auction/${auction.id}?chainId=${chainId}`}>[Auction Page]</Link>
+              </div>
+            ))
+          ) : (
+            <div>
+              <i>No Auctions found..</i>
+            </div>
+          )}
+        </div>
+
+        {/* <AuctionWaitingTable 
+        tokens={Object.values(auctionMarket.waiting)} 
+        placeholder={"No assets available"} 
+        loading={(isValidatingAuctions || isValidatingLPs || isValidatingTokens)} /> */}
+        <div>
+          <h1>AVAILABLE FOR START:</h1>
           {!isValidatingAuctions || !isValidatingLPs || !isValidatingTokens
             ? Object.entries(auctionMarket.waiting).map(([address, token]) => (
-                <div key={address}>
+                <div key={address} className="flex flex-row gap-5">
                   {token?.currency.symbol}, Balance: {token.toExact()}
+                  {/* <Button 
+                       variant="filled"
+                       disabled={token.toExact() === "0"}
+                       onClick={() => {
+                        //  setOpen(true)
+                       }}
+                  > Start bid </Button> */}
+                  <BidModal bidToken={bidToken} rewardAmount={token}/>
                 </div>
               ))
             : 'Loading..'}
