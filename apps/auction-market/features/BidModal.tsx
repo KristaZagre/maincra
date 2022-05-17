@@ -71,7 +71,7 @@ const BidModal: FC<BidModalProps> = ({ bidToken, rewardToken }) => {
     }
 
     setAmount(undefined)
-  }, [amount, account?.address, contract, rewardToken, sendTransactionAsync])
+  }, [amount, account?.address, contract, rewardToken, sendTransactionAsync, fetchStartedAuction])
 
   const onInput = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {

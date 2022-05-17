@@ -56,6 +56,14 @@ const _AuctionsPage: FC<InferGetServerSidePropsType<typeof getServerSideProps>> 
   )
 }
 const AuctionsPage: FC<{ chainId: number }> = ({ chainId }) => {
+  const { activeChain } = useNetwork()
+  const address = useAccount()
+  const bidTokenData = useBalance({
+    addressOrName: address?.data ? address.data?.address : AddressZero,
+    token: activeChain?.id ? BID_TOKEN_ADDRESS[activeChain.id] : AddressZero,
+    watch: true,
+  })
+
   const { data: auctionRepresentations, isValidating: isValidatingAuctions } = useSWR<AuctionRepresentation[]>(
     `/auction-market/api/auctions/${chainId}`,
     fetcher,
@@ -68,6 +76,7 @@ const AuctionsPage: FC<{ chainId: number }> = ({ chainId }) => {
     `/auction-market/api/tokens/${chainId}`,
     fetcher,
   )
+
   const auctions = useMemo(
     () => auctionRepresentations?.map((auction) => new Auction({ auction })),
     [auctionRepresentations],
@@ -76,18 +85,10 @@ const AuctionsPage: FC<{ chainId: number }> = ({ chainId }) => {
   const liquidityPositions = useLiquidityPositionedPairs(lpRepresentations)
   // Before building this, check if any sources are loading
   const auctionMarket = useMemo(() => {
-    if (!isValidatingAuctions || !isValidatingLPs || !isValidatingTokens) {
-      return new AuctionMarket({ auctions, liquidityPositions, balances })
+    if (!isValidatingAuctions || !isValidatingLPs || !isValidatingTokens || !activeChain?.id) {
+      return new AuctionMarket({ chainId: activeChain?.id, auctions, liquidityPositions, balances })
     }
-  }, [auctions, liquidityPositions, balances, isValidatingAuctions, isValidatingLPs, isValidatingTokens])
-
-  const { activeChain } = useNetwork()
-  const address = useAccount()
-  const bidTokenData = useBalance({
-    addressOrName: address?.data ? address.data?.address : AddressZero,
-    token: activeChain?.id ? BID_TOKEN_ADDRESS[activeChain.id] : AddressZero,
-    watch: true,
-  })
+  }, [auctions, liquidityPositions, balances, isValidatingAuctions, isValidatingLPs, isValidatingTokens, activeChain])
 
   const bidToken = useMemo(() => {
     if (!bidTokenData.data || !activeChain) return
@@ -139,15 +140,17 @@ const AuctionsPage: FC<{ chainId: number }> = ({ chainId }) => {
         loading={(isValidatingAuctions || isValidatingLPs || isValidatingTokens)} /> */}
         <div>
           <h1>AVAILABLE FOR START:</h1>
-          {!isValidatingAuctions || !isValidatingLPs || !isValidatingTokens || auctionMarket
-            ? Object.entries(auctionMarket.waiting).map(([address, token]) => (
-                <>
-                  <div key={address} className="flex flex-row gap-5">
-                    {`${token?.symbol}, Balance: ${token.getTotalBalance()}`}
-                  </div>
-                  <BidModal bidToken={bidToken} rewardToken={token} />
-                </>
-              ))
+          {!isValidatingAuctions || !isValidatingLPs || !isValidatingTokens
+            ? auctionMarket?.waiting
+              ? Object.entries(auctionMarket.waiting).map(([address, token]) => (
+                  <>
+                    <div key={address} className="flex flex-row gap-5">
+                      {`${token?.symbol}, Balance: ${token.getTotalBalance()}`}
+                    </div>
+                    <BidModal bidToken={bidToken} rewardToken={token} />
+                  </>
+                ))
+              : 'No tokens available'
             : 'Loading..'}
         </div>
       </div>

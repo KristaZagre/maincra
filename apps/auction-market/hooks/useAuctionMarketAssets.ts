@@ -1,7 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 import { CurrencyAmount, Pair } from '@sushiswap/core-sdk'
 import { Amount, Token } from '@sushiswap/currency'
-import { AUCTION_MAKER_ADDRESSES } from 'config'
+import { AUCTION_MAKER_ADDRESSES, BID_TOKEN_ADDRESS } from 'config'
 import { parseUnits } from 'ethers/lib/utils'
 import {
   LiquidityPositionRepresentation,
@@ -18,11 +18,10 @@ export function useAuctionMakerBalance(
   chainId: ChainId,
   tokenRepresentations: TokenRepresentation[] | undefined,
 ): [(Amount<Token> | undefined)[], boolean] {
-  //   // TODO: fix chainId, should it be passed in from queryParam or fetched from wagmi network hook?
-  //   // The data is coming from subgraph initially, which is determined from queryparam
   const tokens = useMemo(
     () =>
-      tokenRepresentations?.map(
+      tokenRepresentations?.filter(token => token.id !== BID_TOKEN_ADDRESS[chainId])
+      .map(
         (token) =>
           new Token({
             chainId,
