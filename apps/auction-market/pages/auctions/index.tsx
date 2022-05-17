@@ -78,7 +78,7 @@ const AuctionsPage: FC<{ chainId: number }> = ({ chainId }) => {
     () => new AuctionMarket({ auctions, liquidityPositions, balances }),
     [auctions, liquidityPositions, balances],
   )
-  console.log({auctionMarket})
+
 
   const { activeChain } = useNetwork()
   const address = useAccount()

@@ -1,15 +1,16 @@
-import { AddressZero } from '@ethersproject/constants'
+import { parseUnits } from '@ethersproject/units'
 import { ArrowSmDownIcon } from '@heroicons/react/outline'
 import { ZERO } from '@sushiswap/core-sdk'
 import { Amount, Token } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
 import { Button, Dialog, Dots, Typography } from '@sushiswap/ui'
-import AUCTION_MAKER_ABI from 'abis/auction-maker.json'
-import { AUCTION_MAKER_ADDRESSES } from 'config'
+import { MIN_BID_AMOUNT } from 'config'
+import { useAuctionMakerContract } from 'hooks/useAuctionMarketContract'
 // import { createToast } from 'components'
 import { ChangeEvent, FC, useCallback, useRef, useState } from 'react'
-import { useContractWrite, useNetwork } from 'wagmi'
+import { useAccount, useNetwork, useSendTransaction } from 'wagmi'
 
+import { batchAction, startBidAction, unwindTokenAction } from './actions'
 import { RewardToken } from './context/RewardToken'
 
 interface BidModalProps {
@@ -22,44 +23,51 @@ const BidModal: FC<BidModalProps> = ({ bidToken, rewardToken }) => {
   const [amount, setAmount] = useState<Amount<Token>>()
   const inputRef = useRef<HTMLInputElement>(null)
   const { activeChain } = useNetwork()
-
-  const { writeAsync, isLoading: isWritePending } = useContractWrite(
-    {
-      addressOrName: activeChain?.id ? AUCTION_MAKER_ADDRESSES[activeChain.id] : AddressZero,
-      contractInterface: AUCTION_MAKER_ABI,
-    },
-    'withdrawFromStream',
-    {
-      onSuccess() {
-        setOpen(false)
-      },
-    },
-  )
+  const { data: account } = useAccount()
+  const contract = useAuctionMakerContract()
+  const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction()
 
   const bid = useCallback(async () => {
-    if (!amount) return
-    const data = await writeAsync({
-      // args: [BigNumber.from(stream.id), BigNumber.from(amount.quotient.toString()), stream.recipient.id, false, '0x'],
-    })
+    if (!amount || !contract || !account?.address || !rewardToken) return
 
-    // createToast({
-    //   title: 'Withdraw from stream',
-    //   description: `You have successfully withdrawn ${amount.toSignificant(6)} ${
-    //     amount.currency.symbol
-    //   } from your stream`,
-    //   promise: data.wait(),
-    // })
+    const actions: string[] = []
+    rewardToken.tokensToUnwind.forEach((token) =>
+      actions.push(unwindTokenAction({ contract, token0: rewardToken.address, token1: token })),
+    )
+    actions.push(startBidAction({ contract, rewardTokenAddress: rewardToken.address, amount, to: account.address }))
+
+    try {
+      const data = await sendTransactionAsync({
+        request: {
+          from: account?.address,
+          to: contract?.address,
+          data: batchAction({ contract, actions }),
+        },
+      })
+
+      // createToast({
+      //   title: 'Create stream',
+      //   description: `You have successfully created a stream`,
+      //   promise: data.wait(),
+      // })
+    } catch (e: any) {
+      // setError(e.message)
+    }
 
     setAmount(undefined)
-  }, [amount, writeAsync])
+  }, [amount, account?.address, contract, rewardToken, sendTransactionAsync])
 
   const onInput = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
-      if (isNaN(+e.target.value) || +e.target.value <= 0) {
+      if (isNaN(+e.target.value) || +e.target.value <= 0 || !bidToken) {
         setAmount(undefined)
-      } 
-      else {
-        setAmount(bidToken)
+      } else {
+        setAmount(
+          Amount.fromRawAmount(
+            bidToken.currency,
+            JSBI.BigInt(parseUnits(e.target.value, bidToken.currency.decimals).toString()),
+          ),
+        )
       }
     },
     [bidToken],
@@ -90,7 +98,14 @@ const BidModal: FC<BidModalProps> = ({ bidToken, rewardToken }) => {
             className="-ml-6 !-mb-6 -mr-6 p-6 pt-8 bg-slate-800 border-t rounded-2xl border-slate-700 flex flex-col gap-1"
             onClick={() => inputRef.current?.focus()}
           >
-            <div>You must bid at least 25 {bidToken?.currency.symbol}.</div>
+            <div>
+              You must bid at least{' '}
+              {`
+            ${bidToken ? Amount.fromRawAmount(bidToken?.currency, MIN_BID_AMOUNT).toExact() : ''} ${
+                bidToken?.currency.symbol
+              }`}
+              .
+            </div>
             <div>Reward amount: {`${rewardToken.getTotalBalance()} ${rewardToken.symbol}`}.</div>
             <div className="flex justify-between gap-3">
               <Typography variant="sm" weight={400}>

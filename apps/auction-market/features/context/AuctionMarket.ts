@@ -33,7 +33,6 @@ export class AuctionMarket {
 
     balances.forEach((balance) => {
       const address = balance?.currency.address.toLowerCase()
-      console.log({balance, address})
       if (balance && address && this.isValidToken(address)) {
         if (!this.waiting[address]) {
           this.waiting[address] = new RewardToken({ token: balance.currency, tokenBalance: balance })
