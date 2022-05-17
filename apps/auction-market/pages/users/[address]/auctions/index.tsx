@@ -1,6 +1,7 @@
 import { Auction } from 'features/context/Auction'
 import { AuctionRepresentation } from 'features/context/representations'
 import { getUserAuctions } from 'graph/graph-client'
+import { useBidToken } from 'hooks/useBidToken'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
 import { FC, useMemo } from 'react'
@@ -45,10 +46,11 @@ export const UserAuctionsPage: FC<{ chainId: number; address: string }> = ({ cha
     `/auction-market/api/user/${address}/auctions/${chainId}`,
     fetcher,
   )
+  const bidToken = useBidToken()
 
   const auctions = useMemo(
-    () => auctionRepresentations?.map((auction) => new Auction({ auction })),
-    [auctionRepresentations],
+    () => (bidToken ? auctionRepresentations?.map((auction) => new Auction({ bidToken, auction })) : []),
+    [auctionRepresentations, bidToken],
   )
   return (
     <Layout>

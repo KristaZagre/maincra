@@ -2,6 +2,7 @@ import { Auction } from 'features/context/Auction'
 import { Bid } from 'features/context/Bid'
 import { AuctionRepresentation, BidRepresentation } from 'features/context/representations'
 import { getAuction, getBids } from 'graph/graph-client'
+import { useBidToken } from 'hooks/useBidToken'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
 import { FC, useMemo } from 'react'
@@ -51,9 +52,14 @@ const AuctionPage: FC<{ chainId: number; id: string }> = ({ chainId, id }) => {
     `/auction-market/api/bids/${chainId}/${id}`,
     fetcher,
   )
+  const bidToken = useBidToken()
+
   const auction = useMemo(
-    () => (auctionRepresentation ? new Auction({ auction: auctionRepresentation }) : undefined),
-    [auctionRepresentation],
+    () =>
+      auctionRepresentation && bidToken
+        ? new Auction({ bidToken, auction: auctionRepresentation })
+        : undefined,
+    [auctionRepresentation, bidToken],
   )
   const bids = useMemo(() => bidRepresentations?.map((bid) => new Bid({ bid })), [bidRepresentations])
 
@@ -64,8 +70,8 @@ const AuctionPage: FC<{ chainId: number; id: string }> = ({ chainId, id }) => {
         {auction ? (
           <div key={auction.id}>
             {auction.status} {``}
-            {auction.amount.toString()} {` SUSHI `}
-            {auction.leadingBid.amount.toString()} {auction.token?.symbol}
+            {auction.amount.toExact()} {auction.amount.currency.symbol}{``}
+            {auction.leadingBid.amount.toExact()} {auction.leadingBid.amount.currency.symbol}{``}
             {auction.startDate.toLocaleDateString()} {``}
             {auction.endDate?.toLocaleDateString()} {``}
           </div>
@@ -76,7 +82,7 @@ const AuctionPage: FC<{ chainId: number; id: string }> = ({ chainId, id }) => {
       <div>
         <h2>Bids</h2>
         {bids?.length ? (
-          bids.map((bid) => <div key={bid.id}>{`${bid.amount.toString()} ${bid.timestamp} ${bid.user?.id}`}</div>)
+          bids.map((bid) => <div key={bid.id}>{`${bid.amount.toExact()} ${bid.timestamp} ${bid.user?.id}`}</div>)
         ) : (
           <div>
             <i>No bids found..</i>

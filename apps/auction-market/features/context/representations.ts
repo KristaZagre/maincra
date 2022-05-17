@@ -43,6 +43,7 @@ export interface BidRepresentation {
   id: string
   amount: string
   user: UserRepresentation
+  token: TokenRepresentation
   createdAtBlock: string
   createdAtTimestamp: string
 }

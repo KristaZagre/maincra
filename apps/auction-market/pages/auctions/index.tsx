@@ -15,6 +15,7 @@ import {
 } from 'features/context/representations'
 import { getAuctions, getExchangeTokens, getLiquidityPositions } from 'graph/graph-client'
 import { useAuctionMakerBalance, useLiquidityPositionedPairs } from 'hooks/useAuctionMarketAssets'
+import { useBidTokenBalance } from 'hooks/useBidToken'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -58,11 +59,7 @@ const _AuctionsPage: FC<InferGetServerSidePropsType<typeof getServerSideProps>> 
 const AuctionsPage: FC<{ chainId: number }> = ({ chainId }) => {
   const { activeChain } = useNetwork()
   const address = useAccount()
-  const bidTokenData = useBalance({
-    addressOrName: address?.data ? address.data?.address : AddressZero,
-    token: activeChain?.id ? BID_TOKEN_ADDRESS[activeChain.id] : AddressZero,
-    watch: true,
-  })
+
 
   const { data: auctionRepresentations, isValidating: isValidatingAuctions } = useSWR<AuctionRepresentation[]>(
     `/auction-market/api/auctions/${chainId}`,
@@ -77,31 +74,19 @@ const AuctionsPage: FC<{ chainId: number }> = ({ chainId }) => {
     fetcher,
   )
 
+  const bidTokenBalance = useBidTokenBalance()
+
   const auctions = useMemo(
-    () => auctionRepresentations?.map((auction) => new Auction({ auction })),
-    [auctionRepresentations],
+    () => bidTokenBalance ? auctionRepresentations?.map((auction) => new Auction({ bidToken: bidTokenBalance.currency, auction })) : [],
+    [auctionRepresentations, bidTokenBalance],
   )
   const [balances, loading] = useAuctionMakerBalance(ChainId.KOVAN, tokenRepresentations)
   const liquidityPositions = useLiquidityPositionedPairs(lpRepresentations)
-  // Before building this, check if any sources are loading
   const auctionMarket = useMemo(() => {
     if (!isValidatingAuctions || !isValidatingLPs || !isValidatingTokens || !activeChain?.id) {
       return new AuctionMarket({ chainId: activeChain?.id, auctions, liquidityPositions, balances })
     }
   }, [auctions, liquidityPositions, balances, isValidatingAuctions, isValidatingLPs, isValidatingTokens, activeChain])
-
-  const bidToken = useMemo(() => {
-    if (!bidTokenData.data || !activeChain) return
-    return Amount.fromRawAmount(
-      new Token({
-        chainId: activeChain.id,
-        address: BID_TOKEN_ADDRESS[activeChain.id],
-        decimals: bidTokenData.data.decimals,
-        symbol: bidTokenData.data.symbol,
-      }),
-      JSBI.BigInt(bidTokenData.data.value),
-    )
-  }, [bidTokenData, activeChain])
 
   return (
     <Layout>
@@ -117,8 +102,8 @@ const AuctionsPage: FC<{ chainId: number }> = ({ chainId }) => {
             auctions.map((auction) => (
               <div key={auction.id}>
                 {auction.status} {``}
-                {auction.amount.toString()} {` SUSHI `}
-                {auction.leadingBid.amount.toString()} {auction.token.symbol} {``}
+                {auction.amount.toExact()} {auction.amount.currency.symbol} {``}
+                {auction.leadingBid.amount.toExact()} {auction.token.symbol} {``}
                 {auction.remainingTime?.hours} {'H'} {auction.remainingTime?.minutes} {'M'}{' '}
                 {auction.remainingTime?.seconds} {'S'}
                 <Link href={`/users/${auction.leadingBid.user.id.toLowerCase()}/auctions?chainId=${chainId}`}>
@@ -139,15 +124,16 @@ const AuctionsPage: FC<{ chainId: number }> = ({ chainId }) => {
         placeholder={"No assets available"} 
         loading={(isValidatingAuctions || isValidatingLPs || isValidatingTokens)} /> */}
         <div>
-          <h1>AVAILABLE FOR START:</h1>
+          <h1>Not Started</h1>
           {!isValidatingAuctions || !isValidatingLPs || !isValidatingTokens
             ? auctionMarket?.waiting
               ? Object.entries(auctionMarket.waiting).map(([address, token]) => (
                   <>
-                    <div key={address} className="flex flex-row gap-5">
-                      {`${token?.symbol}, Balance: ${token.getTotalBalance()}`}
+                    <div key={address} className="flex flex-row justify-between text-center">
+                      <div>{token?.symbol}</div>
+                      <div>{token.getTotalBalance()}</div>
+                    <BidModal bidToken={bidTokenBalance} rewardToken={token} />
                     </div>
-                    <BidModal bidToken={bidToken} rewardToken={token} />
                   </>
                 ))
               : 'No tokens available'

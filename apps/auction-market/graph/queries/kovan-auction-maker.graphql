@@ -19,6 +19,12 @@ query KovanAuctions {
         user {
           id
         }
+        token {
+          id
+          name
+          symbol
+          decimals
+        }
         amount
         createdAtBlock
         createdAtTimestamp
@@ -46,6 +52,12 @@ query KovanAuction($id: ID!) {
       user {
         id
       }
+      token {
+        id
+        name
+        symbol
+        decimals
+      }
       amount
       createdAtBlock
       createdAtTimestamp
@@ -68,6 +80,12 @@ query KovanBids($auctionId: ID!) {
       id
       user {
         id
+      }
+      token {
+        id
+        name
+        symbol
+        decimals
       }
       amount
       createdAtBlock
@@ -95,6 +113,12 @@ query KovanUserAuctions($id: ID!) {
           amount
           createdAtBlock
           createdAtTimestamp
+          token {
+            id
+            name
+            symbol
+            decimals
+          }
         }
         minTTL
         maxTTL
@@ -109,6 +133,12 @@ query KovanUserAuctions($id: ID!) {
           id
           user {
             id
+          }
+          token {
+            id
+            name
+            symbol
+            decimals
           }
           amount
           createdAtBlock
