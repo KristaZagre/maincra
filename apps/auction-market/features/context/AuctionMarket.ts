@@ -33,7 +33,7 @@ export class AuctionMarket {
 
     balances.forEach((balance) => {
       const address = balance?.currency.address.toLowerCase()
-      if (balance && address && this.isValidToken(address)) {
+      if (balance && address && !this.isLive(address)) {
         if (!this.waiting[address]) {
           this.waiting[address] = new RewardToken({ token: balance.currency, tokenBalance: balance })
         } else {
@@ -44,10 +44,10 @@ export class AuctionMarket {
   }
 
   private addLpBalance(token0: Token, token1: Token, lp: LiquidityPosition) {
-    if (this.isValidToken(token0.address.toLowerCase())) {
+    if (!this.isLive(token0.address.toLowerCase())) {
       if (this.waiting[token0.address.toLowerCase()]) {
         this.waiting[token0.address.toLowerCase()].addLpBalance(
-          lp.pair.getLiquidityValue(token0, lp.totalSupply, lp.balance) as unknown as Amount<Token>, // TODO: refactor ugly hack when Pair is extracted to monrepo
+          lp.pair.getLiquidityValue(token0, lp.totalSupply, lp.balance) as unknown as Amount<Token>, // TODO: refactor ugly hack when Pair is extracted to monorepo
         )
         this.waiting[token0.address.toLowerCase()].addTokenToUnwind(token1.address.toLowerCase())
       } else {
@@ -63,7 +63,7 @@ export class AuctionMarket {
     } 
   }
 
-  private isValidToken(address: string): boolean {
-    return !this.live.has(address) || !this.waiting[address] || !this.finalised.has(address)
+  private isLive(address: string): boolean {
+    return this.live.has(address)
   }
 }

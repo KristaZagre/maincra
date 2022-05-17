@@ -74,17 +74,19 @@ const AuctionsPage: FC<{ chainId: number }> = ({ chainId }) => {
   )
   const [balances, loading] = useAuctionMakerBalance(ChainId.KOVAN, tokenRepresentations)
   const liquidityPositions = useLiquidityPositionedPairs(lpRepresentations)
-  const auctionMarket = useMemo(
-    () => new AuctionMarket({ auctions, liquidityPositions, balances }),
-    [auctions, liquidityPositions, balances],
-  )
+  // Before building this, check if any sources are loading
+  const auctionMarket = useMemo(() => {
+    if (!isValidatingAuctions || !isValidatingLPs || !isValidatingTokens) {
+      return new AuctionMarket({ auctions, liquidityPositions, balances })
+    }
+  }, [auctions, liquidityPositions, balances, isValidatingAuctions, isValidatingLPs, isValidatingTokens])
 
   const { activeChain } = useNetwork()
   const address = useAccount()
   const bidTokenData = useBalance({
     addressOrName: address?.data ? address.data?.address : AddressZero,
     token: activeChain?.id ? BID_TOKEN_ADDRESS[activeChain.id] : AddressZero,
-    watch: true
+    watch: true,
   })
 
   const bidToken = useMemo(() => {
@@ -104,9 +106,9 @@ const AuctionsPage: FC<{ chainId: number }> = ({ chainId }) => {
     <Layout>
       <div className="flex flex-col gap-10 px-2 pt-16">
         <div className="flex flex-row gap-5">
-          <div>LIVE: {auctionMarket.live.size}</div>
-          <div>NOT STARTED: {Object.keys(auctionMarket.waiting).length}</div>
-          <div>FINALIZED: {auctionMarket.finalised.size}</div>
+          <div>LIVE: {auctionMarket ? auctionMarket?.live.size : 0}</div>
+          <div>NOT STARTED: {auctionMarket ? Object.keys(auctionMarket.waiting).length : 0}</div>
+          <div>FINALIZED: {auctionMarket ? auctionMarket?.finalised.size : 0}</div>
         </div>
         <div>
           <h1>Auctions</h1>
@@ -137,21 +139,14 @@ const AuctionsPage: FC<{ chainId: number }> = ({ chainId }) => {
         loading={(isValidatingAuctions || isValidatingLPs || isValidatingTokens)} /> */}
         <div>
           <h1>AVAILABLE FOR START:</h1>
-          {!isValidatingAuctions || !isValidatingLPs || !isValidatingTokens
+          {!isValidatingAuctions || !isValidatingLPs || !isValidatingTokens || auctionMarket
             ? Object.entries(auctionMarket.waiting).map(([address, token]) => (
-              <>
-              <div key={address} className="flex flex-row gap-5">
-                {`${token?.symbol}, Balance: ${token.getTotalBalance()}`}
-                {/* <Button 
-                     variant="filled"
-                     disabled={token.toExact() === "0"}
-                     onClick={() => {
-                      //  setOpen(true)
-                     }}
-                > Start bid </Button> */}
-                </div>
-                <BidModal bidToken={bidToken} rewardToken={token}/>
-              </>
+                <>
+                  <div key={address} className="flex flex-row gap-5">
+                    {`${token?.symbol}, Balance: ${token.getTotalBalance()}`}
+                  </div>
+                  <BidModal bidToken={bidToken} rewardToken={token} />
+                </>
               ))
             : 'Loading..'}
         </div>
