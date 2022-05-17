@@ -24,8 +24,7 @@ export const batchAction = <T = any>({ contract, actions = [] }: Batch): string 
 
   // Call batch function with valid actions
   if (validated.length > 1) {
-    console.log(validated.toString())
-    return contract.interface.encodeFunctionData('batch', [validated, false])
+    return contract.interface.encodeFunctionData('batch', [validated, true])
   }
 }
 
@@ -61,10 +60,25 @@ export const startBidAction = ({
   amount,
   to,
 }: StartBidActionProps): string => {
-  console.log("addr", amount.currency.address)
   return contract.interface.encodeFunctionData('start', [
-    rewardTokenAddress,
+    rewardTokenAddress.toLowerCase(),
     amount.quotient.toString(),
-    to
+    to.toLowerCase()
+  ])
+}
+
+
+
+export interface EndAuctionProps {
+  contract: Contract
+  rewardTokenAddress: string
+}
+
+export const endAuctionAction = ({
+  contract,
+  rewardTokenAddress
+}: EndAuctionProps): string => {
+  return contract.interface.encodeFunctionData('end', [
+    rewardTokenAddress.toLowerCase()
   ])
 }

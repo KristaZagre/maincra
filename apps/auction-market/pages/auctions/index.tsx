@@ -79,7 +79,6 @@ const AuctionsPage: FC<{ chainId: number }> = ({ chainId }) => {
     [auctions, liquidityPositions, balances],
   )
 
-
   const { activeChain } = useNetwork()
   const address = useAccount()
   const bidTokenData = useBalance({

@@ -26,7 +26,7 @@ export class AuctionMarket {
         this.live.add(auction.token.id.toLowerCase())
       }
     })
-    liquidityPositions.forEach((lp) => {
+    liquidityPositions.filter(lp => lp.balance.greaterThan(0)).forEach((lp) => {
       this.addLpBalance(lp.pair.token0, lp.pair.token1, lp)
       this.addLpBalance(lp.pair.token1, lp.pair.token0, lp)
     })

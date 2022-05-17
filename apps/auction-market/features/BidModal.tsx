@@ -1,16 +1,18 @@
+import { AddressZero } from '@ethersproject/constants'
 import { parseUnits } from '@ethersproject/units'
 import { ArrowSmDownIcon } from '@heroicons/react/outline'
 import { ZERO } from '@sushiswap/core-sdk'
 import { Amount, Token } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
 import { Button, Dialog, Dots, Typography } from '@sushiswap/ui'
-import { MIN_BID_AMOUNT } from 'config'
+import { AUCTION_MAKER_ADDRESSES, MIN_BID_AMOUNT } from 'config'
 import { useAuctionMakerContract } from 'hooks/useAuctionMarketContract'
 // import { createToast } from 'components'
 import { ChangeEvent, FC, useCallback, useRef, useState } from 'react'
-import { useAccount, useNetwork, useSendTransaction } from 'wagmi'
+import { useAccount, useContractRead, useNetwork, useSendTransaction } from 'wagmi'
 
-import { batchAction, startBidAction, unwindTokenAction } from './actions'
+import AUCTION_MAKER_ABI from '../abis/auction-maker.json'
+import { batchAction, endAuctionAction, startBidAction, unwindTokenAction } from './actions'
 import { RewardToken } from './context/RewardToken'
 
 interface BidModalProps {
@@ -25,12 +27,26 @@ const BidModal: FC<BidModalProps> = ({ bidToken, rewardToken }) => {
   const { activeChain } = useNetwork()
   const { data: account } = useAccount()
   const contract = useAuctionMakerContract()
+  const { refetch: fetchStartedAuction } = useContractRead(
+    {
+      addressOrName: activeChain?.id ? AUCTION_MAKER_ADDRESSES[activeChain.id] : AddressZero,
+      contractInterface: AUCTION_MAKER_ABI,
+    },
+    'bids',
+    { args: [rewardToken.address], enabled: false },
+  )
   const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction()
 
   const bid = useCallback(async () => {
-    if (!amount || !contract || !account?.address || !rewardToken) return
+    const auctionData = await fetchStartedAuction()
+    if (!amount || !contract || !account?.address || !rewardToken || !auctionData.data) return
 
     const actions: string[] = []
+
+    if (auctionData.data[0] != AddressZero) {
+      actions.push(endAuctionAction({ contract, rewardTokenAddress: rewardToken.address }))
+    }
+    
     rewardToken.tokensToUnwind.forEach((token) =>
       actions.push(unwindTokenAction({ contract, token0: rewardToken.address, token1: token })),
     )
