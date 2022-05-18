@@ -5,10 +5,10 @@ import { ZERO } from '@sushiswap/core-sdk'
 import { Amount, Token } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
 import { Button, Dialog, Dots, Typography } from '@sushiswap/ui'
+import { createToast } from 'components/Toast'
 import { AUCTION_MAKER_ADDRESSES, MIN_BID_AMOUNT } from 'config'
 import { ApprovalState, useApproveCallback } from 'hooks/useApproveCallback'
 import { useAuctionMakerContract } from 'hooks/useAuctionMarketContract'
-// import { createToast } from 'components'
 import { ChangeEvent, FC, useCallback, useRef, useState } from 'react'
 import { useAccount, useContractRead, useNetwork, useSendTransaction } from 'wagmi'
 
@@ -68,11 +68,11 @@ const InitialBidModal: FC<InitialBidModalProps> = ({ bidToken, rewardToken }) =>
         },
       })
 
-      // createToast({
-      //   title: 'Create stream',
-      //   description: `You have successfully created a stream`,
-      //   promise: data.wait(),
-      // })
+      createToast({
+        title: 'Place bid',
+        description: `You have successfully placed a bid!`,
+        promise: data.wait(),
+      })
     } catch (e: any) {
       // setError(e.message)
     }
