@@ -5,6 +5,7 @@ import { JSBI } from '@sushiswap/math'
 import ERC20_ABI from 'abis/erc20.json'
 import { Interface } from 'ethers/lib/utils'
 import { useMemo } from 'react'
+
 import { useMultipleContractSingleData } from '../lib/hooks/multicall'
 
 

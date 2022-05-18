@@ -1,13 +1,13 @@
 import { ChainId } from '@sushiswap/chain'
-import InitialBidModal from 'features/InitialBidModal'
 import { Auction } from 'features/context/Auction'
 import { AuctionMarket } from 'features/context/AuctionMarket'
 import {
   AuctionRepresentation,
   AuctionStatus,
   LiquidityPositionRepresentation,
-  TokenRepresentation
+  TokenRepresentation,
 } from 'features/context/representations'
+import InitialBidModal from 'features/InitialBidModal'
 import { getAuctions, getExchangeTokens, getLiquidityPositions } from 'graph/graph-client'
 import { useAuctionMakerBalance, useLiquidityPositionedPairs } from 'hooks/useAuctionMarketAssets'
 import { useBidTokenAddress, useBidTokenBalance } from 'hooks/useBidToken'
@@ -17,8 +17,8 @@ import { useRouter } from 'next/router'
 import { FC, useMemo } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 import { useAccount, useNetwork } from 'wagmi'
-import Layout from '../../components/Layout'
 
+import Layout from '../../components/Layout'
 
 const fetcher = (params: any) =>
   fetch(params)
@@ -55,7 +55,6 @@ const AuctionsPage: FC<{ chainId: number }> = ({ chainId }) => {
   const { activeChain } = useNetwork()
   const address = useAccount()
 
-
   const { data: auctionRepresentations, isValidating: isValidatingAuctions } = useSWR<AuctionRepresentation[]>(
     `/auction-market/api/auctions/${chainId}`,
     fetcher,
@@ -72,7 +71,10 @@ const AuctionsPage: FC<{ chainId: number }> = ({ chainId }) => {
   const bidTokenBalance = useBidTokenBalance()
 
   const auctions = useMemo(
-    () => bidTokenBalance ? auctionRepresentations?.map((auction) => new Auction({ bidToken: bidTokenBalance.currency, auction })) : [],
+    () =>
+      bidTokenBalance
+        ? auctionRepresentations?.map((auction) => new Auction({ bidToken: bidTokenBalance.currency, auction }))
+        : [],
     [auctionRepresentations, bidTokenBalance],
   )
   const [balances, loading] = useAuctionMakerBalance(ChainId.KOVAN, bidTokenAddress, tokenRepresentations)
@@ -81,7 +83,16 @@ const AuctionsPage: FC<{ chainId: number }> = ({ chainId }) => {
     if (!isValidatingAuctions || !isValidatingLPs || !isValidatingTokens || !activeChain?.id) {
       return new AuctionMarket({ bidTokenAddress, chainId: activeChain?.id, auctions, liquidityPositions, balances })
     }
-  }, [auctions, liquidityPositions, balances, isValidatingAuctions, isValidatingLPs, isValidatingTokens, activeChain])
+  }, [
+    auctions,
+    liquidityPositions,
+    balances,
+    isValidatingAuctions,
+    isValidatingLPs,
+    isValidatingTokens,
+    activeChain,
+    bidTokenAddress,
+  ])
 
   return (
     <Layout>
@@ -91,22 +102,23 @@ const AuctionsPage: FC<{ chainId: number }> = ({ chainId }) => {
           <div>NOT STARTED: {auctionMarket ? Object.keys(auctionMarket.waiting).length : 0}</div>
           <div>FINALIZED: {auctionMarket ? auctionMarket?.finalised.size : 0}</div>
         </div>
+
+
         <div>
           <h1>Live auctions</h1>
           {auctions?.length ? (
-            auctions.filter(auction => auction.status === AuctionStatus.ONGOING).map((auction) => (
-              <div key={auction.id}>
-                {auction.status} {``}
-                {auction.amount.toExact()} {auction.token.symbol} {``}
-                {auction.leadingBid.amount.toExact()} {bidTokenBalance?.currency.symbol} {``}
-                {auction.remainingTime?.hours} {'H'} {auction.remainingTime?.minutes} {'M'}{' '}
-                {auction.remainingTime?.seconds} {'S'}
-                <Link href={`/users/${auction.leadingBid.user.id.toLowerCase()}/auctions?chainId=${chainId}`}>
-                  [User Auctions]
-                </Link>
-                <Link href={`/auction/${auction.id}?chainId=${chainId}`}>[Auction Page]</Link>
-              </div>
-            ))
+            auctions
+              .filter((auction) => auction.status === AuctionStatus.ONGOING)
+              .map((auction) => (
+                <div key={auction.id}>
+                  {auction.status} {``}
+                  {auction.amount.toExact()} {auction.token.symbol} {``}
+                  {auction.leadingBid.amount.toExact()} {bidTokenBalance?.currency.symbol} {``}
+                  {auction.remainingTime?.hours} {'H'} {auction.remainingTime?.minutes} {'M'}{' '}
+                  {auction.remainingTime?.seconds} {'S'}
+                  <Link href={`/auction/${auction.id}?chainId=${chainId}`}>[Auction Page]</Link>
+                </div>
+              ))
           ) : (
             <div>
               <i>No live auctions..</i>
@@ -117,19 +129,18 @@ const AuctionsPage: FC<{ chainId: number }> = ({ chainId }) => {
         <div>
           <h1>Finished auctions</h1>
           {auctions?.length ? (
-            auctions.filter(auction => auction.status === AuctionStatus.FINISHED).map((auction) => (
-              <div key={auction.id}>
-                {auction.status} {``}
-                {auction.amount.toExact()} {auction.token.symbol} {``}
-                {auction.leadingBid.amount.toExact()} {bidTokenBalance?.currency.symbol} {``}
-                {auction.remainingTime?.hours} {'H'} {auction.remainingTime?.minutes} {'M'}{' '}
-                {auction.remainingTime?.seconds} {'S'}
-                <Link href={`/users/${auction.leadingBid.user.id.toLowerCase()}/auctions?chainId=${chainId}`}>
-                  [User Auctions]
-                </Link>
-                <Link href={`/auction/${auction.id}?chainId=${chainId}`}>[Auction Page]</Link>
-              </div>
-            ))
+            auctions
+              .filter((auction) => auction.status === AuctionStatus.FINISHED)
+              .map((auction) => (
+                <div key={auction.id}>
+                  {auction.status} {``}
+                  {auction.amount.toExact()} {auction.token.symbol} {``}
+                  {auction.leadingBid.amount.toExact()} {bidTokenBalance?.currency.symbol} {``}
+                  {auction.remainingTime?.hours} {'H'} {auction.remainingTime?.minutes} {'M'}{' '}
+                  {auction.remainingTime?.seconds} {'S'}
+                  <Link href={`/auction/${auction.id}?chainId=${chainId}`}>[Auction Page]</Link>
+                </div>
+              ))
           ) : (
             <div>
               <i>No finished auctions..</i>
@@ -151,7 +162,7 @@ const AuctionsPage: FC<{ chainId: number }> = ({ chainId }) => {
                       <div>{token?.symbol}</div>
                       <div>{token?.tokensToUnwind.size}</div>
                       <div>{token.getTotalBalance()}</div>
-                    <InitialBidModal bidToken={bidTokenBalance} rewardToken={token} />
+                      <InitialBidModal bidToken={bidTokenBalance} rewardToken={token} />
                     </div>
                   </>
                 ))

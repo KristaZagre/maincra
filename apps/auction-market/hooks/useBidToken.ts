@@ -27,7 +27,7 @@ export function useBidTokenBalance(): Amount<Token> | undefined {
       }),
       bidTokenData.data.value.toString(),
     )
-  }, [bidTokenData, activeChain])
+  }, [bidTokenData, activeChain, bidTokenAddress])
 }
 
 export function useBidToken(): Token | undefined {

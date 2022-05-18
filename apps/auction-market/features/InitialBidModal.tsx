@@ -41,7 +41,6 @@ const InitialBidModal: FC<InitialBidModalProps> = ({ bidToken, rewardToken }) =>
     amount,
     bidToken?.currency.address ?? undefined,
   )
-  console.log({tokenApprovalState})
   
   const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction()
 

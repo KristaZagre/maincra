@@ -1,5 +1,6 @@
 import { Amount, Token } from '@sushiswap/currency'
 import { LiquidityPosition } from 'features/LiquidityPosition'
+
 import { Auction } from './Auction'
 import { AuctionStatus } from './representations'
 import { RewardToken } from './RewardToken'
@@ -33,7 +34,6 @@ export class AuctionMarket {
       }
     })
     liquidityPositions
-      .filter((lp) => lp.balance.greaterThan(0)) // TODO: remove, replace with query. Query param min liquidity?
       .forEach((lp) => {
         this.addLpBalance(lp.pair.token0, lp.pair.token1, lp)
         this.addLpBalance(lp.pair.token1, lp.pair.token0, lp)

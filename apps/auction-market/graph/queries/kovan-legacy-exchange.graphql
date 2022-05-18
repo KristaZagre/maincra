@@ -1,6 +1,6 @@
 query KovanLiquidityPositions($id: ID!) {
- KOVAN_EXCHANGE_user(id: $id) {
-  liquidityPositions {
+  KOVAN_EXCHANGE_user(id: $id) {
+    liquidityPositions(where: { liquidityTokenBalance_gt: 0 }) {
       liquidityTokenBalance
       pair {
         id
@@ -21,7 +21,7 @@ query KovanLiquidityPositions($id: ID!) {
         }
       }
     }
-	}
+  }
 }
 
 query KovanExchangeTokens {
