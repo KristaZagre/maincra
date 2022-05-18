@@ -1,29 +1,23 @@
-import { AddressZero } from '@ethersproject/constants'
 import { ChainId } from '@sushiswap/chain'
-import { Amount, Token } from '@sushiswap/currency'
-import { JSBI } from '@sushiswap/math'
-import { BID_TOKEN_ADDRESS } from 'config'
-// import { Button } from '@sushiswap/ui'
-// import AuctionWaitingTable from 'features/AuctionWaitingTable'
 import BidModal from 'features/BidModal'
 import { Auction } from 'features/context/Auction'
 import { AuctionMarket } from 'features/context/AuctionMarket'
 import {
   AuctionRepresentation,
   LiquidityPositionRepresentation,
-  TokenRepresentation,
+  TokenRepresentation
 } from 'features/context/representations'
 import { getAuctions, getExchangeTokens, getLiquidityPositions } from 'graph/graph-client'
 import { useAuctionMakerBalance, useLiquidityPositionedPairs } from 'hooks/useAuctionMarketAssets'
-import { useBidTokenBalance } from 'hooks/useBidToken'
+import { useBidTokenAddress, useBidTokenBalance } from 'hooks/useBidToken'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FC, useMemo } from 'react'
 import useSWR, { SWRConfig } from 'swr'
-import { useAccount, useBalance, useNetwork } from 'wagmi'
-
+import { useAccount, useNetwork } from 'wagmi'
 import Layout from '../../components/Layout'
+
 
 const fetcher = (params: any) =>
   fetch(params)
@@ -73,18 +67,18 @@ const AuctionsPage: FC<{ chainId: number }> = ({ chainId }) => {
     `/auction-market/api/tokens/${chainId}`,
     fetcher,
   )
-
+  const bidTokenAddress = useBidTokenAddress()
   const bidTokenBalance = useBidTokenBalance()
 
   const auctions = useMemo(
     () => bidTokenBalance ? auctionRepresentations?.map((auction) => new Auction({ bidToken: bidTokenBalance.currency, auction })) : [],
     [auctionRepresentations, bidTokenBalance],
   )
-  const [balances, loading] = useAuctionMakerBalance(ChainId.KOVAN, tokenRepresentations)
+  const [balances, loading] = useAuctionMakerBalance(ChainId.KOVAN, bidTokenAddress, tokenRepresentations)
   const liquidityPositions = useLiquidityPositionedPairs(lpRepresentations)
   const auctionMarket = useMemo(() => {
     if (!isValidatingAuctions || !isValidatingLPs || !isValidatingTokens || !activeChain?.id) {
-      return new AuctionMarket({ chainId: activeChain?.id, auctions, liquidityPositions, balances })
+      return new AuctionMarket({ bidTokenAddress, chainId: activeChain?.id, auctions, liquidityPositions, balances })
     }
   }, [auctions, liquidityPositions, balances, isValidatingAuctions, isValidatingLPs, isValidatingTokens, activeChain])
 

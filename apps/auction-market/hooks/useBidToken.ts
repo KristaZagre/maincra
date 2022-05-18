@@ -1,26 +1,27 @@
 import { AddressZero } from '@ethersproject/constants'
 import { Amount, Token } from '@sushiswap/currency'
-import { BID_TOKEN_ADDRESS } from 'config'
+import { AUCTION_MAKER_ADDRESSES } from 'config'
 import { useMemo } from 'react'
-import { useAccount, useBalance, useNetwork } from 'wagmi'
+import { useAccount, useBalance, useContractRead, useNetwork, useToken } from 'wagmi'
 
-import { useToken } from './Tokens'
+import AUCTION_MAKER_ABI from '../abis/auction-maker.json'
 
 export function useBidTokenBalance(): Amount<Token> | undefined {
   const { activeChain } = useNetwork()
   const address = useAccount()
+  const bidTokenAddress = useBidTokenAddress()
   const bidTokenData = useBalance({
     addressOrName: address?.data ? address.data?.address : AddressZero,
-    token: activeChain?.id ? BID_TOKEN_ADDRESS[activeChain.id] : AddressZero,
+    token: bidTokenAddress ? bidTokenAddress : AddressZero,
     watch: true,
   })
 
   return useMemo(() => {
-    if (!bidTokenData.data || !activeChain) return
+    if (!bidTokenData.data || !activeChain || !bidTokenAddress) return
     return Amount.fromRawAmount(
       new Token({
         chainId: activeChain.id,
-        address: BID_TOKEN_ADDRESS[activeChain.id],
+        address: bidTokenAddress,
         decimals: bidTokenData.data.decimals,
         symbol: bidTokenData.data.symbol,
       }),
@@ -31,17 +32,28 @@ export function useBidTokenBalance(): Amount<Token> | undefined {
 
 export function useBidToken(): Token | undefined {
   const { activeChain } = useNetwork()
-
-  const token = useToken(activeChain?.id ? BID_TOKEN_ADDRESS[activeChain.id] : '')
+  const address = useBidTokenAddress()
+  const token = useToken({ address })
 
   return useMemo(() => {
-    if (!token || !activeChain) return
+    if (!token.data || !activeChain) return
     return new Token({
       chainId: activeChain.id,
-      address: token.address,
-      decimals: token.decimals,
-      symbol: token.symbol,
-      name: token.name,
+      address: token.data.address,
+      decimals: token.data.decimals,
+      symbol: token.data.symbol,
     })
   }, [token, activeChain])
+}
+
+export function useBidTokenAddress(): string | undefined {
+  const { activeChain } = useNetwork()
+  const { data } = useContractRead(
+    {
+      addressOrName: activeChain?.id ? AUCTION_MAKER_ADDRESSES[activeChain.id] : AddressZero,
+      contractInterface: AUCTION_MAKER_ABI,
+    },
+    'bidToken',
+  )
+  return data ? data.toString() : undefined
 }

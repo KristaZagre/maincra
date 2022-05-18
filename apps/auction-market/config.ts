@@ -7,10 +7,6 @@ export const AUCTION_MAKER_ADDRESSES: AddressMap = {
   [ChainId.GÖRLI]: '0x0000000000000000000000000000000000000000',
 }
 
-export const BID_TOKEN_ADDRESS: AddressMap = {
-  [ChainId.KOVAN]: '0x4f96fe3b7a6cf9725f59d353f723c1bdb64ca6aa', // DAI
-  [ChainId.GÖRLI]: '0x0000000000000000000000000000000000000000',
-}
 
 // TODO: Map with network config, minttl maxttl?
 

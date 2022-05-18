@@ -1,7 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 import { CurrencyAmount, Pair } from '@sushiswap/core-sdk'
 import { Amount, Token } from '@sushiswap/currency'
-import { AUCTION_MAKER_ADDRESSES, BID_TOKEN_ADDRESS } from 'config'
+import { AUCTION_MAKER_ADDRESSES } from 'config'
 import { parseUnits } from 'ethers/lib/utils'
 import {
   LiquidityPositionRepresentation,
@@ -10,17 +10,18 @@ import {
 import { LiquidityPosition } from 'features/LiquidityPosition'
 import { useMemo } from 'react'
 
-import { useTokenBalancesWithLoadingIndicator } from './Tokens'
+import { useTokenBalancesWithLoadingIndicator } from './useTokenBalances'
 
 const LP_DECIMALS = 18
 
 export function useAuctionMakerBalance(
   chainId: ChainId,
+  bidTokenAddress: string | undefined,
   tokenRepresentations: TokenRepresentation[] | undefined,
 ): [(Amount<Token> | undefined)[], boolean] {
   const tokens = useMemo(
     () =>
-      tokenRepresentations?.filter(token => token.id !== BID_TOKEN_ADDRESS[chainId])
+      tokenRepresentations?.filter(token => token.id !== bidTokenAddress)
       .map(
         (token) =>
           new Token({
@@ -83,13 +84,3 @@ export function useLiquidityPositionedPairs(
     [liquidityPositions],
   )
 }
-
-// const LP_DECIMALS = 18
-// const lpTokenValue0 = parseUnits(lp.liquidityTokenBalance, LP_DECIMALS)
-//   .mul(parseUnits(lp.pair.reserve0, LP_DECIMALS))
-//   .div(parseUnits(lp.pair.totalSupply, LP_DECIMALS))
-
-// const lpTokenValue1 = parseUnits(lp.liquidityTokenBalance, LP_DECIMALS)
-//   .mul(parseUnits(lp.pair.reserve1, LP_DECIMALS))
-//   .div(parseUnits(lp.pair.totalSupply, LP_DECIMALS))
-// console.log({ token0, lpTokenValue0, token1, lpTokenValue1 })

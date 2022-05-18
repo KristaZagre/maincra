@@ -7,7 +7,7 @@ import { PairRepresentation } from 'features/context/representations'
 import { useMultipleContractSingleData } from 'lib/hooks/multicall'
 import { useMemo } from 'react'
 
-import { useTokenBalancesWithLoadingIndicator } from './Tokens'
+import { useTokenBalancesWithLoadingIndicator } from './useTokenBalances'
 
 const PAIR_INTERFACE = new Interface(IUniswapV2PairABI)
 
