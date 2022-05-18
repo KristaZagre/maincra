@@ -33,7 +33,7 @@ export class AuctionMarket {
       }
     })
     liquidityPositions
-      .filter((lp) => lp.balance.greaterThan(0))
+      .filter((lp) => lp.balance.greaterThan(0)) // TODO: remove, replace with query. Query param min liquidity?
       .forEach((lp) => {
         this.addLpBalance(lp.pair.token0, lp.pair.token1, lp)
         this.addLpBalance(lp.pair.token1, lp.pair.token0, lp)
@@ -52,7 +52,7 @@ export class AuctionMarket {
   }
 
   private addLpBalance(token0: Token, token1: Token, lp: LiquidityPosition) {
-    if (!this.isLive(token0.address.toLowerCase()) || token0.address !== this.bidTokenAddress) {
+    if (!this.isLive(token0.address.toLowerCase()) && token0.address.toLowerCase() !== this.bidTokenAddress) {
       if (this.waiting[token0.address.toLowerCase()]) {
         this.waiting[token0.address.toLowerCase()].addLpBalance(
           lp.pair.getLiquidityValue(token0, lp.totalSupply, lp.balance) as unknown as Amount<Token>, // TODO: refactor ugly hack when Pair is extracted to monorepo

@@ -4,6 +4,7 @@ import { Auction } from 'features/context/Auction'
 import { AuctionMarket } from 'features/context/AuctionMarket'
 import {
   AuctionRepresentation,
+  AuctionStatus,
   LiquidityPositionRepresentation,
   TokenRepresentation
 } from 'features/context/representations'
@@ -91,13 +92,13 @@ const AuctionsPage: FC<{ chainId: number }> = ({ chainId }) => {
           <div>FINALIZED: {auctionMarket ? auctionMarket?.finalised.size : 0}</div>
         </div>
         <div>
-          <h1>Auctions</h1>
+          <h1>Live auctions</h1>
           {auctions?.length ? (
-            auctions.map((auction) => (
+            auctions.filter(auction => auction.status === AuctionStatus.ONGOING).map((auction) => (
               <div key={auction.id}>
                 {auction.status} {``}
-                {auction.amount.toExact()} {auction.amount.currency.symbol} {``}
-                {auction.leadingBid.amount.toExact()} {auction.token.symbol} {``}
+                {auction.amount.toExact()} {auction.token.symbol} {``}
+                {auction.leadingBid.amount.toExact()} {bidTokenBalance?.currency.symbol} {``}
                 {auction.remainingTime?.hours} {'H'} {auction.remainingTime?.minutes} {'M'}{' '}
                 {auction.remainingTime?.seconds} {'S'}
                 <Link href={`/users/${auction.leadingBid.user.id.toLowerCase()}/auctions?chainId=${chainId}`}>
@@ -108,7 +109,30 @@ const AuctionsPage: FC<{ chainId: number }> = ({ chainId }) => {
             ))
           ) : (
             <div>
-              <i>No Auctions found..</i>
+              <i>No live auctions..</i>
+            </div>
+          )}
+        </div>
+
+        <div>
+          <h1>Finished auctions</h1>
+          {auctions?.length ? (
+            auctions.filter(auction => auction.status === AuctionStatus.FINISHED).map((auction) => (
+              <div key={auction.id}>
+                {auction.status} {``}
+                {auction.amount.toExact()} {auction.token.symbol} {``}
+                {auction.leadingBid.amount.toExact()} {bidTokenBalance?.currency.symbol} {``}
+                {auction.remainingTime?.hours} {'H'} {auction.remainingTime?.minutes} {'M'}{' '}
+                {auction.remainingTime?.seconds} {'S'}
+                <Link href={`/users/${auction.leadingBid.user.id.toLowerCase()}/auctions?chainId=${chainId}`}>
+                  [User Auctions]
+                </Link>
+                <Link href={`/auction/${auction.id}?chainId=${chainId}`}>[Auction Page]</Link>
+              </div>
+            ))
+          ) : (
+            <div>
+              <i>No finished auctions..</i>
             </div>
           )}
         </div>
@@ -125,6 +149,7 @@ const AuctionsPage: FC<{ chainId: number }> = ({ chainId }) => {
                   <>
                     <div key={address} className="flex flex-row justify-between text-center">
                       <div>{token?.symbol}</div>
+                      <div>{token?.tokensToUnwind.size}</div>
                       <div>{token.getTotalBalance()}</div>
                     <BidModal bidToken={bidTokenBalance} rewardToken={token} />
                     </div>

@@ -51,7 +51,6 @@ const BidModal: FC<BidModalProps> = ({ bidToken, rewardToken }) => {
       actions.push(unwindTokenAction({ contract, token0: rewardToken.address, token1: token })),
     )
     actions.push(startBidAction({ contract, rewardTokenAddress: rewardToken.address, amount, to: account.address }))
-
     try {
       const data = await sendTransactionAsync({
         request: {

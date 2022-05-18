@@ -24,15 +24,14 @@ export class Auction {
     this.minTTL = new Date(Number(auction.minTTL) * 1000)
     this.maxTTL = new Date(Number(auction.maxTTL) * 1000)
     this.token = auction.token
-
-    if (auction.status === AuctionStatus.ONGOING) {
-      const endTime = this.minTTL < this.maxTTL ? this.minTTL.getTime() : this.maxTTL.getTime()
-      this.endDate = new Date(endTime * 1000)
+    const now = Date.now()
+    if (this.minTTL.getTime() > now && this.maxTTL.getTime() > now) {
+      this.endDate = this.minTTL < this.maxTTL ? this.minTTL : this.maxTTL
+      this.status = AuctionStatus.ONGOING
     } else {
       this.endDate = new Date(Number(auction.modifiedAtTimestamp) * 1000)
+      this.status = AuctionStatus.FINISHED
     }
-    const now = Date.now() * 1000
-    this.status = this.endDate.getTime() >= now ? AuctionStatus.ONGOING : AuctionStatus.FINISHED
     
     this.bids = auction.bids?.map((bid) => new Bid({ bid }))
   }

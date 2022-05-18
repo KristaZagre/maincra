@@ -55,5 +55,5 @@ export function useBidTokenAddress(): string | undefined {
     },
     'bidToken',
   )
-  return data ? data.toString() : undefined
+  return data ? data.toString().toLowerCase() : undefined
 }

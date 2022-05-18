@@ -20,7 +20,7 @@ export const getLiquidityPositions = async (chainId: string): Promise<LiquidityP
     await (
       await getBuiltGraphSDK().KovanLiquidityPositions({ id: AUCTION_MAKER_ADDRESSES[network] })
     ).KOVAN_EXCHANGE_user
-  )?.liquidityPositions as LiquidityPositionRepresentation[]
+  )?.liquidityPositions as LiquidityPositionRepresentation[] ?? []
 }
 
 export const getAuctions = async (chainId: string): Promise<AuctionRepresentation[]> => {

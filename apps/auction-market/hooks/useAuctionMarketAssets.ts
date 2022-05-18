@@ -45,7 +45,7 @@ export function useLiquidityPositionedPairs(
   //   // TODO: fix chainId, should it be passed in from queryParam or fetched from wagmi network hook?
   //   // The data is coming from subgraph initially, which is determined from queryparam
   return useMemo(
-    () =>
+    () => liquidityPositions ? 
       liquidityPositions?.map((lp) => {
         const lpToken = new Token({
           chainId: ChainId.KOVAN,
@@ -80,7 +80,7 @@ export function useLiquidityPositionedPairs(
           balance: CurrencyAmount.fromRawAmount(lpToken, parseUnits(lp.liquidityTokenBalance, LP_DECIMALS).toString()),
           totalSupply: CurrencyAmount.fromRawAmount(lpToken, parseUnits(lp.pair.totalSupply, LP_DECIMALS).toString()),
         }
-      }) ?? [],
+      }) : [],
     [liquidityPositions],
   )
 }
