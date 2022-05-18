@@ -1,5 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
-import BidModal from 'features/BidModal'
+import InitialBidModal from 'features/InitialBidModal'
 import { Auction } from 'features/context/Auction'
 import { AuctionMarket } from 'features/context/AuctionMarket'
 import {
@@ -151,7 +151,7 @@ const AuctionsPage: FC<{ chainId: number }> = ({ chainId }) => {
                       <div>{token?.symbol}</div>
                       <div>{token?.tokensToUnwind.size}</div>
                       <div>{token.getTotalBalance()}</div>
-                    <BidModal bidToken={bidTokenBalance} rewardToken={token} />
+                    <InitialBidModal bidToken={bidTokenBalance} rewardToken={token} />
                     </div>
                   </>
                 ))

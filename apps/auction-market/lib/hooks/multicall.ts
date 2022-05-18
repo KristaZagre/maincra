@@ -14,7 +14,6 @@ export function useMultipleContractSingleData(
   ...args: SkipFirstTwoParams<typeof multicall.hooks.useMultipleContractSingleData>
 ) {
   const { chainId, latestBlock } = useCallContext()
-  // console.log({chainId, latestBlock})
   // TODO: remove hardcoded chainId
   return multicall.hooks.useMultipleContractSingleData(42, latestBlock, ...args)
 }

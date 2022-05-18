@@ -14,7 +14,6 @@ interface Batch {
  */
 export const batchAction = <T = any>({ contract, actions = [] }: Batch): string | undefined => {
   const validated = actions.filter(Boolean)
-  console.log({validated})
   if (validated.length === 0) throw new Error('No valid actions')
 
   // Call action directly to save gas

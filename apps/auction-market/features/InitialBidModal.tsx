@@ -6,6 +6,7 @@ import { Amount, Token } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
 import { Button, Dialog, Dots, Typography } from '@sushiswap/ui'
 import { AUCTION_MAKER_ADDRESSES, MIN_BID_AMOUNT } from 'config'
+import { ApprovalState, useApproveCallback } from 'hooks/useApproveCallback'
 import { useAuctionMakerContract } from 'hooks/useAuctionMarketContract'
 // import { createToast } from 'components'
 import { ChangeEvent, FC, useCallback, useRef, useState } from 'react'
@@ -15,12 +16,12 @@ import AUCTION_MAKER_ABI from '../abis/auction-maker.json'
 import { batchAction, endAuctionAction, startBidAction, unwindTokenAction } from './actions'
 import { RewardToken } from './context/RewardToken'
 
-interface BidModalProps {
+interface InitialBidModalProps {
   bidToken?: Amount<Token>
   rewardToken: RewardToken
 }
 
-const BidModal: FC<BidModalProps> = ({ bidToken, rewardToken }) => {
+const InitialBidModal: FC<InitialBidModalProps> = ({ bidToken, rewardToken }) => {
   const [open, setOpen] = useState(false)
   const [amount, setAmount] = useState<Amount<Token>>()
   const inputRef = useRef<HTMLInputElement>(null)
@@ -35,6 +36,13 @@ const BidModal: FC<BidModalProps> = ({ bidToken, rewardToken }) => {
     'bids',
     { args: [rewardToken.address], enabled: false },
   )
+  const [tokenApprovalState, approveToken] = useApproveCallback(
+    open,
+    amount,
+    bidToken?.currency.address ?? undefined,
+  )
+  console.log({tokenApprovalState})
+  
   const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction()
 
   const bid = useCallback(async () => {
@@ -153,6 +161,23 @@ const BidModal: FC<BidModalProps> = ({ bidToken, rewardToken }) => {
                 className="p-0 pb-1 !border-b border-t-0 border-l-0 border-r-0 border-slate-700 placeholder:text-slate-500 bg-transparent 0 text-2xl !ring-0 !outline-none font-bold w-full"
               />
             </div>
+            <div>
+            {bidToken?.currency && tokenApprovalState !== ApprovalState.APPROVED && tokenApprovalState !== ApprovalState.UNKNOWN && (
+                  <Button
+                    variant="filled"
+                    color="blue"
+                    fullWidth
+                    disabled={tokenApprovalState === ApprovalState.PENDING}
+                    onClick={approveToken}
+                  >
+                    {tokenApprovalState === ApprovalState.PENDING ? (
+                      <Dots>Approving {bidToken?.currency?.symbol}</Dots>
+                    ) : (
+                      `Approve ${bidToken?.currency?.symbol}`
+                    )}
+                  </Button>
+                )}
+            </div>
             <div>Balance: {bidToken?.toExact()}</div>
             <Button
               variant="filled"
@@ -162,6 +187,7 @@ const BidModal: FC<BidModalProps> = ({ bidToken, rewardToken }) => {
                 isWritePending ||
                 !amount ||
                 !bidToken ||
+                tokenApprovalState !== ApprovalState.APPROVED ||
                 !amount.greaterThan(ZERO) ||
                 amount.greaterThan(JSBI.BigInt(bidToken.quotient))
               }
@@ -183,4 +209,4 @@ const BidModal: FC<BidModalProps> = ({ bidToken, rewardToken }) => {
     </>
   )
 }
-export default BidModal
+export default InitialBidModal
