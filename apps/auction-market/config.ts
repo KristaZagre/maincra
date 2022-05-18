@@ -3,7 +3,7 @@ import { AddressMap } from '@sushiswap/core-sdk'
 
 
 export const AUCTION_MAKER_ADDRESSES: AddressMap = {
-  [ChainId.KOVAN]: '0xbdad049d6f60ba477fc468252ecd91bc722be6c9',
+  [ChainId.KOVAN]: '0x5300c2194eae4c5765a39b3c0877a40ce66c5539',
   [ChainId.GÖRLI]: '0x0000000000000000000000000000000000000000',
 }
 

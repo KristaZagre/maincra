@@ -21,7 +21,7 @@ export function useAuctionMakerBalance(
 ): [(Amount<Token> | undefined)[], boolean] {
   const tokens = useMemo(
     () =>
-      tokenRepresentations?.filter(token => token.id !== bidTokenAddress)
+      tokenRepresentations?.filter(token => token.id.toLowerCase() !== bidTokenAddress?.toLowerCase())
       .map(
         (token) =>
           new Token({
