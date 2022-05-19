@@ -6,64 +6,49 @@ import { Amount, Token } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
 import { Button, Dialog, Dots, Typography } from '@sushiswap/ui'
 import { createToast } from 'components/Toast'
-import { AUCTION_MAKER_ADDRESSES, MIN_BID_AMOUNT } from 'config'
+import { AUCTION_MAKER_ADDRESSES } from 'config'
 import { ApprovalState, useApproveCallback } from 'hooks/useApproveCallback'
 import { useAuctionMakerContract } from 'hooks/useAuctionMarketContract'
-import { ChangeEvent, FC, useCallback, useRef, useState } from 'react'
-import { useAccount, useContractRead, useNetwork, useSendTransaction } from 'wagmi'
+import { ChangeEvent, FC, useCallback, useMemo, useRef, useState } from 'react'
+import { useAccount, useContractWrite, useNetwork } from 'wagmi'
 
 import AUCTION_MAKER_ABI from '../abis/auction-maker.json'
-import { batchAction, endAuctionAction, startBidAction, unwindTokenAction } from './actions'
-import { RewardToken } from './context/RewardToken'
+import { Auction } from './context/Auction'
 
-interface InitialBidModalProps {
+interface BidModalProps {
   bidToken?: Amount<Token>
-  rewardToken: RewardToken
+  auction?: Auction
 }
 
-const InitialBidModal: FC<InitialBidModalProps> = ({  bidToken, rewardToken }) => {
+const BidModal: FC<BidModalProps> = ({ auction, bidToken }) => {
   const [open, setOpen] = useState(false)
   const [amount, setAmount] = useState<Amount<Token>>()
   const inputRef = useRef<HTMLInputElement>(null)
   const { activeChain } = useNetwork()
   const { data: account } = useAccount()
   const contract = useAuctionMakerContract()
-  const { refetch: fetchStartedAuction } = useContractRead(
+
+  const { writeAsync: writePlaceBid, isLoading: isPlacingBid } = useContractWrite(
     {
       addressOrName: activeChain?.id ? AUCTION_MAKER_ADDRESSES[activeChain.id] : AddressZero,
       contractInterface: AUCTION_MAKER_ABI,
     },
-    'bids',
-    { args: [rewardToken.address], enabled: false },
+    'placeBid',
+    {
+      onSuccess() {
+        setOpen(false)
+      },
+    },
   )
-
- 
   const [tokenApprovalState, approveToken] = useApproveCallback(open, amount, bidToken?.currency.address ?? undefined)
 
-  const { sendTransactionAsync, isLoading: isCreatingInitialBid } = useSendTransaction()
+  const minimumBid = useMemo( () => (auction?.leadingBid.amount), [auction])
+  console.log({minimumBid})
 
-  const placeInitialbid = useCallback(async () => {
-    const auctionData = await fetchStartedAuction()
-    if (!amount || !contract || !account?.address || !rewardToken || !auctionData.data) return
-
-    const actions: string[] = []
-
-    if (auctionData.data[0] != AddressZero) {
-      actions.push(endAuctionAction({ contract, rewardTokenAddress: rewardToken.address }))
-    }
-
-    rewardToken.tokensToUnwind.forEach((token) =>
-      actions.push(unwindTokenAction({ contract, token0: rewardToken.address, token1: token })),
-    )
-    actions.push(startBidAction({ contract, rewardTokenAddress: rewardToken.address, amount, to: account.address }))
+  const placeBid = useCallback(async () => {
+    if (!amount || !contract || !account?.address) return
     try {
-      const data = await sendTransactionAsync({
-        request: {
-          from: account?.address,
-          to: contract?.address,
-          data: batchAction({ contract, actions }),
-        },
-      })
+      const data = await writePlaceBid({args: [auction?.token.id, amount.quotient.toString(), account.address]})
 
       createToast({
         title: 'Place bid',
@@ -75,8 +60,7 @@ const InitialBidModal: FC<InitialBidModalProps> = ({  bidToken, rewardToken }) =
     }
 
     setAmount(undefined)
-  }, [amount, account?.address, contract, rewardToken, sendTransactionAsync, fetchStartedAuction])
-
+  }, [amount, account?.address, contract, writePlaceBid, auction])
 
   const onInput = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
@@ -104,12 +88,12 @@ const InitialBidModal: FC<InitialBidModalProps> = ({  bidToken, rewardToken }) =
           setOpen(true)
         }}
       >
-        Start
+        Bid
       </Button>
       <Dialog open={open} onClose={() => setOpen(false)}>
         <Dialog.Content className="space-y-4 !max-w-sm">
           <Dialog.Header title="Make Bid" onClose={() => setOpen(false)} />
-          This will be the first bid to kickstart the auction!
+          {auction ? `${auction.remainingTime?.hours} H ${auction.remainingTime?.minutes} M ${auction.remainingTime?.seconds} S` : 'This will be the first bid to kickstart the auction!'}
 
           <div className="flex justify-center !-mb-8 !mt-3 relative">
             <div className="p-1 bg-slate-800 border-[3px] border-slate-700 rounded-2xl">
@@ -122,12 +106,12 @@ const InitialBidModal: FC<InitialBidModalProps> = ({  bidToken, rewardToken }) =
           >
             <div>
               {`You must bid at least 
-            ${bidToken ? Amount.fromRawAmount(bidToken?.currency, MIN_BID_AMOUNT).toExact() : ''} ${
+            ${minimumBid ? minimumBid.toExact() : ''} ${
                 bidToken?.currency.symbol
               }`}
               .
             </div>
-            <div>Reward amount: {`${rewardToken.getTotalBalance()} ${rewardToken.symbol}`}.</div>
+            <div>Reward amount: {`${auction?.amount.toExact()} ${auction?.token.symbol}`}.</div>
             <div className="flex justify-between gap-3">
               <Typography variant="sm" weight={400}>
                 Bid Amount
@@ -184,20 +168,20 @@ const InitialBidModal: FC<InitialBidModalProps> = ({  bidToken, rewardToken }) =
               color="gradient"
               fullWidth
               disabled={
-                isCreatingInitialBid ||
                 !amount ||
+                isPlacingBid ||
                 !bidToken ||
                 tokenApprovalState !== ApprovalState.APPROVED ||
                 !amount.greaterThan(ZERO) ||
                 amount.greaterThan(JSBI.BigInt(bidToken.quotient))
               }
-              onClick={placeInitialbid}
+              onClick={ placeBid }
             >
               {!amount?.greaterThan(ZERO) ? (
                 'Enter an amount'
               ) : bidToken && amount.greaterThan(bidToken) ? (
                 'Not enough balance'
-              ) : isCreatingInitialBid ? (
+              ) : isPlacingBid ? (
                 <Dots>Confirming Bid</Dots>
               ) : (
                 'Bid'
@@ -209,4 +193,4 @@ const InitialBidModal: FC<InitialBidModalProps> = ({  bidToken, rewardToken }) =
     </>
   )
 }
-export default InitialBidModal
+export default BidModal

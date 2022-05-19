@@ -1,4 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
+import BidModal from 'features/BidModal'
 import { Auction } from 'features/context/Auction'
 import { AuctionMarket } from 'features/context/AuctionMarket'
 import {
@@ -103,7 +104,6 @@ const AuctionsPage: FC<{ chainId: number }> = ({ chainId }) => {
           <div>FINALIZED: {auctionMarket ? auctionMarket?.finalised.size : 0}</div>
         </div>
 
-
         <div>
           <h1>Live auctions</h1>
           {auctions?.length ? (
@@ -117,6 +117,7 @@ const AuctionsPage: FC<{ chainId: number }> = ({ chainId }) => {
                   {auction.remainingTime?.hours} {'H'} {auction.remainingTime?.minutes} {'M'}{' '}
                   {auction.remainingTime?.seconds} {'S'}
                   <Link href={`/auction/${auction.id}?chainId=${chainId}`}>[Auction Page]</Link>
+                  <BidModal bidToken={bidTokenBalance} auction={auction} />
                 </div>
               ))
           ) : (
