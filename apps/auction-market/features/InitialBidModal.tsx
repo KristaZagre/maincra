@@ -9,7 +9,7 @@ import { createToast } from 'components/Toast'
 import { AUCTION_MAKER_ADDRESSES, MIN_BID_AMOUNT } from 'config'
 import { ApprovalState, useApproveCallback } from 'hooks/useApproveCallback'
 import { useAuctionMakerContract } from 'hooks/useAuctionMarketContract'
-import { ChangeEvent, FC, useCallback, useRef, useState } from 'react'
+import { ChangeEvent, FC, useCallback, useMemo, useRef, useState } from 'react'
 import { useAccount, useContractRead, useNetwork, useSendTransaction } from 'wagmi'
 
 import AUCTION_MAKER_ABI from '../abis/auction-maker.json'
@@ -21,7 +21,7 @@ interface InitialBidModalProps {
   rewardToken: RewardToken
 }
 
-const InitialBidModal: FC<InitialBidModalProps> = ({  bidToken, rewardToken }) => {
+const InitialBidModal: FC<InitialBidModalProps> = ({ bidToken, rewardToken }) => {
   const [open, setOpen] = useState(false)
   const [amount, setAmount] = useState<Amount<Token>>()
   const inputRef = useRef<HTMLInputElement>(null)
@@ -37,10 +37,14 @@ const InitialBidModal: FC<InitialBidModalProps> = ({  bidToken, rewardToken }) =
     { args: [rewardToken.address], enabled: false },
   )
 
- 
   const [tokenApprovalState, approveToken] = useApproveCallback(open, amount, bidToken?.currency.address ?? undefined)
 
   const { sendTransactionAsync, isLoading: isCreatingInitialBid } = useSendTransaction()
+
+  const minimumBid = useMemo(
+    () => (bidToken ? Amount.fromRawAmount(bidToken?.currency, MIN_BID_AMOUNT) : undefined),
+    [bidToken],
+  )
 
   const placeInitialbid = useCallback(async () => {
     const auctionData = await fetchStartedAuction()
@@ -77,7 +81,6 @@ const InitialBidModal: FC<InitialBidModalProps> = ({  bidToken, rewardToken }) =
     setAmount(undefined)
   }, [amount, account?.address, contract, rewardToken, sendTransactionAsync, fetchStartedAuction])
 
-
   const onInput = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
       if (isNaN(+e.target.value) || +e.target.value <= 0 || !bidToken) {
@@ -110,7 +113,6 @@ const InitialBidModal: FC<InitialBidModalProps> = ({  bidToken, rewardToken }) =
         <Dialog.Content className="space-y-4 !max-w-sm">
           <Dialog.Header title="Make Bid" onClose={() => setOpen(false)} />
           This will be the first bid to kickstart the auction!
-
           <div className="flex justify-center !-mb-8 !mt-3 relative">
             <div className="p-1 bg-slate-800 border-[3px] border-slate-700 rounded-2xl">
               <ArrowSmDownIcon width={24} height={24} className="text-slate-200" />
@@ -132,17 +134,6 @@ const InitialBidModal: FC<InitialBidModalProps> = ({  bidToken, rewardToken }) =
               <Typography variant="sm" weight={400}>
                 Bid Amount
               </Typography>
-              <Typography
-                weight={700}
-                variant="sm"
-                className="text-slate-200"
-                onClick={() => {
-                  // if (stream?.token) setAmount(balance)
-                  // setAmount(JSBI.BigInt(bidToken.data?.value))
-                }}
-              >
-                {/* {balance ? balance.toSignificant(6) : ''} {stream?.token.symbol} */}
-              </Typography>
             </div>
             <div className="flex mb-3">
               <input
@@ -158,6 +149,23 @@ const InitialBidModal: FC<InitialBidModalProps> = ({  bidToken, rewardToken }) =
                 pattern="^[0-9]*[.,]?[0-9]*$"
                 className="p-0 pb-1 !border-b border-t-0 border-l-0 border-r-0 border-slate-700 placeholder:text-slate-500 bg-transparent 0 text-2xl !ring-0 !outline-none font-bold w-full"
               />
+              <Typography
+                weight={700}
+                variant="sm"
+                className="text-slate-200"
+                onClick={() => {
+                  if (bidToken?.currency && minimumBid) {
+                    setAmount(
+                      Amount.fromRawAmount(
+                        bidToken.currency,
+                        JSBI.BigInt(parseUnits(minimumBid.toExact(), bidToken.currency.decimals).toString()),
+                      ),
+                    )
+                  }
+                }}
+              >
+                USE MINIMUM
+              </Typography>
             </div>
             <div>
               {bidToken?.currency &&

@@ -55,7 +55,6 @@ const _AuctionsPage: FC<InferGetServerSidePropsType<typeof getServerSideProps>> 
 const AuctionsPage: FC<{ chainId: number }> = ({ chainId }) => {
   const { activeChain } = useNetwork()
 
-
   const { data: auctionRepresentations, isValidating: isValidatingAuctions } = useSWR<AuctionRepresentation[]>(
     `/auction-market/api/auctions/${chainId}`,
     fetcher,

@@ -7,6 +7,7 @@ import { JSBI } from '@sushiswap/math'
 import { Button, Dialog, Dots, Typography } from '@sushiswap/ui'
 import { createToast } from 'components/Toast'
 import { AUCTION_MAKER_ADDRESSES } from 'config'
+import { calculateMinimumBid } from 'functions/calculateMinimumBid'
 import { ApprovalState, useApproveCallback } from 'hooks/useApproveCallback'
 import { useAuctionMakerContract } from 'hooks/useAuctionMarketContract'
 import { ChangeEvent, FC, useCallback, useMemo, useRef, useState } from 'react'
@@ -42,12 +43,19 @@ const BidModal: FC<BidModalProps> = ({ auction, bidToken }) => {
   )
   const [tokenApprovalState, approveToken] = useApproveCallback(open, amount, bidToken?.currency.address ?? undefined)
 
-  const minimumBid = useMemo( () => (auction?.bidAmount), [auction])
+  const minimumBid = useMemo(
+    () => (auction?.bidAmount ? calculateMinimumBid(auction?.bidAmount) : undefined),
+    [auction],
+  )
 
   const placeBid = useCallback(async () => {
     if (!amount || !contract || !account?.address) return
     try {
-      const data = await writePlaceBid({args: [auction?.rewardAmount.currency.address, amount.quotient.toString(), account.address]})
+      const data = await writePlaceBid({
+        args: [auction?.rewardAmount.currency.address, amount.quotient.toString(), account.address],
+      })
+    
+      console.log({data})
 
       createToast({
         title: 'Place bid',
@@ -56,6 +64,7 @@ const BidModal: FC<BidModalProps> = ({ auction, bidToken }) => {
       })
     } catch (e: any) {
       // setError(e.message)
+      console.log({e})
     }
 
     setAmount(undefined)
@@ -63,7 +72,7 @@ const BidModal: FC<BidModalProps> = ({ auction, bidToken }) => {
 
   const onInput = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
-      if (isNaN(+e.target.value) || +e.target.value <= 0 || !bidToken) {
+      if (isNaN(+e.target.value) || +e.target.value < 0 || !bidToken) {
         setAmount(undefined)
       } else {
         setAmount(
@@ -92,7 +101,9 @@ const BidModal: FC<BidModalProps> = ({ auction, bidToken }) => {
       <Dialog open={open} onClose={() => setOpen(false)}>
         <Dialog.Content className="space-y-4 !max-w-sm">
           <Dialog.Header title="Make Bid" onClose={() => setOpen(false)} />
-          {auction ? `${auction.remainingTime?.hours} H ${auction.remainingTime?.minutes} M ${auction.remainingTime?.seconds} S` : 'This will be the first bid to kickstart the auction!'}
+          {auction
+            ? `${auction.remainingTime?.hours} H ${auction.remainingTime?.minutes} M ${auction.remainingTime?.seconds} S`
+            : 'This will be the first bid to kickstart the auction!'}
 
           <div className="flex justify-center !-mb-8 !mt-3 relative">
             <div className="p-1 bg-slate-800 border-[3px] border-slate-700 rounded-2xl">
@@ -105,26 +116,13 @@ const BidModal: FC<BidModalProps> = ({ auction, bidToken }) => {
           >
             <div>
               {`You must bid at least 
-            ${minimumBid ? minimumBid.toExact() : ''} ${
-                bidToken?.currency.symbol
-              }`}
+            ${minimumBid ? minimumBid.toExact() : ''} ${bidToken?.currency.symbol}`}
               .
             </div>
             <div>Reward amount: {`${auction?.rewardAmount.toExact()} ${auction?.rewardAmount.currency.symbol}`}.</div>
             <div className="flex justify-between gap-3">
               <Typography variant="sm" weight={400}>
                 Bid Amount
-              </Typography>
-              <Typography
-                weight={700}
-                variant="sm"
-                className="text-slate-200"
-                onClick={() => {
-                  // if (stream?.token) setAmount(balance)
-                  // setAmount(JSBI.BigInt(bidToken.data?.value))
-                }}
-              >
-                {/* {balance ? balance.toSignificant(6) : ''} {stream?.token.symbol} */}
               </Typography>
             </div>
             <div className="flex mb-3">
@@ -141,6 +139,23 @@ const BidModal: FC<BidModalProps> = ({ auction, bidToken }) => {
                 pattern="^[0-9]*[.,]?[0-9]*$"
                 className="p-0 pb-1 !border-b border-t-0 border-l-0 border-r-0 border-slate-700 placeholder:text-slate-500 bg-transparent 0 text-2xl !ring-0 !outline-none font-bold w-full"
               />
+              <Typography
+                weight={700}
+                variant="sm"
+                className="text-slate-200"
+                onClick={() => {
+                  if (bidToken?.currency && minimumBid) {
+                    setAmount(
+                      Amount.fromRawAmount(
+                        bidToken.currency,
+                        JSBI.BigInt(parseUnits(minimumBid.toExact(), bidToken.currency.decimals).toString()),
+                      ),
+                    )
+                  }
+                }}
+              >
+                USE MINIMUM
+              </Typography>
             </div>
             <div>
               {bidToken?.currency &&
@@ -174,7 +189,7 @@ const BidModal: FC<BidModalProps> = ({ auction, bidToken }) => {
                 !amount.greaterThan(ZERO) ||
                 amount.greaterThan(JSBI.BigInt(bidToken.quotient))
               }
-              onClick={ placeBid }
+              onClick={placeBid}
             >
               {!amount?.greaterThan(ZERO) ? (
                 'Enter an amount'
