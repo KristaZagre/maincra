@@ -84,7 +84,11 @@ const AuctionPage: FC<{ chainId: number; id: string }> = ({ chainId, id }) => {
       <div>
         <h2>Bids</h2>
         {bids?.length ? (
-          bids.map((bid) => <div key={bid.id}>{`${bid.amount.toExact()} ${bid.timestamp} ${bid.user?.id}`}</div>)
+          bids.map((bid) => 
+          <div key={bid.id}>
+            {`${bid.user?.id} ${bid.amount.toExact()} ${bid.amount.currency.symbol} ${bid.timestamp.toDateString()} `}
+            </div>
+          )
         ) : (
           <div>
             <i>No bids found..</i>

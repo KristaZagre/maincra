@@ -1,4 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
+import AuctionTable from 'features/AuctionTable'
 import BidModal from 'features/BidModal'
 import { Auction } from 'features/context/Auction'
 import { AuctionMarket } from 'features/context/AuctionMarket'
@@ -125,7 +126,7 @@ const AuctionsPage: FC<{ chainId: number }> = ({ chainId }) => {
             </div>
           )}
         </div>
-
+            <AuctionTable auctions={auctions} placeholder={'Loading'} loading={isValidatingAuctions}/>
         <div>
           <h1>Finished auctions</h1>
           {auctions?.length ? (
