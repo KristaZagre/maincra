@@ -3,7 +3,13 @@ query KovanAuctions {
     auctions(first: 1, orderBy: createdAtBlock, orderDirection: desc) {
       __typename
       id
-      token {
+      bidToken {
+        id
+        name
+        symbol
+        decimals
+      }
+      rewardToken {
         id
         name
         symbol
@@ -14,21 +20,6 @@ query KovanAuctions {
       status
       bidAmount
       rewardAmount
-      leadingBid {
-        id
-        user {
-          id
-        }
-        token {
-          id
-          name
-          symbol
-          decimals
-        }
-        amount
-        createdAtBlock
-        createdAtTimestamp
-      }
       createdAtBlock
       createdAtTimestamp
       modifiedAtBlock
@@ -41,7 +32,13 @@ query KovanAuctions {
 query KovanAuction($id: ID!) {
   KOVAN_AUCTION_auction(id: $id) {
     id
-    token {
+    bidToken {
+      id
+      name
+      symbol
+      decimals
+    }
+    rewardToken {
       id
       name
       symbol
@@ -52,7 +49,13 @@ query KovanAuction($id: ID!) {
       user {
         id
       }
-      token {
+      bidToken {
+        id
+        name
+        symbol
+        decimals
+      }
+      rewardToken {
         id
         name
         symbol
@@ -81,7 +84,13 @@ query KovanBids($auctionId: ID!) {
       user {
         id
       }
-      token {
+      bidToken {
+        id
+        name
+        symbol
+        decimals
+      }
+      rewardToken {
         id
         name
         symbol
@@ -99,7 +108,13 @@ query KovanUserAuctions($id: ID!) {
     auctions {
       auction {
         id
-        token {
+        bidToken {
+          id
+          name
+          symbol
+          decimals
+        }
+        rewardToken {
           id
           name
           symbol
@@ -113,7 +128,13 @@ query KovanUserAuctions($id: ID!) {
           amount
           createdAtBlock
           createdAtTimestamp
-          token {
+          bidToken {
+            id
+            name
+            symbol
+            decimals
+          }
+          rewardToken {
             id
             name
             symbol
@@ -134,7 +155,13 @@ query KovanUserAuctions($id: ID!) {
           user {
             id
           }
-          token {
+          bidToken {
+            id
+            name
+            symbol
+            decimals
+          }
+          rewardToken {
             id
             name
             symbol

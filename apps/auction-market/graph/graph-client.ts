@@ -29,7 +29,9 @@ export const getAuctions = async (chainId: string): Promise<AuctionRepresentatio
   return (await await getBuiltGraphSDK().KovanAuctions()).KOVAN_AUCTION_tokens.reduce<AuctionRepresentation[]>(
     (acc, cur) => {
       if (cur.auctions) {
-        acc.push(cur.auctions[0])
+        if (cur.auctions[0]) {
+          acc.push(cur.auctions[0])
+        }
       }
       return acc
     },

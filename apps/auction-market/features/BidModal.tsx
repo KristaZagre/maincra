@@ -42,13 +42,12 @@ const BidModal: FC<BidModalProps> = ({ auction, bidToken }) => {
   )
   const [tokenApprovalState, approveToken] = useApproveCallback(open, amount, bidToken?.currency.address ?? undefined)
 
-  const minimumBid = useMemo( () => (auction?.leadingBid.amount), [auction])
-  console.log({minimumBid})
+  const minimumBid = useMemo( () => (auction?.bidAmount), [auction])
 
   const placeBid = useCallback(async () => {
     if (!amount || !contract || !account?.address) return
     try {
-      const data = await writePlaceBid({args: [auction?.token.id, amount.quotient.toString(), account.address]})
+      const data = await writePlaceBid({args: [auction?.rewardAmount.currency.address, amount.quotient.toString(), account.address]})
 
       createToast({
         title: 'Place bid',
@@ -111,7 +110,7 @@ const BidModal: FC<BidModalProps> = ({ auction, bidToken }) => {
               }`}
               .
             </div>
-            <div>Reward amount: {`${auction?.amount.toExact()} ${auction?.token.symbol}`}.</div>
+            <div>Reward amount: {`${auction?.rewardAmount.toExact()} ${auction?.rewardAmount.currency.symbol}`}.</div>
             <div className="flex justify-between gap-3">
               <Typography variant="sm" weight={400}>
                 Bid Amount

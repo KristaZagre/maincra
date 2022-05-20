@@ -15,10 +15,10 @@ export class Bid {
     this.amount = Amount.fromRawAmount(
       new Token({
         chainId: ChainId.KOVAN,
-        address: bid.token.id,
-        decimals: Number(bid.token.decimals),
-        symbol: bid.token.symbol,
-        name: bid.token.name,
+        address: bid.bidToken.id,
+        decimals: Number(bid.bidToken.decimals),
+        symbol: bid.bidToken.symbol,
+        name: bid.bidToken.name,
       }),
        bid.amount,
     )

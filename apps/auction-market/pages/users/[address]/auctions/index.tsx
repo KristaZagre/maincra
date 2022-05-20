@@ -1,11 +1,11 @@
 import { Auction } from 'features/context/Auction'
 import { AuctionRepresentation } from 'features/context/representations'
 import { getUserAuctions } from 'graph/graph-client'
-import { useBidToken } from 'hooks/useBidToken'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
 import { FC, useMemo } from 'react'
 import useSWR, { SWRConfig } from 'swr'
+import { useNetwork } from 'wagmi'
 
 import Layout from '../../../../components/Layout'
 
@@ -46,11 +46,11 @@ export const UserAuctionsPage: FC<{ chainId: number; address: string }> = ({ cha
     `/auction-market/api/user/${address}/auctions/${chainId}`,
     fetcher,
   )
-  const bidToken = useBidToken()
+  const { activeChain } = useNetwork()
 
   const auctions = useMemo(
-    () => (bidToken ? auctionRepresentations?.map((auction) => new Auction({ bidToken, auction })) : []),
-    [auctionRepresentations, bidToken],
+    () => (activeChain?.id ? auctionRepresentations?.map((auction) => new Auction({ chainId: activeChain.id, auction })) : []),
+    [auctionRepresentations, activeChain],
   )
   return (
     <Layout>
@@ -59,11 +59,11 @@ export const UserAuctionsPage: FC<{ chainId: number; address: string }> = ({ cha
       {auctions?.length ? (
         auctions.map((auction) => (
           <div key={auction.id}>
-            {auction.startDate.toISOString().substring(0, 10)} {``}
-            {auction.token.name} {``}
-            {auction.amount.toString()} {auction.token.symbol} {``}
-            {auction.bids ? auction.bids[0].amount.toString() : ''} {auction.token.symbol} {``}
-            {auction.leadingBid.amount.toString()} {auction.token.symbol} {``}
+            {auction.status} {``}
+            {auction.rewardAmount.toExact()} {auction.rewardAmount.currency.symbol} {``}
+            {auction.bidAmount.toExact()} {auction.bidAmount.currency.symbol} {``}
+            {auction.startDate.toLocaleDateString()} {``}
+            {auction.endDate?.toLocaleDateString()} {``}
             {auction.remainingTime?.hours} {'H'} {auction.remainingTime?.minutes} {'M'} {auction.remainingTime?.seconds}{' '}
             {'S'}
           </div>

@@ -17,7 +17,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FC, useMemo } from 'react'
 import useSWR, { SWRConfig } from 'swr'
-import { useAccount, useNetwork } from 'wagmi'
+import { useNetwork } from 'wagmi'
 
 import Layout from '../../components/Layout'
 
@@ -54,7 +54,7 @@ const _AuctionsPage: FC<InferGetServerSidePropsType<typeof getServerSideProps>> 
 }
 const AuctionsPage: FC<{ chainId: number }> = ({ chainId }) => {
   const { activeChain } = useNetwork()
-  const address = useAccount()
+
 
   const { data: auctionRepresentations, isValidating: isValidatingAuctions } = useSWR<AuctionRepresentation[]>(
     `/auction-market/api/auctions/${chainId}`,
@@ -73,10 +73,10 @@ const AuctionsPage: FC<{ chainId: number }> = ({ chainId }) => {
 
   const auctions = useMemo(
     () =>
-      bidTokenBalance
-        ? auctionRepresentations?.map((auction) => new Auction({ bidToken: bidTokenBalance.currency, auction }))
+      activeChain?.id
+        ? auctionRepresentations?.map((auction) => new Auction({chainId: activeChain.id, auction }))
         : [],
-    [auctionRepresentations, bidTokenBalance],
+    [auctionRepresentations, activeChain],
   )
   const [balances, loading] = useAuctionMakerBalance(ChainId.KOVAN, bidTokenAddress, tokenRepresentations)
   const liquidityPositions = useLiquidityPositionedPairs(lpRepresentations)
@@ -112,8 +112,8 @@ const AuctionsPage: FC<{ chainId: number }> = ({ chainId }) => {
               .map((auction) => (
                 <div key={auction.id}>
                   {auction.status} {``}
-                  {auction.amount.toExact()} {auction.token.symbol} {``}
-                  {auction.leadingBid.amount.toExact()} {bidTokenBalance?.currency.symbol} {``}
+                  {auction.rewardAmount.toExact()} {auction.rewardAmount.currency.symbol} {``}
+                  {auction.bidAmount.toExact()} {auction.bidAmount.currency.symbol} {``}
                   {auction.remainingTime?.hours} {'H'} {auction.remainingTime?.minutes} {'M'}{' '}
                   {auction.remainingTime?.seconds} {'S'}
                   <Link href={`/auction/${auction.id}?chainId=${chainId}`}>[Auction Page]</Link>
@@ -135,8 +135,8 @@ const AuctionsPage: FC<{ chainId: number }> = ({ chainId }) => {
               .map((auction) => (
                 <div key={auction.id}>
                   {auction.status} {``}
-                  {auction.amount.toExact()} {auction.token.symbol} {``}
-                  {auction.leadingBid.amount.toExact()} {bidTokenBalance?.currency.symbol} {``}
+                  {auction.rewardAmount.toExact()} {auction.rewardAmount.currency.symbol} {``}
+                  {auction.bidAmount.toExact()} {bidTokenBalance?.currency.symbol} {``}
                   {auction.remainingTime?.hours} {'H'} {auction.remainingTime?.minutes} {'M'}{' '}
                   {auction.remainingTime?.seconds} {'S'}
                   <Link href={`/auction/${auction.id}?chainId=${chainId}`}>[Auction Page]</Link>

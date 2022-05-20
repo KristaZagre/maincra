@@ -1,12 +1,13 @@
 export interface AuctionRepresentation {
   id: string
-  token: TokenRepresentation
+  rewardToken: TokenRepresentation
+  bidToken: TokenRepresentation
   minTTL: string
   maxTTL: string
   status: string
   bidAmount: string
   rewardAmount: string
-  leadingBid: BidRepresentation
+  leadingBid?: BidRepresentation
   createdAtBlock: string
   createdAtTimestamp: string
   modifiedAtBlock: string
@@ -43,7 +44,8 @@ export interface BidRepresentation {
   id: string
   amount: string
   user: UserRepresentation
-  token: TokenRepresentation
+  rewardToken: TokenRepresentation
+  bidToken: TokenRepresentation
   createdAtBlock: string
   createdAtTimestamp: string
 }

@@ -28,9 +28,9 @@ export class AuctionMarket {
     this.bidTokenAddress = bidTokenAddress
     auctions?.forEach((auction) => {
       if (auction.status === AuctionStatus.FINISHED) {
-        this.finalised.add(auction.token.id.toLowerCase())
+        this.finalised.add(auction.rewardAmount.currency.address.toLowerCase())
       } else {
-        this.live.add(auction.token.id.toLowerCase())
+        this.live.add(auction.rewardAmount.currency.address.toLowerCase())
       }
     })
     liquidityPositions

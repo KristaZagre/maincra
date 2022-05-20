@@ -7,6 +7,7 @@ import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
 import { FC, useMemo } from 'react'
 import useSWR, { SWRConfig } from 'swr'
+import { useNetwork } from 'wagmi'
 
 import Layout from '../../components/Layout'
 
@@ -53,13 +54,14 @@ const AuctionPage: FC<{ chainId: number; id: string }> = ({ chainId, id }) => {
     fetcher,
   )
   const bidToken = useBidToken()
+  const { activeChain } = useNetwork()
 
   const auction = useMemo(
     () =>
-      auctionRepresentation && bidToken
-        ? new Auction({ bidToken, auction: auctionRepresentation })
+      auctionRepresentation && activeChain?.id
+        ? new Auction({ chainId: activeChain.id, auction: auctionRepresentation })
         : undefined,
-    [auctionRepresentation, bidToken],
+    [auctionRepresentation, activeChain],
   )
   const bids = useMemo(() => bidRepresentations?.map((bid) => new Bid({ bid })), [bidRepresentations])
 
@@ -70,8 +72,8 @@ const AuctionPage: FC<{ chainId: number; id: string }> = ({ chainId, id }) => {
         {auction ? (
           <div key={auction.id}>
             {auction.status} {``}
-            {auction.amount.toExact()} {auction.amount.currency.symbol}{``}
-            {auction.leadingBid.amount.toExact()} {auction.leadingBid.amount.currency.symbol}{``}
+            {auction.rewardAmount.toExact()} {auction.rewardAmount.currency.symbol} {``}
+            {auction.bidAmount.toExact()} {auction.bidAmount.currency.symbol} {``}
             {auction.startDate.toLocaleDateString()} {``}
             {auction.endDate?.toLocaleDateString()} {``}
           </div>
