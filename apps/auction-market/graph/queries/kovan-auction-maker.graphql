@@ -15,6 +15,27 @@ query KovanAuctions {
         symbol
         decimals
       }
+      leadingBid {
+        id
+        user {
+          id
+        }
+        bidToken {
+          id
+          name
+          symbol
+          decimals
+        }
+        rewardToken {
+          id
+          name
+          symbol
+          decimals
+        }
+        amount
+        createdAtBlock
+        createdAtTimestamp
+      }
       minTTL
       maxTTL
       status

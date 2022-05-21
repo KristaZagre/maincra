@@ -1,6 +1,4 @@
 import { ChainId } from '@sushiswap/chain'
-import AuctionTable from 'features/AuctionTable'
-import BidModal from 'features/BidModal'
 import { Auction } from 'features/context/Auction'
 import { AuctionMarket } from 'features/context/AuctionMarket'
 import {
@@ -9,12 +7,13 @@ import {
   LiquidityPositionRepresentation,
   TokenRepresentation,
 } from 'features/context/representations'
+import FinishedAuctionTable from 'features/FinishedAuctionTable'
 import InitialBidModal from 'features/InitialBidModal'
+import LiveAuctionTable from 'features/LiveAuctionTable'
 import { getAuctions, getExchangeTokens, getLiquidityPositions } from 'graph/graph-client'
 import { useAuctionMakerBalance, useLiquidityPositionedPairs } from 'hooks/useAuctionMarketAssets'
 import { useBidTokenAddress, useBidTokenBalance } from 'hooks/useBidToken'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FC, useMemo } from 'react'
 import useSWR, { SWRConfig } from 'swr'
@@ -74,7 +73,7 @@ const AuctionsPage: FC<{ chainId: number }> = ({ chainId }) => {
   const auctions = useMemo(
     () =>
       activeChain?.id
-        ? auctionRepresentations?.map((auction) => new Auction({chainId: activeChain.id, auction }))
+        ? auctionRepresentations?.map((auction) => new Auction({ chainId: activeChain.id, auction }))
         : [],
     [auctionRepresentations, activeChain],
   )
@@ -104,55 +103,17 @@ const AuctionsPage: FC<{ chainId: number }> = ({ chainId }) => {
           <div>FINALIZED: {auctionMarket ? auctionMarket?.finalised.size : 0}</div>
         </div>
 
-        <div>
-          <h1>Live auctions</h1>
-          {auctions?.length ? (
-            auctions
-              .filter((auction) => auction.status === AuctionStatus.ONGOING)
-              .map((auction) => (
-                <div key={auction.id}>
-                  {auction.status} {``}
-                  {auction.rewardAmount.toExact()} {auction.rewardAmount.currency.symbol} {``}
-                  {auction.bidAmount.toExact()} {auction.bidAmount.currency.symbol} {``}
-                  {auction.remainingTime?.hours} {'H'} {auction.remainingTime?.minutes} {'M'}{' '}
-                  {auction.remainingTime?.seconds} {'S'}
-                  <Link href={`/auction/${auction.id}?chainId=${chainId}`}>[Auction Page]</Link>
-                  <BidModal bidToken={bidTokenBalance} auction={auction} />
-                </div>
-              ))
-          ) : (
-            <div>
-              <i>No live auctions..</i>
-            </div>
-          )}
-        </div>
-            <AuctionTable auctions={auctions} placeholder={'Loading'} loading={isValidatingAuctions}/>
-        <div>
-          <h1>Finished auctions</h1>
-          {auctions?.length ? (
-            auctions
-              .filter((auction) => auction.status === AuctionStatus.FINISHED)
-              .map((auction) => (
-                <div key={auction.id}>
-                  {auction.status} {``}
-                  {auction.rewardAmount.toExact()} {auction.rewardAmount.currency.symbol} {``}
-                  {auction.bidAmount.toExact()} {bidTokenBalance?.currency.symbol} {``}
-                  {auction.remainingTime?.hours} {'H'} {auction.remainingTime?.minutes} {'M'}{' '}
-                  {auction.remainingTime?.seconds} {'S'}
-                  <Link href={`/auction/${auction.id}?chainId=${chainId}`}>[Auction Page]</Link>
-                </div>
-              ))
-          ) : (
-            <div>
-              <i>No finished auctions..</i>
-            </div>
-          )}
-        </div>
-
-        {/* <AuctionWaitingTable 
-        tokens={Object.values(auctionMarket.waiting)} 
-        placeholder={"No assets available"} 
-        loading={(isValidatingAuctions || isValidatingLPs || isValidatingTokens)} /> */}
+        <LiveAuctionTable
+          auctions={auctions?.filter((auction) => auction.status === AuctionStatus.ONGOING)}
+          placeholder={'No Live Auctions'}
+          loading={isValidatingAuctions}
+          bidToken={bidTokenBalance}
+        />
+        <FinishedAuctionTable
+          auctions={auctions?.filter((auction) => auction.status === AuctionStatus.FINISHED)}
+          placeholder={'No Finished Auctions'}
+          loading={isValidatingAuctions}
+        />
         <div>
           <h1>Not Started</h1>
           {!isValidatingAuctions || !isValidatingLPs || !isValidatingTokens
