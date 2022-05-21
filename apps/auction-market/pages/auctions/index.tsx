@@ -1,14 +1,14 @@
 import { ChainId } from '@sushiswap/chain'
+import AvailableAssetsTable from 'features/AvailableAssetsTable'
 import { Auction } from 'features/context/Auction'
 import { AuctionMarket } from 'features/context/AuctionMarket'
 import {
   AuctionRepresentation,
   AuctionStatus,
   LiquidityPositionRepresentation,
-  TokenRepresentation,
+  TokenRepresentation
 } from 'features/context/representations'
 import FinishedAuctionTable from 'features/FinishedAuctionTable'
-import InitialBidModal from 'features/InitialBidModal'
 import LiveAuctionTable from 'features/LiveAuctionTable'
 import { getAuctions, getExchangeTokens, getLiquidityPositions } from 'graph/graph-client'
 import { useAuctionMakerBalance, useLiquidityPositionedPairs } from 'hooks/useAuctionMarketAssets'
@@ -20,6 +20,7 @@ import useSWR, { SWRConfig } from 'swr'
 import { useNetwork } from 'wagmi'
 
 import Layout from '../../components/Layout'
+
 
 const fetcher = (params: any) =>
   fetch(params)
@@ -102,35 +103,28 @@ const AuctionsPage: FC<{ chainId: number }> = ({ chainId }) => {
           <div>NOT STARTED: {auctionMarket ? Object.keys(auctionMarket.waiting).length : 0}</div>
           <div>FINALIZED: {auctionMarket ? auctionMarket?.finalised.size : 0}</div>
         </div>
-
+        <h1>Live Auctions</h1>
         <LiveAuctionTable
           auctions={auctions?.filter((auction) => auction.status === AuctionStatus.ONGOING)}
           placeholder={'No Live Auctions'}
           loading={isValidatingAuctions}
           bidToken={bidTokenBalance}
         />
+        <h1>Finished Auctions</h1>
         <FinishedAuctionTable
           auctions={auctions?.filter((auction) => auction.status === AuctionStatus.FINISHED)}
           placeholder={'No Finished Auctions'}
           loading={isValidatingAuctions}
         />
-        <div>
-          <h1>Not Started</h1>
-          {!isValidatingAuctions || !isValidatingLPs || !isValidatingTokens
-            ? auctionMarket?.waiting
-              ? Object.entries(auctionMarket.waiting).map(([address, token]) => (
-                  <>
-                    <div key={address} className="flex flex-row justify-between text-center">
-                      <div>{token?.symbol}</div>
-                      <div>{token?.tokensToUnwind.size}</div>
-                      <div>{token.getTotalBalance()}</div>
-                      <InitialBidModal bidToken={bidTokenBalance} rewardToken={token} />
-                    </div>
-                  </>
-                ))
-              : 'No tokens available'
-            : 'Loading..'}
-        </div>
+
+          <h1>Available Assets</h1>
+          <AvailableAssetsTable
+            assets={ auctionMarket?.waiting ? Object.values(auctionMarket?.waiting) : []}
+            bidToken={bidTokenBalance}
+            placeholder={'No Assets available'}
+            loading={isValidatingAuctions || isValidatingLPs || isValidatingTokens}
+          />
+
       </div>
     </Layout>
   )

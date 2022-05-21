@@ -7,7 +7,6 @@ export class RewardToken {
   public readonly decimals: number
   public tokenBalance?: Amount<Token>
   public readonly lpBalance?: Amount<Token>
-  // public readonly totalBalance?: JSBI getter
   public readonly tokensToUnwind: Set<string> = new Set()
 
   public constructor({
@@ -39,13 +38,14 @@ export class RewardToken {
     this.tokenBalance = amount
   }
 
-  public getTotalBalance(): string | undefined {
-    if (!this.tokenBalance) {
-      return this.lpBalance?.toExact()
-    } 
-    if (!this.lpBalance) {
-      return this.tokenBalance.toExact()
+  public getTotalBalance(): Amount<Token> | undefined {
+    if (this.tokenBalance && this.lpBalance) {
+      return this.lpBalance?.add(this.tokenBalance)
+    } else if (!this.tokenBalance && this.lpBalance) {
+      return this.lpBalance
+    } else if (this.tokenBalance && !this.lpBalance) {
+      return this.tokenBalance
     }
-    return this.lpBalance?.add(this.tokenBalance).toExact()
+    return undefined
   }
 }

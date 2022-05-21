@@ -1,4 +1,5 @@
 import { shortenAddress } from '@sushiswap/format'
+import { useIsMounted } from '@sushiswap/hooks'
 import { Table, Typography } from '@sushiswap/ui'
 import { createTable, getCoreRowModel, useTableInstance } from '@tanstack/react-table'
 import { useRouter } from 'next/router'
@@ -28,17 +29,16 @@ const defaultColumns = (tableProps: FinishedAuctionTableProps) => [
       )
     },
   }),
-  table.createDataColumn('rewardAmount', {
+  table.createDisplayColumn({
+    id: 'asset',
     header: () => <div className="w-full text-left">Asset</div>,
-    cell: (props) => {
-      return (
-        <div className="flex flex-col w-full">
-          <Typography variant="sm" weight={700} className="text-left text-slate-200">
-            {props.getValue().currency.name}
-          </Typography>
-        </div>
-      )
-    },
+    cell: (props) => (
+      <div className="flex flex-col w-full">
+        <Typography variant="sm" weight={700} className="text-left text-slate-200">
+          {props.row.original?.rewardAmount.currency.name}
+        </Typography>
+      </div>
+    ),
   }),
   table.createDataColumn('rewardAmount', {
     header: () => <div className="w-full text-left">Auction size</div>,
@@ -109,19 +109,22 @@ export const FinishedAuctionTable: FC<FinishedAuctionTableProps> = (props) => {
     getCoreRowModel: getCoreRowModel(),
   })
 
+  const isMounted = useIsMounted()
+  if (!isMounted) return null
+
   return (
     <Table.container>
       <Table.table>
         <Table.thead>
           {instance.getHeaderGroups().map((headerGroup, i) => (
             <Table.thr key={headerGroup.id}>
-              {!initialized && auctions?.length === 0 ? (
+              {initialized && auctions?.length === 0 ? (
                 <th colSpan={headerGroup.headers?.length} className="border-b border-slate-800">
                   <div className="w-full bg-slate-800/30" />
                 </th>
               ) : (
                 headerGroup.headers.map((header, i) => (
-                  <Table.th key={header.id} colSpan={header.colSpan}>
+                  <Table.th key={header.id + i} colSpan={header.colSpan}>
                     {header.renderHeader()}
                   </Table.th>
                 ))
@@ -132,10 +135,10 @@ export const FinishedAuctionTable: FC<FinishedAuctionTableProps> = (props) => {
         <Table.tbody>
           {instance.getRowModel().rows.length === 0 && (
             <Table.tr>
-              {!initialized && auctions?.length === 0 ? (
-                <td colSpan={columns?.length}>
-                  <div className="w-full animate-pulse bg-slate-800/30" />
-                </td>
+              {initialized && auctions?.length === 0 ? (
+                <Table.td colSpan={columns?.length} className="w-full text-center animate-pulse bg-slate-800/30">
+                  {placeholder}
+                </Table.td>
               ) : (
                 <Table.td colSpan={columns?.length} className="text-center text-slate-500">
                   {placeholder}

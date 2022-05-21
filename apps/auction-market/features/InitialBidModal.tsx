@@ -96,13 +96,10 @@ const InitialBidModal: FC<InitialBidModalProps> = ({ bidToken, rewardToken }) =>
     },
     [bidToken],
   )
-
   return (
     <>
       <Button
-        variant="filled"
         color="gradient"
-        // disabled={stream?.recipient.id.toLowerCase() !== account?.address?.toLowerCase()}
         onClick={() => {
           setOpen(true)
         }}
@@ -129,7 +126,7 @@ const InitialBidModal: FC<InitialBidModalProps> = ({ bidToken, rewardToken }) =>
               }`}
               .
             </div>
-            <div>Reward amount: {`${rewardToken.getTotalBalance()} ${rewardToken.symbol}`}.</div>
+            <div>Reward amount: {`${rewardToken?.getTotalBalance()?.toExact()} ${rewardToken.symbol}`}.</div>
             <div className="flex justify-between gap-3">
               <Typography variant="sm" weight={400}>
                 Bid Amount
