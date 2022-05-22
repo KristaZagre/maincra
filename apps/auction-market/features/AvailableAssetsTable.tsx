@@ -76,7 +76,7 @@ export const AvailableAssetsTable: FC<AvailableAssetsTableProps> = (props) => {
         <Table.thead>
           {instance.getHeaderGroups().map((headerGroup, i) => (
             <Table.thr key={headerGroup.id}>
-              {initialized && assets?.length === 0 ? (
+              {!initialized && assets?.length === 0 ? (
                 <th colSpan={headerGroup.headers?.length} className="border-b border-slate-800">
                   <div className="w-full bg-slate-800/30" />
                 </th>
@@ -93,12 +93,12 @@ export const AvailableAssetsTable: FC<AvailableAssetsTableProps> = (props) => {
         <Table.tbody>
           {instance.getRowModel().rows.length === 0 && (
             <Table.tr>
-              {initialized && assets?.length === 0 ? (
-                <Table.td colSpan={columns?.length} className="w-full text-center animate-pulse bg-slate-800/30">
+              {!initialized && assets?.length === 0 ? (
+                <Table.td colSpan={columns?.length} className="w-full text-center bg-slate-800/30">
                   {placeholder}
                 </Table.td>
               ) : (
-                <Table.td colSpan={columns?.length} className="text-center text-slate-500">
+                <Table.td colSpan={columns?.length} className="text-center animate-pulse text-slate-500">
                   {placeholder}
                 </Table.td>
               )}

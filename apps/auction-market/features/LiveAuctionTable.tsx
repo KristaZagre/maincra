@@ -1,5 +1,4 @@
 import { Amount, Token } from '@sushiswap/currency'
-import { useIsMounted } from '@sushiswap/hooks'
 import { Table, Typography } from '@sushiswap/ui'
 import { createTable, getCoreRowModel, useTableInstance } from '@tanstack/react-table'
 import { useRouter } from 'next/router'
@@ -120,16 +119,14 @@ export const LiveAuctionTable: FC<LiveAuctionTableProps> = (props) => {
     columns,
     getCoreRowModel: getCoreRowModel(),
   })
-
-  const isMounted = useIsMounted()
-  if (!isMounted) return null
+ 
   return (
     <Table.container>
       <Table.table>
         <Table.thead>
           {instance.getHeaderGroups().map((headerGroup, i) => (
             <Table.thr key={headerGroup.id}>
-              {initialized && auctions?.length === 0 ? (
+              {!initialized && auctions?.length === 0 ? (
                 <th colSpan={headerGroup.headers?.length} className="border-b border-slate-800">
                   <div className="w-full bg-slate-800/30" />
                 </th>
@@ -146,7 +143,7 @@ export const LiveAuctionTable: FC<LiveAuctionTableProps> = (props) => {
         <Table.tbody>
           {instance.getRowModel().rows.length === 0 && (
             <Table.tr>
-              {initialized && auctions?.length === 0 ? (
+              {!initialized && auctions?.length === 0 ? (
                 <Table.td colSpan={columns?.length} className="w-full text-center animate-pulse bg-slate-800/30">
                   {placeholder}
                 </Table.td>

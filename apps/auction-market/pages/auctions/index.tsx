@@ -1,4 +1,6 @@
+import { Tab } from '@headlessui/react'
 import { ChainId } from '@sushiswap/chain'
+import { Chip, Typography } from '@sushiswap/ui'
 import AvailableAssetsTable from 'features/AvailableAssetsTable'
 import { Auction } from 'features/context/Auction'
 import { AuctionMarket } from 'features/context/AuctionMarket'
@@ -6,7 +8,7 @@ import {
   AuctionRepresentation,
   AuctionStatus,
   LiquidityPositionRepresentation,
-  TokenRepresentation
+  TokenRepresentation,
 } from 'features/context/representations'
 import FinishedAuctionTable from 'features/FinishedAuctionTable'
 import LiveAuctionTable from 'features/LiveAuctionTable'
@@ -15,12 +17,11 @@ import { useAuctionMakerBalance, useLiquidityPositionedPairs } from 'hooks/useAu
 import { useBidTokenAddress, useBidTokenBalance } from 'hooks/useBidToken'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
-import { FC, useMemo } from 'react'
+import { FC, Fragment, useMemo } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 import { useNetwork } from 'wagmi'
 
 import Layout from '../../components/Layout'
-
 
 const fetcher = (params: any) =>
   fetch(params)
@@ -98,33 +99,97 @@ const AuctionsPage: FC<{ chainId: number }> = ({ chainId }) => {
   return (
     <Layout>
       <div className="flex flex-col gap-10 px-2 pt-16">
-        <div className="flex flex-row gap-5">
-          <div>LIVE: {auctionMarket ? auctionMarket?.live.size : 0}</div>
-          <div>NOT STARTED: {auctionMarket ? Object.keys(auctionMarket.waiting).length : 0}</div>
-          <div>FINALIZED: {auctionMarket ? auctionMarket?.finalised.size : 0}</div>
-        </div>
-        <h1>Live Auctions</h1>
-        <LiveAuctionTable
-          auctions={auctions?.filter((auction) => auction.status === AuctionStatus.ONGOING)}
-          placeholder={'No Live Auctions'}
-          loading={isValidatingAuctions}
-          bidToken={bidTokenBalance}
-        />
-        <h1>Finished Auctions</h1>
-        <FinishedAuctionTable
-          auctions={auctions?.filter((auction) => auction.status === AuctionStatus.FINISHED)}
-          placeholder={'No Finished Auctions'}
-          loading={isValidatingAuctions}
-        />
+        <Tab.Group>
+          <Tab.List className="flex flex-row gap-10">
+            <Tab as={Fragment}>
+              {({ selected }) => (
+                <div className={selected ? 'border-t-2' : ''}>
+                  <div className="flex flex-row gap-2 mt-2">
+                    <Typography
+                      variant="h3"
+                      weight={500}
+                      className={selected ? 'text-slate-200' : 'text-slate-400 hover:text-white'}
+                    >
+                      Live Auctions
+                    </Typography>
+                    <Chip
+                      label={auctionMarket ? auctionMarket?.live.size.toString() : '0'}
+                      color="green"
+                      className="mt-1"
+                    />
+                  </div>
+                </div>
+              )}
+            </Tab>
 
-          <h1>Available Assets</h1>
-          <AvailableAssetsTable
-            assets={ auctionMarket?.waiting ? Object.values(auctionMarket?.waiting) : []}
-            bidToken={bidTokenBalance}
-            placeholder={'No Assets available'}
-            loading={isValidatingAuctions || isValidatingLPs || isValidatingTokens}
-          />
+            <Tab as={Fragment}>
+              {({ selected }) => (
+                <button className={selected ? 'border-t-2' : ''}>
+                  <div className="flex flex-row gap-2 mt-2 ">
+                    <Typography
+                      variant="h3"
+                      weight={500}
+                      className={selected ? 'text-slate-200' : 'text-slate-400 hover:text-white'}
+                    >
+                      Not started
+                    </Typography>
+                    <Chip
+                      label={auctionMarket ? Object.keys(auctionMarket.waiting).length.toString() : '0'}
+                      color="yellow"
+                      className="mt-1"
+                    />
+                  </div>
+                </button>
+              )}
+            </Tab>
 
+            <Tab as={Fragment}>
+              {({ selected }) => (
+                <button className={selected ? 'border-t-2' : ''}>
+                  <div className="flex flex-row gap-2 mt-2">
+                    <Typography
+                      variant="h3"
+                      weight={500}
+                      className={selected ? 'text-slate-200' : 'text-slate-400 hover:text-white'}
+                    >
+                      Finalized
+                    </Typography>
+                    <Chip
+                      label={auctionMarket ? auctionMarket?.finalised.size.toString() : '0'}
+                      color="blue"
+                      className="mt-1"
+                    />
+                  </div>
+                </button>
+              )}
+            </Tab>
+          </Tab.List>
+          <Tab.Panels>
+            <Tab.Panel>
+              <LiveAuctionTable
+                auctions={auctions?.filter((auction) => auction.status === AuctionStatus.ONGOING)}
+                placeholder={'No Live Auctions'}
+                loading={isValidatingAuctions}
+                bidToken={bidTokenBalance}
+              />
+            </Tab.Panel>
+            <Tab.Panel>
+              <FinishedAuctionTable
+                auctions={auctions?.filter((auction) => auction.status === AuctionStatus.FINISHED)}
+                placeholder={'No Finished Auctions'}
+                loading={isValidatingAuctions}
+              />
+            </Tab.Panel>
+            <Tab.Panel>
+              <AvailableAssetsTable
+                assets={auctionMarket?.waiting ? Object.values(auctionMarket?.waiting) : []}
+                bidToken={bidTokenBalance}
+                placeholder={'No Assets available'}
+                loading={isValidatingAuctions || isValidatingLPs || isValidatingTokens}
+              />
+            </Tab.Panel>
+          </Tab.Panels>
+        </Tab.Group>
       </div>
     </Layout>
   )
