@@ -8,6 +8,7 @@ export interface AuctionRepresentation {
   bidAmount: string
   rewardAmount: string
   leadingBid?: BidRepresentation
+  txHash: string
   createdAtBlock: string
   createdAtTimestamp: string
   modifiedAtBlock: string
@@ -46,6 +47,7 @@ export interface BidRepresentation {
   user: UserRepresentation
   rewardToken: TokenRepresentation
   bidToken: TokenRepresentation
+  txHash: string
   createdAtBlock: string
   createdAtTimestamp: string
 }

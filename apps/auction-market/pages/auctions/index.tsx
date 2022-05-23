@@ -95,7 +95,7 @@ const AuctionsPage: FC<{ chainId: number }> = ({ chainId }) => {
     activeChain,
     bidTokenAddress,
   ])
-
+  console.log({ auctions })
   return (
     <Layout>
       <div className="flex flex-col gap-10 px-2 pt-16">
@@ -174,18 +174,18 @@ const AuctionsPage: FC<{ chainId: number }> = ({ chainId }) => {
               />
             </Tab.Panel>
             <Tab.Panel>
-              <FinishedAuctionTable
-                auctions={auctions?.filter((auction) => auction.status === AuctionStatus.FINISHED)}
-                placeholder={'No Finished Auctions'}
-                loading={isValidatingAuctions}
-              />
-            </Tab.Panel>
-            <Tab.Panel>
               <AvailableAssetsTable
                 assets={auctionMarket?.waiting ? Object.values(auctionMarket?.waiting) : []}
                 bidToken={bidTokenBalance}
                 placeholder={'No Assets available'}
                 loading={isValidatingAuctions || isValidatingLPs || isValidatingTokens}
+              />
+            </Tab.Panel>
+            <Tab.Panel>
+              <FinishedAuctionTable
+                auctions={auctions?.filter((auction) => auction.status === AuctionStatus.FINISHED)}
+                placeholder={'No Finished Auctions'}
+                loading={isValidatingAuctions}
               />
             </Tab.Panel>
           </Tab.Panels>

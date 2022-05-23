@@ -8,6 +8,7 @@ export class Bid {
   public readonly amount: Amount<Token>
   public readonly user: UserRepresentation
   public readonly timestamp: Date
+  public readonly txHash: string
   public readonly block: string
 
   public constructor({ bid }: { bid: BidRepresentation }) {
@@ -24,6 +25,7 @@ export class Bid {
     )
     this.user = bid.user
     this.timestamp = new Date(Number(bid.createdAtTimestamp) * 1000)
+    this.txHash = bid.txHash
     this.block = bid.createdAtBlock
   }
 }

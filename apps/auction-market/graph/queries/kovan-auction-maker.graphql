@@ -33,6 +33,7 @@ query KovanAuctions {
           decimals
         }
         amount
+        txHash
         createdAtBlock
         createdAtTimestamp
       }
@@ -41,6 +42,7 @@ query KovanAuctions {
       status
       bidAmount
       rewardAmount
+      txHash
       createdAtBlock
       createdAtTimestamp
       modifiedAtBlock
@@ -83,6 +85,7 @@ query KovanAuction($id: ID!) {
         decimals
       }
       amount
+      txHash
       createdAtBlock
       createdAtTimestamp
     }
@@ -91,6 +94,7 @@ query KovanAuction($id: ID!) {
     status
     bidAmount
     rewardAmount
+    txHash
     createdAtBlock
     createdAtTimestamp
     modifiedAtBlock
@@ -118,6 +122,7 @@ query KovanBids($auctionId: ID!) {
         decimals
       }
       amount
+      txHash
       createdAtBlock
       createdAtTimestamp
     }
@@ -147,6 +152,7 @@ query KovanUserAuctions($id: ID!) {
             id
           }
           amount
+          txHash
           createdAtBlock
           createdAtTimestamp
           bidToken {
@@ -167,6 +173,7 @@ query KovanUserAuctions($id: ID!) {
         status
         bidAmount
         rewardAmount
+        txHash
         createdAtBlock
         createdAtTimestamp
         modifiedAtBlock
@@ -189,6 +196,7 @@ query KovanUserAuctions($id: ID!) {
             decimals
           }
           amount
+          txHash
           createdAtBlock
           createdAtTimestamp
         }

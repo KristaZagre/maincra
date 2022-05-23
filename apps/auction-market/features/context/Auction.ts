@@ -12,8 +12,8 @@ export class Auction {
   public readonly leadingBid?: Bid
   public readonly startDate: Date
   public readonly endDate: Date
-  // public readonly re: TokenRepresentation // TODO: replace, use Token from package/currency?
   public readonly bids?: Bid[]
+  public readonly txHash: string
   private readonly minTTL: Date
   private readonly maxTTL: Date
 
@@ -27,7 +27,7 @@ export class Auction {
     this.startDate = new Date(Number(auction.createdAtTimestamp) * 1000)
     this.minTTL = new Date(Number(auction.minTTL) * 1000)
     this.maxTTL = new Date(Number(auction.maxTTL) * 1000)
-    // this.token = auction.token
+    this.txHash = auction.txHash
     const now = Date.now()
     if (this.minTTL.getTime() > now && this.maxTTL.getTime() > now) {
       this.endDate = this.minTTL < this.maxTTL ? this.minTTL : this.maxTTL
