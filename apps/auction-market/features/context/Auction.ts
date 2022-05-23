@@ -6,7 +6,7 @@ import { AuctionRepresentation, AuctionStatus } from './representations'
 
 export class Auction {
   public readonly id: string
-  public readonly status: AuctionStatus
+  public status: AuctionStatus
   public readonly rewardAmount: Amount<Token>
   public readonly bidAmount: Amount<Token>
   public readonly leadingBid?: Bid
@@ -44,6 +44,9 @@ export class Auction {
     if (this.status === AuctionStatus.ONGOING) {
       const now = Date.now()
       const interval = this.endDate.getTime() - now
+      if (interval <= 0) {
+        return { days: 0, hours: 0, minutes: 0, seconds: 0 }
+      }
 
       let days = Math.floor(interval / (1000 * 60 * 60 * 24))
       let hours = Math.floor((interval % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))

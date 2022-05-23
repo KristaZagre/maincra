@@ -96,23 +96,5 @@ export function toLpTokens(chainId: number, pairs: PairRepresentation[] | undefi
         ],
       ]),
     ),
-    // Object.values(pairs).map((pair) => ({
-    //     [pair.id]: {
-    //       token0: new Token({
-    //         chainId,
-    //         address: pair.token0.id,
-    //         decimals: Number(pair.token0.decimals),
-    //         symbol: pair.token0.symbol,
-    //         name: pair.token0.name,
-    //       }),
-    //       token1: new Token({
-    //         chainId,
-    //         address: pair.token1.id,
-    //         decimals: Number(pair.token1.decimals),
-    //         symbol: pair.token1.symbol,
-    //         name: pair.token1.name,
-    //       }),
-    //     },
-    //   })),
   ]
 }

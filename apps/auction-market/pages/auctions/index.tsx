@@ -15,9 +15,10 @@ import LiveAuctionTable from 'features/LiveAuctionTable'
 import { getAuctions, getExchangeTokens, getLiquidityPositions } from 'graph/graph-client'
 import { useAuctionMakerBalance, useLiquidityPositionedPairs } from 'hooks/useAuctionMarketAssets'
 import { useBidTokenAddress, useBidTokenBalance } from 'hooks/useBidToken'
+import { useUnfinalizedAuctions } from 'hooks/useUnfinalizedAuctions'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
-import { FC, Fragment, useMemo } from 'react'
+import { FC, Fragment,  useMemo } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 import { useNetwork } from 'wagmi'
 
@@ -72,18 +73,37 @@ const AuctionsPage: FC<{ chainId: number }> = ({ chainId }) => {
   const bidTokenAddress = useBidTokenAddress()
   const bidTokenBalance = useBidTokenBalance()
 
-  const auctions = useMemo(
-    () =>
-      activeChain?.id
-        ? auctionRepresentations?.map((auction) => new Auction({ chainId: activeChain.id, auction }))
-        : [],
-    [auctionRepresentations, activeChain],
+  const auctions = useMemo(() => {
+    const auctionMap: Record<string, Auction> = {}
+    if (activeChain?.id) {
+      auctionRepresentations?.forEach((auction) => {
+        const mappedAuction = new Auction({ chainId: activeChain.id, auction })
+        const id = mappedAuction.rewardAmount.currency.address
+        auctionMap[id] = mappedAuction
+      })
+    }
+    return auctionMap
+  }, [auctionRepresentations, activeChain])
+
+  const auctionsToFinalize = useUnfinalizedAuctions(
+    Object.values(auctions)
+      ?.filter((auction) => auction.status === AuctionStatus.FINISHED)
+      .map((auction) => auction.rewardAmount.currency.address),
   )
+
+  useMemo(() => {
+    auctionsToFinalize.forEach( auctionId => {
+      auctions[auctionId].status = AuctionStatus.NON_FINALIZED
+    })
+  }, [auctions, auctionsToFinalize])
+
+
+
   const [balances, loading] = useAuctionMakerBalance(ChainId.KOVAN, bidTokenAddress, tokenRepresentations)
   const liquidityPositions = useLiquidityPositionedPairs(lpRepresentations)
   const auctionMarket = useMemo(() => {
     if (!isValidatingAuctions || !isValidatingLPs || !isValidatingTokens || !activeChain?.id) {
-      return new AuctionMarket({ bidTokenAddress, chainId: activeChain?.id, auctions, liquidityPositions, balances })
+      return new AuctionMarket({ bidTokenAddress, chainId: activeChain?.id, auctions: Object.values(auctions), liquidityPositions, balances })
     }
   }, [
     auctions,
@@ -95,7 +115,7 @@ const AuctionsPage: FC<{ chainId: number }> = ({ chainId }) => {
     activeChain,
     bidTokenAddress,
   ])
-  console.log({ auctions })
+
   return (
     <Layout>
       <div className="flex flex-col gap-10 px-2 pt-16">
@@ -113,7 +133,7 @@ const AuctionsPage: FC<{ chainId: number }> = ({ chainId }) => {
                       Live Auctions
                     </Typography>
                     <Chip
-                      label={auctionMarket ? auctionMarket?.live.size.toString() : '0'}
+                      label={auctionMarket ? (auctionMarket?.nonFinalised.size + auctionMarket?.live.size).toString() : '0'}
                       color="green"
                       className="mt-1"
                     />
@@ -134,7 +154,7 @@ const AuctionsPage: FC<{ chainId: number }> = ({ chainId }) => {
                       Not started
                     </Typography>
                     <Chip
-                      label={auctionMarket ? Object.keys(auctionMarket.waiting).length.toString() : '0'}
+                      label={auctionMarket ? Object.keys(auctionMarket.available).length.toString() : '0'}
                       color="yellow"
                       className="mt-1"
                     />
@@ -167,7 +187,7 @@ const AuctionsPage: FC<{ chainId: number }> = ({ chainId }) => {
           <Tab.Panels>
             <Tab.Panel>
               <LiveAuctionTable
-                auctions={auctions?.filter((auction) => auction.status === AuctionStatus.ONGOING)}
+                auctions={Object.values(auctions)?.filter((auction) => auction.status !== AuctionStatus.FINISHED)}
                 placeholder={'No Live Auctions'}
                 loading={isValidatingAuctions}
                 bidToken={bidTokenBalance}
@@ -175,7 +195,7 @@ const AuctionsPage: FC<{ chainId: number }> = ({ chainId }) => {
             </Tab.Panel>
             <Tab.Panel>
               <AvailableAssetsTable
-                assets={auctionMarket?.waiting ? Object.values(auctionMarket?.waiting) : []}
+                assets={auctionMarket?.available ? Object.values(auctionMarket?.available) : []}
                 bidToken={bidTokenBalance}
                 placeholder={'No Assets available'}
                 loading={isValidatingAuctions || isValidatingLPs || isValidatingTokens}
@@ -183,7 +203,7 @@ const AuctionsPage: FC<{ chainId: number }> = ({ chainId }) => {
             </Tab.Panel>
             <Tab.Panel>
               <FinishedAuctionTable
-                auctions={auctions?.filter((auction) => auction.status === AuctionStatus.FINISHED)}
+                auctions={Object.values(auctions)?.filter((auction) => auction.status === AuctionStatus.FINISHED)}
                 placeholder={'No Finished Auctions'}
                 loading={isValidatingAuctions}
               />

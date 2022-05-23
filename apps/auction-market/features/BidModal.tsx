@@ -54,9 +54,7 @@ const BidModal: FC<BidModalProps> = ({ auction, bidToken }) => {
       const data = await writePlaceBid({
         args: [auction?.rewardAmount.currency.address, amount.quotient.toString(), account.address],
       })
-    
-      console.log({data})
-
+  
       createToast({
         title: 'Place bid',
         description: `You have successfully placed a bid!`,

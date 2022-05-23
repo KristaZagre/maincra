@@ -54,5 +54,6 @@ export interface BidRepresentation {
 
 export enum AuctionStatus {
   ONGOING = 'ONGOING',
+  NON_FINALIZED = 'NON-FINALIZED',
   FINISHED = 'FINISHED',
 }

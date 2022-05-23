@@ -7,6 +7,8 @@ import { useNetwork } from 'wagmi'
 
 import BidModal from './BidModal'
 import { Auction } from './context/Auction'
+import { AuctionStatus } from './context/representations'
+import FinalizeAuctionModal from './FinalizeAuctionModal'
 
 interface LiveAuctionTableProps {
   auctions: Auction[] | undefined
@@ -98,7 +100,13 @@ const defaultColumns = (tableProps: LiveAuctionTableProps) => [
   table.createDisplayColumn({
     id: 'action',
     header: () => <div className="w-full text-left">Bid</div>,
-    cell: (props) => <BidModal bidToken={tableProps.bidToken} auction={props.row.original} />,
+    cell: (props) => {
+      if (props.row.original?.status === AuctionStatus.ONGOING) {
+        return <BidModal bidToken={tableProps.bidToken} auction={props.row.original} />
+      } else {
+        return <FinalizeAuctionModal auction={props.row.original}/>
+      }
+    },
   }),
 ]
 
@@ -119,7 +127,7 @@ export const LiveAuctionTable: FC<LiveAuctionTableProps> = (props) => {
     columns,
     getCoreRowModel: getCoreRowModel(),
   })
- 
+
   return (
     <Table.container>
       <Table.table>
