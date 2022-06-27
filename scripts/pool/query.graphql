@@ -1,0 +1,55 @@
+query LegacyPools($first: Int = 5000, $skip: Int = 0, $where: Token_filter, $block: Block_height) {
+  legacy_exchange_pairs(first: $first, skip: $skip, where: $where, block: $block) {
+    id
+    name
+    token0 {
+      id
+      name
+      symbol
+      decimals
+    }
+    token1 {
+      id
+      name
+      symbol
+      decimals
+    }
+    totalSupply
+    reserveUSD
+    volumeUSD
+  }
+
+  legacy_exchange__meta {
+    block {
+      number
+    }
+  }
+}
+
+query Trident($first: Int = 5000, $skip: Int = 0, $where: Token_filter, $block: Block_height) {
+  trident_pairs(first: $first, skip: $skip, where: $where, block: $block) {
+  kpi {
+      volumeUSD
+      liquidity
+      liquidityUSD
+      feesUSD
+      transactionCount
+    }
+    twapEnabled
+    swapFee
+    assets {
+      token {
+        id
+        name
+        symbol
+        decimals
+      }
+    }
+  }
+
+  trident__meta {
+    block {
+      number
+    }
+  }
+}

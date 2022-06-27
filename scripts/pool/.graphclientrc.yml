@@ -1,0 +1,36 @@
+sources:
+  - name: LegacyExchange
+    handler:
+      graphql:
+        endpoint: https://{context.host:api.thegraph.com}/subgraphs/name/{context.name:sushiswap/exchange}
+    transforms:
+      - prefix:
+          value: legacy_exchange_
+          includeRootOperations: true
+          includeTypes: false
+      - autoPagination:
+          validateSchema: true
+
+  # - name: TridentExchange
+  #   handler:
+  #     graphql:
+  #       endpoint: https://{context.host:api.thegraph.com}/subgraphs/name/{context.name:sushiswap/trident-polygon}
+  #   transforms:
+  #     - prefix:
+  #         value: trident_exchange_
+  #         includeRootOperations: true
+  #         includeTypes: false
+  #     - autoPagination:
+  #         validateSchema: true
+
+
+# additionalTypeDefs: |
+#   extend type Pair {
+#     chainId: ID!
+#   }
+
+# additionalResolvers:
+#   - ./resolvers.ts
+
+documents:
+  - ./query.graphql
