@@ -11,18 +11,21 @@ sources:
       - autoPagination:
           validateSchema: true
 
-  # - name: TridentExchange
-  #   handler:
-  #     graphql:
-  #       endpoint: https://{context.host:api.thegraph.com}/subgraphs/name/{context.name:sushiswap/trident-polygon}
-  #   transforms:
-  #     - prefix:
-  #         value: trident_exchange_
-  #         includeRootOperations: true
-  #         includeTypes: false
-  #     - autoPagination:
-  #         validateSchema: true
-
+  - name: TridentExchange
+    handler:
+      graphql:
+        endpoint: https://{context.host:api.thegraph.com}/subgraphs/name/{context.name:sushiswap/trident-polygon}
+    transforms:
+      - filterSchema:
+          mode: wrap
+          filters:
+            - Type.!Factory
+      - prefix:
+          value: trident_exchange_
+          includeRootOperations: true
+          includeTypes: false
+      - autoPagination:
+          validateSchema: true
 
 # additionalTypeDefs: |
 #   extend type Pair {

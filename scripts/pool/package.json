@@ -35,6 +35,7 @@
     "@graphprotocol/client-add-source-name": "1.0.1",
     "@graphprotocol/client-auto-pagination": "1.0.2-canary-3327a10.0",
     "@graphprotocol/client-block-tracking": "1.0.1",
+    "@graphql-mesh/transform-filter-schema": "0.14.64",
     "@graphql-mesh/cache-localforage": "0.6.8",
     "@graphql-mesh/cross-helpers": "0.1.6",
     "@graphql-mesh/graphql": "0.26.2",

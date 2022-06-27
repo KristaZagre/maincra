@@ -39,6 +39,6 @@ export const LEGACY_SUBGRAPH_NAME: Record<string | number, string> = {
 }
 
 export const TRIDENT_SUBGRAPH_NAME: Record<string | number, string> = {
-  [ChainId.POLYGON]: 'sushiswap/trident-polygon',
-  [ChainId.OPTIMISM]: 'sushiswap/trident-optimism',
+  [ChainId.POLYGON]: 'matthewlilley/trident-polygon',
+  [ChainId.OPTIMISM]: 'matthewlilley/trident-optimism',
 }
