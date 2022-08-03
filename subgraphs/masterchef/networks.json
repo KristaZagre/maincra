@@ -1,0 +1,10 @@
+{
+  "mainnet": {
+    "MasterChef": {
+      "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd"
+    },
+    "MasterChefV2": {
+      "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d"
+    }
+  }
+}

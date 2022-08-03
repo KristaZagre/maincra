@@ -1,0 +1,106 @@
+specVersion: 0.0.4
+# features:
+#   - grafting
+# graft:
+#   base: QmW7ChoykygRpD61FX45mqiyVTZzEXSzjakUy1xu4MDSSv # Subgraph ID of base subgraph
+#   block: 12453582 # Block number
+
+features:
+  - grafting
+graft:
+  base: QmSAU723W3ybjxc2DCfANcR63F9ywCWC1JeGb2dKrfAUs3 # Subgraph ID of base subgraph
+  block: 12520462 # Block number
+
+schema:
+  file: ./schema.graphql
+dataSources:
+  # - kind: ethereum
+  #   name: MasterChef
+  #   network: mainnet
+  #   source:
+  #     address: "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd"
+  #     abi: MasterChef
+  #     startBlock: 10736242
+  #   mapping:
+  #     kind: ethereum/events
+  #     apiVersion: 0.0.6
+  #     language: wasm/assemblyscript
+  #     entities:
+  #       - MasterChefV1
+  #     abis:
+  #       - name: MasterChef
+  #         file: ./abis/MasterChef.json
+  #       - name: Multicall
+  #         file: ./abis/Multicall.json
+  #       - name: ERC20
+  #         file: ./abis/ERC20.json
+  #     eventHandlers:
+  #       - event: Deposit(indexed address,indexed uint256,uint256)
+  #         handler: deposit
+  #       - event: EmergencyWithdraw(indexed address,indexed uint256,uint256)
+  #         handler: emergencyWithdraw
+  #       - event: OwnershipTransferred(indexed address,indexed address)
+  #         handler: ownershipTransferred
+  #       - event: Withdraw(indexed address,indexed uint256,uint256)
+  #         handler: withdraw
+  #     callHandlers:
+  #       - function: add(uint256,address,bool)
+  #         handler: add
+  #       - function: set(uint256,uint256,bool)
+  #         handler: set
+  #       - function: massUpdatePools()
+  #         handler: massUpdatePools
+  #       - function: updatePool(uint256)
+  #         handler: updatePool
+  #       - function: setMigrator(address)
+  #         handler: setMigrator
+  #       - function: migrate(uint256)
+  #         handler: migrate
+  #       - function: dev(address)
+  #         handler: dev
+  #     file: ./src/master-chef.ts
+  - kind: ethereum
+    name: MasterChefV2
+    network: mainnet
+    source:
+      address: "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d"
+      abi: MasterChefV2
+      startBlock: 12428169
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - MasterChefV2
+        - MasterChefV2PoolInfo
+        - MasterChefV2UserInfo
+      abis:
+        - name: MasterChefV2
+          file: ./abis/MasterChefV2.json
+        - name: SushiToken
+          file: ./abis/SushiToken.json
+        - name: ERC20
+          file: ./abis/ERC20.json
+      eventHandlers:
+        - event: Deposit(indexed address,indexed uint256,uint256,indexed address)
+          handler: deposit
+        - event: EmergencyWithdraw(indexed address,indexed uint256,uint256,indexed address)
+          handler: emergencyWithdraw
+        - event: Harvest(indexed address,indexed uint256,uint256)
+          handler: harvest
+        - event: LogInit()
+          handler: init
+        - event: LogPoolAddition(indexed uint256,uint256,indexed address,indexed address)
+          handler: add
+        - event: LogSetPool(indexed uint256,uint256,indexed address,bool)
+          handler: set
+        - event: LogUpdatePool(indexed uint256,uint64,uint256,uint256)
+          handler: updatePool
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: ownershipTransferred
+        - event: Withdraw(indexed address,indexed uint256,uint256,indexed address)
+          handler: withdraw
+      callHandlers:
+        - function: harvestFromMasterChef()
+          handler: harvestFromMasterChef
+      file: ./src/master-chef-v2.ts
