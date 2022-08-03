@@ -1,0 +1,41 @@
+{
+  "name": "masterchef",
+  "version": "0.0.0",
+  "private": true,
+  "description": "MasterChef subgraph",
+  "keywords": [
+    "sushi",
+    "masterchef",
+    "subgraph"
+  ],
+  "homepage": "https://sushi.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sushiswap/sushiswap.git",
+    "directory": "subgraphs/masterchef"
+  },
+  "license": "MIT",
+  "files": [
+    "abis",
+    "build",
+    "generated"
+  ],
+  "scripts": {
+    "generate": "graph codegen",
+    "build": "graph build",
+    "deploy": "graph deploy --node https://api.studio.thegraph.com/deploy/ masterchef",
+    "create-local": "graph create --node http://localhost:8020/ masterchef",
+    "remove-local": "graph remove --node http://localhost:8020/ masterchef",
+    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 masterchef",
+    "deploy-ethereum": "graph deploy --product hosted-service sushiswap/masterchef-ethereum",
+    "deploy-ethereum-labs": "graph deploy --product hosted-service sushi-labs/masterchef-ethereum",
+    "deploy-v2-ethereum": "graph deploy --product hosted-service sushiswap/masterchef-v2-ethereum",
+    "deploy-v2-ethereum-labs": "graph deploy --product hosted-service sushi-labs/masterchef-v2-ethereum",
+    "test": "graph test"
+  },
+  "dependencies": {
+    "@graphprotocol/graph-cli": "0.33.0",
+    "@graphprotocol/graph-ts": "0.27.0"
+  },
+  "devDependencies": { "matchstick-as": "0.5.0" }
+}

@@ -1,0 +1,252 @@
+enum PoolType {
+  SUSHISWAP,
+  TRIDENT,
+  KASHI,
+  UNKNOWN
+}
+
+enum RewarderType {
+  COMPLEX_REWARDER_01,
+  COMPLEX_REWARDER_02,
+  CLONE_REWARDER_01,
+  CLONE_REWARDER_02,
+  ALCX,
+  CONVEX,
+  ALCX,
+  LIDO,
+  NULL,
+  UNKNOWN
+}
+
+type MasterChefV1 @entity {
+  " MasterChefV1 address "
+  id: ID!
+  " Bonus multiplier "
+  bonusMultiplier: BigInt!
+  " Bonus end block "
+  bonusEndBlock: BigInt!
+  " Dev address " 
+  devaddr: Bytes!
+  " Migrator address "
+  migrator: Bytes!
+  " Owner address "
+  owner: Bytes!
+  " Start block "
+  startBlock: BigInt!
+  " Sushi token "
+  sushi: Bytes!
+  " Sushi per block "
+  sushiPerBlock: BigInt!
+  " Sushi per second (Sushi per block / 13)"
+  sushiPerSecond: BigInt!
+  " Sushi per day (Sushi per second * 86400)"
+  sushiPerDay: BigInt!
+  " Total allocation point for all pools"
+  totalAllocPoint: BigInt!
+  # " Pool length "
+  poolLength: BigInt!
+  " Migration count "
+  migrationCount: BigInt!
+  " User count "
+  userCount: BigInt!
+}
+
+type MasterChefV1PoolInfo @entity {
+  " PoolInfo index "
+  id: ID!
+  lpToken: Bytes!
+  lpTokenBalance: MasterChefV1LpTokenBalance!
+  allocPoint: BigInt!
+  lastRewardBlock: BigInt!
+  accSushiPerShare: BigInt!
+  userLength: BigInt!
+  " Sushi per day (pool alloc / total alloc * sushi per day)"
+  sushiPerDay: BigInt!
+}
+
+type MasterChefV1LpTokenBalance @entity {
+  id: ID!
+  amount: BigInt!
+  block: BigInt!  
+  lastAmount: BigInt!
+  lastBlock: BigInt!
+}
+
+type MasterChefV1UserInfo @entity {
+  " Concatination of pid & user address "
+  id: ID!
+  pid: BigInt!
+  user: Bytes!
+  amount: BigInt!
+  rewardDebt: BigInt!
+}
+
+type MasterChefV1Migration @entity(immutable: true) {
+  " Migration index "
+  id: ID!
+  previousLpToken: Bytes!
+  newLpToken: Bytes!
+  previousBalance: BigInt!
+  newBalance: BigInt!
+}
+
+type MasterChefV1Migrator  @entity(immutable: true) {
+  " MasterChefV1Migrator address "
+  id: ID!
+  " MasterChefV1Migrator creation block "
+  block: BigInt!
+  " MasterChefV1Migrator creation timestamp "
+  timestamp: BigInt!
+}
+
+type MasterChefV1Owner  @entity(immutable: true) {
+  " MasterChefV1Owner address "
+  id: ID!
+  " MasterChefV1Owner creation block "
+  block: BigInt!
+  " MasterChefV1Owner creation timestamp "
+  timestamp: BigInt!
+}
+
+type MasterChefV2 @entity {
+  " MasterChefV2 address "
+  id: ID!
+  " MasterChefV1"
+  masterChef: MasterChefV1!
+  " Sushi Token "
+  sushi: Bytes!
+  " Master pool ID"
+  masterPid: BigInt!
+  " Migrator address "
+  migrator: Bytes!
+  " Owner address "
+  owner: Bytes!
+  " Sushi per block "
+  sushiPerBlock: BigInt!
+  " Sushi per second (Sushi per block / 13)"
+  sushiPerSecond: BigInt!
+  " Sushi per day (Sushi per second * 86400)"
+  sushiPerDay: BigInt!
+  " Total allocation point for all pools"
+  totalAllocPoint: BigInt!
+  " Pool count "
+  poolCount: BigInt!
+  " Rewarder count "
+  rewarderCount: BigInt!
+  " Migration count "
+  migrationCount: BigInt!
+  " Sushi balance of the master chef "
+  balance: BigInt!
+  sushiTokenBalance: MasterChefV2SushiTokenBalance!
+}
+
+type MasterChefV2LpTokenBalance @entity {
+  id: ID!
+  amount: BigInt!
+  block: BigInt!  
+  lastAmount: BigInt!
+  lastBlock: BigInt!
+}
+
+type MasterChefV2SushiTokenBalance @entity {
+  id: ID!
+  amount: BigInt!
+}
+
+type MasterChefV2RewardTokenBalance @entity {
+  id: ID!
+  amount: BigInt!
+}
+
+type MasterChefV2PoolInfo @entity {
+  " PoolInfo index "
+  id: ID!
+  " LP token "
+  lpToken: Bytes!
+  lpTokenBalance: MasterChefV2LpTokenBalance!
+  " Allocation point of the pool "
+  allocPoint: BigInt!
+  " Last reward block of the pool "
+  lastRewardBlock: BigInt!
+  " Sushi per share of the pool "
+  accSushiPerShare: BigInt!
+  " Balance of the pool "
+  balance: BigInt!
+  " Type of the pool "
+  type: PoolType!
+  " Rewarder of the pool "
+  rewarder: MasterChefV2Rewarder!
+  " Sushi per day (pool alloc / total alloc * sushi per day)"
+  sushiPerDay: BigInt!
+  # " Reward token of the pool "
+  # rewardToken: Bytes!
+  # " Reward per second of the pool "
+  # rewardPerSecond: BigInt!
+}
+
+type MasterChefV2UserInfo @entity {
+  " Concatination of pid & user address "
+  id: ID!
+  " Pool ID "
+  pid: BigInt!
+  " User address "
+  user: Bytes!
+  " Reward amount "
+  amount: BigInt!
+  " Reward debt "
+  rewardDebt: BigInt!
+}
+
+type MasterChefV2Rewarder @entity {
+  " Rewarder address "
+  id: ID!
+  " Rewarder name "
+  name: String!
+  # " Reward token "
+  rewardToken: Bytes!
+  # " Reward per block "
+  rewardPerBlock: BigInt!  
+  # " Reward per second "
+  rewardPerSecond: BigInt!
+  # " Reward per day "
+  rewardPerDay: BigInt!
+  # " Rewarder type "
+  type: RewarderType!
+}
+
+type MasterChefV2RewarderPoolInfo @entity(immutable: true) {
+  " RewarderPoolInfo index "
+  id: ID!
+  " Allocation point of the pool "
+  allocPoint: BigInt!
+  " Last reward block of the pool "
+  lastRewardBlock: BigInt!
+  " Sushi per share of the pool "
+  accSushiPerShare: BigInt!
+  " Balance of the pool "
+  balance: BigInt!
+  " Type of the pool "
+  type: PoolType!
+  " Rewarder of the pool "
+  rewarder: MasterChefV2Rewarder!
+  " Sushi per day (pool alloc / total alloc * sushi per day)"
+  sushiPerDay: BigInt!
+}
+
+type MasterChefV2Migrator @entity {
+  " MasterChefV2Migrator address "
+  id: ID!
+  " MasterChefV2Migrator creation block "
+  block: BigInt!
+  " MasterChefV2Migrator creation timestamp "
+  timestamp: BigInt!
+}
+
+type MasterChefV2Owner @entity {
+  " MasterChefV2Owner address "
+  id: ID!
+  " MasterChefV2Owner creation block "
+  block: BigInt!
+  " MasterChefV2Owner creation timestamp "
+  timestamp: BigInt!
+}

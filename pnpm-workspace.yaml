@@ -4,5 +4,5 @@ packages:
   - "examples/*"
   - "packages/**"
   - "protocols/**"
-  - "subgraphs/*"
   - "scripts/*"
+  - "subgraphs/*"

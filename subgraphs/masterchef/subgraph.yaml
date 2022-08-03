@@ -1,0 +1,329 @@
+specVersion: 0.0.6
+# features:
+#   - grafting
+# graft:
+#   base: 'QmTyCFoH8hijsjJRwsP8NL48nV38RzDSv2X6vgwEPAvBay'
+#   block: 12883785
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: MasterChef
+    network: mainnet
+    source:
+      address: "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd"
+      abi: MasterChef
+      startBlock: 10736242
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: []
+      abis:
+        - name: MasterChef
+          file: ./abis/MasterChef.json
+        - name: ERC20
+          file: ./abis/ERC20.json
+      eventHandlers:
+        - event: Deposit(indexed address,indexed uint256,uint256)
+          handler: deposit
+        - event: EmergencyWithdraw(indexed address,indexed uint256,uint256)
+          handler: emergencyWithdraw
+        # - event: OwnershipTransferred(indexed address,indexed address)
+        #   handler: ownershipTransferred
+        - event: Withdraw(indexed address,indexed uint256,uint256)
+          handler: withdraw
+      callHandlers:
+        # - function: deposit(uint256,uint256)
+        #   handler: handleDepositCall
+        # - function: withdraw(uint256,uint256)
+        #   handler: handleWithdrawCall
+        - function: add(uint256,address,bool)
+          handler: add
+        - function: set(uint256,uint256,bool)
+          handler: set
+        - function: massUpdatePools()
+          handler: massUpdatePools
+        - function: updatePool(uint256)
+          handler: updatePool
+        # - function: setMigrator(address)
+        #   handler: setMigrator
+        - function: migrate(uint256)
+          handler: migrate
+        # - function: dev(address)
+        #   handler: dev
+      file: ./src/master-chef/master-chef.ts
+  - kind: ethereum
+    name: MasterChefV2
+    network: mainnet
+    source:
+      address: "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d"
+      abi: MasterChefV2
+      # ACTUAL
+      startBlock: 12428169
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: []
+      abis:
+        - name: MasterChefV2
+          file: ./abis/MasterChefV2.json
+        - name: SushiToken
+          file: ./abis/SushiToken.json
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: SymbolBytes32
+          file: ./abis/SymbolBytes32.json
+        - name: NameBytes32
+          file: ./abis/NameBytes32.json 
+        - name: ConvexRewarder
+          file: ./abis/ConvexRewarder.json
+        - name: AlcxRewarder
+          file: ./abis/AlcxRewarder.json
+        - name: LidoRewarder
+          file: ./abis/LidoRewarder.json
+        - name: ComplexRewarder01
+          file: ./abis/ComplexRewarder01.json
+        - name: ComplexRewarder02
+          file: ./abis/ComplexRewarder02.json
+        - name: CloneRewarder01
+          file: ./abis/CloneRewarder01.json
+        - name: CloneRewarder02
+          file: ./abis/CloneRewarder02.json
+      eventHandlers:
+        - event: Deposit(indexed address,indexed uint256,uint256,indexed address)
+          handler: deposit
+        - event: EmergencyWithdraw(indexed address,indexed uint256,uint256,indexed address)
+          handler: emergencyWithdraw
+        - event: Harvest(indexed address,indexed uint256,uint256)
+          handler: harvest
+        - event: LogInit()
+          handler: init
+        - event: LogPoolAddition(indexed uint256,uint256,indexed address,indexed address)
+          handler: add
+        - event: LogSetPool(indexed uint256,uint256,indexed address,bool)
+          handler: set
+        - event: LogUpdatePool(indexed uint256,uint64,uint256,uint256)
+          handler: updatePool
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: ownershipTransferred
+        - event: Withdraw(indexed address,indexed uint256,uint256,indexed address)
+          handler: withdraw
+      file: ./src/master-chef-v2/master-chef-v2.ts
+  # - kind: ethereum
+  #   name: MiniChefV2
+  #   network: mainnet
+  #   source:
+  #     address: "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d"
+  #     abi: MiniChefV2
+  #     startBlock: 123444
+  #   mapping:
+  #     kind: ethereum/events
+  #     apiVersion: 0.0.7
+  #     language: wasm/assemblyscript
+  #     entities: []
+  #     abis:
+  #       - name: MiniChefV2
+  #         file: ./abis/MiniChefV2.json
+  #     eventHandlers:
+  #       - event: LogPoolAddition(indexed uint256,uint256,indexed address,indexed address)
+  #         handler: add
+  #     file: ./src/mini-chef-v2/mini-chef-v2.ts
+templates:
+  - kind: ethereum/contract
+    name: MasterChefV1LpTokenBalance
+    network: mainnet
+    source:
+      abi: ERC20
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: []
+      abis:
+        - name: ERC20
+          file: ./abis/ERC20.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: transfer
+      file: ./src/master-chef/lp-token-balance.ts
+  - kind: ethereum/contract
+    name: MasterChefV2LpTokenBalance
+    network: mainnet
+    source:
+      abi: ERC20
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: []
+      abis:
+        - name: ERC20
+          file: ./abis/ERC20.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: transfer
+      file: ./src/master-chef-v2/lp-token-balance.ts
+  - kind: ethereum/contract
+    name: MasterChefV2SushiTokenBalance
+    network: mainnet
+    source:
+      abi: ERC20
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: []
+      abis:
+        - name: ERC20
+          file: ./abis/ERC20.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: transfer
+      file: ./src/master-chef-v2/sushi-token-balance.ts
+  - kind: ethereum/contract
+    name: MasterChefV2RewardTokenBalance
+    network: mainnet
+    source:
+      abi: ERC20
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: []
+      abis:
+        - name: ERC20
+          file: ./abis/ERC20.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: transfer
+      file: ./src/master-chef-v2/reward-token-balance.ts
+
+  - kind: ethereum/contract
+    name: ConvexRewarder
+    network: mainnet
+    source:
+      abi: ConvexRewarder
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: []
+      abis:
+        - name: ConvexRewarder
+          file: ./abis/ConvexRewarder.json
+      eventHandlers:
+        - event: RewardAdded(uint256)
+          handler: rewardAdded
+      file: ./src/master-chef-v2/convex-rewarder.ts
+  - kind: ethereum/contract
+    name: LidoRewarder
+    network: mainnet
+    source:
+      abi: LidoRewarder
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: []
+      abis:
+        - name: LidoRewarder
+          file: ./abis/LidoRewarder.json
+      eventHandlers:
+        - event: RewardAdded(uint256)
+          handler: rewardAdded
+      file: ./src/master-chef-v2/lido-rewarder.ts
+  - kind: ethereum/contract
+    name: ComplexRewarder01
+    network: mainnet
+    source:
+      abi: ComplexRewarder01
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: []
+      abis:
+        - name: ComplexRewarder01
+          file: ./abis/ComplexRewarder01.json
+      eventHandlers:
+        - event: PoolAdded(indexed uint256,uint256)
+          handler: poolSet
+        - event: PoolSet(indexed uint256,uint256)
+          handler: poolSet
+        - event: PoolUpdated(indexed uint256,uint64,uint256,uint256)
+          handler: poolUpdated
+        - event: OnReward(indexed address,indexed uint256,uint256,indexed address)
+          handler: onReward
+        - event: RewardRateUpdated(uint256,uint256)
+          handler: rewardRateUpdated
+      file: ./src/master-chef-v2/complex-rewarder-01.ts
+  - kind: ethereum/contract
+    name: ComplexRewarder02
+    network: mainnet
+    source:
+      abi: ComplexRewarder02
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: []
+      abis:
+        - name: ComplexRewarder02
+          file: ./abis/ComplexRewarder02.json
+      eventHandlers:
+        - event: LogRewardPerSecond(uint256)
+          handler: rewardPerSecond
+      file: ./src/master-chef-v2/complex-rewarder-02.ts
+  - kind: ethereum/contract
+    name: CloneRewarder01
+    network: mainnet
+    source:
+      abi: CloneRewarder01
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: []
+      abis:
+        - name: CloneRewarder01
+          file: ./abis/CloneRewarder01.json
+      eventHandlers:
+        - event: LogRewardPerSecond(uint256)
+          handler: rewardPerSecond
+      file: ./src/master-chef-v2/clone-rewarder-01.ts
+  - kind: ethereum/contract
+    name: CloneRewarder02
+    network: mainnet
+    source:
+      abi: CloneRewarder02
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: []
+      abis:
+        - name: CloneRewarder02
+          file: ./abis/CloneRewarder02.json
+      eventHandlers:
+        - event: LogRewardPerSecond(uint256)
+          handler: rewardPerSecond
+      file: ./src/master-chef-v2/clone-rewarder-02.ts
+  - kind: ethereum/contract
+    name: AlcxRewarder
+    network: mainnet
+    source:
+      abi: AlcxRewarder
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: []
+      abis:
+        - name: AlcxRewarder
+          file: ./abis/AlcxRewarder.json
+      eventHandlers:
+        - event: RewardRateUpdated(uint256,uint256)
+          handler: rewardRateUpdated
+      file: ./src/master-chef-v2/alcx-rewarder.ts
