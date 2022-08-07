@@ -1,4 +1,4 @@
-import { Address, BigInt, dataSource, log } from '@graphprotocol/graph-ts'
+import { Address, BigInt, dataSource, log, ethereum } from '@graphprotocol/graph-ts'
 
 import { ERC20 as ERC20Contract } from '../generated/MasterChef/ERC20'
 import {
@@ -7,6 +7,7 @@ import {
   DevCall,
   EmergencyWithdraw,
   MassUpdatePoolsCall,
+  MasterChef,
   MasterChef as MasterChefContract,
   MigrateCall,
   OwnershipTransferred,
@@ -81,7 +82,8 @@ function getPoolInfo(pid: BigInt): MasterChefV1PoolInfo {
     poolInfo.accSushiPerShare = poolInfoResult.getAccSushiPerShare()
     poolInfo.lastRewardBlock = poolInfoResult.getLastRewardBlock()
     poolInfo.allocPoint = poolInfoResult.getAllocPoint()
-    poolInfo.balance = erc20.balanceOf(dataSource.address())
+    let tryBalance = erc20.try_balanceOf(MASTER_CHEF_ADDRESS)
+    poolInfo.balance = !tryBalance.reverted ? tryBalance.value : BigInt.fromU32(0)
     poolInfo.save()
   }
 
@@ -103,32 +105,57 @@ function getUserInfo(pid: BigInt, user: Address): MasterChefV1UserInfo {
   return userInfo as MasterChefV1UserInfo
 }
 
-function _updatePool(pid: BigInt): void {
-  log.info('_updatePool pid: {}', [pid.toString()])
-  const masterChefContract = MasterChefContract.bind(MASTER_CHEF_ADDRESS)
-  const poolInfoResult = masterChefContract.try_poolInfo(pid)
-  if (poolInfoResult.reverted) {
-    log.debug('_updatePool poolInfo reverted: {}', [pid.toString()])
+function _updatePool(pid: BigInt, blockNumber: BigInt): void {
+  const poolInfo = getPoolInfo(pid)
+
+  const masterChef = getMasterChef()
+  const erc20 = ERC20Contract.bind(Address.fromBytes(poolInfo.lpToken))
+  let tryLpSupply = erc20.try_balanceOf(MASTER_CHEF_ADDRESS)
+  const lpSupply = !tryLpSupply.reverted ? tryLpSupply.value : BigInt.fromU32(0)
+
+  if (blockNumber.le(poolInfo.lastRewardBlock)) {
     return
-  } else {
-    const poolInfo = getPoolInfo(pid)
-    poolInfo.accSushiPerShare = poolInfoResult.value.getAccSushiPerShare()
-    poolInfo.lastRewardBlock = poolInfoResult.value.getLastRewardBlock()
+  }
+
+  if (poolInfo.balance.isZero()) {
+    poolInfo.lastRewardBlock = blockNumber
     poolInfo.save()
+    return
+  }
+
+
+  const multiplier = getMultiplier(masterChef, poolInfo.lastRewardBlock, blockNumber)
+  const sushiReward = multiplier
+    .times(masterChef.sushiPerBlock)
+    .times(poolInfo.allocPoint)
+    .div(masterChef.totalAllocPoint)
+  poolInfo.accSushiPerShare = poolInfo.accSushiPerShare.plus(
+    sushiReward.times(BigInt.fromU32(10).pow(12)).div(lpSupply)
+  )
+  
+  poolInfo.lastRewardBlock = blockNumber
+  poolInfo.save()
+}
+
+function _massUpdatePools(blockNumber: BigInt): void {
+  const masterChef = getMasterChef()
+  log.debug('massUpdatePools {}', [masterChef.poolCount.toString()])
+  for (let i = BigInt.fromU32(0), j = masterChef.poolCount; i < j; i = i.plus(BigInt.fromU32(1))) {
+    _updatePool(i, blockNumber)
   }
 }
 
-function _massUpdatePools(): void {
-  const masterChef = getMasterChef()
-  log.info('_massUpdatePools poolCount: {}', [masterChef.poolCount.toString()])
-  // todo
-  // we could use multicall, since it was deployed before master chef,
-  // to mass fetch pool info in 1 call instead of N calls
-  // const multicall = Multicall.bind(MULTICALL_ADDRESS)
-  // multicall.aggregate()
-  // for (let i = BigInt.fromU32(0), j = masterChef.poolCount; i < j; i = i.plus(BigInt.fromU32(1))) {
-  //   _updatePool(i)
-  // }
+function getMultiplier(masterChef: MasterChefV1, from: BigInt, to: BigInt): BigInt {
+  if (to.le(masterChef.bonusEndBlock)) {
+    return to.minus(from).times(masterChef.bonusMultiplier)
+  } else if (from.gt(masterChef.bonusEndBlock)) {
+    return to.minus(from)
+  } else {
+    return masterChef.bonusEndBlock
+      .minus(from)
+      .times(masterChef.bonusMultiplier)
+      .plus(to.minus(masterChef.bonusEndBlock))
+  }
 }
 
 export function add(call: AddCall): void {
@@ -142,30 +169,10 @@ export function add(call: AddCall): void {
   ])
 
   if (call.inputs._withUpdate) {
-    _massUpdatePools()
+    _massUpdatePools(call.block.number)
   }
 
-  const poolInfo = new MasterChefV1PoolInfo(masterChef.poolCount.toString())
-  poolInfo.allocPoint = call.inputs._allocPoint
-
-  const erc20 = ERC20Contract.bind(call.inputs._lpToken)
-  if (
-    !erc20.try_name().reverted &&
-    (erc20.try_name().value == 'SushiSwap LP Token' || erc20.try_name().value == 'Uniswap V2')
-  ) {
-    poolInfo.type = 'SUSHISWAP'
-  } else if (!erc20.try_name().reverted && erc20.try_name().value == 'Sushi Constant Product LP Token') {
-    poolInfo.type = 'TRIDENT'
-  } else if (!erc20.try_name().reverted && erc20.try_name().value.startsWith('Kashi Medium Risk')) {
-    poolInfo.type = 'KASHI'
-  } else {
-    poolInfo.type = 'UNKNOWN'
-  }
-  poolInfo.lpToken = call.inputs._lpToken
-  poolInfo.lastRewardBlock = call.block.number > masterChef.startBlock ? call.block.number : masterChef.startBlock
-  poolInfo.accSushiPerShare = BigInt.fromU32(0)
-  poolInfo.balance = erc20.balanceOf(dataSource.address())
-  poolInfo.save()
+  const poolInfo = getPoolInfo(masterChef.poolCount)
 
   masterChef.totalAllocPoint = masterChef.totalAllocPoint.plus(call.inputs._allocPoint)
   masterChef.poolCount = masterChef.poolCount.plus(BigInt.fromU32(1))
@@ -181,7 +188,7 @@ export function set(call: SetCall): void {
   ])
 
   if (call.inputs._withUpdate) {
-    _massUpdatePools()
+    _massUpdatePools(call.block.number)
   }
 
   const poolInfo = getPoolInfo(call.inputs._pid)
@@ -230,12 +237,12 @@ export function migrate(call: MigrateCall): void {
 
 export function massUpdatePools(call: MassUpdatePoolsCall): void {
   log.info('Mass update pools block: {}', [call.block.number.toString()])
-  _massUpdatePools()
+  _massUpdatePools(call.block.number)
 }
 
 export function updatePool(call: UpdatePoolCall): void {
   log.info('Update pool #{} block: {}', [call.inputs._pid.toString(), call.block.number.toString()])
-  _updatePool(call.inputs._pid)
+  _updatePool(call.inputs._pid, call.block.number)
 }
 
 export function dev(call: DevCall): void {
@@ -256,7 +263,7 @@ export function deposit(event: Deposit): void {
   poolInfo.balance = poolInfo.balance.plus(event.params.amount)
   poolInfo.save()
 
-  _updatePool(event.params.pid)
+  _updatePool(event.params.pid, event.block.number)
 
   const userInfo = getUserInfo(event.params.pid, event.params.user)
   userInfo.amount = userInfo.amount.plus(event.params.amount)
@@ -275,7 +282,7 @@ export function withdraw(event: Withdraw): void {
   poolInfo.balance = poolInfo.balance.minus(event.params.amount)
   poolInfo.save()
 
-  _updatePool(event.params.pid)
+  _updatePool(event.params.pid, event.block.number)
 
   const userInfo = getUserInfo(event.params.pid, event.params.user)
   userInfo.amount = userInfo.amount.minus(event.params.amount)

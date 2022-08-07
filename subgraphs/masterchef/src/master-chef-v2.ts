@@ -1,6 +1,6 @@
 import { Address, BigInt, dataSource, log } from '@graphprotocol/graph-ts'
 
-import { ERC20 as ERC20Contract } from '../generated/MasterChef/ERC20'
+import { ERC20 as ERC20Contract } from '../generated/MasterChefV2/ERC20'
 import {
   Deposit,
   EmergencyWithdraw,
