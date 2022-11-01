@@ -1,10 +1,12 @@
 import '@nomiclabs/hardhat-ethers'
 import 'hardhat-deploy'
+// import 'hardhat-deploy-ethers'
 import '@tenderly/hardhat-tenderly'
 
 import { defaultConfig } from '@sushiswap/hardhat-config'
+import { STARGATE_BRIDGE_TOKENS } from '@sushiswap/stargate'
 import { TASK_COMPILE_SOLIDITY_GET_SOLC_BUILD } from 'hardhat/builtin-tasks/task-names'
-import { HardhatUserConfig, subtask } from 'hardhat/config'
+import { HardhatUserConfig, subtask, task } from 'hardhat/config'
 import path from 'path'
 
 subtask(TASK_COMPILE_SOLIDITY_GET_SOLC_BUILD, async ({ solcVersion }: { solcVersion: string }, hre, runSuper) => {
@@ -22,18 +24,18 @@ subtask(TASK_COMPILE_SOLIDITY_GET_SOLC_BUILD, async ({ solcVersion }: { solcVers
   return runSuper()
 })
 
-// task('approve', 'Approve to router').setAction(async function (_, { ethers, getChainId }) {
-//   const chainId = Number(await getChainId())
-//   const contract = await ethers.getContract('SushiXSwap')
+task('approve', 'Approve to router').setAction(async function (_, { ethers, getChainId }) {
+  const chainId = Number(await getChainId())
+  const contract = await ethers.getContract('SushiXSwap')
 
-//   for (const token of STARGATE_BRIDGE_TOKENS[chainId]) {
-//     try {
-//       await contract.approveToStargateRouter(token.address)
-//     } catch (error) {
-//       console.log(error)
-//     }
-//   }
-// })
+  for (const token of STARGATE_BRIDGE_TOKENS[chainId]) {
+    try {
+      await contract.approveToStargateRouter(token.address)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+})
 
 const config: HardhatUserConfig = {
   solidity: {

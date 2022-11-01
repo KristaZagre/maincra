@@ -6,8 +6,8 @@ import '@nomiclabs/hardhat-ethers'
 import '@tenderly/hardhat-tenderly'
 import '@typechain/hardhat'
 import 'hardhat-deploy'
-import 'hardhat-deploy-ethers'
 
+// import 'hardhat-deploy-ethers'
 import type { HardhatUserConfig } from 'hardhat/config'
 
 const accounts = {

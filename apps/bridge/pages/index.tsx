@@ -31,8 +31,8 @@ export const getServerSideProps: GetServerSideProps = async ({ query, res }) => 
     props: {
       srcToken: srcToken ?? null,
       dstToken: dstToken ?? null,
-      srcChainId: srcChainId ?? ChainId.ETHEREUM,
-      dstChainId: dstChainId ?? ChainId.ARBITRUM,
+      srcChainId: srcChainId ?? ChainId.ARBITRUM,
+      dstChainId: dstChainId ?? ChainId.OPTIMISM,
       srcTypedAmount: !isNaN(Number(srcTypedAmount)) ? srcTypedAmount : '',
     },
   }
@@ -150,7 +150,7 @@ const _Bridge: FC = () => {
               customTokenMap={srcCustomTokenMap}
               onAddToken={onAddSrcCustomToken}
               onRemoveToken={onRemoveSrcCustomToken}
-              includeNative={false}
+              includeNative={true}
             />
           </div>
           <div className="border-b border-slate-200/5" />
@@ -171,7 +171,7 @@ const _Bridge: FC = () => {
               onAddToken={onAddDstCustomToken}
               onRemoveToken={onRemoveDstCustomToken}
               loading={isLoading}
-              includeNative={false}
+              includeNative={true}
             />
           </div>
         </div>

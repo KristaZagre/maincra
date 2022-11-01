@@ -38,21 +38,21 @@ export const BridgeReviewModal: FC<BridgeReviewModal> = ({ children }) => {
           onSuccess={createNotification}
           components={
             <Approve.Components>
-              <Approve.Bentobox
+              {/* <Approve.Bentobox
                 size="md"
                 className="whitespace-nowrap"
                 fullWidth
                 address={getSushiXSwapContractConfig(srcChainId).addressOrName}
                 onSignature={onSig}
                 enabled={Boolean(getSushiXSwapContractConfig(srcChainId).addressOrName)}
-              />
+              /> */}
               <Approve.Token
                 size="md"
                 className="whitespace-nowrap"
                 fullWidth
                 amount={amount}
-                address={BENTOBOX_ADDRESS[srcChainId]}
-                enabled={Boolean(BENTOBOX_ADDRESS[srcChainId])}
+                address={getSushiXSwapContractConfig(srcChainId).addressOrName}
+                enabled={Boolean(getSushiXSwapContractConfig(srcChainId).addressOrName)}
               />
             </Approve.Components>
           }

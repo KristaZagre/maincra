@@ -1,5 +1,5 @@
-import bentoBoxExports from '@sushiswap/bentobox/exports.json'
 import { INIT_CODE_HASH } from '@sushiswap/amm'
+import bentoBoxExports from '@sushiswap/bentobox/exports.json'
 import {
   STARGATE_BRIDGE_TOKENS,
   STARGATE_ROUTER_ADDRESS,
@@ -19,7 +19,7 @@ const func: DeployFunction = async function ({
   run,
 }: HardhatRuntimeEnvironment) {
   const { deploy } = deployments
-  const chainId = await getChainId()
+  const chainId = Number(await getChainId())
 
   const { deployer } = await getNamedAccounts()
 
@@ -54,10 +54,10 @@ const func: DeployFunction = async function ({
   const args = [
     bentoBoxExports?.[chainId.toString() as keyof Omit<typeof bentoBoxExports, '31337'>]?.[0]?.contracts?.BentoBoxV1
       ?.address,
-    STARGATE_ROUTER_ADDRESS[chainId],
+    STARGATE_ROUTER_ADDRESS[chainId as keyof typeof STARGATE_ROUTER_ADDRESS],
     sushiSwapExports?.[chainId.toString() as keyof Omit<typeof sushiSwapExports, '31337'>]?.[0]?.contracts
       ?.UniswapV2Factory.address ?? ethers.constants.AddressZero,
-    INIT_CODE_HASH?.[chainId] ?? ethers.constants.HashZero,
+    INIT_CODE_HASH?.[chainId as keyof typeof INIT_CODE_HASH] ?? ethers.constants.HashZero,
     STARGATE_WIDGET_ADDRESS[chainId as keyof typeof STARGATE_WIDGET_ADDRESS],
   ]
 
@@ -103,8 +103,8 @@ func.tags = ['SushiXSwap']
 func.skip = ({ getChainId }) =>
   new Promise((resolve, reject) => {
     getChainId()
-      .then((chainId) => resolve(chainId === '31337'))
-      .catch((error) => reject(error))
+      .then((chainId: string) => resolve(chainId === '31337'))
+      .catch((error: unknown) => reject(error))
   })
 
 export default func

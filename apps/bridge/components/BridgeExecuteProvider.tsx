@@ -7,7 +7,7 @@ import { SendTransactionResult } from 'wagmi/actions'
 
 import { useNotifications } from '../lib/state/storage'
 import { SushiBridge } from '../lib/SushiBridge'
-import { useBridgeState, useBridgeStateActions } from './BridgeStateProvider'
+import { useBridgeState, useBridgeStateActions, useDerivedBridgeState } from './BridgeStateProvider'
 
 interface BridgeExecuteProvider {
   approved: boolean | undefined
@@ -19,6 +19,7 @@ export const BridgeExecuteProvider: FC<BridgeExecuteProvider> = ({ approved, chi
   const [, { createInlineNotification }] = useNotifications(address)
   const { setSourceTx, setSignature, setTimestamp, setGasFee } = useBridgeStateActions()
   const { id, signature, srcChainId, amount, srcToken, dstToken } = useBridgeState()
+  const { dstAmountOut } = useDerivedBridgeState()
   const contract = useSushiXSwapContractWithProvider(srcChainId)
   const srcInputCurrencyRebase = useBentoBoxTotal(srcChainId, srcToken)
 
@@ -66,10 +67,10 @@ export const BridgeExecuteProvider: FC<BridgeExecuteProvider> = ({ approved, chi
     if (signature) {
       bridge.srcCooker.setMasterContractApproval(signature)
     }
-    bridge.transfer(amount, srcShare)
+    bridge.transfer(amount, srcShare, dstAmountOut)
     bridge.teleport(
-      srcToken.wrapped,
-      dstToken.wrapped,
+      srcToken,
+      dstToken,
       1000000, // TODO: figure out exact extra gas required
       id
     )

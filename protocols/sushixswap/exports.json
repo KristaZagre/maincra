@@ -1402,7 +1402,7 @@
       "chainId": "42161",
       "contracts": {
         "SushiXSwap": {
-          "address": "0x53b08DbD70327b7Ba3B7886Fc9987BC985d27262",
+          "address": "0x843D0AAD40295f2198ef528ad747CDF6AB9000e4",
           "abi": [
             {
               "inputs": [
@@ -1434,6 +1434,11 @@
               ],
               "stateMutability": "nonpayable",
               "type": "constructor"
+            },
+            {
+              "inputs": [],
+              "name": "InsufficientGas",
+              "type": "error"
             },
             {
               "inputs": [],

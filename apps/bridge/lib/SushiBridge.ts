@@ -4,7 +4,13 @@ import { Signature } from '@ethersproject/bytes'
 import { AddressZero, Zero } from '@ethersproject/constants'
 import { TransactionRequest } from '@ethersproject/providers'
 import { Amount, Currency, Native, Share, Token } from '@sushiswap/currency'
-import { STARGATE_BRIDGE_TOKENS, STARGATE_CHAIN_ID, STARGATE_POOL_ID } from '@sushiswap/stargate'
+import {
+  STARGATE_BRIDGE_TOKENS,
+  STARGATE_CHAIN_ID,
+  STARGATE_ETH,
+  STARGATE_ETH_ADDRESS,
+  STARGATE_POOL_ID,
+} from '@sushiswap/stargate'
 import { SushiXSwap as SushiXSwapContract } from '@sushiswap/sushixswap/typechain'
 import { getSushiXSwapContractConfig } from '@sushiswap/wagmi'
 import { formatBytes32String } from 'ethers/lib/utils'
@@ -28,6 +34,9 @@ export enum Action {
 
   // Stargate teleport
   STARGATE_TELEPORT = 10,
+
+  // Wrap
+  WRAP_TOKEN = 12,
 }
 
 export interface Cooker {
@@ -84,7 +93,6 @@ export abstract class Cooker implements Cooker {
       ['address', 'address', 'uint256', 'uint256'],
       [currency.isToken ? currency.address : AddressZero, recipient, BigNumber.from(amount), BigNumber.from(share)]
     )
-
     const value = currency.isNative ? amount : Zero
 
     this.add(Action.SRC_DEPOSIT_TO_BENTOBOX, data, value)
@@ -130,10 +138,13 @@ export abstract class Cooker implements Cooker {
     )
   }
 
-  dstWithdraw(token: Currency, to: string = this.user, amount = Zero): void {
+  dstWithdraw(token: Currency, to: string = this.user, amount: BigNumberish = Zero): void {
     this.add(
       Action.DST_WITHDRAW,
-      defaultAbiCoder.encode(['address', 'address', 'uint256'], [token.wrapped.address, to, amount])
+      defaultAbiCoder.encode(
+        ['address', 'address', 'uint256'],
+        [token.isNative ? AddressZero : token.wrapped.address, to, amount]
+      )
     )
   }
 
@@ -154,6 +165,24 @@ export abstract class Cooker implements Cooker {
 
   unwrapAndTransfer(token: Currency, to: string = this.user): void {
     this.add(Action.UNWRAP_AND_TRANSFER, defaultAbiCoder.encode(['address', 'address'], [token.wrapped.address, to]))
+  }
+
+  deposit(token: Currency, to: string = this.user, amount: BigNumberish = Zero): void {
+    this.add(
+      Action.SRC_DEPOSIT,
+      defaultAbiCoder.encode(['address', 'address', 'uint256'], [token.wrapped.address, to, BigNumber.from(amount)])
+    )
+  }
+
+  wrap(token: Currency, amount: BigNumberish = Zero): void {
+    this.add(
+      Action.WRAP_TOKEN,
+      defaultAbiCoder.encode(
+        ['address', 'uint256'],
+        [token.isNative ? STARGATE_ETH_ADDRESS[token.chainId] : token, BigNumber.from(amount)]
+      ),
+      BigNumber.from(amount)
+    )
   }
 }
 
@@ -261,25 +290,36 @@ export class SushiBridge {
   // T2: Wallet - Stargate - Wallet
   // T3: Wallet - Stargate - BentoBox
   // T4: BentoBox - Stargate - Wallet
-  transfer(amountIn: Amount<Currency>, shareIn: Share<Currency>): void {
+  transfer(amountIn: Amount<Currency>, shareIn: Share<Currency>, amountOut: Amount<Currency>): void {
     // T1-T4
-    if (!this.srcUseBentoBox) {
-      this.srcCooker.srcDepositToBentoBox(this.srcToken, this.user, 0, shareIn.quotient.toString())
+
+    if (amountIn.currency.isNative) {
+      this.srcCooker.wrap(this.srcToken, amountIn.quotient.toString())
+    } else {
+      this.srcCooker.deposit(this.srcToken, this.contract.address, amountIn.quotient.toString())
     }
-    this.srcCooker.srcTransferFromBentoBox(
-      this.srcToken,
-      this.srcCooker.masterContract,
-      0,
-      shareIn.quotient.toString(),
-      true
+
+    // if (!this.srcUseBentoBox) {
+    //   this.srcCooker.srcDepositToBentoBox(this.srcToken, this.user, 0, shareIn.quotient.toString())
+    // }
+    // this.srcCooker.srcTransferFromBentoBox(
+    //   this.srcToken,
+    //   this.srcCooker.masterContract,
+    //   0,
+    //   shareIn.quotient.toString(),
+    //   true
+    // )
+    this.dstCooker[this.dstUseBentoBox ? 'dstDepositToBentoBox' : 'dstWithdraw'](
+      this.dstToken,
+      this.user,
+      amountOut.quotient.toString()
     )
-    this.dstCooker[this.dstUseBentoBox ? 'dstDepositToBentoBox' : 'dstWithdraw'](this.dstToken)
   }
 
   teleport(
-    srcBridgeToken: Token = STARGATE_BRIDGE_TOKENS[this.srcChainId][0],
-    dstBridgeToken: Token = STARGATE_BRIDGE_TOKENS[this.dstChainId][0],
-    gasSpent = 1000000,
+    srcBridgeToken: Currency = STARGATE_BRIDGE_TOKENS[this.srcChainId][0],
+    dstBridgeToken: Currency = STARGATE_BRIDGE_TOKENS[this.dstChainId][0],
+    gasSpent = 200000,
     id: string,
     amountMin: Amount<Currency> = Amount.fromRawAmount(dstBridgeToken, 0),
     dustAmount: Amount<Currency> = Amount.fromRawAmount(Native.onChain(this.dstChainId), 0)
@@ -315,9 +355,13 @@ export class SushiBridge {
       ],
       [
         STARGATE_CHAIN_ID[this.dstCooker.chainId],
-        srcBridgeToken.address,
-        STARGATE_POOL_ID[this.srcCooker.chainId][srcBridgeToken.address],
-        STARGATE_POOL_ID[this.dstCooker.chainId][dstBridgeToken.address],
+        srcBridgeToken.isNative ? STARGATE_ETH_ADDRESS[this.srcChainId] : srcBridgeToken.wrapped.address,
+        STARGATE_POOL_ID[this.srcCooker.chainId][
+          srcBridgeToken.isNative ? STARGATE_ETH_ADDRESS[this.srcChainId] : srcBridgeToken.wrapped.address
+        ],
+        STARGATE_POOL_ID[this.dstCooker.chainId][
+          dstBridgeToken.isNative ? STARGATE_ETH_ADDRESS[this.dstChainId] : dstBridgeToken.wrapped.address
+        ],
         0,
         amountMin.quotient.toString(),
         dustAmount.quotient.toString(),
@@ -334,9 +378,13 @@ export class SushiBridge {
     if (this.debug) {
       console.debug('cook teleport', [
         STARGATE_CHAIN_ID[this.dstCooker.chainId],
-        srcBridgeToken.address,
-        STARGATE_POOL_ID[this.srcCooker.chainId][srcBridgeToken.address],
-        STARGATE_POOL_ID[this.dstCooker.chainId][dstBridgeToken.address],
+        srcBridgeToken.isNative ? STARGATE_ETH_ADDRESS[this.srcChainId] : srcBridgeToken.wrapped.address,
+        STARGATE_POOL_ID[this.srcCooker.chainId][
+          srcBridgeToken.isNative ? STARGATE_ETH_ADDRESS[this.srcChainId] : srcBridgeToken.wrapped.address
+        ],
+        STARGATE_POOL_ID[this.dstCooker.chainId][
+          dstBridgeToken.isNative ? STARGATE_ETH_ADDRESS[this.dstChainId] : dstBridgeToken.wrapped.address
+        ],
         0,
         0,
         0,
@@ -353,7 +401,7 @@ export class SushiBridge {
     this.srcCooker.add(Action.STARGATE_TELEPORT, data)
   }
 
-  async getFee(gasSpent = 1000000) {
+  async getFee(gasSpent = 200000) {
     return this.crossChain
       ? await this.contract.getFee(
           STARGATE_CHAIN_ID[this.dstCooker.chainId],
@@ -369,7 +417,7 @@ export class SushiBridge {
       : [Zero, Zero]
   }
 
-  async cook(gasSpent = 1000000): Promise<Partial<(TransactionRequest & { to: string }) | undefined>> {
+  async cook(gasSpent = 200000): Promise<Partial<(TransactionRequest & { to: string }) | undefined>> {
     if (!this.contract) {
       return
     }

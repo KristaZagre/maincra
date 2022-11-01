@@ -1,5 +1,11 @@
 import { Amount, Token } from '@sushiswap/currency'
-import { STARGATE_CHAIN_ID, STARGATE_POOL_ADDRESS, STARGATE_POOL_ID } from '@sushiswap/stargate'
+import {
+  STARGATE_CHAIN_ID,
+  STARGATE_ETH,
+  STARGATE_ETH_ADDRESS,
+  STARGATE_POOL_ADDRESS,
+  STARGATE_POOL_ID,
+} from '@sushiswap/stargate'
 import STARGATE_FEE_LIBRARY_V03_ABI from '@sushiswap/stargate/abis/stargate-fee-library-v03.json'
 import STARGATE_POOL_ABI from '@sushiswap/stargate/abis/stargate-pool.json'
 import { getSushiXSwapContractConfig } from '@sushiswap/wagmi'
@@ -27,14 +33,25 @@ export const useBridgeFees = ({
     if (srcToken && dstToken) {
       return [
         {
-          addressOrName: STARGATE_POOL_ADDRESS[srcChainId][srcToken.wrapped.address],
+          addressOrName:
+            STARGATE_POOL_ADDRESS[srcChainId][
+              srcToken.isNative ? STARGATE_ETH_ADDRESS[srcChainId] : srcToken.wrapped.address
+            ],
           functionName: 'getChainPath',
-          args: [STARGATE_CHAIN_ID[dstChainId], STARGATE_POOL_ID[dstChainId][dstToken.wrapped.address]],
+          args: [
+            STARGATE_CHAIN_ID[dstChainId],
+            STARGATE_POOL_ID[dstChainId][
+              dstToken.isNative ? STARGATE_ETH_ADDRESS[dstChainId] : dstToken.wrapped.address
+            ],
+          ],
           contractInterface: STARGATE_POOL_ABI,
           chainId: srcChainId,
         },
         {
-          addressOrName: STARGATE_POOL_ADDRESS[srcChainId][srcToken.wrapped.address],
+          addressOrName:
+            STARGATE_POOL_ADDRESS[srcChainId][
+              srcToken.isNative ? STARGATE_ETH_ADDRESS[srcChainId] : srcToken.wrapped.address
+            ],
           functionName: 'feeLibrary',
           contractInterface: STARGATE_POOL_ABI,
           chainId: srcChainId,
@@ -54,8 +71,12 @@ export const useBridgeFees = ({
     addressOrName: String(stargatePoolResults?.[1]),
     functionName: 'getFees',
     args: [
-      srcToken ? STARGATE_POOL_ID[srcChainId][srcToken.wrapped.address] : undefined,
-      dstToken ? STARGATE_POOL_ID[dstChainId][dstToken.wrapped.address] : undefined,
+      srcToken
+        ? STARGATE_POOL_ID[srcChainId][srcToken.isNative ? STARGATE_ETH_ADDRESS[srcChainId] : srcToken.wrapped.address]
+        : undefined,
+      dstToken
+        ? STARGATE_POOL_ID[dstChainId][dstToken.isNative ? STARGATE_ETH_ADDRESS[dstChainId] : dstToken.wrapped.address]
+        : undefined,
       STARGATE_CHAIN_ID[dstChainId],
       getSushiXSwapContractConfig(srcChainId).addressOrName,
       amount?.quotient?.toString(),
@@ -88,10 +109,29 @@ export const useBridgeFees = ({
       }
     }
 
-    const eqFee = Amount.fromRawAmount(srcToken.wrapped, getFeesResults.eqFee.toString())
-    const eqReward = Amount.fromRawAmount(srcToken.wrapped, getFeesResults.eqReward.toString())
-    const lpFee = Amount.fromRawAmount(srcToken.wrapped, getFeesResults.lpFee.toString())
-    const protocolFee = Amount.fromRawAmount(srcToken.wrapped, getFeesResults.protocolFee.toString())
+    const eqFee = Amount.fromRawAmount(
+      srcToken.isNative ? STARGATE_ETH[srcChainId] : srcToken.wrapped,
+      getFeesResults.eqFee.toString()
+    )
+    const eqReward = Amount.fromRawAmount(
+      srcToken.isNative ? STARGATE_ETH[srcChainId] : srcToken.wrapped,
+      getFeesResults.eqReward.toString()
+    )
+    const lpFee = Amount.fromRawAmount(
+      srcToken.isNative ? STARGATE_ETH[srcChainId] : srcToken.wrapped,
+      getFeesResults.lpFee.toString()
+    )
+    const protocolFee = Amount.fromRawAmount(
+      srcToken.isNative ? STARGATE_ETH[srcChainId] : srcToken.wrapped,
+      getFeesResults.protocolFee.toString()
+    )
+
+    console.log([
+      eqFee.currency.wrapped.address,
+      eqReward.currency.wrapped.address,
+      lpFee.currency.wrapped.address,
+      protocolFee.currency.wrapped.address,
+    ])
 
     let bridgeFee: Amount<Token> | undefined = undefined
     if (eqFee && eqReward && lpFee && protocolFee) {
