@@ -50,7 +50,16 @@ export const BridgeExecuteProvider: FC<BridgeExecuteProvider> = ({ approved, chi
   )
 
   const prepareBridge = useCallback(() => {
-    if (!srcChainId || !amount || !address || !srcInputCurrencyRebase || !contract || !srcToken || !dstToken) {
+    if (
+      !srcChainId ||
+      !amount ||
+      !address ||
+      !srcInputCurrencyRebase ||
+      !contract ||
+      !srcToken ||
+      !dstToken ||
+      !dstAmountOut
+    ) {
       return
     }
 
@@ -71,12 +80,12 @@ export const BridgeExecuteProvider: FC<BridgeExecuteProvider> = ({ approved, chi
     bridge.teleport(
       srcToken,
       dstToken,
-      1000000, // TODO: figure out exact extra gas required
+      400000, // TODO: figure out exact extra gas required
       id
     )
 
     bridge
-      .getFee(1000000)
+      .getFee(400000)
       .then(([fee]) => {
         setGasFee(Amount.fromRawAmount(Native.onChain(srcChainId), fee.toString()))
       })
@@ -92,7 +101,7 @@ export const BridgeExecuteProvider: FC<BridgeExecuteProvider> = ({ approved, chi
       const bridge = prepareBridge()
       if (bridge && approved) {
         bridge
-          .cook(1000000)
+          .cook(400000)
           .then((request) => {
             if (request) setRequest(request)
           })
