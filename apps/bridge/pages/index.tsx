@@ -2,7 +2,7 @@ import { ArrowRightIcon } from '@heroicons/react/solid'
 import { ChainId } from '@sushiswap/chain'
 import { tryParseAmount } from '@sushiswap/currency'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
-import { STARGATE_BRIDGE_TOKENS } from '@sushiswap/stargate'
+import { STARGATE_BRIDGE_TOKENS, STARGATE_ETH } from '@sushiswap/stargate'
 import { Button, Loader, Typography } from '@sushiswap/ui'
 import { Widget } from '@sushiswap/ui/widget'
 import { Checker, Web3Input } from '@sushiswap/wagmi'
@@ -150,7 +150,7 @@ const _Bridge: FC = () => {
               customTokenMap={srcCustomTokenMap}
               onAddToken={onAddSrcCustomToken}
               onRemoveToken={onRemoveSrcCustomToken}
-              includeNative={true}
+              includeNative={srcChainId in STARGATE_ETH}
             />
           </div>
           <div className="border-b border-slate-200/5" />
@@ -171,7 +171,7 @@ const _Bridge: FC = () => {
               onAddToken={onAddDstCustomToken}
               onRemoveToken={onRemoveDstCustomToken}
               loading={isLoading}
-              includeNative={true}
+              includeNative={dstChainId in STARGATE_ETH}
             />
           </div>
         </div>
