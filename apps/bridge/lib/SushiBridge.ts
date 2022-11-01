@@ -319,7 +319,7 @@ export class SushiBridge {
   teleport(
     srcBridgeToken: Currency = STARGATE_BRIDGE_TOKENS[this.srcChainId][0],
     dstBridgeToken: Currency = STARGATE_BRIDGE_TOKENS[this.dstChainId][0],
-    gasSpent = 200000,
+    gasSpent = 400000,
     id: string,
     amountMin: Amount<Currency> = Amount.fromRawAmount(dstBridgeToken, 0),
     dustAmount: Amount<Currency> = Amount.fromRawAmount(Native.onChain(this.dstChainId), 0)
@@ -386,12 +386,12 @@ export class SushiBridge {
           dstBridgeToken.isNative ? STARGATE_ETH_ADDRESS[this.dstChainId] : dstBridgeToken.wrapped.address
         ],
         0,
-        0,
-        0,
+        amountMin.quotient.toString(),
+        dustAmount.quotient.toString(),
         this.dstCooker.masterContract,
         this.user,
         gasSpent,
-        id,
+        formatBytes32String(id),
         this.dstCooker.actions,
         this.dstCooker.values.map((value) => BigNumber.from(value)),
         this.dstCooker.datas,
@@ -401,7 +401,7 @@ export class SushiBridge {
     this.srcCooker.add(Action.STARGATE_TELEPORT, data)
   }
 
-  async getFee(gasSpent = 200000) {
+  async getFee(gasSpent = 400000) {
     return this.crossChain
       ? await this.contract.getFee(
           STARGATE_CHAIN_ID[this.dstCooker.chainId],
@@ -417,7 +417,7 @@ export class SushiBridge {
       : [Zero, Zero]
   }
 
-  async cook(gasSpent = 200000): Promise<Partial<(TransactionRequest & { to: string }) | undefined>> {
+  async cook(gasSpent = 400000): Promise<Partial<(TransactionRequest & { to: string }) | undefined>> {
     if (!this.contract) {
       return
     }

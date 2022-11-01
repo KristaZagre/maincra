@@ -1,11 +1,12 @@
 import { Amount, Native } from '@sushiswap/currency'
+import { Fraction, ONE, Percent } from '@sushiswap/math'
 import { useBentoBoxTotal, useSushiXSwapContractWithProvider } from '@sushiswap/wagmi'
 import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
-import { FC, useCallback } from 'react'
+import { FC, useCallback, useMemo } from 'react'
 import { useAccount } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 
-import { useNotifications } from '../lib/state/storage'
+import { useNotifications, useSettings } from '../lib/state/storage'
 import { SushiBridge } from '../lib/SushiBridge'
 import { useBridgeState, useBridgeStateActions, useDerivedBridgeState } from './BridgeStateProvider'
 
@@ -13,6 +14,9 @@ interface BridgeExecuteProvider {
   approved: boolean | undefined
   children({ execute, isWritePending }: { execute: (() => void) | undefined; isWritePending: boolean })
 }
+
+// 1%
+const BRIDGE_DEFAULT_SLIPPAGE = new Percent(100, 10_000)
 
 export const BridgeExecuteProvider: FC<BridgeExecuteProvider> = ({ approved, children }) => {
   const { address } = useAccount()
@@ -22,6 +26,13 @@ export const BridgeExecuteProvider: FC<BridgeExecuteProvider> = ({ approved, chi
   const { dstAmountOut } = useDerivedBridgeState()
   const contract = useSushiXSwapContractWithProvider(srcChainId)
   const srcInputCurrencyRebase = useBentoBoxTotal(srcChainId, srcToken)
+
+  const [{ slippageTolerance }] = useSettings()
+
+  const allowedSlippage = useMemo(
+    () => (slippageTolerance ? new Percent(slippageTolerance * 100, 10_000) : BRIDGE_DEFAULT_SLIPPAGE),
+    [slippageTolerance]
+  )
 
   const onSettled = useCallback(
     async (data: SendTransactionResult | undefined) => {
@@ -63,6 +74,13 @@ export const BridgeExecuteProvider: FC<BridgeExecuteProvider> = ({ approved, chi
       return
     }
 
+    const slippageAdjustedAmountOut = new Fraction(ONE)
+      .add(allowedSlippage)
+      .invert()
+      .multiply(dstAmountOut.quotient).quotient
+
+    const minimumAmountOut = Amount.fromRawAmount(dstAmountOut.currency, slippageAdjustedAmountOut)
+
     const srcShare = amount.toShare(srcInputCurrencyRebase)
     const bridge = new SushiBridge({
       contract,
@@ -77,11 +95,15 @@ export const BridgeExecuteProvider: FC<BridgeExecuteProvider> = ({ approved, chi
       bridge.srcCooker.setMasterContractApproval(signature)
     }
     bridge.transfer(amount, srcShare, dstAmountOut)
+
+    console.log('minimum amount out', minimumAmountOut.toFixed())
+
     bridge.teleport(
       srcToken,
       dstToken,
       400000, // TODO: figure out exact extra gas required
-      id
+      id,
+      minimumAmountOut
     )
 
     bridge
