@@ -328,4 +328,26 @@ describe('StableSwap test', () => {
   //   const t3 = numberPrecision((finish - start2) / 1000)
   //   console.log(`StableSwap pool calcOutByIn: ${t1}ms, calcInByOut: ${t2}ms, price: ${t3}ms`)
   // })
+
+  
+  describe('Price calculation with different decimals (USDC 6, DAI 18)', () => {
+
+  it('initial reserves', () => {
+    const pool = createPool(BigNumber.from('999999'), BigNumber.from('999999999999999999'), 0.003, 6, 18)
+    const token0Price = pool.calcCurrentPriceWithoutFee(true)
+    const token1Price = pool.calcCurrentPriceWithoutFee(false)
+    expect(token0Price).toBeLessThan(1.0001)
+    expect(token1Price).toBeLessThan(0.9999)
+  })
+
+  
+  it('other real values', () => {
+    const pool = createPool(BigNumber.from('35279238545'), BigNumber.from('31208645960838534493538'), 0.003, 6, 18)
+    const token0Price = pool.calcCurrentPriceWithoutFee(true)
+    const token1Price = pool.calcCurrentPriceWithoutFee(false)
+    expect(token0Price).toBeLessThan(1.0001)
+    expect(token1Price).toBeLessThan(0.9999)
+  })
+
+  })
 })
