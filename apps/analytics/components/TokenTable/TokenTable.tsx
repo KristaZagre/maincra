@@ -1,5 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
-import { Token } from '@sushiswap/graph-client/.graphclient'
+import { Token } from '@sushiswap/graph-client'
 import { Table, useBreakpoint } from '@sushiswap/ui'
 import { getCoreRowModel, getSortedRowModel, PaginationState, SortingState, useReactTable } from '@tanstack/react-table'
 import stringify from 'fast-json-stable-stringify'
@@ -14,11 +14,16 @@ import {
   TOKEN_LIQUIDITY_COLUMN,
   TOKEN_NAME_COLUMN,
   TOKEN_PRICE_COLUMN,
-  TOKEN_VOLUME_COLUMN,
 } from '../Table'
 
 // @ts-ignore
-const COLUMNS = [TOKEN_CHAIN_COLUMN, TOKEN_NAME_COLUMN, TOKEN_PRICE_COLUMN, TOKEN_LIQUIDITY_COLUMN, TOKEN_VOLUME_COLUMN]
+const COLUMNS = [
+  TOKEN_CHAIN_COLUMN,
+  TOKEN_NAME_COLUMN,
+  TOKEN_PRICE_COLUMN,
+  TOKEN_LIQUIDITY_COLUMN,
+  // TOKEN_VOLUME_COLUMN
+]
 
 const fetcher = ({
   url,

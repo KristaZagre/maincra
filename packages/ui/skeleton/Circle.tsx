@@ -16,6 +16,7 @@ export const Circle: FC<CircleProps> = (props) => {
         'relative',
         "rounded-full overflow-hidden after:absolute after:inset-0 after:translate-x-[-100%] after:animate-wave after:content-[''] after:bg-shimmer-gradient"
       )}
+      // className={classNames(props.className, 'rounded-full overflow-hidden shimmer')}
     />
   )
 }

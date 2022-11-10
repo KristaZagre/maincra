@@ -1,6 +1,6 @@
 import { Transition } from '@headlessui/react'
 import { Amount, Token, tryParseAmount } from '@sushiswap/currency'
-import { Pair } from '@sushiswap/graph-client/.graphclient'
+import { Pair } from '@sushiswap/graph-client'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
 import { Button, Dots, Typography } from '@sushiswap/ui'
@@ -12,7 +12,6 @@ import { ProviderRpcError, useAccount, UserRejectedRequestError } from 'wagmi'
 import { CHEF_TYPE_MAP } from '../../lib/constants'
 import { useTokensFromPair } from '../../lib/hooks'
 import { useNotifications } from '../../lib/state/storage'
-import { PairWithAlias } from '../../types'
 import { usePoolPosition } from '../PoolPositionProvider'
 import { usePoolPositionStaked } from '../PoolPositionStakedProvider'
 import { AddSectionStakeWidget } from './AddSectionStakeWidget'
@@ -25,7 +24,7 @@ interface AddSectionStakeProps {
 
 export const AddSectionStake: FC<{ poolAddress: string; title?: string }> = ({ poolAddress, title }) => {
   const isMounted = useIsMounted()
-  const { data } = useSWR<{ pair: PairWithAlias }>(`/earn/api/pool/${poolAddress}`, (url) =>
+  const { data } = useSWR<{ pair: Pair }>(`/earn/api/pool/${poolAddress}`, (url) =>
     fetch(url).then((response) => response.json())
   )
 
