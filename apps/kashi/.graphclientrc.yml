@@ -19,19 +19,19 @@ additionalTypeDefs: |
   }
   extend type Query {
     dashboard(
-      first: Int, 
-      skip: Int, 
-      orderBy: KashiPair_orderBy, 
-      orderDirection: OrderDirection, 
-      where: KashiPair_filter, 
+      first: Int
+      skip: Int
+      orderBy: KashiPair_orderBy
+      orderDirection: OrderDirection
+      where: KashiPair_filter
       chainIds: [BigInt!]!
     ): Dashboard!
     datapoints(
-      first: Int, 
-      skip: Int, 
-      orderBy: KashiPair_orderBy, 
-      orderDirection: OrderDirection, 
-      where: KashiPair_filter, 
+      first: Int
+      skip: Int
+      orderBy: KashiPair_orderBy
+      orderDirection: OrderDirection
+      where: KashiPair_filter
       chainIds: [BigInt!]!
     ): Datapoint!
     pair(
@@ -40,11 +40,11 @@ additionalTypeDefs: |
       chainId: BigInt!
     ): KashiPair!
     pairs(
-      first: Int, 
-      skip: Int, 
-      orderBy: KashiPair_orderBy,
-      orderDirection: OrderDirection,
-      where: KashiPair_filter,
+      first: Int
+      skip: Int
+      orderBy: KashiPair_orderBy
+      orderDirection: OrderDirection
+      where: KashiPair_filter
       chainIds: [BigInt!]!
     ): [KashiPair!]!
   }
@@ -58,3 +58,7 @@ documents:
 
 codegen:
   contextType: 'MeshContext & { chainId: string; chainName: string; subgraphName: string; subgraphHost: string }'
+
+cache:
+  redis:
+    url: "${env.REDIS_URL}"

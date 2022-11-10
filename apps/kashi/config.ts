@@ -12,11 +12,11 @@ export const KASHI_ADDRESS = {
 
 export const SUPPORTED_CHAIN_IDS = [
   ChainId.ETHEREUM,
-  // ChainId.POLYGON,
+  ChainId.POLYGON,
   ChainId.GNOSIS,
   ChainId.ARBITRUM,
-  // ChainId.AVALANCHE,
-  ChainId.BSC,
+  ChainId.AVALANCHE,
+  // ChainId.BSC,
 ]
 
 export const GRAPH_HOST = 'api.thegraph.com/subgraphs/name'

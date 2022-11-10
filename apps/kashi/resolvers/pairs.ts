@@ -16,13 +16,17 @@ export const pairs: QueryResolvers['pairs'] = async (root, args, context, info) 
           subgraphHost: KASHI_SUBGRAPH_HOST[chainId],
         },
         info,
-      }).then((pairs: KashiPair[]) =>
-        pairs.map((pair) => ({
+      }).then((pairs: KashiPair[]) => {
+        if (!Array.isArray(pairs)) {
+          console.error('kashiPairs query failed...', pairs, KASHI_SUBGRAPH_NAME[chainId], KASHI_SUBGRAPH_HOST[chainId])
+          return []
+        }
+        return pairs.map((pair) => ({
           ...pair,
           chainId,
           chainName: CHAIN_NAME[chainId],
         }))
-      )
+      })
     )
   ).then((pairs) =>
     pairs
