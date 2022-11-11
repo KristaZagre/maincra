@@ -40,16 +40,16 @@ export const _getMasterChefContractConfig = (
   chainId: keyof typeof MASTERCHEF_ADDRESS
 ): Pick<ReadContractConfig, 'chainId' | 'addressOrName' | 'contractInterface'> => ({
   chainId,
-  addressOrName: MASTERCHEF_ADDRESS[chainId],
-  contractInterface: MASTERCHEF_ABI,
+  address: MASTERCHEF_ADDRESS[chainId],
+  abi: MASTERCHEF_ABI,
 })
 
 export const getMasterChefContractV2Config = (
   chainId: keyof typeof MASTERCHEF_V2_ADDRESS
 ): Pick<ReadContractConfig, 'chainId' | 'addressOrName' | 'contractInterface'> => ({
   chainId,
-  addressOrName: MASTERCHEF_V2_ADDRESS[chainId],
-  contractInterface: MASTERCHEF_ABI_V2,
+  address: MASTERCHEF_V2_ADDRESS[chainId],
+  abi: MASTERCHEF_ABI_V2,
 })
 
 export const getMiniChefContractConfig = (
@@ -57,8 +57,8 @@ export const getMiniChefContractConfig = (
 ): Pick<ReadContractConfig, 'chainId' | 'addressOrName' | 'contractInterface'> => {
   return {
     chainId,
-    addressOrName: MINICHEF_ADDRESS[chainId],
-    contractInterface: MINICHEF_ABI,
+    address: MINICHEF_ADDRESS[chainId],
+    abi: MINICHEF_ABI,
   }
 }
 

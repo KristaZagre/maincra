@@ -7,7 +7,7 @@ export type Props = {
 
 export function Avatar({ address }: Props): JSX.Element {
   const { data } = useEnsAvatar({
-    addressOrName: address,
+    address: address,
     chainId: ChainId.ETHEREUM,
     enabled: !!address,
   })

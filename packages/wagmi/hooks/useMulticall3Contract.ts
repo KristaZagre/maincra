@@ -4,8 +4,8 @@ import { allChains, useContract, useProvider } from 'wagmi'
 const chains = [...allChains, ...otherChains]
 
 export const getMulticall3ContractConfig = (chainId: number | undefined) => ({
-  addressOrName: chains.find((chain) => chain.id === chainId)?.multicall?.address || '',
-  contractInterface: [
+  address: chains.find((chain) => chain.id === chainId)?.multicall?.address || '',
+  abi: [
     {
       inputs: [
         {

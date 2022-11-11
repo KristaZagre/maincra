@@ -60,8 +60,8 @@ export function useGetConstantProductPools(
   } = useContractReads({
     contracts: pairsUniqueAddr.map((el) => ({
       chainId,
-      addressOrName: contract.address,
-      contractInterface: contract.interface,
+      address: contract.address,
+      abi: contract.interface,
       functionName: 'poolsCount',
       args: el,
     })),
@@ -92,8 +92,8 @@ export function useGetConstantProductPools(
       if (!callStatePoolsCountProcessed) return []
       return callStatePoolsCountProcessed.map((args) => ({
         chainId,
-        addressOrName: contract.address,
-        contractInterface: contract.interface,
+        address: contract.address,
+        abi: contract.interface,
         functionName: 'getPools',
         args,
       }))
@@ -129,13 +129,13 @@ export function useGetConstantProductPools(
       ...poolsAddresses.map((addressOrName) => ({
         chainId,
         addressOrName,
-        contractInterface: POOL_INTERFACE,
+        abi: POOL_INTERFACE,
         functionName: 'getReserves',
       })),
       ...poolsAddresses.map((addressOrName) => ({
         chainId,
         addressOrName,
-        contractInterface: POOL_INTERFACE,
+        abi: POOL_INTERFACE,
         functionName: 'swapFee',
       })),
     ],
@@ -225,7 +225,7 @@ export function useConstantProductPools(
     contracts: poolsAddresses.map((addressOrName) => ({
       chainId,
       addressOrName,
-      contractInterface: POOL_INTERFACE,
+      abi: POOL_INTERFACE,
       functionName: 'getReserves',
     })),
     enabled: poolsAddresses.length > 0,

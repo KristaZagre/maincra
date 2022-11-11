@@ -147,8 +147,8 @@ const BAR_ABI = [
 ]
 
 export const getSushiBarContractConfig = (chainId: number | undefined) => ({
-  addressOrName: XSUSHI_ADDRESS[chainId as number],
-  contractInterface: BAR_ABI,
+  address: XSUSHI_ADDRESS[chainId as number],
+  abi: BAR_ABI,
 })
 
 export function useSushiBarContract(chainId: number | undefined) {

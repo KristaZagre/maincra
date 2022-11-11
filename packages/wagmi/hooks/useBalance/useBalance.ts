@@ -39,7 +39,7 @@ export const useBalances: UseBalances = ({
     isLoading: isNativeLoading,
     isError: isNativeError,
   } = useWagmiBalance({
-    addressOrName: account,
+    address: account,
     chainId,
     enabled,
     watch: !(typeof enabled !== undefined && !enabled) && watch,
@@ -66,8 +66,8 @@ export const useBalances: UseBalances = ({
     const input = validatedTokenAddresses.map((token) => {
       return {
         chainId,
-        addressOrName: token[0],
-        contractInterface: erc20ABI,
+        address: token[0],
+        abi: erc20ABI,
         functionName: 'balanceOf',
         args: [account],
       }
