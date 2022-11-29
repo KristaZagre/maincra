@@ -24,15 +24,12 @@ test.beforeEach(async ({ page }) => {
 })
 
 
-
 test.describe('Create stream', () => {
 
   test('Create a stream', async ({ page }) => {
-    const createStreamLink = page.locator('[testdata-id=furo-landing-pay-someone-button]')
-    await createStreamLink.click()
+    await page.goto((process.env.PLAYWRIGHT_URL as string).concat('/stream/create/single'))
 
-    // Expects the URL to contain intro.
-    await expect(page).toHaveURL(process.env.PLAYWRIGHT_URL + '/stream/create')
+
   })
 
   

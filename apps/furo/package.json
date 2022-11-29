@@ -78,6 +78,7 @@
     "zod": "^3.19.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.25.0",
     "@graphprotocol/client-add-source-name": "latest",
     "@graphprotocol/client-auto-pagination": "latest",
     "@graphprotocol/client-cli": "2.2.15",
