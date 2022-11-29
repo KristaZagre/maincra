@@ -82,6 +82,7 @@ export const StreamAmountDetails: FC<{ chainId: ChainId }> = ({ chainId }) => {
           render={({ field: { onChange, value }, fieldState: { error } }) => (
             <>
               <Select.Button
+                testdata-id="token-selector-button"
                 error={!!error?.message}
                 standalone
                 className="!cursor-pointer ring-offset-slate-900"
@@ -117,6 +118,7 @@ export const StreamAmountDetails: FC<{ chainId: ChainId }> = ({ chainId }) => {
               <div className="flex flex-col">
                 <div className="flex items-center gap-3">
                   <FundSourceOption
+                    id={'fund-source-wallet'}
                     chainId={chainId}
                     label="Wallet"
                     active={_value === FundSource.WALLET}
@@ -126,6 +128,7 @@ export const StreamAmountDetails: FC<{ chainId: ChainId }> = ({ chainId }) => {
                   />
                   {!currency?.isNative && (
                     <FundSourceOption
+                      id={'fund-source-bentobox'}
                       chainId={chainId}
                       label="BentoBox"
                       active={_value === FundSource.BENTOBOX}
@@ -149,6 +152,7 @@ export const StreamAmountDetails: FC<{ chainId: ChainId }> = ({ chainId }) => {
             return (
               <>
                 <CurrencyInput.Base
+                  id="create-stream-amount"
                   onBlur={onBlur}
                   name={name}
                   className="ring-offset-slate-900"

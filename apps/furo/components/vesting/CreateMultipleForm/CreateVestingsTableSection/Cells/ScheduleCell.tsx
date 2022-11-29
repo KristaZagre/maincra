@@ -194,6 +194,7 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
                         name={`vestings.${index}.stepAmount`}
                         render={({ field: { onChange, value, name, onBlur }, fieldState: { error } }) => (
                           <CurrencyInput.Base
+                            id={`create-vest-graded-step-amount-${index}`}
                             className="ring-offset-slate-900"
                             onChange={onChange}
                             value={value || ''}

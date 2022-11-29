@@ -56,6 +56,7 @@ export const GradedVestingDetailsSection = () => {
           name="stepAmount"
           render={({ field: { onChange, value, name, onBlur }, fieldState: { error } }) => (
             <CurrencyInput.Base
+              id="create-vest-graded-step-amount"
               className="ring-offset-slate-900"
               onChange={onChange}
               value={value || ''}

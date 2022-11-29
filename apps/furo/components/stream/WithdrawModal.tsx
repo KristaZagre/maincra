@@ -111,6 +111,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId }) => {
           <Dialog.Header title="Withdraw" onClose={() => setOpen(false)} />
           <div className="flex flex-col gap-2">
             <CurrencyInput.Base
+              id="furo-withdraw"
               inputClassName="pb-2"
               className="ring-offset-slate-800"
               currency={stream?.token}
@@ -170,7 +171,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId }) => {
                 </div>
               )}
             </div>
-            <div className="pt-2 col-span-2">
+            <div className="col-span-2 pt-2">
               <Checker.Custom
                 showGuardIfTrue={!amount?.greaterThan(0)}
                 guard={
