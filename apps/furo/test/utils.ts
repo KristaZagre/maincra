@@ -219,6 +219,8 @@ export async function selectDate(testDataId: string, months: number, page: Page)
     )
     .last()
     .click()
+
+  await page.locator(`li.react-datepicker__time-list-item`).first().click()
 }
 
 export async function depositToBento(amount: string, chainId: ChainId) {
