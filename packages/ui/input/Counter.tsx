@@ -25,6 +25,7 @@ export const Counter = forwardRef<HTMLInputElement, CounterProps>(
           )}
         >
           <button
+            testdata-id={`${rest.id}-add-button`}
             className={classNames(
               DEFAULT_INPUT_HOVER_BG,
               'col-span-3 text-2xl text-slate-300 hover:text-slate-200 h-full w-10 rounded-l-xl cursor-pointer outline-none'
@@ -35,6 +36,7 @@ export const Counter = forwardRef<HTMLInputElement, CounterProps>(
             -
           </button>
           <input
+            testdata-id={`${rest.id}-input`}
             className={classNames(DEFAULT_INPUT_UNSTYLED, 'col-span-6 !rounded-none flex text-center w-unset')}
             ref={ref}
             value={value || ''}
@@ -51,6 +53,7 @@ export const Counter = forwardRef<HTMLInputElement, CounterProps>(
             {...rest}
           />
           <button
+            testdata-id={`${rest.id}-minus-button`}
             className={classNames(
               DEFAULT_INPUT_HOVER_BG,
               'col-span-3 text-2xl text-slate-300 hover:text-slate-200 h-full w-10 rounded-r-xl cursor-pointer outline-none'

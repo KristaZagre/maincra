@@ -1,6 +1,6 @@
 import { AddressZero } from '@ethersproject/constants'
 import { expect, test } from '@playwright/test'
-import { Native, WNATIVE_ADDRESS } from '@sushiswap/currency'
+import { Native } from '@sushiswap/currency'
 import { depositToBento, selectDate, selectNetwork, timeout, Token } from 'test/utils'
 
 if (!process.env.CHAIN_ID) {
@@ -121,4 +121,3 @@ test.describe('Create stream', () => {
     await expect(page.locator('div', { hasText: expectedText }).last()).toContainText(expectedText)
   })
 })
-
