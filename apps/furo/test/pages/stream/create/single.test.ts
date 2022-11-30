@@ -1,10 +1,7 @@
 import { AddressZero } from '@ethersproject/constants'
-import { parseUnits } from '@ethersproject/units'
-import { expect, Page, test } from '@playwright/test'
-import { chainName } from '@sushiswap/chain'
+import { expect, test } from '@playwright/test'
 import { Native, WNATIVE_ADDRESS } from '@sushiswap/currency'
-import { Contract } from 'ethers'
-import { BENTOBOX_ADDRESS, BENTOBOX_DEPOSIT_ABI, getProvider, getSigners } from 'test/utils'
+import { depositToBento, selectDate, selectNetwork, timeout, Token } from 'test/utils'
 
 if (!process.env.CHAIN_ID) {
   throw new Error('CHAIN_ID env var not set')
@@ -16,16 +13,17 @@ const NATIVE_TOKEN: Token = {
   address: AddressZero,
   symbol: Native.onChain(CHAIN_ID).symbol,
 }
-const WNATIVE_TOKEN: Token = {
-  address: WNATIVE_ADDRESS[CHAIN_ID],
-  symbol: `W${NATIVE_TOKEN.symbol}`,
+
+const WNATIVE_TOKEN = {
+  address: Native.onChain(CHAIN_ID).wrapped.address.toLowerCase(),
+  symbol: Native.onChain(CHAIN_ID).wrapped.symbol ?? 'WETH',
 }
 
 test.describe('Create stream', () => {
   test('Create a stream, native token', async ({ page }) => {
     const url = (process.env.PLAYWRIGHT_URL as string).concat('/stream/create/single')
     await page.goto(url)
-    await selectNetwork(page)
+    await selectNetwork(page, CHAIN_ID)
 
     // Date
     await selectDate('stream-start-date', 1, page)
@@ -68,11 +66,11 @@ test.describe('Create stream', () => {
   test('Create a stream using bentobox balance', async ({ page }) => {
     //deposit 1 native to bentobox
     const amount = '10.0'
-    await depositToBento(amount)
+    await depositToBento(amount, CHAIN_ID)
 
     const url = (process.env.PLAYWRIGHT_URL as string).concat('/stream/create/single')
     await page.goto(url)
-    await selectNetwork(page)
+    await selectNetwork(page, CHAIN_ID)
 
     // Date
     await selectDate('stream-start-date', 1, page)
@@ -96,89 +94,31 @@ test.describe('Create stream', () => {
     // Amount
     await page.locator('[testdata-id=create-stream-amount-input]').fill(amount)
 
+    // Approve BentoBox
+    await page
+      .locator('[testdata-id=furo-create-single-stream-approve-bentobox-button]')
+      .click({ timeout: 1500 })
+      .then(async () => {
+        console.log(`BentoBox Approved`)
+      })
+      .catch(() => console.log('BentoBox already approved or not needed'))
+
+    // Approve Token
     await page
       .locator('[testdata-id=furo-create-single-stream-approve-token-button]')
       .click({ timeout: 1500 })
       .then(async () => {
-        console.log(`WMATIC Approved`)
+        console.log(`${WNATIVE_TOKEN.symbol} Approved`)
       })
-      .catch(() => console.log('WMATIC already approved or not needed'))
+      .catch(() => console.log(`${WNATIVE_TOKEN.symbol} already approved or not needed`))
 
     const confirmCreateStreamButton = page.locator(`[testdata-id=furo-create-single-stream-confirm-button]`)
 
     await expect(confirmCreateStreamButton).toBeEnabled()
     await confirmCreateStreamButton.click()
 
-    const expectedText = new RegExp(`Created .* W${NATIVE_TOKEN.symbol} stream`)
+    const expectedText = new RegExp(`Created .* ${WNATIVE_TOKEN.symbol} stream`)
     await expect(page.locator('div', { hasText: expectedText }).last()).toContainText(expectedText)
   })
 })
 
-// test.describe('Create vest', () => {
-
-//   test('Graded', async() => {
-
-//   })
-
-//   test('Cliff', async() => {
-
-//   })
-
-//   test('Hybrid', async() => {
-
-//   })
-
-// })
-
-// test.describe('Create vest with balance from bentobox', () => {
-
-// })
-
-async function selectNetwork(page: Page) {
-  await page.locator(`[testdata-id=network-selector-button]`).click()
-  const networkList = page.locator(`[testdata-id=network-selector-list]`)
-  const desiredNetwork = networkList.getByText(chainName[CHAIN_ID])
-  expect(desiredNetwork).toBeVisible()
-  await desiredNetwork.click()
-
-  if (await desiredNetwork.isVisible()) {
-    await page.locator(`[testdata-id=network-selector-button]`).click()
-  }
-}
-
-function timeout(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms))
-}
-
-interface Token {
-  address: string
-  symbol: string
-}
-
-async function selectDate(testDataId: string, months: number, page: Page) {
-  await page.locator(`[testdata-id=${testDataId}]`).click()
-  for (let i = 0; i < months; i++) {
-    await page.locator(`[aria-label="Next Month"]`).click()
-  }
-
-  await page
-    .locator(
-      `div.react-datepicker__day.react-datepicker__day--001, div.react-datepicker__day.react-datepicker__day--001.react-datepicker__day--weekend`
-    )
-    .last()
-    .click()
-}
-
-async function depositToBento(amount: string) {
-  const amountToSend = parseUnits(amount, 'ether').add(parseUnits('100.0', 'gwei')) //add 100 gwei so we actually get the amount asked as bentobox round down
-  const signer = getSigners()[0].connect(getProvider({ chainId: CHAIN_ID }))
-  const bentoContract = new Contract(BENTOBOX_ADDRESS[CHAIN_ID], BENTOBOX_DEPOSIT_ABI, signer)
-  await bentoContract.deposit(
-    '0x0000000000000000000000000000000000000000',
-    signer.address,
-    signer.address,
-    amountToSend,
-    0,
-    { value: amountToSend }
-  )
-}

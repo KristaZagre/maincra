@@ -1,5 +1,7 @@
-import { ChainId } from '@sushiswap/chain'
-import { providers, Wallet } from 'ethers'
+import { parseUnits } from '@ethersproject/units'
+import { expect, Page } from '@playwright/test'
+import { ChainId, chainName } from '@sushiswap/chain'
+import { Contract, providers, Wallet } from 'ethers'
 import { allChains, Chain, chain as chainLookup } from 'wagmi'
 
 function getNetwork(chain: Chain) {
@@ -183,3 +185,52 @@ export const BENTOBOX_DEPOSIT_ABI = [
     type: 'function',
   },
 ]
+
+export async function selectNetwork(page: Page, chainId: ChainId) {
+  await page.locator(`[testdata-id=network-selector-button]`).click()
+  const networkList = page.locator(`[testdata-id=network-selector-list]`)
+  const desiredNetwork = networkList.getByText(chainName[chainId])
+  await expect(desiredNetwork).toBeVisible()
+  await desiredNetwork.click()
+
+  if (await desiredNetwork.isVisible()) {
+    await page.locator(`[testdata-id=network-selector-button]`).click()
+  }
+}
+
+export function timeout(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
+export interface Token {
+  address: string
+  symbol: string
+}
+
+export async function selectDate(testDataId: string, months: number, page: Page) {
+  await page.locator(`[testdata-id=${testDataId}]`).click()
+  for (let i = 0; i < months; i++) {
+    await page.locator(`[aria-label="Next Month"]`).click()
+  }
+
+  await page
+    .locator(
+      `div.react-datepicker__day.react-datepicker__day--001, div.react-datepicker__day.react-datepicker__day--001.react-datepicker__day--weekend`
+    )
+    .last()
+    .click()
+}
+
+export async function depositToBento(amount: string, chainId: ChainId) {
+  const amountToSend = parseUnits(amount, 'ether').add(parseUnits('100.0', 'gwei')) //add 100 gwei so we actually get the amount asked as bentobox round down
+  const signer = getSigners()[0].connect(getProvider({ chainId }))
+  const bentoContract = new Contract(BENTOBOX_ADDRESS[chainId], BENTOBOX_DEPOSIT_ABI, signer)
+  await bentoContract.deposit(
+    '0x0000000000000000000000000000000000000000',
+    signer.address,
+    signer.address,
+    amountToSend,
+    0,
+    { value: amountToSend }
+  )
+}
