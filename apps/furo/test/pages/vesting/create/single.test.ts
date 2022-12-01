@@ -1,5 +1,5 @@
 import { AddressZero } from '@ethersproject/constants'
-import { expect, test } from '@playwright/test'
+import { expect, Page, test } from '@playwright/test'
 import { Native } from '@sushiswap/currency'
 import { selectDate, selectNetwork, timeout, Token } from 'test/utils'
 
@@ -13,16 +13,19 @@ const NATIVE_TOKEN: Token = {
   address: AddressZero,
   symbol: Native.onChain(CHAIN_ID).symbol,
 }
+const WNATIVE_TOKEN = {
+  address: Native.onChain(CHAIN_ID).wrapped.address.toLowerCase(),
+  symbol: Native.onChain(CHAIN_ID).wrapped.symbol ?? 'WETH',
+}
+const AMOUNT = '1'
+const AMOUNT_OF_PERIODS = '5'
+const CLIFF_AMOUNT = '10'
 
 test.describe('Create vest', () => {
-  test('Graded', async ({ page }) => {
+  test.beforeEach(async ({ page }) => {
     const url = (process.env.PLAYWRIGHT_URL as string).concat('/vesting/create/single')
     await page.goto(url)
     await selectNetwork(page, CHAIN_ID)
-
-    const amount = '1'
-    const amountOfPeriods = '5'
-    const totalAmount = (parseFloat(amount) * parseFloat(amountOfPeriods)).toString()
 
     // Token selector
     await page.locator(`[testdata-id=token-selector-button]`).click()
@@ -41,49 +44,34 @@ test.describe('Create vest', () => {
     await page.locator(`[testdata-id=fund-source-wallet-button]`).click()
 
     // Amount
-    await page.locator('[testdata-id=create-vest-graded-step-amount-input]').fill(amount)
+    await page.locator('[testdata-id=create-vest-graded-step-amount-input]').fill(AMOUNT)
 
     // Amount of periods
-    await page.locator('[testdata-id=furo-graded-vesting-step-amount-input]').fill(amountOfPeriods)
+    await page.locator('[testdata-id=furo-graded-vesting-step-amount-input]').fill(AMOUNT_OF_PERIODS)
     await page.locator('[testdata-id=furo-graded-vesting-step-amount-add-button]').click()
     await page.locator('[testdata-id=furo-graded-vesting-step-amount-minus-button]').click()
 
     // Edit period length
     await page.locator('[testdata-id=furo-select-period-length-button]').click()
     await page.locator('text=Bi-weekly').click()
-
-    // Review
-    await page.locator('[testdata-id=furo-review-vesting-button]').click()
-
-    // add expect to check if data displayed is correct
-    await expect(page.locator('[testdata-id=furo-review-modal-funds-source]')).toContainText('wallet')
-    await expect(page.locator('[testdata-id=furo-review-modal-total-amount]')).toContainText(totalAmount)
-    await expect(page.locator('[testdata-id=furo-review-modal-payment-per-period]')).toContainText(
-      `${amount} ${NATIVE_TOKEN.symbol}`
-    )
-    await expect(page.locator('[testdata-id=furo-review-modal-period-length]')).toContainText('Bi-weekly')
-    await expect(page.locator('[testdata-id=furo-review-modal-amount-of-periods]')).toContainText(amountOfPeriods)
-
-    // Approve BentoBox
-    await page
-      .locator('[testdata-id=furo-create-single-vest-approve-bentobox-button]')
-      .click({ timeout: 1500 })
-      .then(async () => {
-        console.log(`BentoBox Approved`)
-      })
-      .catch(() => console.log('BentoBox already approved or not needed'))
-
-    // Confirm creation
-    await timeout(1000) //confirm button can take some time to appear
-    const confirmCreateVestingButton = page.locator('[testdata-id=furo-create-single-vest-confirm-button]')
-    expect(confirmCreateVestingButton).toBeEnabled()
-    await confirmCreateVestingButton.click()
-
-    const expectedText = new RegExp(`Created .* ${NATIVE_TOKEN.symbol} vesting`)
-    await expect(page.locator('div', { hasText: expectedText }).last()).toContainText(expectedText)
   })
-  //   test('Cliff', async() => {
-  //   })
+
+  test('Graded', async ({ page }) => {
+    const totalAmount = (Number(AMOUNT) * Number(AMOUNT_OF_PERIODS)).toString()
+
+    await reviewAndConfirm(page, totalAmount, false, false)
+  })
+
+  test('Cliff', async ({ page }) => {
+    const totalAmount = (Number(AMOUNT) * Number(AMOUNT_OF_PERIODS) + Number(CLIFF_AMOUNT)).toString()
+
+    // Add cliff
+    await page.locator('[testdata-id=furo-enable-cliff-button-switch]').click()
+    await selectDate('vesting-cliff-start-date', 1, page)
+    await page.locator('[testdata-id=create-single-vest-input]').fill(CLIFF_AMOUNT)
+
+    await reviewAndConfirm(page, totalAmount, false, true)
+  })
   //   test('Hybrid', async() => {
   //   })
 })
@@ -91,3 +79,49 @@ test.describe('Create vest', () => {
 // test.describe('Create vest with balance from bentobox', () => {
 
 // })
+
+async function reviewAndConfirm(page: Page, totalAmount: string, approveToken: boolean, isCliff: boolean) {
+  // Review
+  await page.locator('[testdata-id=furo-review-vesting-button]').click()
+
+  // add expect to check if data displayed is correct
+  await expect(page.locator('[testdata-id=furo-review-modal-funds-source]')).toContainText('wallet')
+  await expect(page.locator('[testdata-id=furo-review-modal-total-amount]')).toContainText(totalAmount)
+  await expect(page.locator('[testdata-id=furo-review-modal-payment-per-period]')).toContainText(
+    `${AMOUNT} ${NATIVE_TOKEN.symbol}`
+  )
+  await expect(page.locator('[testdata-id=furo-review-modal-period-length]')).toContainText('Bi-weekly')
+  await expect(page.locator('[testdata-id=furo-review-modal-amount-of-periods]')).toContainText(AMOUNT_OF_PERIODS)
+  if (isCliff) {
+    await expect(page.locator('[testdata-id=furo-review-modal-cliff-amount]')).toContainText(CLIFF_AMOUNT)
+  }
+
+  // Approve BentoBox
+  await page
+    .locator('[testdata-id=furo-create-single-vest-approve-bentobox-button]')
+    .click({ timeout: 1500 })
+    .then(async () => {
+      console.log(`BentoBox Approved`)
+    })
+    .catch(() => console.log('BentoBox already approved or not needed'))
+
+  if (approveToken) {
+    // Approve Token
+    await page
+      .locator('[testdata-id=furo-create-single-stream-approve-token-button]')
+      .click({ timeout: 1500 })
+      .then(async () => {
+        console.log(`${WNATIVE_TOKEN.symbol} Approved`)
+      })
+      .catch(() => console.log(`${WNATIVE_TOKEN.symbol} already approved or not needed`))
+  }
+
+  // Confirm creation
+  await timeout(1000) //confirm button can take some time to appear
+  const confirmCreateVestingButton = page.locator('[testdata-id=furo-create-single-vest-confirm-button]')
+  expect(confirmCreateVestingButton).toBeEnabled()
+  await confirmCreateVestingButton.click()
+
+  const expectedText = new RegExp(`Created .* ${NATIVE_TOKEN.symbol} vesting`)
+  await expect(page.locator('div', { hasText: expectedText }).last()).toContainText(expectedText)
+}
