@@ -1,7 +1,7 @@
 import { AddressZero } from '@ethersproject/constants'
 import { expect, Page, test } from '@playwright/test'
 import { Native } from '@sushiswap/currency'
-import { selectDate, selectNetwork, timeout, Token } from 'test/utils'
+import { depositToBento, selectDate, selectNetwork, timeout, Token } from 'test/utils'
 
 if (!process.env.CHAIN_ID) {
   throw new Error('CHAIN_ID env var not set')
@@ -26,13 +26,6 @@ test.describe('Create vest', () => {
     const url = (process.env.PLAYWRIGHT_URL as string).concat('/vesting/create/single')
     await page.goto(url)
     await selectNetwork(page, CHAIN_ID)
-
-    // Token selector
-    await page.locator(`[testdata-id=token-selector-button]`).click()
-    await page.fill(`[testdata-id=create-single-vest-token-selector-dialog-address-input]`, NATIVE_TOKEN.symbol)
-    await timeout(1000) // wait for the list to load instead of using timeout
-
-    await page.locator(`[testdata-id=create-single-vest-token-selector-dialog-row-${NATIVE_TOKEN.address}]`).click()
 
     // Date
     await selectDate('vesting-start-date', 1, page)
@@ -59,39 +52,69 @@ test.describe('Create vest', () => {
   test('Graded', async ({ page }) => {
     const totalAmount = (Number(AMOUNT) * Number(AMOUNT_OF_PERIODS)).toString()
 
-    await reviewAndConfirm(page, totalAmount, false, false)
+    await selectToken(page)
+
+    await reviewAndConfirm(page, totalAmount)
   })
 
   test('Cliff', async ({ page }) => {
     const totalAmount = (Number(AMOUNT) * Number(AMOUNT_OF_PERIODS) + Number(CLIFF_AMOUNT)).toString()
+
+    await selectToken(page)
 
     // Add cliff
     await page.locator('[testdata-id=furo-enable-cliff-button-switch]').click()
     await selectDate('vesting-cliff-start-date', 1, page)
     await page.locator('[testdata-id=create-single-vest-input]').fill(CLIFF_AMOUNT)
 
-    await reviewAndConfirm(page, totalAmount, false, true)
+    await reviewAndConfirm(page, totalAmount, false, true, true)
   })
-  //   test('Hybrid', async() => {
-  //   })
+
+  test('From bentobox', async ({ page }) => {
+    const totalAmount = (Number(AMOUNT) * Number(AMOUNT_OF_PERIODS)).toString()
+    depositToBento(totalAmount, CHAIN_ID)
+
+    await selectToken(page, false)
+
+    // Update funding for bentobox
+    await page.locator(`[testdata-id=fund-source-bentobox-button]`).click()
+
+    await reviewAndConfirm(page, totalAmount, true, false, false)
+  })
 })
 
-// test.describe('Create vest with balance from bentobox', () => {
+async function selectToken(page: Page, isNative = true) {
+  // Token selector
+  await page.locator(`[testdata-id=token-selector-button]`).click()
+  await page.fill(
+    `[testdata-id=create-single-vest-token-selector-dialog-address-input]`,
+    isNative ? NATIVE_TOKEN.symbol : WNATIVE_TOKEN.symbol
+  )
+  await timeout(1000) // wait for the list to load instead of using timeout
+  await page
+    .locator(
+      `[testdata-id=create-single-vest-token-selector-dialog-row-${
+        isNative ? NATIVE_TOKEN.address : WNATIVE_TOKEN.address
+      }]`
+    )
+    .click()
+}
 
-// })
-
-async function reviewAndConfirm(page: Page, totalAmount: string, approveToken: boolean, isCliff: boolean) {
+async function reviewAndConfirm(page: Page, totalAmount: string, fromBento = false, isNative = true, isCliff = false) {
   // Review
   await page.locator('[testdata-id=furo-review-vesting-button]').click()
 
-  // add expect to check if data displayed is correct
-  await expect(page.locator('[testdata-id=furo-review-modal-funds-source]')).toContainText('wallet')
-  await expect(page.locator('[testdata-id=furo-review-modal-total-amount]')).toContainText(totalAmount)
-  await expect(page.locator('[testdata-id=furo-review-modal-payment-per-period]')).toContainText(
-    `${AMOUNT} ${NATIVE_TOKEN.symbol}`
+  // Check review
+  await expect(page.locator('[testdata-id=furo-review-modal-funds-source]')).toContainText(
+    fromBento ? 'bentobox' : 'wallet'
   )
+  await expect(page.locator('[testdata-id=furo-review-modal-payment-per-period]')).toContainText(
+    `${AMOUNT} ${isNative ? NATIVE_TOKEN.symbol : WNATIVE_TOKEN.symbol}`
+  )
+  await expect(page.locator('[testdata-id=furo-review-modal-total-amount]')).toContainText(totalAmount)
   await expect(page.locator('[testdata-id=furo-review-modal-period-length]')).toContainText('Bi-weekly')
   await expect(page.locator('[testdata-id=furo-review-modal-amount-of-periods]')).toContainText(AMOUNT_OF_PERIODS)
+  // Check cliff amount if Cliff
   if (isCliff) {
     await expect(page.locator('[testdata-id=furo-review-modal-cliff-amount]')).toContainText(CLIFF_AMOUNT)
   }
@@ -105,7 +128,7 @@ async function reviewAndConfirm(page: Page, totalAmount: string, approveToken: b
     })
     .catch(() => console.log('BentoBox already approved or not needed'))
 
-  if (approveToken) {
+  if (!isNative) {
     // Approve Token
     await page
       .locator('[testdata-id=furo-create-single-stream-approve-token-button]')
@@ -122,6 +145,6 @@ async function reviewAndConfirm(page: Page, totalAmount: string, approveToken: b
   expect(confirmCreateVestingButton).toBeEnabled()
   await confirmCreateVestingButton.click()
 
-  const expectedText = new RegExp(`Created .* ${NATIVE_TOKEN.symbol} vesting`)
+  const expectedText = new RegExp(`Created .* ${isNative ? NATIVE_TOKEN.symbol : WNATIVE_TOKEN.symbol} vesting`)
   await expect(page.locator('div', { hasText: expectedText }).last()).toContainText(expectedText)
 }
