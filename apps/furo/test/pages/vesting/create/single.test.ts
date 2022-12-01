@@ -20,6 +20,10 @@ test.describe('Create vest', () => {
     await page.goto(url)
     await selectNetwork(page, CHAIN_ID)
 
+    const amount = '1'
+    const amountOfPeriods = '5'
+    const totalAmount = (parseFloat(amount) * parseFloat(amountOfPeriods)).toString()
+
     // Token selector
     await page.locator(`[testdata-id=token-selector-button]`).click()
     await page.fill(`[testdata-id=create-single-vest-token-selector-dialog-address-input]`, NATIVE_TOKEN.symbol)
@@ -37,10 +41,10 @@ test.describe('Create vest', () => {
     await page.locator(`[testdata-id=fund-source-wallet-button]`).click()
 
     // Amount
-    await page.locator('[testdata-id=create-vest-graded-step-amount-input]').fill('1')
+    await page.locator('[testdata-id=create-vest-graded-step-amount-input]').fill(amount)
 
     // Amount of periods
-    await page.locator('[testdata-id=furo-graded-vesting-step-amount-input]').fill('5')
+    await page.locator('[testdata-id=furo-graded-vesting-step-amount-input]').fill(amountOfPeriods)
     await page.locator('[testdata-id=furo-graded-vesting-step-amount-add-button]').click()
     await page.locator('[testdata-id=furo-graded-vesting-step-amount-minus-button]').click()
 
@@ -52,6 +56,13 @@ test.describe('Create vest', () => {
     await page.locator('[testdata-id=furo-review-vesting-button]').click()
 
     // add expect to check if data displayed is correct
+    await expect(page.locator('[testdata-id=furo-review-modal-funds-source]')).toContainText('wallet')
+    await expect(page.locator('[testdata-id=furo-review-modal-total-amount]')).toContainText(totalAmount)
+    await expect(page.locator('[testdata-id=furo-review-modal-payment-per-period]')).toContainText(
+      `${amount} ${NATIVE_TOKEN.symbol}`
+    )
+    await expect(page.locator('[testdata-id=furo-review-modal-period-length]')).toContainText('Bi-weekly')
+    await expect(page.locator('[testdata-id=furo-review-modal-amount-of-periods]')).toContainText(amountOfPeriods)
 
     // Approve BentoBox
     await page
