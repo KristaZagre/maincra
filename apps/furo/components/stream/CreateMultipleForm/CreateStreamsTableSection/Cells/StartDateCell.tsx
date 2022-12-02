@@ -27,6 +27,7 @@ export const StartDateCell: FC<CellProps> = ({ index }) => {
       name={`streams.${index}.dates.startDate`}
       render={({ field: { onChange, value, onBlur, name }, fieldState: { error } }) => (
         <DatePicker
+          customInput={<input testdata-id={`create-multiple-streams-start-date-${index}`} type="text" />}
           name={name}
           onBlur={onBlur}
           className={classNames(

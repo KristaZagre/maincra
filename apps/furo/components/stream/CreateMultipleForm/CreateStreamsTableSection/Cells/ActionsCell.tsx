@@ -30,12 +30,12 @@ export const ActionsCell: FC<CellProps> = ({ row, index }) => {
   return (
     <div className="flex items-center gap-2">
       <div className="flex items-center">
-        <IconButton onClick={onRemove}>
+        <IconButton onClick={onRemove} testdata-id={`create-multiple-streams-remove-line-button`}>
           <TrashIcon width={20} height={20} className="text-slate-300" />
         </IconButton>
       </div>
       <div className="flex items-center">
-        <IconButton onClick={() => append(row)}>
+        <IconButton onClick={() => append(row)} testdata-id={`create-multiple-streams-copy-line-button`}>
           <DuplicateIcon width={20} height={20} className="text-slate-300" />
         </IconButton>
       </div>
