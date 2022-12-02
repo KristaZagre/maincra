@@ -1,6 +1,7 @@
 import { parseUnits } from '@ethersproject/units'
 import { expect, Page } from '@playwright/test'
 import { ChainId, chainName } from '@sushiswap/chain'
+import { WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { Contract, providers, Wallet } from 'ethers'
 import { allChains, Chain, chain as chainLookup } from 'wagmi'
 
@@ -235,4 +236,23 @@ export async function depositToBento(amount: string, chainId: ChainId) {
     0,
     { value: amountToSend }
   )
+}
+
+const WRAPPED_DEPOSIT_ABI = [
+  {
+    constant: false,
+    inputs: [],
+    name: 'deposit',
+    outputs: [],
+    payable: true,
+    stateMutability: 'payable',
+    type: 'function',
+  },
+]
+
+export async function depositToWrapped(amount: string, chainId: ChainId) {
+  const amountToWrap = parseUnits(amount, 'ether')
+  const signer = getSigners()[0].connect(getProvider({ chainId }))
+  const wrappedContract = new Contract(WNATIVE_ADDRESS[chainId], WRAPPED_DEPOSIT_ABI, signer)
+  await wrappedContract.deposit({ value: amountToWrap })
 }
