@@ -1,6 +1,6 @@
 import { AddressZero } from '@ethersproject/constants'
 import { expect, Page, test } from '@playwright/test'
-import { Native } from '@sushiswap/currency'
+import { Amount, Native } from '@sushiswap/currency'
 import { depositToBento, selectDate, selectNetwork, timeout, Token, depositToWrapped } from 'test/utils'
 
 if (!process.env.CHAIN_ID) {
@@ -17,7 +17,7 @@ const WNATIVE_TOKEN = {
   address: Native.onChain(CHAIN_ID).wrapped.address.toLowerCase(),
   symbol: Native.onChain(CHAIN_ID).wrapped.symbol ?? 'WETH',
 }
-const AMOUNT = '10.0'
+const AMOUNT = '10'
 
 test.describe('Create multiple stream', () => {
   test('Create ETH, WETH, from wallet and from bentobox at once', async ({ page }) => {
@@ -38,6 +38,47 @@ test.describe('Create multiple stream', () => {
 
     // Go to review
     await page.locator(`[testdata-id=furo-create-multiple-streams-review-button]`).click()
+
+    // Check review
+    await expect(page.locator('[testdata-id=create-multiple-streams-review-token-symbol-0]')).toContainText(
+      NATIVE_TOKEN.symbol
+    )
+    await expect(page.locator('[testdata-id=create-multiple-streams-review-token-symbol-1]')).toContainText(
+      WNATIVE_TOKEN.symbol
+    )
+    await expect(page.locator('[testdata-id=create-multiple-streams-review-total-amount-0]')).toContainText(AMOUNT)
+    await expect(page.locator('[testdata-id=create-multiple-streams-review-total-amount-1]')).toContainText(
+      (Number(AMOUNT) * 2).toString()
+    )
+
+    // Approve BentoBox
+    await page
+      .locator('[testdata-id=furo-create-multiple-streams-approve-bentobox-button]')
+      .click({ timeout: 1500 })
+      .then(async () => {
+        console.log(`BentoBox Approved`)
+      })
+      .catch(() => console.log('BentoBox already approved or not needed'))
+
+    // Approve Token
+    await page
+      .locator('[testdata-id=furo-create-multiple-streams-approve-token1-button]')
+      .click({ timeout: 1500 })
+      .then(async () => {
+        console.log(`${WNATIVE_TOKEN.symbol} Approved`)
+      })
+      .catch(() => console.log(`${WNATIVE_TOKEN.symbol} already approved or not needed`))
+
+    // Create streams
+    await timeout(1000) //confirm button can take some time to appear
+    const confirmCreateVestingButton = page.locator('[testdata-id=furo-create-multiple-streams-confirm-button]')
+    expect(confirmCreateVestingButton).toBeEnabled()
+    await confirmCreateVestingButton.click()
+
+    await expect(page.locator('div', { hasText: 'Creating 3 streams' }).last()).toContainText('Creating 3 streams')
+    await expect(page.locator('div', { hasText: 'Transaction Completed' }).last()).toContainText(
+      'Transaction Completed'
+    )
   })
 })
 
