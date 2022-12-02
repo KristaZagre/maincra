@@ -21,7 +21,7 @@ const AMOUNT = '1'
 const AMOUNT_OF_PERIODS = '5'
 const CLIFF_AMOUNT = '10'
 
-test.describe('Create vest', () => {
+test.describe('Create single vest', () => {
   test.beforeEach(async ({ page }) => {
     const url = (process.env.PLAYWRIGHT_URL as string).concat('/vesting/create/single')
     await page.goto(url)
