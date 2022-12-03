@@ -57,6 +57,7 @@ export const CurrencyCell: FC<CellProps> = ({ row, index, chainId = ChainId.ETHE
             )}
           >
             <Button
+              testdata-id={`create-multiple-vests-token-selector-button-${index}`}
               variant="empty"
               className={classNames('!px-0 text-left !text-slate-50')}
               color="gray"

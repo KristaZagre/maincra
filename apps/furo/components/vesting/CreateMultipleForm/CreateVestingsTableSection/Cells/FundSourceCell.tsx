@@ -20,6 +20,7 @@ export const FundSourceCell: FC<CellProps> = ({ row, index }) => {
         <Menu
           button={
             <Menu.Button
+              testdata-id={`create-multiple-vests-fund-source-button-${index}`}
               color="gray"
               className="!px-0 !text-slate-50"
               variant="empty"
@@ -32,8 +33,18 @@ export const FundSourceCell: FC<CellProps> = ({ row, index }) => {
           }
         >
           <Menu.Items className="!min-w-[unset] !w-fit">
-            <Menu.Item onClick={() => onChange(FundSource.WALLET)}>Wallet</Menu.Item>
-            <Menu.Item onClick={() => onChange(FundSource.BENTOBOX)}>BentoBox</Menu.Item>
+            <Menu.Item
+              testdata-id={`create-multiple-vests-fund-source-wallet-${index}`}
+              onClick={() => onChange(FundSource.WALLET)}
+            >
+              Wallet
+            </Menu.Item>
+            <Menu.Item
+              testdata-id={`create-multiple-vests-fund-source-bentobox-${index}`}
+              onClick={() => onChange(FundSource.BENTOBOX)}
+            >
+              BentoBox
+            </Menu.Item>
           </Menu.Items>
         </Menu>
       )}

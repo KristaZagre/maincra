@@ -18,26 +18,30 @@ const WNATIVE_TOKEN = {
   symbol: Native.onChain(CHAIN_ID).wrapped.symbol ?? 'WETH',
 }
 const AMOUNT = '10'
+const AMOUNT_OF_PERIODS = '5'
 
-test.describe('Create multiple stream', () => {
-  test('Create ETH, WETH, from wallet and from bentobox at once', async ({ page }) => {
-    const url = (process.env.PLAYWRIGHT_URL as string).concat('/stream/create/multiple')
+test.describe('Create multiple vesting', () => {
+  test('Create ETH, WETH, With and without cliff, from wallet and from bentobox at once', async ({ page }) => {
+    const url = (process.env.PLAYWRIGHT_URL as string).concat('/vesting/create/multiple')
     await page.goto(url)
     await selectNetwork(page, CHAIN_ID)
 
-    // Add native stream
-    await addStream(page, '0')
+    // Add native vesting
+    await addVesting(page, '0')
 
-    // Add wrapped stream
+    // Add wrapped vesting
     await depositToWrapped(AMOUNT, CHAIN_ID)
-    await addStream(page, '1', false)
+    await addVesting(page, '1', false)
 
-    // Add bentobox stream
+    // Add bentobox vesting
     await depositToBento(AMOUNT, CHAIN_ID)
-    await addStream(page, '2', false, true)
+    await addVesting(page, '2', false, true)
 
-    // Go to review
-    await page.locator(`[testdata-id=furo-create-multiple-streams-review-button]`).click()
+    // Add native vesting with cliff
+    await addVesting(page, '3', true, false, true)
+
+    /* Go to review
+    await page.locator(`[testdata-id=furo-create-multiple-vest-review-button]`).click()
 
     // Check review
     await expect(page.locator('[testdata-id=create-multiple-streams-review-token-symbol-0]')).toContainText(
@@ -69,7 +73,7 @@ test.describe('Create multiple stream', () => {
       })
       .catch(() => console.log(`${WNATIVE_TOKEN.symbol} already approved or not needed`))
 
-    // Create streams
+    // Create vestings
     await timeout(1000) //confirm button can take some time to appear
     const confirmCreateVestingButton = page.locator('[testdata-id=furo-create-multiple-streams-confirm-button]')
     expect(confirmCreateVestingButton).toBeEnabled()
@@ -79,44 +83,63 @@ test.describe('Create multiple stream', () => {
     await expect(page.locator('div', { hasText: 'Transaction Completed' }).last()).toContainText(
       'Transaction Completed'
     )
+    */
   })
 })
 
-async function addStream(page: Page, index: string, isNative = true, fromBentobox = false) {
+async function addVesting(page: Page, index: string, isNative = true, fromBentobox = false, isCliff = false) {
   // Add item
-  await page.locator(`[testdata-id=furo-create-multiple-streams-add-item-button]`).click()
+  await page.locator(`[testdata-id=furo-create-multiple-vest-add-item-button]`).click()
 
   // Select token
   await selectToken(page, index, isNative)
-
-  // Add amount
-  await page.locator(`[testdata-id=create-multiple-streams-amount-input-${index}]`).fill(AMOUNT)
 
   // Add recipient
   await page.locator(`[testdata-id=recipient-${index}-input]`).fill(RECIPIENT)
 
   // Select source
-  await page.locator(`[testdata-id=create-multiple-streams-fund-source-button-${index}]`).click()
+  await page.locator(`[testdata-id=create-multiple-vests-fund-source-button-${index}]`).click()
   await page
-    .locator(`[testdata-id=create-multiple-streams-fund-source-${fromBentobox ? 'bentobox' : 'wallet'}-${index}]`)
+    .locator(`[testdata-id=create-multiple-vests-fund-source-${fromBentobox ? 'bentobox' : 'wallet'}-${index}]`)
     .click()
 
-  // Select dates
-  await selectDate(`create-multiple-streams-start-date-${index}`, 1, page)
-  await selectDate(`create-multiple-streams-end-date-${index}`, 2, page)
+  // Select start date
+  await selectDate(`create-multiple-vests-start-date-${index}`, 1, page)
+
+  // Select schedule and amounts
+  await page.locator(`[testdata-id=furo-create-multiple-vests-schedule-${index}]`).click()
+  if (isCliff) {
+    await page.locator(`[testdata-id=furo-create-multiple-vests-schedule-modal-${index}-switch]`).click()
+    selectDate(`create-multiple-vests-schedule-modal-cliff-date-${index}`, 2, page)
+    await page.locator(`[testdata-id=create-multiple-vests-schedule-modal-${index}-input]`).fill(AMOUNT)
+  }
+  // Fill step details
+  await page.locator(`[testdata-id=create-vest-graded-step-amount-${index}-input]`).fill(AMOUNT)
+  await page
+    .locator(`[testdata-id=create-multiple-vests-schedule-modal-amount-of-periods-${index}-input]`)
+    .fill(AMOUNT_OF_PERIODS)
+  await page
+    .locator(`[testdata-id=create-multiple-vests-schedule-modal-amount-of-periods-${index}-minus-button]`)
+    .click()
+  await page.locator(`[testdata-id=create-multiple-vests-schedule-modal-amount-of-periods-${index}-add-button]`).click()
+  await page.locator(`[testdata-id=create-multiple-vests-schedule-modal-period-length-${index}]`).click()
+  await page.locator('text=Bi-weekly').last().click()
+
+  // Close modal
+  await page.locator(`[testdata-id=create-multiple-vests-schedule-modal-close-button-${index}]`).click()
 }
 
 async function selectToken(page: Page, index: string, isNative = true) {
   // Token selector
-  await page.locator(`[testdata-id=create-multiple-streams-token-selector-button-${index}]`).click()
+  await page.locator(`[testdata-id=create-multiple-vests-token-selector-button-${index}]`).click()
   await page.fill(
-    `[testdata-id=create-multiple-streams-${index}-token-selector-dialog-address-input]`,
+    `[testdata-id=create-multiple-vests-${index}-token-selector-dialog-address-input]`,
     isNative ? NATIVE_TOKEN.symbol : WNATIVE_TOKEN.symbol
   )
   await timeout(1000) // wait for the list to load instead of using timeout
   await page
     .locator(
-      `[testdata-id=create-multiple-streams-${index}-token-selector-dialog-row-${
+      `[testdata-id=create-multiple-vests-${index}-token-selector-dialog-row-${
         isNative ? NATIVE_TOKEN.address : WNATIVE_TOKEN.address
       }]`
     )
