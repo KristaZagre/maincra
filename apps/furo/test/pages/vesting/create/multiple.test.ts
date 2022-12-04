@@ -40,24 +40,26 @@ test.describe('Create multiple vesting', () => {
     // Add native vesting with cliff
     await addVesting(page, '3', true, false, true)
 
-    /* Go to review
+    // Go to review
     await page.locator(`[testdata-id=furo-create-multiple-vest-review-button]`).click()
 
     // Check review
-    await expect(page.locator('[testdata-id=create-multiple-streams-review-token-symbol-0]')).toContainText(
+    await expect(page.locator('[testdata-id=create-multiple-vests-review-token-symbol-0]')).toContainText(
       NATIVE_TOKEN.symbol
     )
-    await expect(page.locator('[testdata-id=create-multiple-streams-review-token-symbol-1]')).toContainText(
+    await expect(page.locator('[testdata-id=create-multiple-vests-review-token-symbol-1]')).toContainText(
       WNATIVE_TOKEN.symbol
     )
-    await expect(page.locator('[testdata-id=create-multiple-streams-review-total-amount-0]')).toContainText(AMOUNT)
-    await expect(page.locator('[testdata-id=create-multiple-streams-review-total-amount-1]')).toContainText(
-      (Number(AMOUNT) * 2).toString()
+    await expect(page.locator('[testdata-id=create-multiple-vests-review-total-amount-0]')).toContainText(
+      (Number(AMOUNT) * Number(AMOUNT_OF_PERIODS) * 2 + Number(AMOUNT)).toString() //2 vests of NATIVE + <AMOUNT> NATIVE in cliff
+    )
+    await expect(page.locator('[testdata-id=create-multiple-vests-review-total-amount-1]')).toContainText(
+      (Number(AMOUNT) * Number(AMOUNT_OF_PERIODS) * 2).toString() //2 vests WNATIVE
     )
 
     // Approve BentoBox
     await page
-      .locator('[testdata-id=furo-create-multiple-streams-approve-bentobox-button]')
+      .locator('[testdata-id=furo-create-multiple-vests-approve-bentobox-button]')
       .click({ timeout: 1500 })
       .then(async () => {
         console.log(`BentoBox Approved`)
@@ -66,7 +68,7 @@ test.describe('Create multiple vesting', () => {
 
     // Approve Token
     await page
-      .locator('[testdata-id=furo-create-multiple-streams-approve-token1-button]')
+      .locator('[testdata-id=furo-create-multiple-vests-approve-token1-button]')
       .click({ timeout: 1500 })
       .then(async () => {
         console.log(`${WNATIVE_TOKEN.symbol} Approved`)
@@ -75,15 +77,14 @@ test.describe('Create multiple vesting', () => {
 
     // Create vestings
     await timeout(1000) //confirm button can take some time to appear
-    const confirmCreateVestingButton = page.locator('[testdata-id=furo-create-multiple-streams-confirm-button]')
+    const confirmCreateVestingButton = page.locator('[testdata-id=furo-create-multiple-vests-confirm-button]')
     expect(confirmCreateVestingButton).toBeEnabled()
     await confirmCreateVestingButton.click()
 
-    await expect(page.locator('div', { hasText: 'Creating 3 streams' }).last()).toContainText('Creating 3 streams')
+    await expect(page.locator('div', { hasText: 'Creating 4 vests' }).last()).toContainText('Creating 4 vests')
     await expect(page.locator('div', { hasText: 'Transaction Completed' }).last()).toContainText(
       'Transaction Completed'
     )
-    */
   })
 })
 
@@ -110,7 +111,7 @@ async function addVesting(page: Page, index: string, isNative = true, fromBentob
   await page.locator(`[testdata-id=furo-create-multiple-vests-schedule-${index}]`).click()
   if (isCliff) {
     await page.locator(`[testdata-id=furo-create-multiple-vests-schedule-modal-${index}-switch]`).click()
-    selectDate(`create-multiple-vests-schedule-modal-cliff-date-${index}`, 2, page)
+    await selectDate(`create-multiple-vests-schedule-modal-cliff-date-${index}`, 2, page)
     await page.locator(`[testdata-id=create-multiple-vests-schedule-modal-${index}-input]`).fill(AMOUNT)
   }
   // Fill step details
