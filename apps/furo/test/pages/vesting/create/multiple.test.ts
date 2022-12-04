@@ -19,6 +19,7 @@ const WNATIVE_TOKEN = {
 }
 const AMOUNT = '10'
 const AMOUNT_OF_PERIODS = '5'
+const TOTAL_AMOUNT = (Number(AMOUNT) * Number(AMOUNT_OF_PERIODS)).toString()
 
 test.describe('Create multiple vesting', () => {
   test('Create ETH, WETH, With and without cliff, from wallet and from bentobox at once', async ({ page }) => {
@@ -30,11 +31,11 @@ test.describe('Create multiple vesting', () => {
     await addVesting(page, '0')
 
     // Add wrapped vesting
-    await depositToWrapped(AMOUNT, CHAIN_ID)
+    await depositToWrapped(TOTAL_AMOUNT, CHAIN_ID)
     await addVesting(page, '1', false)
 
     // Add bentobox vesting
-    await depositToBento(AMOUNT, CHAIN_ID)
+    await depositToBento(TOTAL_AMOUNT, CHAIN_ID)
     await addVesting(page, '2', false, true)
 
     // Add native vesting with cliff
@@ -51,10 +52,10 @@ test.describe('Create multiple vesting', () => {
       WNATIVE_TOKEN.symbol
     )
     await expect(page.locator('[testdata-id=create-multiple-vests-review-total-amount-0]')).toContainText(
-      (Number(AMOUNT) * Number(AMOUNT_OF_PERIODS) * 2 + Number(AMOUNT)).toString() //2 vests of NATIVE + <AMOUNT> NATIVE in cliff
+      (Number(TOTAL_AMOUNT) * 2 + Number(AMOUNT)).toString() //2 vests of NATIVE + <AMOUNT> NATIVE in cliff
     )
     await expect(page.locator('[testdata-id=create-multiple-vests-review-total-amount-1]')).toContainText(
-      (Number(AMOUNT) * Number(AMOUNT_OF_PERIODS) * 2).toString() //2 vests WNATIVE
+      (Number(TOTAL_AMOUNT) * 2).toString() //2 vests WNATIVE
     )
 
     // Approve BentoBox
@@ -78,7 +79,7 @@ test.describe('Create multiple vesting', () => {
     // Create vestings
     await timeout(1000) //confirm button can take some time to appear
     const confirmCreateVestingButton = page.locator('[testdata-id=furo-create-multiple-vests-confirm-button]')
-    expect(confirmCreateVestingButton).toBeEnabled()
+    await expect(confirmCreateVestingButton).toBeEnabled()
     await confirmCreateVestingButton.click()
 
     await expect(page.locator('div', { hasText: 'Creating 4 vests' }).last()).toContainText('Creating 4 vests')

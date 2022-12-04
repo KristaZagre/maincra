@@ -72,7 +72,7 @@ test.describe('Create multiple stream', () => {
     // Create streams
     await timeout(1000) //confirm button can take some time to appear
     const confirmCreateVestingButton = page.locator('[testdata-id=furo-create-multiple-streams-confirm-button]')
-    expect(confirmCreateVestingButton).toBeEnabled()
+    await expect(confirmCreateVestingButton).toBeEnabled()
     await confirmCreateVestingButton.click()
 
     await expect(page.locator('div', { hasText: 'Creating 3 streams' }).last()).toContainText('Creating 3 streams')
