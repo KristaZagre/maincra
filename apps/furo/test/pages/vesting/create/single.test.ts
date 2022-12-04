@@ -1,7 +1,7 @@
 import { AddressZero } from '@ethersproject/constants'
 import { expect, Page, test } from '@playwright/test'
 import { Native } from '@sushiswap/currency'
-import { depositToBento, selectDate, selectNetwork, timeout, Token } from 'test/utils'
+import { depositToBento, depositToWrapped, selectDate, selectNetwork, timeout, Token } from 'test/utils'
 
 if (!process.env.CHAIN_ID) {
   throw new Error('CHAIN_ID env var not set')
@@ -70,7 +70,7 @@ test.describe('Create single vest', () => {
     await reviewAndConfirm(page, totalAmount, false, true, true)
   })
 
-  test('From bentobox', async ({ page }) => {
+  test('Graded from bentobox', async ({ page }) => {
     const totalAmount = (Number(AMOUNT) * Number(AMOUNT_OF_PERIODS)).toString()
     depositToBento(totalAmount, CHAIN_ID)
 
@@ -80,6 +80,18 @@ test.describe('Create single vest', () => {
     await page.locator(`[testdata-id=fund-source-bentobox-button]`).click()
 
     await reviewAndConfirm(page, totalAmount, true, false, false)
+  })
+
+  test('Graded wrapped native', async ({ page }) => {
+    const totalAmount = (Number(AMOUNT) * Number(AMOUNT_OF_PERIODS)).toString()
+    depositToWrapped(totalAmount, CHAIN_ID)
+
+    await selectToken(page, false)
+
+    // Update funding for bentobox
+    await page.locator(`[testdata-id=fund-source-wallet-button]`).click()
+
+    await reviewAndConfirm(page, totalAmount, false, false, false)
   })
 })
 

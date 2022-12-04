@@ -1,7 +1,7 @@
 import { AddressZero } from '@ethersproject/constants'
 import { expect, Page, test } from '@playwright/test'
 import { Native } from '@sushiswap/currency'
-import { depositToBento, selectDate, selectNetwork, timeout, Token } from 'test/utils'
+import { depositToBento, depositToWrapped, selectDate, selectNetwork, timeout, Token } from 'test/utils'
 
 if (!process.env.CHAIN_ID) {
   throw new Error('CHAIN_ID env var not set')
@@ -53,6 +53,18 @@ test.describe('Create single stream', () => {
 
     // Fund source
     await page.locator(`[testdata-id=fund-source-bentobox-button]`).click()
+
+    await approveAndConfirm(page, false)
+  })
+
+  test('Create a stream using wrapped balance', async ({ page }) => {
+    //deposit 1 native to bentobox
+    await depositToWrapped(AMOUNT, CHAIN_ID)
+
+    await selectToken(page, false)
+
+    // Fund source
+    await page.locator(`[testdata-id=fund-source-wallet-button]`).click()
 
     await approveAndConfirm(page, false)
   })
