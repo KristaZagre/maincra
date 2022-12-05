@@ -44,7 +44,7 @@ export async function getMasterChefV1(): Promise<{ chainId: ChainId; farms: Reco
       const rewardPerDay = sushiPerDay * (farm.allocPoint.toNumber() / totalAllocPoint.toNumber())
       const rewardPerYearUSD = daysInYear * rewardPerDay * sushiPriceUSD
 
-      let incentives: Farm['incentives'] = [
+      const incentives: Farm['incentives'] = [
         {
           apr: rewardPerYearUSD / ((pair.liquidityUSD * lpBalance) / pair.totalSupply),
           rewardPerDay: rewardPerDay,
@@ -59,8 +59,6 @@ export async function getMasterChefV1(): Promise<{ chainId: ChainId; farms: Reco
           },
         },
       ]
-
-      incentives = incentives.filter((incentive) => incentive.apr !== 0)
 
       acc[farm.lpToken.toLowerCase()] = {
         id: i,

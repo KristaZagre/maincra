@@ -64,7 +64,7 @@ export async function getMasterChefV2(): Promise<{ chainId: ChainId; farms: Reco
 
       const stakedLiquidityUSD = (pool.pair.liquidityUSD * pool.lpBalance) / pool.pair.totalSupply
 
-      let incentives: Farm['incentives'] = [
+      const incentives: Farm['incentives'] = [
         {
           apr: sushiRewardPerYearUSD / stakedLiquidityUSD,
           rewardPerDay: sushiRewardPerDay,
@@ -127,8 +127,6 @@ export async function getMasterChefV2(): Promise<{ chainId: ChainId; farms: Reco
           })
         }
       }
-
-      incentives = incentives.filter((incentive) => incentive.apr !== 0)
 
       acc[pool.pair.id] = {
         id: pool.id,
