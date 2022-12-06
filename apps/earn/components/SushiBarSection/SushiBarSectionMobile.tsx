@@ -156,6 +156,7 @@ export const SushiBarSectionMobile: FC = () => {
                       components={
                         <Approve.Components>
                           <Approve.Token
+                            id="earn-sushibar-section-mobile-approve-token"
                             hideIcon
                             fullWidth
                             size="md"

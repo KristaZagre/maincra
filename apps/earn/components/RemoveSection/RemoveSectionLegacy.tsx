@@ -270,6 +270,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
                   components={
                     <Approve.Components>
                       <Approve.Token
+                        id="earn-remove-section-legacy-approve-token"
                         size="md"
                         className="whitespace-nowrap"
                         fullWidth

@@ -170,6 +170,7 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
             components={
               <Approve.Components>
                 <Approve.Token
+                  id="earn-add-section-review-approve-token-1"
                   size="md"
                   className="whitespace-nowrap"
                   fullWidth
@@ -177,6 +178,7 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
                   address={getSushiSwapRouterContractConfig(chainId).addressOrName}
                 />
                 <Approve.Token
+                  id="earn-add-section-review-approve-token-2"
                   size="md"
                   className="whitespace-nowrap"
                   fullWidth

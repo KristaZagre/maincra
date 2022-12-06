@@ -86,6 +86,7 @@ export const AddSectionWidget: FC<AddSectionWidgetProps> = ({
               >
                 <Disclosure.Panel unmount={false}>
                   <Web3Input.Currency
+                    id="earn-add-section-widget-input-currency-1"
                     className="p-3"
                     loading={false}
                     value={input0}
@@ -105,6 +106,7 @@ export const AddSectionWidget: FC<AddSectionWidgetProps> = ({
                   </div>
                   <div className="bg-slate-800">
                     <Web3Input.Currency
+                      id="earn-add-section-widget-input-currency-2"
                       className="p-3 !pb-1"
                       value={input1}
                       onChange={onInput1}

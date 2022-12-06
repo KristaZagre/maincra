@@ -266,6 +266,7 @@ const _Add: FC<AddProps> = ({
               <SettingsOverlay />
             </Widget.Header>
             <Web3Input.Currency
+              id="earn-add-input-currency-1"
               className="p-3"
               value={input0}
               onChange={onChangeToken0TypedAmount}
@@ -284,6 +285,7 @@ const _Add: FC<AddProps> = ({
             </div>
             <div className="bg-slate-800">
               <Web3Input.Currency
+                id="earn-add-input-currency-2"
                 className="p-3 !pb-1"
                 value={input1}
                 onChange={onChangeToken1TypedAmount}

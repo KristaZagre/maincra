@@ -73,6 +73,7 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({ pair, chefType
               components={
                 <Approve.Components>
                   <Approve.Token
+                    id="earn-remove-section-unstake-approve-token"
                     size="md"
                     className="whitespace-nowrap"
                     fullWidth

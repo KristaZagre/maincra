@@ -133,6 +133,7 @@ export const SushiBarSectionDesktop: FC = () => {
                   components={
                     <Approve.Components>
                       <Approve.Token
+                        id="earn-sushibar-section-desktop-approve-token"
                         hideIcon
                         className="whitespace-nowrap w-[213px] min-h-[48px]"
                         amount={amount}
