@@ -87,6 +87,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
               },
             })}
             data-testid={`${id}-button`}
+            testdata-id={`${id}-button`}
             className={classNames(
               onSelect ? 'shadow-md hover:ring-2' : 'cursor-default text-2xl',
               (currency || loading) && onSelect ? 'bg-white bg-opacity-[0.12]' : '',
@@ -220,6 +221,7 @@ const BalancePanel: FC<BalancePanel> = ({
   return (
     <button
       data-testid={`${id}-balance-button`}
+      testdata-id={`${id}-balance-button`}
       type="button"
       onClick={() => onChange(balance?.[fundSource]?.greaterThan(0) ? balance[fundSource].toFixed() : '')}
       className="py-1 text-xs text-slate-400 hover:text-slate-300"

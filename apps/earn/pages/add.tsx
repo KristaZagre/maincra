@@ -325,7 +325,13 @@ const _Add: FC<AddProps> = ({
                           input1={parsedInput1}
                         >
                           {({ isWritePending, setOpen }) => (
-                            <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md">
+                            <Button
+                              fullWidth
+                              onClick={() => setOpen(true)}
+                              disabled={isWritePending}
+                              size="md"
+                              testdata-id="earn-add-trident-button"
+                            >
                               {isWritePending ? <Dots>Confirm transaction</Dots> : title}
                             </Button>
                           )}
@@ -341,7 +347,13 @@ const _Add: FC<AddProps> = ({
                           input1={parsedInput1}
                         >
                           {({ isWritePending, setOpen }) => (
-                            <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md">
+                            <Button
+                              fullWidth
+                              onClick={() => setOpen(true)}
+                              disabled={isWritePending}
+                              size="md"
+                              testdata-id="earn-add-legacy-button"
+                            >
                               {isWritePending ? <Dots>Confirm transaction</Dots> : title}
                             </Button>
                           )}
@@ -358,7 +370,13 @@ const _Add: FC<AddProps> = ({
                           poolType={poolType}
                         >
                           {({ isWritePending, setOpen }) => (
-                            <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md">
+                            <Button
+                              fullWidth
+                              onClick={() => setOpen(true)}
+                              disabled={isWritePending}
+                              size="md"
+                              testdata-id="earn-create-trident-button"
+                            >
                               {isWritePending ? <Dots>Confirm transaction</Dots> : title}
                             </Button>
                           )}

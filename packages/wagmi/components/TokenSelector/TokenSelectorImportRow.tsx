@@ -82,7 +82,12 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
             </div>
           )
         })}
-        <Button size="md" as="div" onClick={onImport}>
+        <Button
+          size="md"
+          as="div"
+          onClick={onImport}
+          testdata-id={`import-input-currency-token-confirm-button-${currencies[0]?.address}`}
+        >
           Import
         </Button>
       </div>

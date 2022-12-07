@@ -1,9 +1,10 @@
 import { expect, Page } from '@playwright/test'
 import { ChainId, chainName } from '@sushiswap/chain'
 import { WNATIVE_ADDRESS } from '@sushiswap/currency'
-import { Contract, providers, Wallet } from 'ethers'
+import { Contract, ContractFactory, providers, Wallet } from 'ethers'
 import { parseUnits } from 'ethers/lib/utils'
 import { allChains, Chain, chain as chainLookup } from 'wagmi'
+import fakeToken from './fakeToken.json'
 
 function getNetwork(chain: Chain) {
   return {
@@ -143,50 +144,6 @@ export function getSigners() {
 
 export const addressRegex = /^0x[a-fA-F0-9]{40}/
 
-export const BENTOBOX_ADDRESS: Record<number, string> = {
-  [ChainId.ETHEREUM]: '0xF5BCE5077908a1b7370B9ae04AdC565EBd643966',
-  [ChainId.ROPSTEN]: '0x6BdD85290001C8Aef74f35A7606065FA15aD5ACF',
-  [ChainId.RINKEBY]: '0xF5BCE5077908a1b7370B9ae04AdC565EBd643966',
-  [ChainId.GÖRLI]: '0xF5BCE5077908a1b7370B9ae04AdC565EBd643966',
-  [ChainId.KOVAN]: '0xc381a85ed7C7448Da073b7d6C9d4cBf1Cbf576f0',
-  [ChainId.FANTOM]: '0xF5BCE5077908a1b7370B9ae04AdC565EBd643966',
-  [ChainId.POLYGON]: '0x0319000133d3AdA02600f0875d2cf03D442C3367',
-  [ChainId.POLYGON_TESTNET]: '0xF5BCE5077908a1b7370B9ae04AdC565EBd643966',
-  [ChainId.GNOSIS]: '0xE2d7F5dd869Fc7c126D21b13a9080e75a4bDb324',
-  [ChainId.BSC]: '0xF5BCE5077908a1b7370B9ae04AdC565EBd643966',
-  [ChainId.BSC_TESTNET]: '0xF5BCE5077908a1b7370B9ae04AdC565EBd643966',
-  [ChainId.ARBITRUM]: '0x74c764D41B77DBbb4fe771daB1939B00b146894A',
-  [ChainId.AVALANCHE]: '0x0711B6026068f736bae6B213031fCE978D48E026',
-  [ChainId.HECO]: '0xF5BCE5077908a1b7370B9ae04AdC565EBd643966',
-  [ChainId.CELO]: '0x0711B6026068f736bae6B213031fCE978D48E026',
-  [ChainId.HARMONY]: '0xA28cfF72b04f83A7E3f912e6ad34d5537708a2C2',
-  [ChainId.MOONBEAM]: '0x80C7DD17B01855a6D2347444a0FCC36136a314de',
-  [ChainId.MOONRIVER]: '0x145d82bCa93cCa2AE057D1c6f26245d1b9522E6F',
-  [ChainId.OPTIMISM]: '0xc35DADB65012eC5796536bD9864eD8773aBc74C4',
-  [ChainId.KAVA]: '0xc35DADB65012eC5796536bD9864eD8773aBc74C4',
-  [ChainId.METIS]: '0xc35DADB65012eC5796536bD9864eD8773aBc74C4',
-  [ChainId.BTTC]: '0x8dacffa7F69Ce572992132697252E16254225D38',
-}
-
-export const BENTOBOX_DEPOSIT_ABI = [
-  {
-    inputs: [
-      { internalType: 'contract IERC20', name: 'token_', type: 'address' },
-      { internalType: 'address', name: 'from', type: 'address' },
-      { internalType: 'address', name: 'to', type: 'address' },
-      { internalType: 'uint256', name: 'amount', type: 'uint256' },
-      { internalType: 'uint256', name: 'share', type: 'uint256' },
-    ],
-    name: 'deposit',
-    outputs: [
-      { internalType: 'uint256', name: 'amountOut', type: 'uint256' },
-      { internalType: 'uint256', name: 'shareOut', type: 'uint256' },
-    ],
-    stateMutability: 'payable',
-    type: 'function',
-  },
-]
-
 export async function selectNetwork(page: Page, chainId: ChainId) {
   await page.locator(`[testdata-id=network-selector-button]`).click()
   const networkList = page.locator(`[testdata-id=network-selector-list]`)
@@ -224,35 +181,8 @@ export async function selectDate(testDataId: string, months: number, page: Page)
   await page.locator(`li.react-datepicker__time-list-item`).first().click()
 }
 
-export async function depositToBento(amount: string, chainId: ChainId) {
-  const amountToSend = parseUnits(amount, 'ether').add(parseUnits('100.0', 'gwei')) //add 100 gwei so we actually get the amount asked as bentobox round down
+export async function deployFakeToken(chainId: ChainId): Promise<Contract> {
   const signer = getSigners()[0].connect(getProvider({ chainId }))
-  const bentoContract = new Contract(BENTOBOX_ADDRESS[chainId], BENTOBOX_DEPOSIT_ABI, signer)
-  await bentoContract.deposit(
-    '0x0000000000000000000000000000000000000000',
-    signer.address,
-    signer.address,
-    amountToSend,
-    0,
-    { value: amountToSend }
-  )
-}
-
-const WRAPPED_DEPOSIT_ABI = [
-  {
-    constant: false,
-    inputs: [],
-    name: 'deposit',
-    outputs: [],
-    payable: true,
-    stateMutability: 'payable',
-    type: 'function',
-  },
-]
-
-export async function depositToWrapped(amount: string, chainId: ChainId) {
-  const amountToWrap = parseUnits(amount, 'ether')
-  const signer = getSigners()[0].connect(getProvider({ chainId }))
-  const wrappedContract = new Contract(WNATIVE_ADDRESS[chainId], WRAPPED_DEPOSIT_ABI, signer)
-  await wrappedContract.deposit({ value: amountToWrap })
+  const factory = new ContractFactory(fakeToken.abi, fakeToken.bytecode, signer)
+  return await factory.deploy()
 }
