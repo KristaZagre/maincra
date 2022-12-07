@@ -49,6 +49,7 @@ export const Selector: FC<SelectorProps> = ({
       {networks.map((chainId) => {
         const button = (
           <div
+           testdata-id={`network-selector-${chainId}`}
             onClick={() => handleClick(chainId)}
             className={classNames(
               className,
