@@ -1,9 +1,9 @@
 import { AddressZero } from '@ethersproject/constants'
-import { expect, Page, test } from '@playwright/test'
+import { Page, test } from '@playwright/test'
 import { Native } from '@sushiswap/currency'
 import { TRIDENT_ENABLED_NETWORKS } from 'config'
 import { Contract } from 'ethers'
-import { deployFakeToken, selectNetwork, timeout, Token } from 'test/utils'
+import { approveBento, approveToken, deployFakeToken, selectNetwork, timeout, Token } from 'test/utils'
 
 enum PoolType {
   LEGACY,
@@ -28,8 +28,13 @@ const NATIVE_TOKEN: Token = {
   symbol: Native.onChain(CHAIN_ID).symbol,
 }
 const AMOUNT = '10'
+let fakeToken: Contract
 
-test.describe('Add liquidity', () => {
+test.describe('Create/Add', () => {
+  test.beforeAll(async () => {
+    fakeToken = await deployFakeToken(CHAIN_ID)
+  })
+
   test.beforeEach(async ({ page }) => {
     const url = (process.env.PLAYWRIGHT_URL as string).concat('/add')
     await page.goto(url)
@@ -41,42 +46,103 @@ test.describe('Add liquidity', () => {
   })
 
   if (TRIDENT_ENABLED_NETWORKS.indexOf(CHAIN_ID) === -1) {
-    test('Create & Add to existing liquidity pool legacy', async ({ page }) => {
-      // Deploy fake token
-      const fakeToken = await deployFakeToken(CHAIN_ID)
-
-      await createOrAddPool(page, fakeToken, PoolType.LEGACY)
+    test('Create pool legacy', async ({ page }) => {
+      await createPool(page, fakeToken, PoolType.LEGACY)
       // todo: assert pool creation
+    })
 
-      await createOrAddPool(page, fakeToken, PoolType.LEGACY, PoolFeeTier.REGULAR, true)
-      // todo: assert pool add liquidity
+    test('Add liquidity pool legacy', async ({ page }) => {
+      await addLiquidityPool(page, fakeToken, PoolType.LEGACY)
+      // todo: asset pool add liquidty
     })
   } else {
-    test('Create & Add to existing liquidity pool trident classic', async ({ page }) => {
-      // Deploy fake token
-      const fakeToken = await deployFakeToken(CHAIN_ID)
-
-      await createOrAddPool(page, fakeToken, PoolType.CLASSIC, PoolFeeTier.HIGH)
+    test('Create pool trident classic', async ({ page }) => {
+      await createPool(page, fakeToken, PoolType.CLASSIC, PoolFeeTier.HIGH)
       // todo: assert pool creation
-
-      await createOrAddPool(page, fakeToken, PoolType.CLASSIC, PoolFeeTier.HIGH, true)
-      // todo: assert pool add liquidity
     })
 
-    test('Create & Add to existing liquidity pool trident stable', async ({ page }) => {
-      // Deploy fake token
-      const fakeToken = await deployFakeToken(CHAIN_ID)
+    test('Add liquidity pool trident classic', async ({ page }) => {
+      await addLiquidityPool(page, fakeToken, PoolType.CLASSIC, PoolFeeTier.HIGH)
+      // todo: asset pool add liquidty
+    })
 
-      await createOrAddPool(page, fakeToken, PoolType.STABLE, PoolFeeTier.LOWEST)
-      // todo: assert pool creation)
-
-      await createOrAddPool(page, fakeToken, PoolType.STABLE, PoolFeeTier.LOWEST, true)
-      // todo: assert pool add liquidity
+    test('Create liquidity pool trident stable', async ({ page }) => {
+      await createPool(page, fakeToken, PoolType.STABLE, PoolFeeTier.LOWEST)
+      // todo: assert pool creation
+    })
+    test('Add liquidity pool trident stable', async ({ page }) => {
+      await addLiquidityPool(page, fakeToken, PoolType.STABLE, PoolFeeTier.LOWEST)
+      // todo: asset pool add liquidty
     })
   }
 })
 
-async function createOrAddPool(page: Page, fakeToken: Contract, poolType: PoolType, fee = '03', add = false) {
+async function createPool(page: Page, fakeToken: Contract, poolType: PoolType, fee = '03') {
+  await configPool(page, fakeToken, PoolType.STABLE, fee)
+
+  // Input amounts
+  await page.locator('[testdata-id=earn-add-input-currency-2-input]').fill(AMOUNT)
+  await page.locator('[testdata-id=earn-add-input-currency-1-input]').fill(AMOUNT)
+
+  // Create pool
+  if (poolType === PoolType.LEGACY) {
+    await page.locator(`[testdata-id=earn-add-legacy-button]`).click()
+  } else {
+    await page.locator(`[testdata-id=earn-create-trident-button]`).click()
+    // Approve BentoBox
+    await approveBento(page)
+  }
+
+  // Approve Token
+  await approveToken(
+    page,
+    poolType === PoolType.LEGACY
+      ? 'earn-add-section-review-approve-token-2-button'
+      : 'create-trident-approve-token1-button'
+  )
+
+  const confirmCreatePoolButton = page.locator(
+    `[testdata-id=${
+      poolType === PoolType.LEGACY ? 'earn-add-legacy-review-modal-add-button' : 'earn-create-review-modal-add-button'
+    }]`
+  )
+  await confirmCreatePoolButton.click()
+}
+
+async function addLiquidityPool(page: Page, fakeToken: Contract, poolType: PoolType, fee = '03') {
+  await configPool(page, fakeToken, PoolType.STABLE, fee)
+
+  // Input amount for one token
+  await page.locator('[testdata-id=earn-add-input-currency-1-input]').fill(AMOUNT)
+
+  // Add liquidity
+  if (poolType === PoolType.LEGACY) {
+    await page.locator(`[testdata-id=earn-add-legacy-button]`).click()
+  } else {
+    await page.locator(`[testdata-id=earn-add-trident-button]`).click()
+    // Approve BentoBox
+    await approveBento(page)
+  }
+
+  // Approve Token
+  await approveToken(
+    page,
+    poolType === PoolType.LEGACY
+      ? 'earn-add-section-review-approve-token-2-button'
+      : 'create-trident-approve-token1-button'
+  )
+
+  const confirmCreatePoolButton = page.locator(
+    `[testdata-id=${
+      poolType === PoolType.LEGACY
+        ? 'earn-add-legacy-review-modal-add-button'
+        : 'earn-add-trident-review-modal-add-button'
+    }]`
+  )
+  await confirmCreatePoolButton.click()
+}
+
+async function configPool(page: Page, fakeToken: Contract, poolType: PoolType, fee = '03') {
   if (poolType !== PoolType.LEGACY) {
     // Select pool type
     await page.locator('[testdata-id=earn-pool-select-type-button]').click()
@@ -105,54 +171,4 @@ async function createOrAddPool(page: Page, fakeToken: Contract, poolType: PoolTy
   await page.locator(`[testdata-id=import-input-currency-token-selector-dialog-row-${fakeToken.address}]`).click()
   await page.locator(`[testdata-id=import-input-currency-token-confirm-button-${fakeToken.address}]`).click()
   timeout(2_000) //wait for the modal to disappear
-
-  // Input amounts
-  await page.locator('[testdata-id=earn-add-input-currency-2-input]').fill(AMOUNT)
-  await page.locator('[testdata-id=earn-add-input-currency-1-input]').fill(AMOUNT)
-
-  // Create pool
-  if (poolType === PoolType.LEGACY) {
-    await page.locator(`[testdata-id=earn-add-legacy-button]`).click()
-  } else {
-    if (add) {
-      await page.locator(`[testdata-id=earn-add-trident-button]`).click()
-    } else {
-      await page.locator(`[testdata-id=earn-create-trident-button]`).click()
-    }
-    // Approve BentoBox
-    await page
-      .locator('[testdata-id=create-trident-approve-bentobox-button]')
-      .click({ timeout: 1500 })
-      .then(async () => {
-        console.log(`BentoBox Approved`)
-      })
-      .catch(() => console.log('BentoBox already approved or not needed'))
-  }
-
-  // Approve Token
-  await page
-    .locator(
-      `[testdata-id=${
-        poolType === PoolType.LEGACY
-          ? 'earn-add-section-review-approve-token-2-button'
-          : 'create-trident-approve-token1-button'
-      }]`
-    )
-    .click({ timeout: 1500 })
-    .then(async () => {
-      console.log(`${fakeToken.address} Approved`)
-    })
-    .catch(() => console.log(`${fakeToken.address} already approved or not needed`))
-
-  const confirmCreatePoolButton = page.locator(
-    `[testdata-id=${
-      poolType === PoolType.LEGACY
-        ? 'earn-add-legacy-review-modal-add-button'
-        : add
-        ? 'earn-add-trident-review-modal-add-button'
-        : 'earn-create-review-modal-add-button'
-    }]`
-  )
-  await expect(confirmCreatePoolButton).toBeEnabled()
-  await confirmCreatePoolButton.click()
 }

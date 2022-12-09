@@ -1,9 +1,8 @@
 import { expect, Page } from '@playwright/test'
 import { ChainId, chainName } from '@sushiswap/chain'
-import { WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { Contract, ContractFactory, providers, Wallet } from 'ethers'
-import { parseUnits } from 'ethers/lib/utils'
 import { allChains, Chain, chain as chainLookup } from 'wagmi'
+
 import fakeToken from './fakeToken.json'
 
 function getNetwork(chain: Chain) {
@@ -185,4 +184,24 @@ export async function deployFakeToken(chainId: ChainId): Promise<Contract> {
   const signer = getSigners()[0].connect(getProvider({ chainId }))
   const factory = new ContractFactory(fakeToken.abi, fakeToken.bytecode, signer)
   return await factory.deploy()
+}
+
+export async function approveBento(page: Page) {
+  await page
+    .locator('[testdata-id=create-trident-approve-bentobox-button]')
+    .click({ timeout: 1500 })
+    .then(async () => {
+      console.log(`BentoBox Approved`)
+    })
+    .catch(() => console.log('BentoBox already approved or not needed'))
+}
+
+export async function approveToken(page: Page, locator: string) {
+  await page
+    .locator(`[testdata-id=${locator}]`)
+    .click({ timeout: 1500 })
+    .then(async () => {
+      console.log(`Token Approved`)
+    })
+    .catch(() => console.log(`Token already approved or not needed`))
 }
