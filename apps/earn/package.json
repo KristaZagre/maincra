@@ -59,6 +59,7 @@
     "wagmi": "latest"
   },
   "devDependencies": {
+    "@wagmi/core": "latest",
     "@playwright/test": "^1.25.0",
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",

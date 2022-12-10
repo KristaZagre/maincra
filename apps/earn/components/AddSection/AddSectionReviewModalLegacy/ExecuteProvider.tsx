@@ -144,55 +144,5 @@ export const ExecuteProvider: FC<ExecuteProvider> = ({
     onSuccess,
   })
 
-<<<<<<< HEAD:apps/earn/components/AddSection/AddSectionReviewModalLegacy.tsx
-  return useMemo(
-    () => (
-      <>
-        {children({ isWritePending, setOpen })}
-        <AddSectionReviewModal chainId={chainId} input0={input0} input1={input1} open={open} setOpen={setOpen}>
-          <Approve
-            onSuccess={createNotification}
-            className="flex-grow !justify-end"
-            components={
-              <Approve.Components>
-                <Approve.Token
-                  id="earn-add-section-review-approve-token-1"
-                  size="md"
-                  className="whitespace-nowrap"
-                  fullWidth
-                  amount={input0}
-                  address={getSushiSwapRouterContractConfig(chainId).addressOrName}
-                />
-                <Approve.Token
-                  id="earn-add-section-review-approve-token-2"
-                  size="md"
-                  className="whitespace-nowrap"
-                  fullWidth
-                  amount={input1}
-                  address={getSushiSwapRouterContractConfig(chainId).addressOrName}
-                />
-              </Approve.Components>
-            }
-            render={({ approved }) => {
-              return (
-                <Button
-                  testdata-id="earn-add-legacy-review-modal-add-button"
-                  size="md"
-                  disabled={!approved || isWritePending}
-                  fullWidth
-                  onClick={() => sendTransaction?.()}
-                >
-                  {isWritePending ? <Dots>Confirm transaction</Dots> : 'Add'}
-                </Button>
-              )
-            }}
-          />
-        </AddSectionReviewModal>
-      </>
-    ),
-    [chainId, children, createNotification, input0, input1, isWritePending, open, sendTransaction]
-  )
-=======
   return children({ execute: sendTransaction, isWritePending })
->>>>>>> refactor/add-liquidity-approve2:apps/earn/components/AddSection/AddSectionReviewModalLegacy/ExecuteProvider.tsx
 }

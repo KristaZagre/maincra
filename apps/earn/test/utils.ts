@@ -1,9 +1,12 @@
 import { expect, Page } from '@playwright/test'
 import { ChainId, chainName } from '@sushiswap/chain'
 import { Contract, ContractFactory, providers, Wallet } from 'ethers'
-import { allChains, Chain, chain as chainLookup } from 'wagmi'
+import { Chain, chain as chainLookup } from 'wagmi'
+import * as _allChains from '@wagmi/core/chains'
 
 import fakeToken from './fakeToken.json'
+
+const allChains = Object.values(_allChains)
 
 function getNetwork(chain: Chain) {
   return {
