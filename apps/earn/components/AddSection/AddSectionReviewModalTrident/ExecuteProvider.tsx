@@ -200,9 +200,7 @@ export const ExecuteProvider: FC<ExecuteProvider> = ({
           }),
           ...(value && { value }),
         })
-      } catch (e: unknown) {
-        //
-      }
+      } catch (e: unknown) {}
     },
     [
       chainId,
