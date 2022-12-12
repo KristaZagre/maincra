@@ -1,5 +1,5 @@
 import { otherChains } from '@sushiswap/wagmi-config'
-import { allChains, Chain, chain, configureChains, createClient, CreateClientConfig } from 'wagmi'
+import { Chain, configureChains, createClient, CreateClientConfig } from 'wagmi'
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { MockConnector } from 'wagmi/connectors/mock'
@@ -8,11 +8,14 @@ import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 // import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { publicProvider } from 'wagmi/providers/public'
+import * as _allChains from '@wagmi/core/chains'
 
 import { SafeConnector } from './connectors/safe'
 import { getSigners } from './test/utils'
 
 export type Client = ReturnType<typeof createClient>
+
+const allChains = Object.values(_allChains)
 
 const isTest = process.env.NODE_ENV === 'test' || process.env.NEXT_PUBLIC_PLAYWRIGHT_ENABLED === 'true'
 
@@ -21,11 +24,11 @@ const infuraId = process.env.INFURA_ID || process.env.NEXT_PUBLIC_INFURA_ID
 
 const { chains, provider }: CreateClientConfig & { chains: Chain[] } = isTest
   ? configureChains(
-      [chain.foundry],
+      [_allChains.foundry],
       [
         jsonRpcProvider({
           rpc: (chain_) => ({
-            http: chain_.rpcUrls.default,
+            http: chain_.rpcUrls.default.http[0],
           }),
         }),
       ]

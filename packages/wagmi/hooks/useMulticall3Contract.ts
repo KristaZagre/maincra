@@ -1,12 +1,13 @@
 import { otherChains } from '@sushiswap/wagmi-config'
-import { Address, allChains, useContract, useProvider } from 'wagmi'
+import { Address, useContract, useProvider } from 'wagmi'
+import * as allChains from '@wagmi/core/chains'
 
 import { multicall3Abi } from '../abis'
 
-const chains = [...allChains, ...otherChains]
+const chains = [...Object.values(allChains), ...otherChains]
 
 export const getMulticall3ContractConfig = (chainId: number | undefined) => ({
-  address: (chains.find((chain) => chain.id === chainId)?.multicall?.address || '') as Address,
+  address: (chains.find((chain) => chain.id === chainId)?.contracts?.multicall3?.address || '') as Address,
   abi: multicall3Abi,
 })
 

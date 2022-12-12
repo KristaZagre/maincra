@@ -1,7 +1,7 @@
 import { expect, Page } from '@playwright/test'
 import { ChainId, chainName } from '@sushiswap/chain'
 import { Contract, ContractFactory, providers, Wallet } from 'ethers'
-import { Chain, chain as chainLookup } from 'wagmi'
+import { Chain } from 'wagmi'
 import * as _allChains from '@wagmi/core/chains'
 
 import fakeToken from './fakeToken.json'
@@ -23,8 +23,8 @@ class EthersProviderWrapper extends providers.StaticJsonRpcProvider {
 }
 
 export function getProvider({ chains = allChains, chainId }: { chains?: Chain[]; chainId?: number } = {}) {
-  const chain = allChains.find((x) => x.id === chainId) ?? chainLookup.foundry
-  const url = chainLookup.foundry.rpcUrls.default
+  const chain = allChains.find((x) => x.id === chainId) ?? _allChains.foundry
+  const url = _allChains.foundry.rpcUrls.default.http[0]
   const provider = new EthersProviderWrapper(url, getNetwork(chain))
   provider.pollingInterval = 1_000
   return Object.assign(provider, { chains })
@@ -37,8 +37,8 @@ class EthersWebSocketProviderWrapper extends providers.WebSocketProvider {
 }
 
 export function getWebSocketProvider({ chains = allChains, chainId }: { chains?: Chain[]; chainId?: number } = {}) {
-  const chain = allChains.find((x) => x.id === chainId) ?? chainLookup.foundry
-  const url = chainLookup.foundry.rpcUrls.default.replace('http', 'ws')
+  const chain = allChains.find((x) => x.id === chainId) ?? _allChains.foundry
+  const url = _allChains.foundry.rpcUrls.default.http[0].replace('http', 'ws')
   const webSocketProvider = Object.assign(new EthersWebSocketProviderWrapper(url, getNetwork(chain)), { chains })
   // Clean up WebSocketProvider immediately
   // so handle doesn't stay open in test environment
