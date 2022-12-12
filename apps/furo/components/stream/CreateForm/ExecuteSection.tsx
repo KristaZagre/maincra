@@ -168,6 +168,7 @@ export const ExecuteSection: FC<{ chainId: ChainId }> = ({ chainId }) => {
         render={({ approved }) => {
           return (
             <Button
+              testdata-id="furo-create-single-stream-confirm-button"
               name="execute"
               type="button"
               variant="filled"

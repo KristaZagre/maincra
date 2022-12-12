@@ -8,6 +8,7 @@ import { FC } from 'react'
 import { useAccount } from 'wagmi'
 
 interface FundSourceOption {
+  id: string
   chainId: ChainId
   label: string
   active: boolean
@@ -16,7 +17,7 @@ interface FundSourceOption {
   onChange(): void
 }
 
-export const FundSourceOption: FC<FundSourceOption> = ({ chainId, label, active, value, onChange, currency }) => {
+export const FundSourceOption: FC<FundSourceOption> = ({ id, chainId, label, active, value, onChange, currency }) => {
   const isMounted = useIsMounted()
   const { address } = useAccount()
   const { data: balance } = useBalance({
@@ -30,6 +31,7 @@ export const FundSourceOption: FC<FundSourceOption> = ({ chainId, label, active,
   return (
     <button
       type="button"
+      testdata-id={`${id}-button`}
       onClick={onChange}
       className={classNames(
         active ? 'ring-green/70' : 'ring-transparent',

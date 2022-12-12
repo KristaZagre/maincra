@@ -126,6 +126,7 @@ export default function Index() {
                 <div>
                   <Link passHref={true} href="/stream/create" legacyBehavior>
                     <Button
+                      testdata-id="furo-landing-pay-someone-button"
                       color="blue"
                       variant="filled"
                       fullWidth

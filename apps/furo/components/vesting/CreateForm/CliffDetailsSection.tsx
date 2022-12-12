@@ -54,6 +54,7 @@ export const CliffDetailsSection: FC = () => {
               size="sm"
               uncheckedIcon={<XIcon />}
               checkedIcon={<CheckIcon />}
+              id="furo-enable-cliff-button"
             />
           )}
         />
@@ -67,6 +68,7 @@ export const CliffDetailsSection: FC = () => {
             render={({ field: { onChange, value, name, onBlur }, fieldState: { error } }) => (
               <>
                 <DatePicker
+                  customInput={<input testdata-id="vesting-cliff-start-date" type="text" />}
                   name={name}
                   onBlur={onBlur}
                   className={classNames(

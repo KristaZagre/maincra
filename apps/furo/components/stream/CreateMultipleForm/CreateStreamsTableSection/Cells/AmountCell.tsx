@@ -49,6 +49,7 @@ export const AmountCell: FC<CellProps> = ({ row, index, chainId = ChainId.ETHERE
         return (
           <div className="py-2">
             <Input.Numeric
+              testdata-id={`create-multiple-streams-amount-input-${index}`}
               variant="unstyled"
               onBlur={onBlur}
               value={value || ''}

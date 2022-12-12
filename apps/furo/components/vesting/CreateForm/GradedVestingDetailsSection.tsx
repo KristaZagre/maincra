@@ -56,6 +56,7 @@ export const GradedVestingDetailsSection = () => {
           name="stepAmount"
           render={({ field: { onChange, value, name, onBlur }, fieldState: { error } }) => (
             <CurrencyInput.Base
+              id="create-vest-graded-step-amount"
               className="ring-offset-slate-900"
               onChange={onChange}
               value={value || ''}
@@ -93,6 +94,7 @@ export const GradedVestingDetailsSection = () => {
                 <>
                   <Input.Counter
                     name={name}
+                    id={'furo-graded-vesting-step-amount'}
                     onBlur={onBlur}
                     step={1}
                     min={0}
@@ -116,7 +118,11 @@ export const GradedVestingDetailsSection = () => {
               <>
                 <Select
                   button={
-                    <Select.Button error={!!error?.message} className="ring-offset-slate-900">
+                    <Select.Button
+                      error={!!error?.message}
+                      className="ring-offset-slate-900"
+                      testdata-id="furo-select-period-length-button"
+                    >
                       {value.label}
                     </Select.Button>
                   }

@@ -112,6 +112,7 @@ const _AddSectionStake: FC<AddSectionStakeProps> = ({ pair, chefType, title, far
                   components={
                     <Approve.Components>
                       <Approve.Token
+                        id="earn-add-section-stake-approve-token"
                         size="md"
                         className="whitespace-nowrap"
                         fullWidth

@@ -235,6 +235,7 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ chainId, children })
             render={({ approved }) => {
               return (
                 <Button
+                  testdata-id="furo-create-single-vest-confirm-button"
                   fullWidth
                   size="md"
                   variant="filled"

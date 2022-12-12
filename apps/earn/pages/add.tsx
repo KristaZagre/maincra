@@ -266,6 +266,7 @@ const _Add: FC<AddProps> = ({
               <SettingsOverlay />
             </Widget.Header>
             <Web3Input.Currency
+              id="earn-add-input-currency-1"
               className="p-3"
               value={input0}
               onChange={onChangeToken0TypedAmount}
@@ -284,6 +285,7 @@ const _Add: FC<AddProps> = ({
             </div>
             <div className="bg-slate-800">
               <Web3Input.Currency
+                id="earn-add-input-currency-2"
                 className="p-3 !pb-1"
                 value={input1}
                 onChange={onChangeToken1TypedAmount}
@@ -323,7 +325,13 @@ const _Add: FC<AddProps> = ({
                           input1={parsedInput1}
                         >
                           {({ isWritePending, setOpen }) => (
-                            <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md">
+                            <Button
+                              fullWidth
+                              onClick={() => setOpen(true)}
+                              disabled={isWritePending}
+                              size="md"
+                              testdata-id="earn-add-trident-button"
+                            >
                               {isWritePending ? <Dots>Confirm transaction</Dots> : title}
                             </Button>
                           )}
@@ -339,7 +347,13 @@ const _Add: FC<AddProps> = ({
                           input1={parsedInput1}
                         >
                           {({ isWritePending, setOpen }) => (
-                            <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md">
+                            <Button
+                              fullWidth
+                              onClick={() => setOpen(true)}
+                              disabled={isWritePending}
+                              size="md"
+                              testdata-id="earn-add-legacy-button"
+                            >
                               {isWritePending ? <Dots>Confirm transaction</Dots> : title}
                             </Button>
                           )}
@@ -356,7 +370,13 @@ const _Add: FC<AddProps> = ({
                           poolType={poolType}
                         >
                           {({ isWritePending, setOpen }) => (
-                            <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md">
+                            <Button
+                              fullWidth
+                              onClick={() => setOpen(true)}
+                              disabled={isWritePending}
+                              size="md"
+                              testdata-id="earn-create-trident-button"
+                            >
                               {isWritePending ? <Dots>Confirm transaction</Dots> : title}
                             </Button>
                           )}

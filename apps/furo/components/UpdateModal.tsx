@@ -229,6 +229,7 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
               components={
                 <Approve.Components>
                   <Approve.Token
+                    id="furo-stream-top-up"
                     enabled={amountAsEntity?.greaterThan(0)}
                     amount={amountAsEntity}
                     address={BENTOBOX_ADDRESS[chainId]}
@@ -240,6 +241,7 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
               render={({ approved }) => {
                 return (
                   <Button
+                    testdata-id="furo-stream-update-button"
                     type="button"
                     size="md"
                     variant="filled"
