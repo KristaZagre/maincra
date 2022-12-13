@@ -4,3 +4,6 @@ playwright-report/
 results/
 # Sentry
 .sentryclirc
+
+# Sentry
+.sentryclirc

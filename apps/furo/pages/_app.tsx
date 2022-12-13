@@ -9,13 +9,10 @@ import { useRouter } from 'next/router'
 import Script from 'next/script'
 import { DefaultSeo } from 'next-seo'
 import { FC, useEffect } from 'react'
-import { Provider as ReduxProvider } from 'react-redux'
+import { Provider } from 'react-redux'
 import { WagmiConfig } from 'wagmi'
 
-import { Header } from '../components'
-import { SUPPORTED_CHAINS } from '../config'
-import { Updaters as MulticallUpdaters } from '../lib/state/MulticallUpdaters'
-import { Updaters as TokenListUpdaters } from '../lib/state/TokenListsUpdaters'
+// import { TokenListUpdaters } from '../lib/state/TokenListsUpdaters'
 import SEO from '../next-seo.config.mjs'
 import store from '../store'
 
@@ -24,6 +21,16 @@ declare global {
     dataLayer: Record<string, any>[]
   }
 }
+
+// import { configureChains, createClient, mainnet } from 'wagmi'
+// import { publicProvider } from 'wagmi/providers/public'
+
+// const { provider, webSocketProvider } = configureChains([mainnet], [publicProvider()])
+
+// const client = createClient({
+//   provider,
+//   webSocketProvider,
+// })
 
 const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
   const router = useRouter()
@@ -67,19 +74,18 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
         }}
       />
       <WagmiConfig client={client}>
-        <ReduxProvider store={store}>
+        <Provider store={store}>
           <ThemeProvider>
             <App.Shell>
               <DefaultSeo {...SEO} />
-              <Header />
-              <MulticallUpdaters chainIds={SUPPORTED_CHAINS} />
-              <TokenListUpdaters chainIds={SUPPORTED_CHAINS} />
+              {/* <Header /> */}
+              {/* <TokenListUpdaters chainIds={SUPPORTED_CHAINS} /> */}
               <Component {...pageProps} />
               <App.Footer />
             </App.Shell>
             <ToastContainer className="mt-[50px]" />
           </ThemeProvider>
-        </ReduxProvider>
+        </Provider>
       </WagmiConfig>
       <Analytics />
     </>

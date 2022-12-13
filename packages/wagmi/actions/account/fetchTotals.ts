@@ -18,7 +18,7 @@ export async function fetchTotals(args: { token: Address; user: Address; chainId
 
   return Object.fromEntries(
     totals
-      .filter((value) => !!value && value[0].gt(0) && value[1].gt(0))
+      .filter((value) => !!value && value?.[0]?.gt(0) && value?.[1]?.gt(0))
       .map((value, i) => [`${args[i].chainId}:${args[i].token}`, value])
   )
 }

@@ -26,6 +26,7 @@
     "@headlessui/react": "^1.7.3",
     "@heroicons/react": "^1.0.0",
     "@reduxjs/toolkit": "^1.8.1",
+    "@sushiswap/abi": "workspace:*",
     "@sushiswap/address": "workspace:*",
     "@sushiswap/amm": "workspace:*",
     "@sushiswap/chain": "workspace:*",
@@ -50,11 +51,11 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^8.0.1",
-    "wagmi": "0.9.2",
-    "wait-on": "6.0.1"
+    "wagmi": "0.9.2"
   },
   "devDependencies": {
     "@playwright/test": "1.28.1",
+    "@sentry/nextjs": "7.24.2",
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
@@ -66,7 +67,6 @@
     "@types/numeral": "^2.0.2",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
-    "@types/workbox-sw": "^4.3.2",
     "autoprefixer": "^10.4.0",
     "eslint": "8.29.0",
     "concurrently": "7.6.0",

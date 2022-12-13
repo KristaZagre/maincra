@@ -18,12 +18,6 @@ const nextConfig = {
   staticPageGenerationTimeout: 180,
   experimental: {
     esmExternals: 'loose',
-    // transpilePackages: [
-    //   '@sushiswap/redux-token-lists',
-    //   '@sushiswap/redux-localstorage',
-    //   '@sushiswap/wagmi',
-    //   '@sushiswap/ui',
-    // ],
   },
   images: {
     loader: 'cloudinary',
