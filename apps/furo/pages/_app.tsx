@@ -82,8 +82,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
         <ThemeProvider>
           <App.Shell>
             <DefaultSeo {...SEO} />
-            <Header />
-            {/* <Updaters chainIds={SUPPORTED_CHAINS} /> */}
+            <Header />a{/* <Updaters chainIds={SUPPORTED_CHAINS} /> */}
             <Component {...pageProps} />
             <App.Footer />
           </App.Shell>

@@ -30,7 +30,8 @@ export const Header: FC = () => {
       withScrollBackground={router.pathname === '/'}
     >
       <div className="flex items-center gap-2 whitespace-nowrap">
-        <NetworkSelector />
+        <NetworkSelector supportedNetworks={[1]} />a
+        <Profile />
         {address && true && isConnected && (
           <Menu
             button={
