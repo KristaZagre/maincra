@@ -1,12 +1,7 @@
-import { ChainId } from '@sushiswap/chain'
+// import { ChainId } from '@sushiswap/chain'
 import transpileModules from 'next-transpile-modules'
 
-const withTranspileModules = transpileModules([
-  '@sushiswap/redux-token-lists',
-  '@sushiswap/redux-localstorage',
-  '@sushiswap/ui',
-  '@sushiswap/wagmi',
-])
+const withTranspileModules = transpileModules(['@sushiswap/ui', '@sushiswap/wagmi'])
 
 // @ts-check
 /** @type {import('next').NextConfig} */

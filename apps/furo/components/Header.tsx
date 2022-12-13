@@ -1,19 +1,19 @@
 import { PaperAirplaneIcon } from '@heroicons/react/outline'
-import { useIsMounted } from '@sushiswap/hooks'
+// import { useIsMounted } from '@sushiswap/hooks'
 import { App, AppType, Link, Menu } from '@sushiswap/ui'
 import { NetworkSelector, Profile } from '@sushiswap/wagmi'
 import { useRouter } from 'next/router'
 import React, { FC } from 'react'
 import { useAccount, useConnect } from 'wagmi'
 
-import { SUPPORTED_CHAINS } from '../config'
-import { useNotifications } from '../lib/state/storage'
+// import { SUPPORTED_CHAINS } from '../config'
+// import { useNotifications } from '../lib/state/storage'
 
 export const Header: FC = () => {
-  const isMounted = useIsMounted()
+  // const isMounted = useIsMounted()
   const { address, isConnected } = useAccount()
   const router = useRouter()
-  const [notifications, { clearNotifications }] = useNotifications(address)
+  // const [notifications, { clearNotifications }] = useNotifications(address)
 
   const connect = useConnect({
     onSuccess: () => {
@@ -30,13 +30,8 @@ export const Header: FC = () => {
       withScrollBackground={router.pathname === '/'}
     >
       <div className="flex items-center gap-2 whitespace-nowrap">
-        <NetworkSelector supportedNetworks={SUPPORTED_CHAINS} />
-        <Profile
-          supportedNetworks={SUPPORTED_CHAINS}
-          notifications={notifications}
-          clearNotifications={clearNotifications}
-        />
-        {address && isMounted && isConnected && (
+        <NetworkSelector />
+        {address && true && isConnected && (
           <Menu
             button={
               <Menu.Button
