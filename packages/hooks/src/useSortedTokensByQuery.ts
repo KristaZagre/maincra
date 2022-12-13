@@ -15,8 +15,7 @@ export function createTokenFilterFunction<T extends Token>(search: string): (tok
   const validAddress = isAddress(search)
 
   if (validAddress) {
-    const lower = search.toLowerCase()
-    return (t: T) => ('isToken' in t ? search === t.address : lower === t.address.toLowerCase())
+    return (t: T) => search.toLowerCase() === t.address.toLowerCase()
   }
 
   const lowerSearchParts = search

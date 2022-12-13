@@ -39,7 +39,7 @@
     "@tanstack/react-query": "4.19.1",
     "@tanstack/react-query-devtools":"4.19.1",
     "tsup": "6.5.0",
-    "typescript": "4.8.2"
+    "typescript": "4.9.3"
   },
   "peerDependencies": {
     "@sushiswap/chain": "workspace:*",
