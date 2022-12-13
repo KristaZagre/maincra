@@ -1,8 +1,9 @@
 import '@sushiswap/ui/index.css'
 
 import { App, ThemeProvider, ToastContainer } from '@sushiswap/ui'
-import { client } from '@sushiswap/wagmi'
+import { config } from '@sushiswap/wagmi-config'
 import { Analytics } from '@vercel/analytics/react'
+import { SUPPORTED_CHAINS } from 'config'
 import type { AppProps } from 'next/app'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
@@ -10,9 +11,9 @@ import Script from 'next/script'
 import { DefaultSeo } from 'next-seo'
 import { FC, useEffect } from 'react'
 import { Provider } from 'react-redux'
-import { WagmiConfig } from 'wagmi'
+import { createClient, WagmiConfig } from 'wagmi'
 
-// import { TokenListUpdaters } from '../lib/state/TokenListsUpdaters'
+import { Updaters } from '../lib/state/TokenListsUpdaters'
 import SEO from '../next-seo.config.mjs'
 import store from '../store'
 
@@ -31,6 +32,8 @@ declare global {
 //   provider,
 //   webSocketProvider,
 // })
+
+const client = createClient(config)
 
 const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
   const router = useRouter()
@@ -79,7 +82,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
             <App.Shell>
               <DefaultSeo {...SEO} />
               {/* <Header /> */}
-              {/* <TokenListUpdaters chainIds={SUPPORTED_CHAINS} /> */}
+              <Updaters chainIds={SUPPORTED_CHAINS} />
               <Component {...pageProps} />
               <App.Footer />
             </App.Shell>

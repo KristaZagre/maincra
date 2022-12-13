@@ -1,5 +1,5 @@
 // Export pre-configured client
-export { client } from './client'
+// export { client } from './client'
 
 // Export actions
 export * from './actions'
