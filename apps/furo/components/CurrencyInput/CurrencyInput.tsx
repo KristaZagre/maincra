@@ -17,6 +17,7 @@ type HelperTextPanelRenderProps = {
 }
 
 type CurrencyInput = Omit<CurrencyInputBase, 'bottomPanel' | 'error' | 'helperTextPanel' | 'onError'> & {
+  id: string
   onError?(message?: string): void
   fundSource: FundSource
   account: string | undefined
@@ -30,6 +31,7 @@ type CurrencyInput = Omit<CurrencyInputBase, 'bottomPanel' | 'error' | 'helperTe
 }
 
 export const CurrencyInput: FC<CurrencyInput> = ({
+  id,
   account,
   fundSource,
   value,
@@ -68,6 +70,7 @@ export const CurrencyInput: FC<CurrencyInput> = ({
   return useMemo(
     () => (
       <CurrencyInputBase
+        id={id}
         name={name}
         onBlur={onBlur}
         hideSymbol={hideSymbol}

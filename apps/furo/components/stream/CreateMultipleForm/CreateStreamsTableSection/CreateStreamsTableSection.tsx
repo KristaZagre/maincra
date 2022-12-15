@@ -118,6 +118,7 @@ export const CreateStreamsTableSection: FC<CreateStreamsTableSection> = ({ chain
         )}
         <div className="flex justify-between">
           <Button
+            testdata-id="furo-create-multiple-streams-add-item-button"
             type="button"
             variant="empty"
             size="sm"
@@ -126,7 +127,13 @@ export const CreateStreamsTableSection: FC<CreateStreamsTableSection> = ({ chain
           >
             Add Item
           </Button>
-          <Button onClick={onReview} disabled={!formValid} type="submit" className="!px-10">
+          <Button
+            testdata-id="furo-create-multiple-streams-review-button"
+            onClick={onReview}
+            disabled={!formValid}
+            type="submit"
+            className="!px-10"
+          >
             Review
           </Button>
         </div>

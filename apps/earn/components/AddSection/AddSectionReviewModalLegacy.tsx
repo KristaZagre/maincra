@@ -171,6 +171,7 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
             components={
               <Approve.Components>
                 <Approve.Token
+                  id="earn-add-section-review-approve-token-1"
                   size="md"
                   className="whitespace-nowrap"
                   fullWidth
@@ -178,6 +179,7 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
                   address={getSushiSwapRouterContractConfig(chainId).address as Address}
                 />
                 <Approve.Token
+                  id="earn-add-section-review-approve-token-2"
                   size="md"
                   className="whitespace-nowrap"
                   fullWidth
@@ -188,7 +190,13 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
             }
             render={({ approved }) => {
               return (
-                <Button size="md" disabled={!approved || isWritePending} fullWidth onClick={() => sendTransaction?.()}>
+                <Button
+                  testdata-id="earn-add-legacy-review-modal-add-button"
+                  size="md"
+                  disabled={!approved || isWritePending}
+                  fullWidth
+                  onClick={() => sendTransaction?.()}
+                >
                   {isWritePending ? <Dots>Confirm transaction</Dots> : 'Add'}
                 </Button>
               )

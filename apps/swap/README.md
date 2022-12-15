@@ -3,9 +3,9 @@
 Swap application.
 
 
-### Testing
+### Test
 
-#### Install
+#### Prerequisites
 
 install anvil
 ```
@@ -18,9 +18,8 @@ npx playwright install
 npx playwright install-deps
 ```
 
-#### How to run
+#### Run
 
-#### Prerequisites
 
 You need to run three terminal sessions:
 
@@ -47,6 +46,7 @@ Open a third terminal, run:
 cd apps/swap
 CHAIN_ID=137 NODE_ENV=test PLAYWRIGHT_URL=http://localhost:3000/swap pnpm test:e2e
 ```
+OR  
 
 Run a test a single test on a certain line, with one browser
 ```

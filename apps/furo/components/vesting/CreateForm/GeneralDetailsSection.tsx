@@ -63,6 +63,7 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId }> = ({ chainId }) => 
           render={({ field: { onChange, value, onBlur }, fieldState: { error } }) => (
             <>
               <Select.Button
+                testdata-id="token-selector-button"
                 error={!!error?.message}
                 standalone
                 className="!cursor-pointer ring-offset-slate-900"
@@ -99,6 +100,7 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId }> = ({ chainId }) => 
             return (
               <>
                 <DatePicker
+                  customInput={<input testdata-id="vesting-start-date" type="text" />}
                   name={name}
                   onBlur={onBlur}
                   className={classNames(
@@ -133,7 +135,7 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId }> = ({ chainId }) => 
               <Web3Input.Ens
                 name={name}
                 onBlur={onBlur}
-                id="ensInput"
+                id="create-vest-recipient"
                 value={value}
                 onChange={onChange}
                 error={!!error?.message}
@@ -159,6 +161,7 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId }> = ({ chainId }) => 
               <div className="flex flex-col">
                 <div className="flex items-center gap-3">
                   <FundSourceOption
+                    id={'fund-source-wallet'}
                     chainId={chainId}
                     label="Wallet"
                     active={_value === FundSource.WALLET}
@@ -168,6 +171,7 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId }> = ({ chainId }) => 
                   />
                   {!currency?.isNative && (
                     <FundSourceOption
+                      id={'fund-source-bentobox'}
                       chainId={chainId}
                       label="BentoBox"
                       active={_value === FundSource.BENTOBOX}

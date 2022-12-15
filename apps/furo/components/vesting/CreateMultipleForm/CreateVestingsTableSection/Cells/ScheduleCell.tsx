@@ -75,6 +75,7 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
                   errors?.vestings?.[index]?.cliff ? 'border-red' : 'border-transparent',
                   'border-0 !border-b-[1px] h-[37px] flex items-center'
                 )}
+                testdata-id={`furo-create-multiple-vests-schedule-${index}`}
               >
                 <IconButton as="div" className={classNames('py-0.5 px-1 flex items-center gap-2')}>
                   <span className="text-sm font-medium">
@@ -93,7 +94,10 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
                 <Typography variant="lg" weight={500}>
                   Vesting Details
                 </Typography>
-                <IconButton onClick={() => setOpen(false)}>
+                <IconButton
+                  testdata-id={`create-multiple-vests-schedule-modal-close-button-${index}`}
+                  onClick={() => setOpen(false)}
+                >
                   <XIcon width={24} height={24} className="text-slate-200" />
                 </IconButton>
               </div>
@@ -109,6 +113,7 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
                         render={({ field: { onChange, value } }) => {
                           return (
                             <Switch
+                              id={`furo-create-multiple-vests-schedule-modal-${index}`}
                               checked={value}
                               onChange={(val) => {
                                 onChange(val)
@@ -134,6 +139,12 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
                           return (
                             <>
                               <DatePicker
+                                customInput={
+                                  <input
+                                    testdata-id={`create-multiple-vests-schedule-modal-cliff-date-${index}`}
+                                    type="text"
+                                  />
+                                }
                                 name={name}
                                 onBlur={onBlur}
                                 className={classNames(
@@ -172,7 +183,7 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
                           fieldState: { error: validationError },
                         }) => (
                           <CurrencyInput
-                            id="create-multiple-vest"
+                            id={`create-multiple-vests-schedule-modal-${index}`}
                             name={name}
                             onBlur={onBlur}
                             className="ring-offset-slate-900"
@@ -195,6 +206,7 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
                         name={`vestings.${index}.stepAmount`}
                         render={({ field: { onChange, value, name, onBlur }, fieldState: { error } }) => (
                           <CurrencyInputBase
+                            id={`create-vest-graded-step-amount-${index}`}
                             className="ring-offset-slate-900"
                             onChange={onChange}
                             value={value || ''}
@@ -231,6 +243,7 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
                             return (
                               <>
                                 <Input.Counter
+                                  id={`create-multiple-vests-schedule-modal-amount-of-periods-${index}`}
                                   name={name}
                                   onBlur={onBlur}
                                   step={1}
@@ -255,7 +268,11 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
                             <>
                               <Select
                                 button={
-                                  <Select.Button error={!!error?.message} className="ring-offset-slate-900">
+                                  <Select.Button
+                                    testdata-id={`create-multiple-vests-schedule-modal-period-length-${index}`}
+                                    error={!!error?.message}
+                                    className="ring-offset-slate-900"
+                                  >
                                     {value.label}
                                   </Select.Button>
                                 }

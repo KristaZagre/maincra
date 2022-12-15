@@ -110,6 +110,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId }) => {
           <Dialog.Header title="Withdraw" onClose={() => setOpen(false)} />
           <div className="flex flex-col gap-2">
             <CurrencyInputBase
+              id="furo-withdraw"
               inputClassName="pb-2"
               className="ring-offset-slate-800"
               currency={stream?.token}

@@ -20,6 +20,7 @@ export const FundSourceCell: FC<CellProps> = ({ row, index }) => {
         <Menu
           button={
             <Menu.Button
+              testdata-id={`create-multiple-streams-fund-source-button-${index}`}
               color="gray"
               className="!px-0 !text-slate-50"
               variant="empty"
@@ -32,8 +33,18 @@ export const FundSourceCell: FC<CellProps> = ({ row, index }) => {
           }
         >
           <Menu.Items className="!min-w-[unset] !w-fit">
-            <Menu.Item onClick={() => onChange(FundSource.WALLET)}>Wallet</Menu.Item>
-            <Menu.Item onClick={() => onChange(FundSource.BENTOBOX)}>BentoBox</Menu.Item>
+            <Menu.Item
+              onClick={() => onChange(FundSource.WALLET)}
+              testdata-id={`create-multiple-streams-fund-source-wallet-${index}`}
+            >
+              Wallet
+            </Menu.Item>
+            <Menu.Item
+              onClick={() => onChange(FundSource.BENTOBOX)}
+              testdata-id={`create-multiple-streams-fund-source-bentobox-${index}`}
+            >
+              BentoBox
+            </Menu.Item>
           </Menu.Items>
         </Menu>
       )}

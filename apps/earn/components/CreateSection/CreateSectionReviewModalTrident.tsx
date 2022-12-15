@@ -313,7 +313,13 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
           }
           render={({ approved }) => {
             return (
-              <Button size="md" disabled={!approved || isWritePending} fullWidth onClick={() => sendTransaction?.()}>
+              <Button
+                testdata-id="earn-create-review-modal-add-button"
+                size="md"
+                disabled={!approved || isWritePending}
+                fullWidth
+                onClick={() => sendTransaction?.()}
+              >
                 {isWritePending ? <Dots>Confirm transaction</Dots> : 'Add'}
               </Button>
             )

@@ -10,6 +10,7 @@ import {
 import React, { FC, forwardRef } from 'react'
 
 export type CurrencyInputBase = Omit<React.HTMLProps<HTMLInputElement>, 'ref' | 'onChange'> & {
+  id: string
   value: string | number
   onChange(value: string): void
   currency: Type | undefined
@@ -24,6 +25,7 @@ export type CurrencyInputBase = Omit<React.HTMLProps<HTMLInputElement>, 'ref' | 
 export const CurrencyInputBase: FC<CurrencyInputBase> = forwardRef<HTMLInputElement, CurrencyInputBase>(
   (
     {
+      id,
       value,
       onChange,
       currency,
@@ -49,6 +51,8 @@ export const CurrencyInputBase: FC<CurrencyInputBase> = forwardRef<HTMLInputElem
           )}
         >
           <Input.Numeric
+            id={id}
+            testdata-id={`${id}-input`}
             variant="unstyled"
             ref={ref}
             value={value}
@@ -62,7 +66,7 @@ export const CurrencyInputBase: FC<CurrencyInputBase> = forwardRef<HTMLInputElem
             <Typography
               variant="sm"
               weight={500}
-              className="absolute right-4 top-3 bottom-0 text-slate-300 max-w-10 truncate"
+              className="absolute bottom-0 truncate right-4 top-3 text-slate-300 max-w-10"
             >
               {currency?.symbol}
             </Typography>

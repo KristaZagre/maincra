@@ -85,11 +85,14 @@ export const ReviewSection: FC<ReviewSection> = ({ chainId, onBack }) => {
               <Table.tbody>
                 {summedAmounts.map((el, idx) => (
                   <Table.tr key={idx}>
-                    <Table.td className="flex items-center gap-2">
+                    <Table.td
+                      testdata-id={`create-multiple-vests-review-token-symbol-${idx}`}
+                      className="flex items-center gap-2"
+                    >
                       <Currency.Icon currency={el.currency} width={20} height={20} />
                       {el.currency.symbol}
                     </Table.td>
-                    <Table.td>
+                    <Table.td testdata-id={`create-multiple-vests-review-total-amount-${idx}`}>
                       {el.toSignificant(6)} {el.currency.symbol}
                     </Table.td>
                     <Table.td>

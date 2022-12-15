@@ -119,7 +119,7 @@ export const TransferModal: FC<TransferModalProps> = ({
           </Typography>
           <Form.Control label="Recipient">
             <Web3Input.Ens
-              id="ens-input"
+              id="furo-transfer"
               value={recipient}
               onChange={setRecipient}
               placeholder="Address or ENS Name"

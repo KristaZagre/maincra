@@ -183,6 +183,7 @@ export const ExecuteMultipleSection: FC<{ chainId: ChainId; isReview: boolean }>
             type="submit"
             onClick={() => sendTransaction?.()}
             disabled={isWritePending || !approved || !isValid || isValidating}
+            testdata-id="furo-create-multiple-vests-confirm-button"
           >
             {isWritePending ? <Dots>Confirm transaction</Dots> : 'Create Vests'}
           </Button>

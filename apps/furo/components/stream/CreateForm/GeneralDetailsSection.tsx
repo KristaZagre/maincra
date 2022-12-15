@@ -40,6 +40,7 @@ export const GeneralDetailsSection = () => {
               return (
                 <>
                   <DatePicker
+                    customInput={<input testdata-id="stream-start-date" type="text" />}
                     name={name}
                     onBlur={onBlur}
                     className={classNames(
@@ -73,6 +74,7 @@ export const GeneralDetailsSection = () => {
               return (
                 <>
                   <DatePicker
+                    customInput={<input testdata-id="stream-end-date" type="text" />}
                     name={name}
                     onBlur={onBlur}
                     className={classNames(
@@ -111,7 +113,7 @@ export const GeneralDetailsSection = () => {
                 <Web3Input.Ens
                   name={name}
                   onBlur={onBlur}
-                  id="recipient"
+                  id="create-stream-recipient"
                   value={value}
                   onChange={onChange}
                   error={!!error?.message}

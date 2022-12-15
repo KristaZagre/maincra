@@ -40,7 +40,7 @@ export const SelectFeeWidget: FC<SelectFeeWidgetProps> = memo(({ selectedNetwork
                   }
                 ></Tooltip>
               ) : (
-                <Disclosure.Button className="w-full pr-3">
+                <Disclosure.Button className="w-full pr-3" testdata-id={'earn-pool-select-fee-tier-button'}>
                   <div className="flex items-center justify-between">
                     <Widget.Header title="3. Select Fee Tier" className="!pb-3" />
                     <Typography variant="sm" weight={700} className="px-2 py-1 rounded-lg bg-slate-900">
@@ -63,7 +63,7 @@ export const SelectFeeWidget: FC<SelectFeeWidgetProps> = memo(({ selectedNetwork
                   <div className="p-3 pt-0">
                     <Tab.Group selectedIndex={fee} onChange={setFee}>
                       <Tab.List className="mt-2">
-                        <Disclosure.Button>
+                        <Disclosure.Button testdata-id={'earn-pool-fee-tier-selector-001'}>
                           <Tab as="div" className="!h-[unset] p-2">
                             <div className="flex flex-col gap-0.5">
                               <Typography variant="xs" weight={500} className="text-slate-200">
@@ -75,7 +75,7 @@ export const SelectFeeWidget: FC<SelectFeeWidgetProps> = memo(({ selectedNetwork
                             </div>
                           </Tab>
                         </Disclosure.Button>
-                        <Disclosure.Button>
+                        <Disclosure.Button testdata-id={'earn-pool-fee-tier-selector-005'}>
                           <Tab as="div" className="!h-[unset] p-2">
                             <div className="flex flex-col gap-0.5">
                               <Typography variant="xs" weight={500} className="text-slate-200">
@@ -87,7 +87,7 @@ export const SelectFeeWidget: FC<SelectFeeWidgetProps> = memo(({ selectedNetwork
                             </div>
                           </Tab>
                         </Disclosure.Button>
-                        <Disclosure.Button>
+                        <Disclosure.Button testdata-id={'earn-pool-fee-tier-selector-03'}>
                           <Tab as="div" className="!h-[unset] p-2">
                             <div className="flex flex-col gap-0.5">
                               <Typography variant="xs" weight={500} className="text-slate-200">
@@ -99,7 +99,7 @@ export const SelectFeeWidget: FC<SelectFeeWidgetProps> = memo(({ selectedNetwork
                             </div>
                           </Tab>
                         </Disclosure.Button>
-                        <Disclosure.Button>
+                        <Disclosure.Button testdata-id={'earn-pool-fee-tier-selector-1'}>
                           <Tab as="div" className="!h-[unset] p-2">
                             <div className="flex flex-col gap-0.5">
                               <Typography variant="xs" weight={500} className="text-slate-200">

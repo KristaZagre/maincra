@@ -28,6 +28,7 @@ export const StartDateCell: FC<CellProps> = ({ index }) => {
       render={({ field: { onChange, value, onBlur, name }, fieldState: { error } }) => {
         return (
           <DatePicker
+            customInput={<input testdata-id={`create-multiple-vests-start-date-${index}`} type="text" />}
             name={name}
             onBlur={onBlur}
             className={classNames(

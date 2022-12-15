@@ -88,6 +88,7 @@ export const CreateForm: FC<{ chainId: ChainId }> = ({ chainId }) => {
                   type="button"
                   disabled={isWritePending || !isValid || isValidating || Boolean(errors?.[FORM_ERROR])}
                   onClick={() => setOpen(true)}
+                  testdata-id="furo-review-vesting-button"
                 >
                   Review Vesting
                 </Button>

@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "anvil": "anvil --fork-url $ANVIL_FORK_URL --fork-block-number 35896301",
     "build": "next build && next-sitemap --config next-sitemap.config.mjs",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next && rm -rf .swc && rm -rf .graphclient",
     "dev": "next dev -p 3005",
@@ -10,7 +11,8 @@
     "lint": "TIMING=1 eslint --fix . && next lint",
     "start": "next start",
     "test": "jest --watch --no-cache",
-    "check": "tsc --pretty --noEmit"
+    "check": "tsc --pretty --noEmit",
+    "test:e2e": "npx playwright test"
   },
   "dependencies": {
     "@ethersproject/abi": "^5.7.0",
@@ -79,6 +81,7 @@
     "zod": "^3.19.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.25.0",
     "@graphprotocol/client-add-source-name": "latest",
     "@graphprotocol/client-auto-pagination": "latest",
     "@graphprotocol/client-cli": "2.2.16",
