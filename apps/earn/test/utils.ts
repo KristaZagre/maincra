@@ -1,58 +1,9 @@
+import { JsonRpcProvider } from '@ethersproject/providers'
 import { expect, Page } from '@playwright/test'
 import { ChainId, chainName } from '@sushiswap/chain'
 import { Contract, ContractFactory, providers, Wallet } from 'ethers'
-import { Chain } from 'wagmi'
-import { foundry, goerli, mainnet, optimism, polygon } from 'wagmi/chains'
 
 import fakeToken from './fakeToken.json'
-
-export function getNetwork(chain: Chain) {
-  return {
-    chainId: chain.id,
-    ensAddress: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
-    name: chain.name,
-  }
-}
-
-const foundryMainnet: Chain = {
-  ...mainnet,
-  rpcUrls: foundry.rpcUrls,
-}
-
-export const testChains = [foundryMainnet, mainnet, goerli, optimism, polygon]
-
-class EthersProviderWrapper extends providers.StaticJsonRpcProvider {
-  toJSON() {
-    return `<Provider network={${this.network.chainId}} />`
-  }
-}
-
-export function getProvider({ chains = testChains, chainId }: { chains?: Chain[]; chainId?: number } = {}) {
-  const chain = testChains.find((x) => x.id === chainId) ?? foundryMainnet
-  console.log('CHAIN', { chain })
-  const url = foundryMainnet.rpcUrls.default.http[0]
-  const provider = new EthersProviderWrapper(url, getNetwork(chain))
-  provider.pollingInterval = 1_000
-  return Object.assign(provider, { chains })
-}
-
-class EthersWebSocketProviderWrapper extends providers.WebSocketProvider {
-  toJSON() {
-    return `<WebSocketProvider network={${this.network.chainId}} />`
-  }
-}
-
-export function getWebSocketProvider({ chains = testChains, chainId }: { chains?: Chain[]; chainId?: number } = {}) {
-  const chain = testChains.find((x) => x.id === chainId) ?? foundryMainnet
-  const url = foundryMainnet.rpcUrls.default.http[0]!.replace('http', 'ws')
-  const webSocketProvider = Object.assign(new EthersWebSocketProviderWrapper(url, getNetwork(chain)), { chains })
-  // Clean up WebSocketProvider immediately
-  // so handle doesn't stay open in test environment
-  webSocketProvider?.destroy().catch(() => {
-    return
-  })
-  return webSocketProvider
-}
 
 // Default accounts from Anvil
 export const accounts = [
@@ -138,18 +89,6 @@ export const accounts = [
   },
 ]
 
-export class WalletSigner extends Wallet {
-  connectUnchecked(): providers.JsonRpcSigner {
-    const uncheckedSigner = (this.provider as EthersProviderWrapper).getUncheckedSigner(this.address)
-    return uncheckedSigner
-  }
-}
-
-export function getSigners() {
-  const provider = getProvider()
-  return accounts.map((x) => new WalletSigner(x.privateKey, provider))
-}
-
 export const addressRegex = /^0x[a-fA-F0-9]{40}/
 
 export async function selectNetwork(page: Page, chainId: ChainId) {
@@ -190,7 +129,8 @@ export async function selectDate(testDataId: string, months: number, page: Page)
 }
 
 export async function deployFakeToken(chainId: ChainId): Promise<Contract> {
-  const signer = getSigners()[0].connect(getProvider({ chainId }))
+  const provider = new JsonRpcProvider("http://127.0.0.1:8545", chainId)
+  const signer = new Wallet(accounts[0].privateKey, provider)
   const factory = new ContractFactory(fakeToken.abi, fakeToken.bytecode, signer)
   return await factory.deploy()
 }
