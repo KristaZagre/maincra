@@ -189,14 +189,13 @@ export const BENTOBOX_DEPOSIT_ABI = [
 
 export async function selectNetwork(page: Page, chainId: ChainId) {
   await page.locator(`[testdata-id=network-selector-button]`).click()
-  const networkList = page.locator(`[testdata-id=network-selector-list]`)
-  const desiredNetwork = networkList.getByText(chainName[chainId])
+  await page.locator(`[testdata-id=network-selector-search-input]`).fill(chainName[chainId])
+  const desiredNetwork = page.locator(`[testdata-id=network-selector-button-chain-${chainId}]`)
   await expect(desiredNetwork).toBeVisible()
   await desiredNetwork.click()
 
-  if (await desiredNetwork.isVisible()) {
-    await page.locator(`[testdata-id=network-selector-button]`).click()
-  }
+  //close popup
+  await page.locator(`[testdata-id=network-selector-button]`).click()
 }
 
 export function timeout(ms: number) {

@@ -23,6 +23,7 @@ export const NetworkSelector: FC<NetworkSelectorNewProps> = ({ supportedNetworks
       <div className="flex gap-2 items-center p-4 pb-3">
         <SearchIcon width={20} height={20} className="text-slate-500" />
         <input
+          testdata-id="network-selector-search-input"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           className={classNames(DEFAULT_INPUT_UNSTYLED, 'w-full bg-transparent placeholder:font-medium text-base')}
@@ -35,6 +36,7 @@ export const NetworkSelector: FC<NetworkSelectorNewProps> = ({ supportedNetworks
           .filter((el) => (query ? chains[el].name.toLowerCase().includes(query.toLowerCase()) : Boolean))
           .map((el) => (
             <div
+              testdata-id={`network-selector-button-chain-${el}`}
               onClick={() => {
                 switchNetwork && switchNetwork(el)
               }}
@@ -62,6 +64,7 @@ export const NetworkSelector: FC<NetworkSelectorNewProps> = ({ supportedNetworks
         return (
           <>
             <Popover.Button
+              testdata-id="network-selector-button"
               className={classNames(
                 DEFAULT_INPUT_UNSTYLED,
                 'flex items-center gap-2 bg-white/[0.04] hover:bg-white/[0.08] hover:text-white h-[38px] rounded-xl px-2 pl-3 !font-semibold !text-sm text-slate-200'

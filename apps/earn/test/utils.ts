@@ -1,7 +1,7 @@
 import { JsonRpcProvider } from '@ethersproject/providers'
 import { expect, Page } from '@playwright/test'
 import { ChainId, chainName } from '@sushiswap/chain'
-import { Contract, ContractFactory, providers, Wallet } from 'ethers'
+import { Contract, ContractFactory, Wallet } from 'ethers'
 
 import fakeToken from './fakeToken.json'
 
@@ -93,14 +93,13 @@ export const addressRegex = /^0x[a-fA-F0-9]{40}/
 
 export async function selectNetwork(page: Page, chainId: ChainId) {
   await page.locator(`[testdata-id=network-selector-button]`).click()
-  const networkList = page.locator(`[testdata-id=network-selector-list]`)
-  const desiredNetwork = networkList.getByText(chainName[chainId])
+  await page.locator(`[testdata-id=network-selector-search-input]`).fill(chainName[chainId])
+  const desiredNetwork = page.locator(`[testdata-id=network-selector-button-chain-${chainId}]`)
   await expect(desiredNetwork).toBeVisible()
   await desiredNetwork.click()
 
-  if (await desiredNetwork.isVisible()) {
-    await page.locator(`[testdata-id=network-selector-button]`).click()
-  }
+  //close popup
+  await page.locator(`[testdata-id=network-selector-button]`).click()
 }
 
 export function timeout(ms: number) {
@@ -129,7 +128,7 @@ export async function selectDate(testDataId: string, months: number, page: Page)
 }
 
 export async function deployFakeToken(chainId: ChainId): Promise<Contract> {
-  const provider = new JsonRpcProvider("http://127.0.0.1:8545", chainId)
+  const provider = new JsonRpcProvider('http://127.0.0.1:8545', chainId)
   const signer = new Wallet(accounts[0].privateKey, provider)
   const factory = new ContractFactory(fakeToken.abi, fakeToken.bytecode, signer)
   return await factory.deploy()

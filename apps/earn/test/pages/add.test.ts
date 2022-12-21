@@ -78,7 +78,7 @@ test.describe('Create/Add', () => {
 })
 
 async function createPool(page: Page, fakeToken: Contract, poolType: PoolType, fee = '03') {
-  await configPool(page, fakeToken, PoolType.STABLE, fee)
+  await configPool(page, fakeToken, poolType, fee)
 
   // Input amounts
   await page.locator('[testdata-id=earn-add-input-currency-2-input]').fill(AMOUNT)
@@ -110,7 +110,7 @@ async function createPool(page: Page, fakeToken: Contract, poolType: PoolType, f
 }
 
 async function addLiquidityPool(page: Page, fakeToken: Contract, poolType: PoolType, fee = '03') {
-  await configPool(page, fakeToken, PoolType.STABLE, fee)
+  await configPool(page, fakeToken, poolType, fee)
 
   // Input amount for one token
   await page.locator('[testdata-id=earn-add-input-currency-1-input]').fill(AMOUNT)
