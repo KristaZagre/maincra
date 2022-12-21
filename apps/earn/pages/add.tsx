@@ -4,7 +4,7 @@ import { ChainId, chainShortName } from '@sushiswap/chain'
 import { tryParseAmount, Type } from '@sushiswap/currency'
 import { Pair as PairDTO } from '@sushiswap/graph-client'
 import { FundSource } from '@sushiswap/hooks'
-import { AppearOnMount, BreadcrumbLink, Button, Container, Dots, Loader } from '@sushiswap/ui'
+import { AppearOnMount, BreadcrumbLink, Button, Container, Loader } from '@sushiswap/ui'
 import { Widget } from '@sushiswap/ui/widget'
 import {
   Checker,
@@ -324,15 +324,14 @@ const _Add: FC<AddProps> = ({
                           input0={parsedInput0}
                           input1={parsedInput1}
                         >
-                          {({ isWritePending, setOpen }) => (
+                          {({ setOpen }) => (
                             <Button
+                              testdata-id="earn-add-trident-button"
                               fullWidth
                               onClick={() => setOpen(true)}
-                              disabled={isWritePending}
                               size="md"
-                              testdata-id="earn-add-trident-button"
                             >
-                              {isWritePending ? <Dots>Confirm transaction</Dots> : title}
+                              {title}
                             </Button>
                           )}
                         </AddSectionReviewModalTrident>
@@ -346,15 +345,14 @@ const _Add: FC<AddProps> = ({
                           input0={parsedInput0}
                           input1={parsedInput1}
                         >
-                          {({ isWritePending, setOpen }) => (
+                          {({ setOpen }) => (
                             <Button
+                              testdata-id="earn-add-legacy-button"
                               fullWidth
                               onClick={() => setOpen(true)}
-                              disabled={isWritePending}
                               size="md"
-                              testdata-id="earn-add-legacy-button"
                             >
-                              {isWritePending ? <Dots>Confirm transaction</Dots> : title}
+                              {title}
                             </Button>
                           )}
                         </AddSectionReviewModalLegacy>
@@ -369,15 +367,14 @@ const _Add: FC<AddProps> = ({
                           fee={FEE_MAP[fee]}
                           poolType={poolType}
                         >
-                          {({ isWritePending, setOpen }) => (
+                          {({ setOpen }) => (
                             <Button
+                              testdata-id="earn-create-trident-button"
                               fullWidth
                               onClick={() => setOpen(true)}
-                              disabled={isWritePending}
                               size="md"
-                              testdata-id="earn-create-trident-button"
                             >
-                              {isWritePending ? <Dots>Confirm transaction</Dots> : title}
+                              {title}
                             </Button>
                           )}
                         </CreateSectionReviewModalTrident>
