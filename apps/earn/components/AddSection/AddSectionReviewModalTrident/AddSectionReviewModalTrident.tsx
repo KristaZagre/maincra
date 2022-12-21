@@ -3,12 +3,8 @@ import { ConstantProductPool, StablePool } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Type } from '@sushiswap/currency'
 import { Button, Dots } from '@sushiswap/ui'
-import {
-  BENTOBOX_ADDRESS,
-  ConstantProductPoolState,
-  getTridentRouterContractConfig,
-  StablePoolState,
-} from '@sushiswap/wagmi'
+import { ConstantProductPoolState, getTridentRouterContractConfig, StablePoolState } from '@sushiswap/wagmi'
+import { BENTOBOX_ADDRESS } from '@sushiswap/address'
 import { Approve2 } from '@sushiswap/wagmi/systems/Approve2'
 import { ApprovalType, ApproveDefinition } from '@sushiswap/wagmi/systems/Approve2/types'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'

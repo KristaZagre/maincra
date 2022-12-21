@@ -1,4 +1,3 @@
-import { TransactionRequest } from '@ethersproject/providers'
 import { calculateSlippageAmount } from '@sushiswap/amm'
 import { Amount } from '@sushiswap/currency'
 import { Percent } from '@sushiswap/math'
@@ -13,7 +12,7 @@ import { AddSectionReviewModalLegacyProps } from './AddSectionReviewModalLegacy'
 
 interface ExecuteProvider extends Omit<AddSectionReviewModalLegacyProps, 'children'> {
   onSuccess(): void
-  children({ execute, isWritePending }: { execute: (() => void) | undefined; isWritePending: boolean })
+  children({ execute, isWritePending }: { execute: (() => void) | undefined; isWritePending: boolean }): any
 }
 
 export const ExecuteProvider: FC<ExecuteProvider> = ({
@@ -75,7 +74,7 @@ export const ExecuteProvider: FC<ExecuteProvider> = ({
   }, [poolState, input0, input1, slippagePercent])
 
   const prepare = useCallback(
-    async (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
+    async (setRequest: any) => {
       try {
         if (
           !token0 ||

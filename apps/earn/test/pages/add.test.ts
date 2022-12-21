@@ -1,5 +1,5 @@
 import { AddressZero } from '@ethersproject/constants'
-import { Page, test } from '@playwright/test'
+import { Page, test, expect } from '@playwright/test'
 import { Native } from '@sushiswap/currency'
 import { TRIDENT_ENABLED_NETWORKS } from 'config'
 import { Contract } from 'ethers'
@@ -34,7 +34,6 @@ test.describe('Create/Add', () => {
   test.beforeAll(async () => {
     fakeToken = await deployFakeToken(CHAIN_ID)
   })
-
   test.beforeEach(async ({ page }) => {
     const url = (process.env.PLAYWRIGHT_URL as string).concat('/add')
     await page.goto(url)
@@ -72,7 +71,7 @@ test.describe('Create/Add', () => {
     })
     test('Add liquidity pool trident stable', async ({ page }) => {
       await addLiquidityPool(page, fakeToken, PoolType.STABLE, PoolFeeTier.LOWEST)
-      // todo: asset pool add liquidty
+      // todo: assert pool add liquidty
     })
   }
 })
@@ -96,17 +95,20 @@ async function createPool(page: Page, fakeToken: Contract, poolType: PoolType, f
   // Approve Token
   await approveToken(
     page,
-    poolType === PoolType.LEGACY
-      ? 'earn-add-section-review-approve-token-2-button'
-      : 'create-trident-approve-token1-button'
+    poolType === PoolType.LEGACY ? 'add-liquidity-legacy-approve-token1' : 'create-trident-approve-token1-button'
   )
 
+  timeout(3_000)
   const confirmCreatePoolButton = page.locator(
     `[testdata-id=${
-      poolType === PoolType.LEGACY ? 'earn-add-legacy-review-modal-add-button' : 'earn-create-review-modal-add-button'
+      poolType === PoolType.LEGACY ? 'add-legacy-review-confirm-button' : 'earn-create-review-modal-add-button'
     }]`
   )
+  await expect(confirmCreatePoolButton).toBeVisible({ timeout: 5_000 })
   await confirmCreatePoolButton.click()
+
+  const expectedText = `Successfully added liquidity to the ETH/FT pair`
+  await expect(page.locator('div', { hasText: expectedText }).last()).toContainText(expectedText)
 }
 
 async function addLiquidityPool(page: Page, fakeToken: Contract, poolType: PoolType, fee = '03') {
@@ -127,19 +129,19 @@ async function addLiquidityPool(page: Page, fakeToken: Contract, poolType: PoolT
   // Approve Token
   await approveToken(
     page,
-    poolType === PoolType.LEGACY
-      ? 'earn-add-section-review-approve-token-2-button'
-      : 'create-trident-approve-token1-button'
+    poolType === PoolType.LEGACY ? 'add-liquidity-legacy-approve-token1' : 'create-trident-approve-token1-button'
   )
 
   const confirmCreatePoolButton = page.locator(
     `[testdata-id=${
-      poolType === PoolType.LEGACY
-        ? 'earn-add-legacy-review-modal-add-button'
-        : 'earn-add-trident-review-modal-add-button'
+      poolType === PoolType.LEGACY ? 'add-legacy-review-confirm-button' : 'earn-add-trident-review-modal-add-button'
     }]`
   )
+  await expect(confirmCreatePoolButton).toBeVisible({ timeout: 5_000 })
   await confirmCreatePoolButton.click()
+
+  const expectedText = `Successfully added liquidity to the ETH/FT pair`
+  await expect(page.locator('div', { hasText: expectedText }).last()).toContainText(expectedText)
 }
 
 async function configPool(page: Page, fakeToken: Contract, poolType: PoolType, fee = '03') {

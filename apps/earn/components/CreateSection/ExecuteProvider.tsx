@@ -34,7 +34,7 @@ import { CreateSectionReviewModalTridentProps } from './CreateSectionReviewModal
 interface ExecuteProvider extends Omit<CreateSectionReviewModalTridentProps, 'children'> {
   signature: Signature | undefined
   onSuccess(): void
-  children({ execute, isWritePending }: { execute: (() => void) | undefined; isWritePending: boolean })
+  children({ execute, isWritePending }: { execute: (() => void) | undefined; isWritePending: boolean }): any
 }
 
 export const ExecuteProvider: FC<ExecuteProvider> = ({
@@ -144,7 +144,7 @@ export const ExecuteProvider: FC<ExecuteProvider> = ({
   )
 
   const prepare = useCallback(
-    async (setRequest) => {
+    async (setRequest: any) => {
       try {
         if (
           !chainId ||

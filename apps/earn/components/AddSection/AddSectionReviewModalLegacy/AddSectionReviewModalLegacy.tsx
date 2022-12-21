@@ -39,7 +39,7 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
       {
         type: ApprovalType.Token,
         amount: input0,
-        address: getSushiSwapRouterContractConfig(chainId).address,
+        address: getSushiSwapRouterContractConfig(chainId).address as `0x${string}`,
         buttonProps: {
           fullWidth: true,
           className: 'whitespace-nowrap',
@@ -50,7 +50,7 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
       {
         type: ApprovalType.Token,
         amount: input1,
-        address: getSushiSwapRouterContractConfig(chainId).address,
+        address: getSushiSwapRouterContractConfig(chainId).address as `0x${string}`,
         buttonProps: {
           fullWidth: true,
           className: 'whitespace-nowrap',

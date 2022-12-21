@@ -2,48 +2,9 @@ import { parseUnits } from '@ethersproject/units'
 import { expect, Page } from '@playwright/test'
 import { ChainId, chainName } from '@sushiswap/chain'
 import { WNATIVE_ADDRESS } from '@sushiswap/currency'
-import { Contract, providers, Wallet } from 'ethers'
-import { allChains, Chain, chain as chainLookup } from 'wagmi'
-
-function getNetwork(chain: Chain) {
-  return {
-    chainId: chain.id,
-    ensAddress: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
-    name: chain.name,
-  }
-}
-
-class EthersProviderWrapper extends providers.StaticJsonRpcProvider {
-  toJSON() {
-    return `<Provider network={${this.network.chainId}} />`
-  }
-}
-
-export function getProvider({ chains = allChains, chainId }: { chains?: Chain[]; chainId?: number } = {}) {
-  const chain = allChains.find((x) => x.id === chainId) ?? chainLookup.foundry
-  const url = chainLookup.foundry.rpcUrls.default
-  const provider = new EthersProviderWrapper(url, getNetwork(chain))
-  provider.pollingInterval = 1_000
-  return Object.assign(provider, { chains })
-}
-
-class EthersWebSocketProviderWrapper extends providers.WebSocketProvider {
-  toJSON() {
-    return `<WebSocketProvider network={${this.network.chainId}} />`
-  }
-}
-
-export function getWebSocketProvider({ chains = allChains, chainId }: { chains?: Chain[]; chainId?: number } = {}) {
-  const chain = allChains.find((x) => x.id === chainId) ?? chainLookup.foundry
-  const url = chainLookup.foundry.rpcUrls.default.replace('http', 'ws')
-  const webSocketProvider = Object.assign(new EthersWebSocketProviderWrapper(url, getNetwork(chain)), { chains })
-  // Clean up WebSocketProvider immediately
-  // so handle doesn't stay open in test environment
-  webSocketProvider?.destroy().catch(() => {
-    return
-  })
-  return webSocketProvider
-}
+import { Contract, Wallet } from 'ethers'
+import { BENTOBOX_ADDRESS } from '@sushiswap/address'
+import { JsonRpcProvider } from '@ethersproject/providers'
 
 // Default accounts from Anvil
 export const accounts = [
@@ -129,45 +90,6 @@ export const accounts = [
   },
 ]
 
-export class WalletSigner extends Wallet {
-  connectUnchecked(): providers.JsonRpcSigner {
-    const uncheckedSigner = (<EthersProviderWrapper>this.provider).getUncheckedSigner(this.address)
-    return uncheckedSigner
-  }
-}
-
-export function getSigners() {
-  const provider = getProvider()
-  return accounts.map((x) => new WalletSigner(x.privateKey, provider))
-}
-
-export const addressRegex = /^0x[a-fA-F0-9]{40}/
-
-export const BENTOBOX_ADDRESS: Record<number, string> = {
-  [ChainId.ETHEREUM]: '0xF5BCE5077908a1b7370B9ae04AdC565EBd643966',
-  [ChainId.ROPSTEN]: '0x6BdD85290001C8Aef74f35A7606065FA15aD5ACF',
-  [ChainId.RINKEBY]: '0xF5BCE5077908a1b7370B9ae04AdC565EBd643966',
-  [ChainId.GÖRLI]: '0xF5BCE5077908a1b7370B9ae04AdC565EBd643966',
-  [ChainId.KOVAN]: '0xc381a85ed7C7448Da073b7d6C9d4cBf1Cbf576f0',
-  [ChainId.FANTOM]: '0xF5BCE5077908a1b7370B9ae04AdC565EBd643966',
-  [ChainId.POLYGON]: '0x0319000133d3AdA02600f0875d2cf03D442C3367',
-  [ChainId.POLYGON_TESTNET]: '0xF5BCE5077908a1b7370B9ae04AdC565EBd643966',
-  [ChainId.GNOSIS]: '0xE2d7F5dd869Fc7c126D21b13a9080e75a4bDb324',
-  [ChainId.BSC]: '0xF5BCE5077908a1b7370B9ae04AdC565EBd643966',
-  [ChainId.BSC_TESTNET]: '0xF5BCE5077908a1b7370B9ae04AdC565EBd643966',
-  [ChainId.ARBITRUM]: '0x74c764D41B77DBbb4fe771daB1939B00b146894A',
-  [ChainId.AVALANCHE]: '0x0711B6026068f736bae6B213031fCE978D48E026',
-  [ChainId.HECO]: '0xF5BCE5077908a1b7370B9ae04AdC565EBd643966',
-  [ChainId.CELO]: '0x0711B6026068f736bae6B213031fCE978D48E026',
-  [ChainId.HARMONY]: '0xA28cfF72b04f83A7E3f912e6ad34d5537708a2C2',
-  [ChainId.MOONBEAM]: '0x80C7DD17B01855a6D2347444a0FCC36136a314de',
-  [ChainId.MOONRIVER]: '0x145d82bCa93cCa2AE057D1c6f26245d1b9522E6F',
-  [ChainId.OPTIMISM]: '0xc35DADB65012eC5796536bD9864eD8773aBc74C4',
-  [ChainId.KAVA]: '0xc35DADB65012eC5796536bD9864eD8773aBc74C4',
-  [ChainId.METIS]: '0xc35DADB65012eC5796536bD9864eD8773aBc74C4',
-  [ChainId.BTTC]: '0x8dacffa7F69Ce572992132697252E16254225D38',
-}
-
 export const BENTOBOX_DEPOSIT_ABI = [
   {
     inputs: [
@@ -225,8 +147,9 @@ export async function selectDate(testDataId: string, months: number, page: Page)
 
 export async function depositToBento(amount: string, chainId: ChainId) {
   const amountToSend = parseUnits(amount, 'ether').add(parseUnits('100.0', 'gwei')) //add 100 gwei so we actually get the amount asked as bentobox round down
-  const signer = getSigners()[0].connect(getProvider({ chainId }))
-  const bentoContract = new Contract(BENTOBOX_ADDRESS[chainId], BENTOBOX_DEPOSIT_ABI, signer)
+  const provider = new JsonRpcProvider('http://127.0.0.1:8545', chainId)
+  const signer = new Wallet(accounts[0].privateKey, provider)
+  const bentoContract = new Contract(BENTOBOX_ADDRESS[chainId] as string, BENTOBOX_DEPOSIT_ABI, signer)
   await bentoContract.deposit(
     '0x0000000000000000000000000000000000000000',
     signer.address,
@@ -251,7 +174,8 @@ const WRAPPED_DEPOSIT_ABI = [
 
 export async function depositToWrapped(amount: string, chainId: ChainId) {
   const amountToWrap = parseUnits(amount, 'ether')
-  const signer = getSigners()[0].connect(getProvider({ chainId }))
+  const provider = new JsonRpcProvider('http://127.0.0.1:8545', chainId)
+  const signer = new Wallet(accounts[0].privateKey, provider)
   const wrappedContract = new Contract(WNATIVE_ADDRESS[chainId], WRAPPED_DEPOSIT_ABI, signer)
   await wrappedContract.deposit({ value: amountToWrap })
 }
