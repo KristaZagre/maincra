@@ -95,13 +95,12 @@ async function createPool(page: Page, fakeToken: Contract, poolType: PoolType, f
   // Approve Token
   await approveToken(
     page,
-    poolType === PoolType.LEGACY ? 'add-liquidity-legacy-approve-token1' : 'create-trident-approve-token1-button'
+    poolType === PoolType.LEGACY ? 'add-liquidity-legacy-approve-token1' : 'create-trident-approve-token1'
   )
 
-  timeout(3_000)
   const confirmCreatePoolButton = page.locator(
     `[testdata-id=${
-      poolType === PoolType.LEGACY ? 'add-legacy-review-confirm-button' : 'earn-create-review-modal-add-button'
+      poolType === PoolType.LEGACY ? 'add-legacy-review-confirm-button' : 'create-trident-review-confirm-button'
     }]`
   )
   await expect(confirmCreatePoolButton).toBeVisible({ timeout: 5_000 })
@@ -129,12 +128,12 @@ async function addLiquidityPool(page: Page, fakeToken: Contract, poolType: PoolT
   // Approve Token
   await approveToken(
     page,
-    poolType === PoolType.LEGACY ? 'add-liquidity-legacy-approve-token1' : 'create-trident-approve-token1-button'
+    poolType === PoolType.LEGACY ? 'add-liquidity-legacy-approve-token1' : 'create-trident-approve-token1'
   )
 
   const confirmCreatePoolButton = page.locator(
     `[testdata-id=${
-      poolType === PoolType.LEGACY ? 'add-legacy-review-confirm-button' : 'earn-add-trident-review-modal-add-button'
+      poolType === PoolType.LEGACY ? 'add-legacy-review-confirm-button' : 'add-trident-review-confirm-button'
     }]`
   )
   await expect(confirmCreatePoolButton).toBeVisible({ timeout: 5_000 })

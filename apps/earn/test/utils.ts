@@ -111,22 +111,6 @@ export interface Token {
   symbol: string
 }
 
-export async function selectDate(testDataId: string, months: number, page: Page) {
-  await page.locator(`[testdata-id=${testDataId}]`).click()
-  for (let i = 0; i < months; i++) {
-    await page.locator(`[aria-label="Next Month"]`).click()
-  }
-
-  await page
-    .locator(
-      `div.react-datepicker__day.react-datepicker__day--001, div.react-datepicker__day.react-datepicker__day--001.react-datepicker__day--weekend`
-    )
-    .last()
-    .click()
-
-  await page.locator(`li.react-datepicker__time-list-item`).first().click()
-}
-
 export async function deployFakeToken(chainId: ChainId): Promise<Contract> {
   const provider = new JsonRpcProvider('http://127.0.0.1:8545', chainId)
   const signer = new Wallet(accounts[0].privateKey, provider)
@@ -136,7 +120,7 @@ export async function deployFakeToken(chainId: ChainId): Promise<Contract> {
 
 export async function approveBento(page: Page) {
   await page
-    .locator('[testdata-id=create-trident-approve-bentobox-button]')
+    .locator('[testdata-id=create-trident-approve-bentobox]')
     .click({ timeout: 1500 })
     .then(async () => {
       console.log(`BentoBox Approved`)
