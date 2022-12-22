@@ -42,7 +42,7 @@ test.describe('Create multiple vesting', () => {
     await addVesting(page, '3', true, false, true)
 
     // Go to review
-    await page.locator(`[testdata-id=furo-create-multiple-vest-review-button]`).click()
+    await page.locator(`[testdata-id=furo-create-multiple-vests-review-button]`).click()
 
     // Check review
     await expect(page.locator('[testdata-id=create-multiple-vests-review-token-symbol-0]')).toContainText(
@@ -91,7 +91,7 @@ test.describe('Create multiple vesting', () => {
 
 async function addVesting(page: Page, index: string, isNative = true, fromBentobox = false, isCliff = false) {
   // Add item
-  await page.locator(`[testdata-id=furo-create-multiple-vest-add-item-button]`).click()
+  await page.locator(`[testdata-id=furo-create-multiple-vests-add-item-button]`).click()
 
   // Select token
   await selectToken(page, index, isNative)

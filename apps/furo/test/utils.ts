@@ -1,10 +1,10 @@
+import { JsonRpcProvider } from '@ethersproject/providers'
 import { parseUnits } from '@ethersproject/units'
 import { expect, Page } from '@playwright/test'
+import { BENTOBOX_ADDRESS } from '@sushiswap/address'
 import { ChainId, chainName } from '@sushiswap/chain'
 import { WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { Contract, Wallet } from 'ethers'
-import { BENTOBOX_ADDRESS } from '@sushiswap/address'
-import { JsonRpcProvider } from '@ethersproject/providers'
 
 // Default accounts from Anvil
 export const accounts = [

@@ -99,7 +99,7 @@ export const CreateVestingsTableSection: FC<CreateVestingsTableSection> = ({ cha
         )}
         <div className="flex justify-between">
           <Button
-            testdata-id="furo-create-multiple-vest-add-item-button"
+            testdata-id="furo-create-multiple-vests-add-item-button"
             type="button"
             variant="empty"
             size="sm"
@@ -109,7 +109,7 @@ export const CreateVestingsTableSection: FC<CreateVestingsTableSection> = ({ cha
             Add Item
           </Button>
           <Button
-            testdata-id="furo-create-multiple-vest-review-button"
+            testdata-id="furo-create-multiple-vests-review-button"
             onClick={onReview}
             disabled={!isValid || isValidating}
             type="submit"
