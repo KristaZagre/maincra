@@ -1,13 +1,13 @@
 import 'dotenv/config'
-import './lib/wagmi'
+import './lib/wagmi.js'
 
 import { ChainId } from '@sushiswap/chain'
 import { MINICHEF_SUBGRAPH_NAME } from '@sushiswap/graph-config'
 import { getUnixTime } from 'date-fns'
 import stringify from 'fast-json-stable-stringify'
 
-import { getMasterChefV1, getMasterChefV2, getMinichef } from './lib'
-import { redis } from './lib'
+import { getMasterChefV1, getMasterChefV2, getMinichef } from './lib/chefs/index.js'
+import { redis } from './lib/index.js'
 
 export async function execute() {
   console.log(`Updating farms`)

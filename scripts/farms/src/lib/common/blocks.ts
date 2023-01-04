@@ -1,6 +1,8 @@
 import { BLOCKS_SUBGRAPH_NAME, SUBGRAPH_HOST } from '@sushiswap/graph-config'
 import { getUnixTime, subDays } from 'date-fns'
 
+import { getBuiltGraphSDK} from '../../../.graphclient/index.js'
+
 interface Block {
   number: number
   timestamp: number
@@ -10,7 +12,6 @@ const getBlock = async (
   timestamp: number | undefined = undefined,
   chainId: keyof typeof SUBGRAPH_HOST
 ): Promise<Block | undefined> => {
-  const { getBuiltGraphSDK } = await import('@sushiswap/graph-client')
   const subgraphName = BLOCKS_SUBGRAPH_NAME[chainId]
   if (!subgraphName) return
   const sdk = getBuiltGraphSDK({

@@ -10,7 +10,8 @@ import { isSushiSwapChain, isTridentChain } from '@sushiswap/validate'
 import { erc20ABI, readContracts } from '@wagmi/core'
 import { BigNumber } from 'ethers'
 
-import { divBigNumberToNumber } from './utils'
+import { getBuiltGraphSDK} from '../../../.graphclient/index.js'
+import { divBigNumberToNumber } from './utils.js'
 
 interface Token {
   id: string
@@ -21,7 +22,6 @@ interface Token {
 }
 
 const getExchangeTokens = async (ids: string[], chainId: SushiSwapChainId): Promise<Token[]> => {
-  const { getBuiltGraphSDK } = await import('../../../.graphclient')
   const subgraphName = SUSHISWAP_SUBGRAPH_NAME[chainId]
   if (!subgraphName) return []
   const sdk = getBuiltGraphSDK({
@@ -44,7 +44,7 @@ const getExchangeTokens = async (ids: string[], chainId: SushiSwapChainId): Prom
 }
 
 const getTridentTokens = async (ids: string[], chainId: TridentChainId): Promise<Token[]> => {
-  const { getBuiltGraphSDK } = await import('../../../.graphclient')
+  const { getBuiltGraphSDK } = await import('../../../.graphclient/index.js')
   const subgraphName = TRIDENT_SUBGRAPH_NAME[chainId]
   if (!subgraphName) return []
   const sdk = getBuiltGraphSDK({
