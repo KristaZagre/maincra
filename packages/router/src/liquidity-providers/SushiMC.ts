@@ -7,6 +7,7 @@ import { ConstantProductRPool, RPool, RToken } from '@sushiswap/tines'
 import type { ethers } from 'ethers'
 import { getCreate2Address } from 'ethers/lib/utils'
 
+import { getPools } from '../lib/api'
 import type { Limited } from '../Limited'
 import { convertToBigNumberPair, MultiCallProvider } from '../MulticallProvider'
 import { ConstantProductPoolCode } from '../pools/ConstantProductPool'
@@ -68,32 +69,36 @@ export class SushiProviderMC extends LiquidityProviderMC {
       return
     }
 
-    // tokens deduplication
-    const tokenMap = new Map<string, Token>()
-    tokens.forEach((t) => tokenMap.set(t.address.toLocaleLowerCase().substring(2).padStart(40, '0'), t))
-    const tokensDedup = Array.from(tokenMap.values())
-    // tokens sorting
-    const tok0: [string, Token][] = tokensDedup.map((t) => [
-      t.address.toLocaleLowerCase().substring(2).padStart(40, '0'),
-      t,
-    ])
-    tokens = tok0.sort((a, b) => (b[0] > a[0] ? -1 : 1)).map(([_, t]) => t)
+    // // tokens deduplication
+    // const tokenMap = new Map<string, Token>()
+    // tokens.forEach((t) => tokenMap.set(t.address.toLocaleLowerCase().substring(2).padStart(40, '0'), t))
+    // const tokensDedup = Array.from(tokenMap.values())
+    // // tokens sorting
+    // const tok0: [string, Token][] = tokensDedup.map((t) => [
+    //   t.address.toLocaleLowerCase().substring(2).padStart(40, '0'),
+    //   t,
+    // ])
+    // tokens = tok0.sort((a, b) => (b[0] > a[0] ? -1 : 1)).map(([_, t]) => t)
 
-    const poolAddr: Map<string, [Token, Token]> = new Map()
-    for (let i = 0; i < tokens.length; ++i) {
-      const t0 = tokens[i]
-      for (let j = i + 1; j < tokens.length; ++j) {
-        const t1 = tokens[j]
+    // const poolAddr: Map<string, [Token, Token]> = new Map()
+    // for (let i = 0; i < tokens.length; ++i) {
+    //   const t0 = tokens[i]
+    //   for (let j = i + 1; j < tokens.length; ++j) {
+    //     const t1 = tokens[j]
 
-        const addr = this._getPoolAddress(t0, t1)
-        if (this.fetchedPools.get(addr) === undefined) {
-          poolAddr.set(addr, [t0, t1])
-          this.fetchedPools.set(addr, 1)
-        }
-      }
-    }
+    //     const addr = this._getPoolAddress(t0, t1)
+    //     if (this.fetchedPools.get(addr) === undefined) {
+    //       poolAddr.set(addr, [t0, t1])
+    //       this.fetchedPools.set(addr, 1)
+    //     }
+    //   }
+    // }
 
+    // const addrs = Array.from(poolAddr.keys())
+
+    const poolAddr = await getPools(this.chainId, 'SushiSwap', 'LEGACY', 'CONSTANT_PRODUCT_POOL', tokens[0].address, tokens[1].address)
     const addrs = Array.from(poolAddr.keys())
+
     const reserves = convertToBigNumberPair(
       await this.multiCallProvider.multiContractCall(addrs, getReservesABI, 'getReserves', [])
     )
@@ -169,7 +174,8 @@ export class SushiProviderMC extends LiquidityProviderMC {
     this.chainDataProvider.on('block', this.blockListener)
   }
   fetchPoolsForToken(t0: Token, t1: Token): void {
-    this.getPools(this._getProspectiveTokens(t0, t1))
+    // this.getPools(this._getProspectiveTokens(t0, t1))
+    this.getPools([t0, t1])
   }
   getCurrentPoolList(): PoolCode[] {
     return this.poolCodes

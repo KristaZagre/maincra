@@ -1,3 +1,4 @@
+import { Token } from '@sushiswap/currency'
 import prisma from '@sushiswap/database'
 
 /**
@@ -25,6 +26,8 @@ export async function getPools(
     prisma.pool.findMany({
       select: {
         address: true,
+        token0: true,
+        token1: true,
       },
       where: {
         AND: [
@@ -37,12 +40,12 @@ export async function getPools(
             OR: [
               {
                 token0Id: {
-                  in: [token0Id, token1Id],
+                  in: [token0Id],
                 },
               },
               {
                 token1Id: {
-                  in: [token0Id, token1Id],
+                  in: [token0Id],
                 },
               },
             ],
@@ -53,6 +56,38 @@ export async function getPools(
     prisma.pool.findMany({
       select: {
         address: true,
+        token0: true,
+        token1: true,
+      },
+      where: {
+        AND: [
+          {
+            chainId,
+            isWhitelisted: true,
+            protocol,
+            version,
+            type: poolType,
+            OR: [
+              {
+                token0Id: {
+                  in: [token1Id],
+                },
+              },
+              {
+                token1Id: {
+                  in: [token1Id],
+                },
+              },
+            ],
+          },
+        ],
+      },
+    }),
+    prisma.pool.findMany({
+      select: {
+        address: true,
+        token0: true,
+        token1: true,
       },
       where: {
         AND: [
@@ -77,8 +112,26 @@ export async function getPools(
       },
     }),
   ])
-
   await prisma.$disconnect()
 
-  return Array.from(new Set(pools.flat().map((pool) => pool.address)))
+  const poolMap: Map<string, [Token, Token]> = new Map()
+  for (const pool of pools.flat()) {
+    const token0 = new Token({
+      chainId,
+      address: pool.token0.address,
+      decimals: pool.token0.decimals,
+      symbol: pool.token0.symbol,
+      name: pool.token0.name,
+    })
+    const token1 = new Token({
+      chainId,
+      address: pool.token1.address,
+      decimals: pool.token1.decimals,
+      symbol: pool.token1.symbol,
+      name: pool.token1.name,
+    })
+    poolMap.set(pool.address, [token0, token1])
+  }
+
+  return poolMap
 }
