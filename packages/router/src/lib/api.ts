@@ -148,7 +148,7 @@ export async function getPools(
           },
         ],
       },
-      take: 100,
+      take: 500,
       orderBy: {
         liquidityUSD: 'desc',
       },
