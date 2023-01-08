@@ -24,25 +24,29 @@ export async function getPools(
 
   const pools = await Promise.all([
     prisma.pool.findMany({
-      select: {
-        address: true,
-        token0: {
-          select: {
-            address: true,
-            decimals: true,
-            symbol: true,
-            name: true,
-          },
-        },
-        token1: {
-          select: {
-            address: true,
-            decimals: true,
-            symbol: true,
-            name: true,
-          },
-        },
+      include: {
+        token0: true,
+        token1: true,
       },
+      // select: {
+      //   address: true,
+      //   token0: {
+      //     select: {
+      //       address: true,
+      //       decimals: true,
+      //       symbol: true,
+      //       name: true,
+      //     },
+      //   },
+      //   token1: {
+      //     select: {
+      //       address: true,
+      //       decimals: true,
+      //       symbol: true,
+      //       name: true,
+      //     },
+      //   },
+      // },
       where: {
         AND: [
           {
@@ -53,14 +57,10 @@ export async function getPools(
             type: poolType,
             OR: [
               {
-                token0Id: {
-                  in: [token0Id],
-                },
+                token0Id,
               },
               {
-                token1Id: {
-                  in: [token0Id],
-                },
+                token1Id,
               },
             ],
           },
@@ -68,25 +68,30 @@ export async function getPools(
       },
     }),
     prisma.pool.findMany({
-      select: {
-        address: true,
-        token0: {
-          select: {
-            address: true,
-            decimals: true,
-            symbol: true,
-            name: true,
-          },
-        },
-        token1: {
-          select: {
-            address: true,
-            decimals: true,
-            symbol: true,
-            name: true,
-          },
-        },
+      
+      include: {
+        token0: true,
+        token1: true,
       },
+      // select: {
+      //   address: true,
+      //   token0: {
+      //     select: {
+      //       address: true,
+      //       decimals: true,
+      //       symbol: true,
+      //       name: true,
+      //     },
+      //   },
+      //   token1: {
+      //     select: {
+      //       address: true,
+      //       decimals: true,
+      //       symbol: true,
+      //       name: true,
+      //     },
+      //   },
+      // },
       where: {
         AND: [
           {
@@ -97,14 +102,10 @@ export async function getPools(
             type: poolType,
             OR: [
               {
-                token0Id: {
-                  in: [token1Id],
-                },
+                token0Id,
               },
               {
-                token1Id: {
-                  in: [token1Id],
-                },
+                token1Id,
               },
             ],
           },
@@ -112,25 +113,30 @@ export async function getPools(
       },
     }),
     prisma.pool.findMany({
-      select: {
-        address: true,
-        token0: {
-          select: {
-            address: true,
-            decimals: true,
-            symbol: true,
-            name: true,
-          },
-        },
-        token1: {
-          select: {
-            address: true,
-            decimals: true,
-            symbol: true,
-            name: true,
-          },
-        },
+      
+      include: {
+        token0: true,
+        token1: true,
       },
+      // select: {
+      //   address: true,
+      //   token0: {
+      //     select: {
+      //       address: true,
+      //       decimals: true,
+      //       symbol: true,
+      //       name: true,
+      //     },
+      //   },
+      //   token1: {
+      //     select: {
+      //       address: true,
+      //       decimals: true,
+      //       symbol: true,
+      //       name: true,
+      //     },
+      //   },
+      // },
       where: {
         AND: [
           {
