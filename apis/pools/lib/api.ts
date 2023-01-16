@@ -1,4 +1,4 @@
-import prisma, { Prisma } from '@sushiswap/database'
+import prisma from '@sushiswap/database'
 
 import type { PoolType } from '.'
 
@@ -29,7 +29,8 @@ export async function getPool(chainId: number, address: string) {
   return pool
 }
 
-export async function getPools(args: PoolApiArgs) {
+export async function getPools(args: PoolApiArgs): Promise<any> {
+
   const orderBy = { [args.orderBy]: args.orderDir }
 
   let where = {}
@@ -75,70 +76,68 @@ export async function getPools(args: PoolApiArgs) {
     }
   }
 
-  const select = Prisma.validator<Prisma.SushiPoolSelect>()({
-    id: true,
-    address: true,
-    name: true,
-    chainId: true,
-    version: true,
-    type: true,
-    swapFee: true,
-    twapEnabled: true,
-    liquidityUSD: true,
-    volumeUSD: true,
-    apr: true,
-    totalApr: true,
-    isIncentivized: true,
-    volume1d: true,
-    fees1d: true,
-    volume1w: true,
-    fees1w: true,
-    isBlacklisted: true,
-    token0: {
-      select: {
-        id: true,
-        address: true,
-        name: true,
-        symbol: true,
-        decimals: true,
-      },
-    },
-    token1: {
-      select: {
-        id: true,
-        address: true,
-        name: true,
-        symbol: true,
-        decimals: true,
-      },
-    },
-    incentives: {
-      select: {
-        id: true,
-        chainId: true,
-        type: true,
-        apr: true,
-        rewardPerDay: true,
-        rewardToken: {
-          select: {
-            id: true,
-            address: true,
-            name: true,
-            symbol: true,
-            decimals: true,
-          },
-        },
-      },
-    },
-  })
-
   const pools = await prisma.sushiPool.findMany({
-    select,
     take: 20,
     skip,
     ...cursor,
     where,
     orderBy,
+    select: {
+      id: true,
+      address: true,
+      name: true,
+      chainId: true,
+      version: true,
+      type: true,
+      swapFee: true,
+      twapEnabled: true,
+      liquidityUSD: true,
+      volumeUSD: true,
+      apr: true,
+      totalApr: true,
+      isIncentivized: true,
+      volume1d: true,
+      fees1d: true,
+      volume1w: true,
+      fees1w: true,
+      isBlacklisted: true,
+      token0: {
+        select: {
+          id: true,
+          address: true,
+          name: true,
+          symbol: true,
+          decimals: true,
+        },
+      },
+      token1: {
+        select: {
+          id: true,
+          address: true,
+          name: true,
+          symbol: true,
+          decimals: true,
+        },
+      },
+      incentives: {
+        select: {
+          id: true,
+          chainId: true,
+          type: true,
+          apr: true,
+          rewardPerDay: true,
+          rewardToken: {
+            select: {
+              id: true,
+              address: true,
+              name: true,
+              symbol: true,
+              decimals: true,
+            },
+          },
+        },
+      },
+    },
   })
 
   await prisma.$disconnect()
