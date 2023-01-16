@@ -1,4 +1,4 @@
-import prisma from '@sushiswap/database'
+import prisma, { Prisma } from '@sushiswap/database'
 
 import type { PoolType } from '.'
 
@@ -12,7 +12,7 @@ export type PoolApiArgs = {
   orderDir: 'asc' | 'desc'
 }
 
-export async function getPool(chainId: number, address: string): Promise<any> {
+export async function getPool(chainId: number, address: string) {
   const id = `${chainId}:${address.toLowerCase()}`
   const pool = await prisma.sushiPool.findFirstOrThrow({
     include: {
@@ -29,7 +29,7 @@ export async function getPool(chainId: number, address: string): Promise<any> {
   return pool
 }
 
-export async function getPools(args: PoolApiArgs): Promise<any> {
+export async function getPools(args: PoolApiArgs) {
   const orderBy = { [args.orderBy]: args.orderDir }
 
   let where = {}
@@ -75,69 +75,72 @@ export async function getPools(args: PoolApiArgs): Promise<any> {
     }
   }
 
-  const pools = await prisma.sushiPool.findMany({
-    take: 20,
-    skip,
-    ...cursor,
-    where,
-    orderBy,
-    select: {
-      id: true,
-      address: true,
-      name: true,
-      chainId: true,
-      version: true,
-      type: true,
-      swapFee: true,
-      twapEnabled: true,
-      liquidityUSD: true,
-      volumeUSD: true,
-      apr: true,
-      totalApr: true,
-      isIncentivized: true,
-      volume1d: true,
-      fees1d: true,
-      volume1w: true,
-      fees1w: true,
-      isBlacklisted: true,
-      token0: {
-        select: {
-          id: true,
-          address: true,
-          name: true,
-          symbol: true,
-          decimals: true,
-        },
+  const select = Prisma.validator<Prisma.SushiPoolSelect>()({
+    id: true,
+    address: true,
+    name: true,
+    chainId: true,
+    version: true,
+    type: true,
+    swapFee: true,
+    twapEnabled: true,
+    liquidityUSD: true,
+    volumeUSD: true,
+    apr: true,
+    totalApr: true,
+    isIncentivized: true,
+    volume1d: true,
+    fees1d: true,
+    volume1w: true,
+    fees1w: true,
+    isBlacklisted: true,
+    token0: {
+      select: {
+        id: true,
+        address: true,
+        name: true,
+        symbol: true,
+        decimals: true,
       },
-      token1: {
-        select: {
-          id: true,
-          address: true,
-          name: true,
-          symbol: true,
-          decimals: true,
-        },
+    },
+    token1: {
+      select: {
+        id: true,
+        address: true,
+        name: true,
+        symbol: true,
+        decimals: true,
       },
-      incentives: {
-        select: {
-          id: true,
-          chainId: true,
-          type: true,
-          apr: true,
-          rewardPerDay: true,
-          rewardToken: {
-            select: {
-              id: true,
-              address: true,
-              name: true,
-              symbol: true,
-              decimals: true,
-            },
+    },
+    incentives: {
+      select: {
+        id: true,
+        chainId: true,
+        type: true,
+        apr: true,
+        rewardPerDay: true,
+        rewardToken: {
+          select: {
+            id: true,
+            address: true,
+            name: true,
+            symbol: true,
+            decimals: true,
           },
         },
       },
     },
   })
+
+  const pools = await prisma.sushiPool.findMany({
+    select,
+    take: 20,
+    skip,
+    ...cursor,
+    where,
+    orderBy,
+  })
+
   await prisma.$disconnect()
   return pools ? pools : []
 }
