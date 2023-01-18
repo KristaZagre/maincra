@@ -1,6 +1,6 @@
 //// @ts-nocheck
 import { ChainId } from '@sushiswap/chain'
-import { Type, USDC, USDT } from '@sushiswap/currency'
+import { DAI, FRAX, Native, SUSHI, Type, UNI, USDC, USDT, WETH9 } from '@sushiswap/currency'
 import { getBigNumber, MultiRoute } from '@sushiswap/tines'
 import { BigNumber, ethers } from 'ethers'
 import https from 'https'
@@ -53,6 +53,36 @@ async function quote(
     amount,
     gasPrice,
     protocolWhiteList,
+  })) as { toTokenAmount: string }
+  return resp.toTokenAmount
+}
+
+const sender: Record<string, string> = {
+  '0x7ceb23fd6bc0add59e62ac25578270cff1b9f619': '0x5a4069c86f49d2454cF4EA9cDa5D3bcB0F340c4B', // Poly weth 52
+  '0x2791bca1f2de4661ed88a30c99a7a9449aa84174': '0x5a4069c86f49d2454cF4EA9cDa5D3bcB0F340c4B', // Poly usdc 53300
+  '0x1bfd67037b42cf73acf2047067bd4f2c47d9bfd6': '0x5a4069c86f49d2454cF4EA9cDa5D3bcB0F340c4B', // Poly wbtc 1.44
+  '0xc2132d05d31c914a87c6611c10748aeb04b58e8f': '0x5a4069c86f49d2454cF4EA9cDa5D3bcB0F340c4B', // Poly usdt 2497
+  '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270': '0xdbA30284AD317F6c7D08fae69338E442c51F8BcE', // Poly wmatic 40500 - $41000
+}
+
+async function swap(
+  chainId: ChainId,
+  fromTokenAddress: string,
+  toTokenAddress: string,
+  amount: string,
+  gasPrice: number,
+  providers?: LiquidityProviders[]
+): Promise<string> {
+  const protocolWhiteList = providers ? getProtocols(providers, chainId) : undefined
+  const fromAddress = sender[fromTokenAddress.toLowerCase()]
+  const resp = (await getAPIObject(`https://api.1inch.io/v5.0/${chainId}/swap`, {
+    fromTokenAddress,
+    toTokenAddress,
+    amount,
+    gasPrice,
+    protocolWhiteList,
+    fromAddress,
+    slippage: 0.5,
   })) as { toTokenAmount: string }
   return resp.toTokenAmount
 }
@@ -164,15 +194,16 @@ async function test(
   const fromAddress = from.isNative ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' : from.address
   const toAddress = to.isNative ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' : to.address
   const res1 = await quote(env.chainId, fromAddress, toAddress, amount, gasPrice, providers)
+  const res1_5 = await swap(env.chainId, fromAddress, toAddress, amount, gasPrice, providers)
   const res2 = await quote2(env.chainId, fromAddress, toAddress, amount, gasPrice, providers)
   const res3 = await route(env, from, to, amount, gasPrice, providers)
-  return [parseInt(res1), parseInt(res2), res3.amountOut]
+  return [parseInt(res1), parseInt(res1_5), parseInt(res2), res3.amountOut]
 }
 
 async function testTrident() {
   try {
     const chainId = ChainId.POLYGON
-    const from = USDT[chainId]
+    const from = WETH9[chainId]
     const divisor = Math.pow(10, from.decimals)
     const to = USDC[chainId]
     const gasPrice = 100e9
@@ -180,11 +211,11 @@ async function testTrident() {
     const env = getEnvironment(chainId)
     env.dataFetcher.fetchPoolsForToken(from, to)
     await delay(3000)
-    for (let i = 6; i < 15; ++i) {
-      const amount = getBigNumber(Math.pow(10, i)).toString()
+    for (let i = 15; i < 22; ++i) {
+      const amount = getBigNumber(4 * Math.pow(10, i)).toString()
       const res = await test(env, from, to, amount, gasPrice, providers)
       console.log(
-        Math.pow(10, i) / divisor,
+        (4 * Math.pow(10, i)) / divisor,
         res.map((e) => e / divisor)
       )
     }
@@ -193,4 +224,39 @@ async function testTrident() {
   }
 }
 
-testTrident()
+async function testPolygon(fromR: Record<ChainId, Type>, amountMax: number) {
+  const chainId = ChainId.POLYGON
+  const from = fromR[chainId]
+  const divisor = Math.pow(10, from.decimals)
+  const toArray: Type[] = [
+    Native.onChain(chainId),
+    USDT[chainId],
+    USDC[chainId],
+    WETH9[chainId],
+    SUSHI[chainId],
+    UNI[chainId],
+    DAI[chainId],
+    FRAX[chainId],
+  ]
+  const gasPrice = 100e9
+  const providers = [LiquidityProviders.Quickswap, LiquidityProviders.Sushiswap, LiquidityProviders.Trident]
+  const env = getEnvironment(chainId)
+  toArray.forEach((to) => env.dataFetcher.fetchPoolsForToken(from, to))
+  await delay(3000)
+  for (let i = 0; i < toArray.length; ++i) {
+    const to = toArray[i]
+    for (let amount = divisor; amount < amountMax * divisor; amount *= 10) {
+      const line = `${from.symbol} ${amount / divisor} => ${to.symbol}`
+      try {
+        const res = await test(env, from, to, BigNumber.from(amount).toString(), gasPrice, providers)
+        const div2 = Math.pow(10, to.decimals)
+        console.log(line, JSON.stringify(res.map((e) => e / div2)))
+      } catch (e) {
+        console.log(line, 'Error')
+      }
+    }
+  }
+}
+
+//testTrident()
+testPolygon(USDC as Record<ChainId, Type>, 110000)
