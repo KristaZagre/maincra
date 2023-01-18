@@ -46,13 +46,13 @@ async function quote(
   gasPrice: number,
   providers?: LiquidityProviders[]
 ): Promise<string> {
-  const protocolWhiteList = providers ? getProtocols(providers, chainId) : undefined
+  const protocols = providers ? getProtocols(providers, chainId) : undefined
   const resp = (await getAPIObject(`https://api.1inch.io/v5.0/${chainId}/quote`, {
     fromTokenAddress,
     toTokenAddress,
     amount,
     gasPrice,
-    protocolWhiteList,
+    protocols,
   })) as { toTokenAmount: string }
   return resp.toTokenAmount
 }
@@ -73,14 +73,14 @@ async function swap(
   gasPrice: number,
   providers?: LiquidityProviders[]
 ): Promise<string> {
-  const protocolWhiteList = providers ? getProtocols(providers, chainId) : undefined
+  const protocols = providers ? getProtocols(providers, chainId) : undefined
   const fromAddress = sender[fromTokenAddress.toLowerCase()]
   const resp = (await getAPIObject(`https://api.1inch.io/v5.0/${chainId}/swap`, {
     fromTokenAddress,
     toTokenAddress,
     amount,
     gasPrice,
-    protocolWhiteList,
+    protocols,
     fromAddress,
     slippage: 0.5,
   })) as { toTokenAmount: string }
@@ -152,6 +152,7 @@ async function route(
       //console.log(router.getCurrentRouteHumanString())
       res(r)
     })
+    router.stopRouting()
   })
 }
 
@@ -183,6 +184,11 @@ function getProtocols(lp: LiquidityProviders[], chainId: ChainId): string {
   return lp.map((l) => getProtocol(l, chainId)).join(',')
 }
 
+function makeProcents(value: number, precision = 3) {
+  const mult = Math.pow(10, precision)
+  return Math.round(value * mult * 100) / mult
+}
+
 async function test(
   env: Environment,
   from: Type,
@@ -193,11 +199,16 @@ async function test(
 ) {
   const fromAddress = from.isNative ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' : from.address
   const toAddress = to.isNative ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' : to.address
+  const divisor = Math.pow(10, to.decimals)
   const res1 = await quote(env.chainId, fromAddress, toAddress, amount, gasPrice, providers)
-  const res1_5 = await swap(env.chainId, fromAddress, toAddress, amount, gasPrice, providers)
-  const res2 = await quote2(env.chainId, fromAddress, toAddress, amount, gasPrice, providers)
+  //const res1_5 = await swap(env.chainId, fromAddress, toAddress, amount, gasPrice, providers)
+  //const res2 = await quote2(env.chainId, fromAddress, toAddress, amount, gasPrice, providers)
   const res3 = await route(env, from, to, amount, gasPrice, providers)
-  return [parseInt(res1), parseInt(res1_5), parseInt(res2), res3.amountOut]
+  const v1 = parseInt(res1) / divisor
+  const v2 = res3.amountOut / divisor
+  const diff = makeProcents((v2 - v1) / v1)
+  const pi = makeProcents(res3.priceImpact as number)
+  return [v1, /*parseInt(res1_5), parseInt(res2),*/ v2, diff, pi]
 }
 
 async function testTrident() {
@@ -214,10 +225,7 @@ async function testTrident() {
     for (let i = 15; i < 22; ++i) {
       const amount = getBigNumber(4 * Math.pow(10, i)).toString()
       const res = await test(env, from, to, amount, gasPrice, providers)
-      console.log(
-        (4 * Math.pow(10, i)) / divisor,
-        res.map((e) => e / divisor)
-      )
+      console.log((4 * Math.pow(10, i)) / divisor, res)
     }
   } catch (e) {
     console.log('Error', e)
@@ -245,12 +253,12 @@ async function testPolygon(fromR: Record<ChainId, Type>, amountMax: number) {
   await delay(3000)
   for (let i = 0; i < toArray.length; ++i) {
     const to = toArray[i]
+    if (to.symbol == from.symbol) continue
     for (let amount = divisor; amount < amountMax * divisor; amount *= 10) {
       const line = `${from.symbol} ${amount / divisor} => ${to.symbol}`
       try {
         const res = await test(env, from, to, BigNumber.from(amount).toString(), gasPrice, providers)
-        const div2 = Math.pow(10, to.decimals)
-        console.log(line, JSON.stringify(res.map((e) => e / div2)))
+        console.log(line, res)
       } catch (e) {
         console.log(line, 'Error')
       }

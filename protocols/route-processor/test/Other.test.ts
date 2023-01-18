@@ -1,12 +1,13 @@
 import { ChainId } from '@sushiswap/chain'
 import { DAI, FRAX, Native, SUSHI, Type, UNI, USDC, USDT, WETH9 } from '@sushiswap/currency'
+import { DataFetcher, Router } from '@sushiswap/router'
 import { LiquidityProviders } from '@sushiswap/router/dist/liquidity-providers/LiquidityProviderMC'
-import { getBigNumber } from '@sushiswap/tines'
-import { Contract } from 'ethers'
+import { getBigNumber, MultiRoute } from '@sushiswap/tines'
+import { BigNumber } from 'ethers'
 import { ethers, network } from 'hardhat'
 import https from 'https'
 
-import { RouterABI } from './routerAbi'
+const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
 function getProtocol(lp: LiquidityProviders, chainId: ChainId) {
   let prefix
@@ -71,9 +72,38 @@ const sender: Record<string, string> = {
   '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270': '0xdbA30284AD317F6c7D08fae69338E442c51F8BcE', // Poly wmatic 40500 - $41000
 }
 
+function addProtocolsInSet(set: Set<string>, inp: { name: string }[] | { name: string }) {
+  if (inp instanceof Array) {
+    inp.forEach((r) => addProtocolsInSet(set, r))
+  } else set.add(inp.name)
+}
+
+function collectProtocols(inp: { name: string }[] | { name: string }): string[] {
+  const set = new Set<string>()
+  addProtocolsInSet(set, inp)
+  return Array.from(set.keys())
+}
+
+function makeProcents(value: number, precision = 3) {
+  const mult = Math.pow(10, precision)
+  return Math.round(value * mult * 100) / mult
+}
+
+function route(
+  env: Environment,
+  from: Type,
+  to: Type,
+  amount: string,
+  gasPrice: number,
+  providers?: LiquidityProviders[]
+): number {
+  env.dataFetcher.fetchPoolsForToken(from, to)
+  const route = Router.findBestRoute(env.dataFetcher, from, BigNumber.from(amount), to, gasPrice, providers)
+  return route.amountOut
+}
+
 async function swapEmulate(
   chainId: ChainId,
-  jsonRpcUrl: string,
   from: Type,
   to: Type,
   amount: number,
@@ -83,17 +113,17 @@ async function swapEmulate(
 ): Promise<object> {
   const fromTokenAddress = from.isNative ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' : from.address
   const toTokenAddress = to.isNative ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' : to.address
-  const protocolWhiteList = providers ? getProtocols(providers, chainId) : undefined
+  const protocols = providers ? getProtocols(providers, chainId) : undefined
   const exp = (await getAPIObject(`https://api.1inch.io/v5.0/${chainId}/swap`, {
     fromTokenAddress,
     toTokenAddress,
     amount: getBigNumber(amount).toString(),
     gasPrice,
-    protocolWhiteList,
+    protocols,
     fromAddress,
     slippage: 0.5,
-  })) as { toTokenAmount: string; protocols: string; tx: { from: string; to: string; data: string } }
-  console.log(exp.protocols)
+  })) as { toTokenAmount: string; protocols: { name: string }; tx: { from: string; to: string; data: string } }
+
   const divisor = Math.pow(10, to.decimals)
   const expected = parseInt(exp.toTokenAmount as string) / divisor
   await network.provider.request({
@@ -101,7 +131,7 @@ async function swapEmulate(
     params: [
       {
         forking: {
-          jsonRpcUrl,
+          jsonRpcUrl: ProviderURL[chainId as keyof typeof ProviderURL],
         },
       },
     ],
@@ -116,11 +146,47 @@ async function swapEmulate(
   return {
     expected,
     reported,
+    diff: makeProcents((reported - expected) / expected),
     spent,
+    reportedProviders: collectProtocols(exp.protocols),
   }
 }
 
-async function testPolygon(fromR: Record<ChainId, Type>, amountMax: number) {
+const ProviderURL = {
+  [ChainId.ETHEREUM]: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+  [ChainId.POLYGON]: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
+}
+
+interface Environment {
+  chainId: ChainId
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  provider: any
+  dataFetcher: DataFetcher
+}
+
+function getEnvironment(chainId: ChainId): Environment {
+  let network
+  switch (chainId) {
+    case ChainId.ETHEREUM:
+      network = 'mainnet'
+      break
+    case ChainId.POLYGON:
+      network = 'matic'
+      break
+    default:
+  }
+  const provider = new ethers.providers.AlchemyProvider(network, process.env.ALCHEMY_API_KEY)
+  const dataFetcher = new DataFetcher(provider, chainId)
+  dataFetcher.startDataFetching()
+
+  return {
+    chainId,
+    provider,
+    dataFetcher,
+  }
+}
+
+async function testPolygon(fromR: Record<ChainId, Type>, fromAddr: string, amountMax: number) {
   const chainId = ChainId.POLYGON
   const from = fromR[chainId]
   const divisor = Math.pow(10, from.decimals)
@@ -135,48 +201,24 @@ async function testPolygon(fromR: Record<ChainId, Type>, amountMax: number) {
     FRAX[chainId],
   ]
   const gasPrice = 100e9
-  const providers = undefined //[LiquidityProviders.Quickswap, LiquidityProviders.Sushiswap, LiquidityProviders.Trident]
+  const env = getEnvironment(chainId)
+  toArray.forEach((to) => env.dataFetcher.fetchPoolsForToken(from, to))
+  await delay(3000)
+  const providers = [LiquidityProviders.Quickswap, LiquidityProviders.Sushiswap, LiquidityProviders.Trident]
   for (let i = 0; i < toArray.length; ++i) {
     const to = toArray[i]
     if (from.symbol === to.symbol) continue
     for (let amount = divisor; amount < amountMax * divisor; amount *= 10) {
-      const line = `Routing: ${from.symbol} ${amount / divisor} => ${to.symbol}`
+      const line = `${amount / divisor} ${from.symbol} => ${to.symbol}`
       try {
-        const res = await swapEmulate(
-          chainId,
-          `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
-          from,
-          to,
-          amount,
-          gasPrice,
-          '0x5a4069c86f49d2454cF4EA9cDa5D3bcB0F340c4B',
-          providers
-        )
-        const div2 = Math.pow(10, to.decimals)
-        const expected = parseInt(res?.toTokenAmount as string) / div2
-        console.log(line, expected)
-        await provider.request({
-          method: 'hardhat_reset',
-          params: [
-            {
-              forking: {
-                jsonRpcUrl: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
-              },
-            },
-          ],
+        const res = await swapEmulate(chainId, from, to, amount, gasPrice, fromAddr, providers)
+        const route = Router.findBestRoute(env.dataFetcher, from, BigNumber.from(amount), to, gasPrice, providers)
+        const tines = route.amountOut / Math.pow(10, to.decimals)
+        console.log(line, res, {
+          tines,
+          diff: makeProcents((tines - res.expected) / res.expected),
+          priceImact: route.primaryPrice,
         })
-        const rct = await ethers.provider.call({
-          from: res?.tx.from,
-          to: res?.tx.to,
-          data: res?.tx.data,
-        })
-        console.log(rct)
-
-        if (rct !== '0xf32bec2f') {
-          const retAmount = parseInt(rct.substring(2, 66), 16) / div2
-          const spentAmount = parseInt(rct.substring(66) || '0', 16) / divisor
-          console.log(`Emulation: In ${spentAmount}, Out ${retAmount}, ${((retAmount - expected) / expected) * 100}%`)
-        }
       } catch (e) {
         console.log(line, 'Error', e)
       }
@@ -184,6 +226,6 @@ async function testPolygon(fromR: Record<ChainId, Type>, amountMax: number) {
   }
 }
 
-it.only('1', async () => {
-  await testPolygon(USDC as Record<ChainId, Type>, 60000)
+it.only('SwapEmulation', async () => {
+  await testPolygon(USDC as Record<ChainId, Type>, '0x5a4069c86f49d2454cF4EA9cDa5D3bcB0F340c4B', 101000)
 })
