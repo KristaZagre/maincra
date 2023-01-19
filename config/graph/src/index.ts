@@ -11,7 +11,7 @@ export const TRIDENT_ENABLED_NETWORKS = [
   ChainId.BSC,
 ] as const
 
-export type TridentChainId = typeof TRIDENT_ENABLED_NETWORKS[number]
+export type TridentChainId = (typeof TRIDENT_ENABLED_NETWORKS)[number]
 
 export const SUSHISWAP_ENABLED_NETWORKS = [
   ChainId.ARBITRUM,
@@ -35,7 +35,7 @@ export const SUSHISWAP_ENABLED_NETWORKS = [
   // ChainId.OKEX
 ] as const
 
-export type SushiSwapChainId = typeof SUSHISWAP_ENABLED_NETWORKS[number]
+export type SushiSwapChainId = (typeof SUSHISWAP_ENABLED_NETWORKS)[number]
 
 export const SWAP_ENABLED_NETWORKS = Array.from(new Set([...SUSHISWAP_ENABLED_NETWORKS, ...TRIDENT_ENABLED_NETWORKS]))
 
@@ -174,22 +174,22 @@ export const EXCHANGE_SUBGRAPH_NAME: Record<number, string> = {
 } as const
 
 export const SUSHISWAP_SUBGRAPH_NAME = {
-  [ChainId.ETHEREUM]: 'sushi-0m/sushiswap-ethereum-v2',
-  [ChainId.AVALANCHE]: 'sushi-0m/sushiswap-avalanche',
-  [ChainId.ARBITRUM]: 'sushi-0m/sushiswap-arbitrum',
-  [ChainId.BSC]: 'sushi-0m/sushiswap-bsc',
-  [ChainId.CELO]: 'sushi-0m/sushiswap-celo',
-  [ChainId.FANTOM]: 'sushi-0m/sushiswap-fantom',
-  [ChainId.FUSE]: 'sushi-0m/sushiswap-fuse',
-  [ChainId.GNOSIS]: 'sushi-0m/sushiswap-gnosis',
-  [ChainId.MOONBEAM]: 'sushi-0m/sushiswap-moonbeam',
-  [ChainId.MOONRIVER]: 'sushi-0m/sushiswap-moonriver',
+  [ChainId.ETHEREUM]: 'sushi-v2/sushiswap-ethereum',
+  [ChainId.AVALANCHE]: 'sushi-v2/sushiswap-avalanche',
+  [ChainId.ARBITRUM]: 'sushi-v2/sushiswap-arbitrum',
+  [ChainId.BSC]: 'sushi-v2/sushiswap-bsc',
+  [ChainId.CELO]: 'sushi-v2/sushiswap-celo',
+  [ChainId.FANTOM]: 'sushi-v2/sushiswap-fantom',
+  [ChainId.FUSE]: 'sushi-v2/sushiswap-fuse',
+  [ChainId.GNOSIS]: 'sushi-v2/sushiswap-gnosis',
+  [ChainId.MOONBEAM]: 'sushi-v2/sushiswap-moonbeam',
+  [ChainId.MOONRIVER]: 'sushi-v2/sushiswap-moonriver',
   [ChainId.HARMONY]: 'olastenberg/sushiswap-harmony-fix',
   [ChainId.ARBITRUM_NOVA]: 'sushi-0m/sushiswap-arbitrum-nova',
-  [ChainId.BOBA]: 'sushi-0m/sushiswap-boba',
-  [ChainId.POLYGON]: 'subgraph-qa/sushiswap-polygon',
-  [ChainId.BOBA_AVAX]: 'sushi-0m/sushiswap-boba-avax',
-  [ChainId.BOBA_BNB]: 'sushi-0m/sushiswap-boba-bnb',
+  [ChainId.BOBA]: 'sushi-v2/sushiswap-boba',
+  [ChainId.POLYGON]: 'sushi-v2/sushiswap-polygon',
+  [ChainId.BOBA_AVAX]: 'sushi-v2/sushiswap-boba-avax',
+  [ChainId.BOBA_BNB]: 'sushi-v2/sushiswap-boba-bnb',
 } as const
 
 export const TRIDENT_SUBGRAPH_NAME = {
