@@ -1,9 +1,10 @@
+import { erc20Abi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
 import { DAI, FRAX, Native, SUSHI, Type, UNI, USDC, USDT, WETH9 } from '@sushiswap/currency'
 import { DataFetcher, Router } from '@sushiswap/router'
 import { LiquidityProviders } from '@sushiswap/router/dist/liquidity-providers/LiquidityProviderMC'
 import { getBigNumber, MultiRoute } from '@sushiswap/tines'
-import { BigNumber } from 'ethers'
+import { BigNumber, Contract } from 'ethers'
 import { ethers, network } from 'hardhat'
 import https from 'https'
 
@@ -102,6 +103,12 @@ function route(
   return route.amountOut
 }
 
+async function getBalance(token: Type, addr: string): Promise<BigNumber> {
+  if (token.isNative) return ethers.provider.getBalance(addr)
+  const contract = new Contract(token.address, erc20Abi, ethers.provider)
+  return contract.balanceOf(addr)
+}
+
 async function swapEmulate(
   chainId: ChainId,
   from: Type,
@@ -110,7 +117,7 @@ async function swapEmulate(
   gasPrice: number,
   fromAddress: string,
   providers?: LiquidityProviders[]
-): Promise<object> {
+): Promise<any> {
   const fromTokenAddress = from.isNative ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' : from.address
   const toTokenAddress = to.isNative ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' : to.address
   const protocols = providers ? getProtocols(providers, chainId) : undefined
@@ -136,18 +143,29 @@ async function swapEmulate(
       },
     ],
   })
-  const trResult = await ethers.provider.call({
-    from: exp?.tx.from,
+  await network.provider.request({
+    method: 'hardhat_impersonateAccount',
+    params: [fromAddress],
+  })
+  const signer = await ethers.getSigner(fromAddress)
+  const balanceBefore = await getBalance(to, fromAddress)
+  const trResult = await signer.sendTransaction({
+    from: fromAddress,
     to: exp?.tx.to,
     data: exp?.tx.data,
   })
-  const reported = parseInt(trResult.substring(2, 66), 16) / divisor
-  const spent = parseInt(trResult.substring(66), 16)
+  await trResult.wait()
+  const balanceAfter = await getBalance(to, fromAddress)
+  const realOutput = balanceAfter.sub(balanceBefore)
+  const real = parseInt(realOutput.toString()) / divisor
+  //const reported = parseInt(trResult.substring(2, 66), 16) / divisor
+  //const spent = parseInt(trResult.substring(66), 16)
   return {
     expected,
-    reported,
-    diff: makeProcents((reported - expected) / expected),
-    spent,
+    //reported,
+    real,
+    diff: makeProcents((real - expected) / expected),
+    //spent,
     reportedProviders: collectProtocols(exp.protocols),
   }
 }
@@ -186,13 +204,26 @@ function getEnvironment(chainId: ChainId): Environment {
   }
 }
 
-async function testPolygon(fromR: Record<ChainId, Type>, fromAddr: string, amountMax: number) {
+async function testPolygon(fromR: Record<ChainId, Type>, fromAddr: string) {
   const chainId = ChainId.POLYGON
   const from = fromR[chainId]
+
+  await network.provider.request({
+    method: 'hardhat_reset',
+    params: [
+      {
+        forking: {
+          jsonRpcUrl: ProviderURL[chainId as keyof typeof ProviderURL],
+        },
+      },
+    ],
+  })
+  const amountMax = parseInt((await getBalance(from, fromAddr)).toString())
+
   const divisor = Math.pow(10, from.decimals)
   const toArray: Type[] = [
-    Native.onChain(chainId),
     USDT[chainId],
+    Native.onChain(chainId),
     USDC[chainId],
     WETH9[chainId],
     SUSHI[chainId],
@@ -208,7 +239,7 @@ async function testPolygon(fromR: Record<ChainId, Type>, fromAddr: string, amoun
   for (let i = 0; i < toArray.length; ++i) {
     const to = toArray[i]
     if (from.symbol === to.symbol) continue
-    for (let amount = divisor; amount < amountMax * divisor; amount *= 10) {
+    for (let amount = divisor; amount < amountMax; amount *= 10) {
       const line = `${amount / divisor} ${from.symbol} => ${to.symbol}`
       try {
         const res = await swapEmulate(chainId, from, to, amount, gasPrice, fromAddr, providers)
@@ -217,7 +248,7 @@ async function testPolygon(fromR: Record<ChainId, Type>, fromAddr: string, amoun
         console.log(line, res, {
           tines,
           diff: makeProcents((tines - res.expected) / res.expected),
-          priceImact: route.primaryPrice,
+          priceImact: makeProcents(route.priceImpact as number),
         })
       } catch (e) {
         console.log(line, 'Error', e)
@@ -227,5 +258,5 @@ async function testPolygon(fromR: Record<ChainId, Type>, fromAddr: string, amoun
 }
 
 it.only('SwapEmulation', async () => {
-  await testPolygon(USDC as Record<ChainId, Type>, '0x5a4069c86f49d2454cF4EA9cDa5D3bcB0F340c4B', 101000)
+  await testPolygon(USDC as Record<ChainId, Type>, '0x5a4069c86f49d2454cF4EA9cDa5D3bcB0F340c4B')
 })
