@@ -247,7 +247,7 @@ async function testPolygon(fromR: Record<ChainId, Type>, amountMax: number) {
     FRAX[chainId],
   ]
   const gasPrice = 100e9
-  const providers = [LiquidityProviders.Quickswap, LiquidityProviders.Sushiswap, LiquidityProviders.Trident]
+  const providers = [LiquidityProviders.QuickSwap, LiquidityProviders.SushiSwap, LiquidityProviders.Trident]
   const env = getEnvironment(chainId)
   toArray.forEach((to) => env.dataFetcher.fetchPoolsForToken(from, to))
   await delay(3000)
