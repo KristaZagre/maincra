@@ -145,15 +145,7 @@ async function route(
   providers?: LiquidityProviders[]
 ): Promise<MultiRoute> {
   env.dataFetcher.fetchPoolsForToken(from, to)
-  const router = new Router(env.dataFetcher, from, BigNumber.from(amount), to, gasPrice, providers)
-  return new Promise((res) => {
-    router.startRouting((r) => {
-      router.stopRouting()
-      //console.log(router.getCurrentRouteHumanString())
-      res(r)
-    })
-    router.stopRouting()
-  })
+  return Router.findBestRoute(env.dataFetcher, from, BigNumber.from(amount), to, gasPrice, providers)
 }
 
 function getProtocol(lp: LiquidityProviders, chainId: ChainId) {
@@ -177,6 +169,14 @@ function getProtocol(lp: LiquidityProviders, chainId: ChainId) {
       return prefix + 'TRIDENT'
     case LiquidityProviders.UniswapV2:
       return prefix + 'UNISWAP_V2'
+    case LiquidityProviders.ApeSwap:
+      return prefix + 'APESWAP'
+    case LiquidityProviders.JetSwap:
+      return prefix + 'JETSWAP'
+    case LiquidityProviders.Elk:
+      return prefix + 'ELK'
+    case LiquidityProviders.Dfyn:
+      return 'DFYN'
   }
 }
 
@@ -247,7 +247,15 @@ async function testPolygon(fromR: Record<ChainId, Type>, amountMax: number) {
     FRAX[chainId],
   ]
   const gasPrice = 100e9
-  const providers = [LiquidityProviders.QuickSwap, LiquidityProviders.SushiSwap, LiquidityProviders.Trident]
+  const providers = [
+    LiquidityProviders.QuickSwap,
+    LiquidityProviders.SushiSwap,
+    LiquidityProviders.Trident,
+    LiquidityProviders.ApeSwap,
+    LiquidityProviders.JetSwap,
+    LiquidityProviders.Dfyn,
+    LiquidityProviders.Elk,
+  ]
   const env = getEnvironment(chainId)
   toArray.forEach((to) => env.dataFetcher.fetchPoolsForToken(from, to))
   await delay(3000)
