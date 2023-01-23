@@ -14,20 +14,6 @@
   },
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
-    },
-    "./liquidity-providers/Trident": {
-      "types": "./dist/liquidity-providers/Trident.d.ts",
-      "default": "./dist/liquidity-providers/Trident.js"
-    },
-    "./dist/liquidity-providers/LiquidityProviderMC": {
-      "types": "./dist/liquidity-providers/LiquidityProviderMC.d.ts",
-      "default": "./dist/liquidity-providers/LiquidityProviderMC.js"
-    }
-  },
   "main": "dist/index.js",
   "source": "src/index.ts",
   "typings": "dist/index.d.ts",
@@ -35,7 +21,7 @@
     "dist/**"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "tsup src/index.ts --format cjs --dts",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsc -w",
@@ -65,6 +51,7 @@
     "tiny-warning": "^1.0.3"
   },
   "devDependencies": {
+    "@sushiswap/database": "workspace:*",
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
@@ -75,5 +62,13 @@
     "eslint": "8.29.0",
     "tsup": "6.5.0",
     "typescript": "4.9.4"
+  },
+  "peerDependencies": {
+    "@sushiswap/database": "workspace:*"
+  },
+  "peerDependenciesMeta": {
+    "@sushiswap/database": {
+      "optional": true
+    }
   }
 }

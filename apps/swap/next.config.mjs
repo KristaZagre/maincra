@@ -10,6 +10,9 @@ const nextConfig = {
     dirs: ['pages', 'components', 'lib', 'app', 'ui'],
   },
   transpilePackages: ['@sushiswap/ui13', '@sushiswap/wagmi13'],
+  experimental: {
+    esmExternals: 'loose',
+  },
   async redirects() {
     return [
       {

@@ -4,6 +4,8 @@ export const envSchema = z.object({
   ALCHEMY_API_KEY: z.string(),
   PORT: z.coerce.number().default(3000),
   HOST: z.string().default('0.0.0.0'),
+  DATABASE_URL: z.string(),
+  REDIS_URL: z.string(),
 })
 
 const parsed = envSchema.safeParse(process.env)

@@ -38,6 +38,7 @@
     "ethers": "5.7.2",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
+    "@sushiswap/database": "workspace:*",
     "@sushiswap/router": "workspace:*",
     "@sushiswap/route-processor": "workspace:*",
     "fastify": "4.11.0",
