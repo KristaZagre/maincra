@@ -6,7 +6,7 @@ import { ConstantProductRPool, RPool, RToken } from '@sushiswap/tines'
 import type { ethers } from 'ethers'
 import { getCreate2Address } from 'ethers/lib/utils'
 
-import { getPools } from '../lib/api'
+import { getPoolsByTokenIds, getTopPools } from '../lib/api'
 import type { Limited } from '../Limited'
 import { convertToBigNumberPair, MultiCallProvider } from '../MulticallProvider'
 import { ConstantProductPoolCode } from '../pools/ConstantProductPool'
@@ -89,14 +89,24 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
 
     const type = this.getType()
 
-    const poolAddr = await getPools(
-      this.chainId,
-      type === LiquidityProviders.UniswapV2 ? 'UniSwap' : type,
-      type === LiquidityProviders.SushiSwap ? 'LEGACY' : 'V2',
-      'CONSTANT_PRODUCT_POOL',
-      tokens[0].address,
-      tokens[1].address
-    )
+    const result = await Promise.all([
+      getTopPools(
+        this.chainId,
+        type === LiquidityProviders.UniswapV2 ? 'UniSwap' : type,
+        type === LiquidityProviders.SushiSwap ? 'LEGACY' : 'V2',
+        'CONSTANT_PRODUCT_POOL'
+      ),
+      getPoolsByTokenIds(
+        this.chainId,
+        type === LiquidityProviders.UniswapV2 ? 'Uniswap' : type,
+        type === LiquidityProviders.SushiSwap ? 'LEGACY' : 'V2',
+        'CONSTANT_PRODUCT_POOL',
+        tokens[0].address,
+        tokens[1].address
+      ),
+    ])
+    const poolAddr = new Map([...Array.from(result[0].entries()), ...Array.from(result[1].entries())])
+
     const addrs = Array.from(poolAddr.keys())
 
     const reserves = convertToBigNumberPair(
@@ -159,6 +169,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     ])
     return Array.from(set)
   }
+
   startFetchPoolsData() {
     this.stopFetchPoolsData()
     this.poolCodes = []
