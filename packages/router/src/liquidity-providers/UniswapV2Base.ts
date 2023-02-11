@@ -3,7 +3,8 @@ import { getReservesAbi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
-import { ConstantProductRPool, RToken } from '@sushiswap/tines'
+import { ConstantProductRPool, RPool, RToken } from '@sushiswap/tines'
+import { isContractAddressInBloom } from 'ethereum-bloom-filters'
 import { BigNumber } from 'ethers'
 import { getCreate2Address } from 'ethers/lib/utils'
 import { Address, Client, multicall, watchBlockNumber } from 'viem'
@@ -230,6 +231,75 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     })
   }
 
+  async processBloom(bloom: string): Promise<void> {
+    if (!this.isInitialized) {
+      return
+    }
+    const contractsToUpdate = [Array.from(this.initialPools.keys()), Array.from(this.onDemandPools.keys())]
+      .flat()
+      .filter((c) => isContractAddressInBloom(bloom as Address, c))
+      if (contractsToUpdate.length === 0) {
+        console.debug(`${this.getLogPrefix()} - BLOOM: Contracts not in bloom.`)
+      return 
+      }
+
+    const reserves = await multicall(this.client, {
+      multicallAddress: '0xcA11bde05977b3631167028862bE2a173976CA11' as Address,
+      allowFailure: true,
+      contracts: contractsToUpdate.map(
+        (address) =>
+          ({
+            address: address as Address,
+            chainId: this.chainId,
+            abi: getReservesAbi,
+            functionName: 'getReserves',
+          } as const)
+      ),
+    })
+    let updatedPoolCount = 0
+    contractsToUpdate.forEach((address, i) => {
+      let existingPool = this.initialPools.get(address)?.pool
+      let type = 'INITIAL'
+      if (existingPool === undefined) {
+        const onDemandPool = this.onDemandPools.get(address)?.poolCode.pool
+        if (onDemandPool === undefined) {
+          console.debug('should not be undefined at this point, should be either initial or on demand. ignore.')
+          return
+        }
+        existingPool = onDemandPool
+        type = 'ON_DEMAND'
+      }
+
+      const res0 = reserves?.[i]?.result?.[0]
+      const res1 = reserves?.[i]?.result?.[1]
+
+      if (res0 && res1) {
+        const res0BN = BigNumber.from(res0)
+        const res1BN = BigNumber.from(res1)
+        if (!existingPool.reserve0.eq(res0BN) || !existingPool.reserve1.eq(res1BN)) {
+          existingPool.updateReserves(res0BN, res1BN)
+          console.info(
+            `${this.getLogPrefix()} - SYNC, ${type}: ${existingPool.address} ${existingPool.token0.symbol}/${
+              existingPool.token1.symbol
+            } ${res0BN.toString()} ${res1BN.toString()}`
+          )
+          ++updatedPoolCount
+          ++this.stateId
+        }
+      } else {
+        console.error(
+          `${this.getLogPrefix()} - ERROR UPDATING RESERVES for a ${type} pool, Failed to fetch reserves for pool: ${
+            existingPool.address
+          }`
+        )
+      }
+
+    })
+    if (updatedPoolCount !== contractsToUpdate.length) {
+      console.info(`${this.getLogPrefix()} - BLOOM: Updated ${updatedPoolCount} out of ${contractsToUpdate.length} pools.`)
+    }
+  }
+
   _getPoolAddress(t1: Token, t2: Token): string {
     return getCreate2Address(
       this.factory[this.chainId as keyof typeof this.factory],
@@ -261,7 +331,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
         if (!this.isInitialized) {
           this.initialize()
         } else {
-          this.updatePools(Number(blockNumber))
+          // this.updatePools(Number(blockNumber))
         }
       },
     })

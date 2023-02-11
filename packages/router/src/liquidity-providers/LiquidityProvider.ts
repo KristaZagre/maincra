@@ -77,6 +77,8 @@ export abstract class LiquidityProvider {
     return this.lastUpdateBlock
   }
 
+  abstract processBloom(bloom: string): void
+
   /**
    * Logs a message with the following format:
    * <chainId>~<lastUpdateBlock>~<providerName>

@@ -1,5 +1,3 @@
-import './env'
-
 import cors from '@fastify/cors'
 import rateLimit from '@fastify/rate-limit'
 import { ChainId } from '@sushiswap/chain'

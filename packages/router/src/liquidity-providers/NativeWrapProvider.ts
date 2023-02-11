@@ -34,6 +34,10 @@ export class NativeWrapProvider extends LiquidityProvider {
     return 'NativeWrap'
   }
 
+  processBloom(bloom: string): void {
+      
+  }
+
   startFetchPoolsData() {}
   fetchPoolsForToken(): void {}
   getCurrentPoolList(): PoolCode[] {

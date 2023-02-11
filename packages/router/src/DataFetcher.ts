@@ -1,11 +1,12 @@
 import { ChainId, chainShortName } from '@sushiswap/chain'
 import { Native, Token, Type, WNATIVE } from '@sushiswap/currency'
+import { isTopicInBloom } from 'ethereum-bloom-filters'
 // const { provider } = configureChains(allChains, allProviders, { pollingInterval: 10000, minQuorum: 1, targetQuorum: 1 })
 // createClient({
 //   autoConnect: true,
 //   provider,
 // })
-import { Client } from 'viem'
+import { Client, watchBlocks } from 'viem'
 
 // import { configureChains, createClient } from '@wagmi/core'
 // import { allChains } from './chains'
@@ -66,14 +67,14 @@ export class DataFetcher {
       }
     }
 
-    if (this._providerIsIncluded(LiquidityProviders.Trident, providers)) {
-      try {
-        const provider = new TridentProvider(this.chainId, this.client)
-        this.providers.push(provider)
-      } catch (e: any) {
-        // console.warn(e.message)
-      }
-    }
+    // if (this._providerIsIncluded(LiquidityProviders.Trident, providers)) {
+    //   try {
+    //     const provider = new TridentProvider(this.chainId, this.client)
+    //     this.providers.push(provider)
+    //   } catch (e: any) {
+    //     // console.warn(e.message)
+    //   }
+    // }
 
     if (this._providerIsIncluded(LiquidityProviders.UniswapV2, providers)) {
       try {
@@ -157,6 +158,7 @@ export class DataFetcher {
         .join(', ')}`
     )
     this.providers.forEach((p) => p.startFetchPoolsData())
+    this.setupBloomListener()
   }
 
   // To stop fetch pool data
@@ -224,5 +226,29 @@ export class DataFetcher {
 
   transformToken(t: Type) {
     return t instanceof Native ? WNATIVE[t.chainId] : (t as Token)
+  }
+
+
+  setupBloomListener() {
+    const TOPIC = '0x1c411e9a96e071241c2f21f7726b17ae89e3cab4c78be50e062b03a9fffbbad1'
+    watchBlocks(this.client, {
+      onBlock: (block) => {
+        if (block.logsBloom !== null && isTopicInBloom(block.logsBloom, TOPIC)) {
+          // const contractsToUpdate = contracts.filter((c) => isContractAddressInBloom(block.logsBloom as Address, c))
+          // if (contractsToUpdate.length > 0) {
+          //   detectPools(client, block, contractsToUpdate)
+          // } else {
+          //   console.log(`TN: ${block.number}`)
+          // }
+          this.providers.forEach((p) => p.processBloom(block.logsBloom as string))
+        } else {
+          // console.log(`No TOPIC in block: ${block.number}`)
+        }
+      },
+      onError: (err) => {
+        console.error(err)
+      },
+      emitMissed: true,
+    })
   }
 }

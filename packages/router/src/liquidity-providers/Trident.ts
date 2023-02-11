@@ -486,6 +486,10 @@ export class TridentProvider extends LiquidityProvider {
     })
   }
 
+  processBloom(bloom: string): void {
+      
+  }
+
   startFetchPoolsData() {
     this.stopFetchPoolsData()
     this.initialClassicPools = new Map()
