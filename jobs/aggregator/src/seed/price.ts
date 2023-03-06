@@ -1,17 +1,31 @@
 /* eslint-disable turbo/no-undeclared-env-vars */
 import { isAddress } from '@ethersproject/address'
 import { BigNumber } from '@ethersproject/bignumber'
-import { totalsAbi } from '@sushiswap/abi'
+import { balanceOfAbi, liquidityAbi, slot0Abi, totalsAbi } from '@sushiswap/abi'
 import { bentoBoxV1Address, BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 import type { ChainId } from '@sushiswap/chain'
 import { Prisma, PrismaClient, Token } from '@sushiswap/database'
-import { calcTokenPrices, ConstantProductRPool, Rebase, RPool, StableSwapRPool } from '@sushiswap/tines'
+import { calcTokenPrices, CLRPool, ConstantProductRPool, Rebase, RPool, StableSwapRPool } from '@sushiswap/tines'
 import { Address, readContracts } from '@wagmi/core'
 import { performance } from 'perf_hooks'
 
 import { PoolType, Price, ProtocolName, ProtocolVersion } from '../config.js'
 
-const CURRENT_SUPPORTED_VERSIONS = [ProtocolVersion.V2, ProtocolVersion.LEGACY, ProtocolVersion.TRIDENT]
+interface V3PoolInfo {
+  address: string
+  balance0: BigNumber
+  balance1: BigNumber
+  liquidity: BigNumber
+  sqrtPriceX96: BigNumber
+  tick: number
+  observationIndex: number
+  observationCardinality: number
+  observationCardinalityNext: number
+  feeProtocol: number
+  unlocked: boolean
+}
+
+const CURRENT_SUPPORTED_VERSIONS = [ProtocolVersion.V2, ProtocolVersion.V3, ProtocolVersion.LEGACY, ProtocolVersion.TRIDENT]
 
 export async function prices(chainId: ChainId, base: string, price: Price, minimumLiquidity = 500000000) {
   const client = new PrismaClient()
@@ -121,7 +135,7 @@ async function getPoolsByPagination(
         {
           isWhitelisted: true,
           chainId,
-          type: { in: [PoolType.CONSTANT_PRODUCT_POOL, PoolType.STABLE_POOL] },
+          type: { in: [PoolType.CONSTANT_PRODUCT_POOL, PoolType.STABLE_POOL, PoolType.CONCENTRATED_LIQUIDITY_POOL] },
           version: {
             in: CURRENT_SUPPORTED_VERSIONS,
           },
@@ -131,7 +145,7 @@ async function getPoolsByPagination(
           protocol: ProtocolName.SUSHISWAP,
           type: { in: [PoolType.CONSTANT_PRODUCT_POOL, PoolType.STABLE_POOL] },
           version: {
-            in: CURRENT_SUPPORTED_VERSIONS,
+            in: [ProtocolVersion.V2, ProtocolVersion.LEGACY, ProtocolVersion.TRIDENT],
           },
         },
       ],
@@ -143,6 +157,10 @@ async function transform(chainId: ChainId, pools: Pool[]) {
   const tokens: Map<string, Token> = new Map()
   const stablePools = pools.filter((pool) => pool.type === PoolType.STABLE_POOL)
   const rebases = isBentoBoxV1ChainId(chainId) ? await fetchRebases(stablePools, chainId) : undefined
+
+  const concentratedLiquidityPools = pools.filter((pool) => pool.type === PoolType.CONCENTRATED_LIQUIDITY_POOL)
+  // Could run in parallell with rebases..
+  const v3Info = await fetchV3Info(concentratedLiquidityPools, chainId)
 
   const rPools: RPool[] = []
   pools.forEach((pool) => {
@@ -188,23 +206,33 @@ async function transform(chainId: ChainId, pools: Pool[]) {
           )
         )
       }
+    } else if (pool.type === PoolType.CONCENTRATED_LIQUIDITY_POOL) {
+        const v3 = v3Info.get(pool.address)
+        if (v3) {
+          rPools.push(
+            new CLRPool(
+              pool.address,
+              token0,
+              token1,
+              pool.swapFee,
+              12,
+              v3.balance0,
+              v3.balance1,
+              v3.liquidity,
+              v3.sqrtPriceX96,
+              v3.tick,
+              []
+            )
+          )
+        }
     }
   })
+  console.log(`Transformed ${rPools.length} pools and ${tokens.size} tokens`)
   return { rPools, tokens }
 }
 
 async function fetchRebases(pools: Pool[], chainId: BentoBoxV1ChainId) {
-  const tokenMap = new Map<string, Token>()
-  pools.forEach((pool) => {
-    tokenMap.set(pool.token0.address, pool.token0)
-    tokenMap.set(pool.token1.address, pool.token1)
-  })
-  const tokensDedup = Array.from(tokenMap.values())
-  const tok0: [string, Token][] = tokensDedup.map((t) => [
-    t.address.toLocaleLowerCase().substring(2).padStart(40, '0'),
-    t,
-  ])
-  const sortedTokens = tok0.sort((a, b) => (b[0] > a[0] ? -1 : 1)).map(([, t]) => t)
+  const sortedTokens = poolsToUniqueTokens(pools)
 
   const totals = await readContracts({
     allowFailure: true,
@@ -228,6 +256,96 @@ async function fetchRebases(pools: Pool[], chainId: BentoBoxV1ChainId) {
   })
   return rebases
 }
+
+
+async function fetchV3Info(pools: Pool[], chainId: ChainId) {
+  const balanceContracts = pools.map(
+    (p) => 
+      ([
+        {
+        args: [p.address as Address],
+        address: p.token0.address as Address,
+        chainId: chainId,
+        abi: balanceOfAbi,
+        functionName: 'balanceOf',
+      } as const,
+      {
+        args: [p.address as Address],
+        address: p.token1.address as Address,
+        chainId: chainId,
+        abi: balanceOfAbi,
+        functionName: 'balanceOf',
+      } as const,
+    ].flat())
+  )
+  const [slot0, liquidity, balances] = await Promise.all([
+    readContracts({
+    allowFailure: true,
+    contracts: pools.map((pool) => ({
+      address: pool.address as Address,
+      chainId,
+      abi: slot0Abi,
+      functionName: 'slot0',
+    } as const))
+    }),
+  readContracts({
+    allowFailure: true,
+    contracts: pools.map(
+      (p) =>
+        ({
+          address: p.address as Address,
+          chainId: chainId,
+          abi: liquidityAbi,
+          functionName: 'liquidity',
+        } as const)
+    )
+  }),
+ 
+  readContracts({
+    allowFailure: true,
+    contracts: balanceContracts.flat()
+  })
+])
+  const poolInfo: Map<string, V3PoolInfo> = new Map()
+  pools.forEach((pool, i) => {
+    const _slot0 = slot0[i]
+    const _liquidity = liquidity[i]
+    const balance0 = balances[i * 2]
+    const balance1 = balances[i * 2 + 1]
+    if (_slot0 && _liquidity && balance0 && balance1) {
+      poolInfo.set(pool.address, {
+        address: pool.address,
+        liquidity: _liquidity,
+        balance0: balance0,
+        balance1: balance1,
+        sqrtPriceX96: _slot0.sqrtPriceX96,
+        tick: _slot0.tick,
+        observationIndex: _slot0.observationIndex,
+        observationCardinality: _slot0.observationCardinality,
+        observationCardinalityNext: _slot0.observationCardinalityNext,
+        feeProtocol: _slot0.feeProtocol,
+        unlocked: _slot0.unlocked,
+      })
+    }
+  })
+
+  return poolInfo
+}
+
+function poolsToUniqueTokens(pools: Pool[]){
+  const tokenMap = new Map<string, Token>()
+  pools.forEach((pool) => {
+    tokenMap.set(pool.token0.address, pool.token0)
+    tokenMap.set(pool.token1.address, pool.token1)
+  })
+  const tokensDedup = Array.from(tokenMap.values())
+  const tok0: [string, Token][] = tokensDedup.map((t) => [
+    t.address.toLocaleLowerCase().substring(2).padStart(40, '0'),
+    t,
+  ])
+  return tok0.sort((a, b) => (b[0] > a[0] ? -1 : 1)).map(([, t]) => t)
+}
+
 
 function calculatePrices(
   pools: RPool[],
