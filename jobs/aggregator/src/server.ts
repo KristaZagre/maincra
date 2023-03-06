@@ -23,6 +23,7 @@ import { uniswapV2 } from './seed/uniswap/v2/seed.js'
 import { whitelistPools } from './seed/whitelist-pool.js'
 import { whitelistPools2 } from './seed/whitelist-pool-2.js'
 import { whitelistTokens2 } from './seed/whitelist-tokens-2.js'
+import { uniswapV3 } from './seed/uniswap/v3/seed.js'
 
 const app = express()
 
@@ -73,7 +74,11 @@ app.get(
         if (version === ProtocolVersion.V2) {
           await uniswapV2()
           res.sendStatus(200)
-        } else {
+        } else if (version === ProtocolVersion.V3) {
+          await uniswapV3()
+          res.sendStatus(200)
+        }
+         else {
           res.status(400).send('Not a valid version')
         }
       } else if (name === ProtocolName.PANCAKESWAP) {

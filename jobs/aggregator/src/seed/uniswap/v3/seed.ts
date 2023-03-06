@@ -10,8 +10,7 @@ import { GRAPH_HOST, UNISWAP_V3_SUBGRAPH_NAME, UNISWAP_V3_SUPPORTED_CHAINS } fro
 
 const PROTOCOL = ProtocolName.UNISWAP
 const VERSION = ProtocolVersion.V3
-const CONSTANT_PRODUCT_POOL = PoolType.CONSTANT_PRODUCT_POOL
-const SWAP_FEE = 0.003
+const CONCENTRATED_LIQUIDITY_POOL = PoolType.CONCENTRATED_LIQUIDITY_POOL
 const TWAP_ENABLED = true
 
 export async function uniswapV3() {
@@ -31,6 +30,7 @@ export async function uniswapV3() {
     await client.$disconnect()
   }
 }
+
 async function start(client: PrismaClient) {
   console.log(
     `Fetching pools from ${PROTOCOL} ${VERSION}, chains: ${UNISWAP_V3_SUPPORTED_CHAINS.map(
@@ -153,9 +153,9 @@ function transform(
       name,
       protocol: PROTOCOL,
       version: VERSION,
-      type: CONSTANT_PRODUCT_POOL,
+      type: CONCENTRATED_LIQUIDITY_POOL,
       chainId,
-      swapFee: SWAP_FEE,
+      swapFee: pair.feeTier / 10000,
       twapEnabled: TWAP_ENABLED,
       token0Id: chainId.toString().concat(':').concat(pair.token0.id),
       token1Id: chainId.toString().concat(':').concat(pair.token1.id),

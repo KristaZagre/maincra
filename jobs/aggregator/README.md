@@ -9,8 +9,8 @@ build and run from repo root dir
 pnpm exec turbo run db:generate --filter=database
 pnpm exec turbo run db:push --filter=database
 
-pnpm exec turbo run build --filter=sushi
-pnpm exec turbo run start --only --filter=sushi
+pnpm exec turbo run build --filter=aggregator-job
+pnpm exec turbo run start --only --filter=aggregator-job
 ```
 
 There are currently 5 different seed scripts:
@@ -62,5 +62,5 @@ pnpm run setup
 - Create a seed script in src/seed
 - Add the protocol to the [config](src/config.ts)
   - create a new `ProtocolName` and add it to `PROTOCOL_JOBS` (This will create the cronjob next time the `setup` command is run)
-- Update the `/protocol` endpoint
+- Update the `/protocol` endpoint in [server.ts](src/server.ts)
 - Build and deploy, then run `pnpm run setup` for the cronjob to appear
