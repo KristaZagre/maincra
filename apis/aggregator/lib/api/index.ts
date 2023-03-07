@@ -35,6 +35,7 @@ export async function getAggregatorTopPools(args: typeof AggregatorTopPools._out
       liquidityUSD: 'desc',
     },
     select: {
+      liquidityUSD: true, 
       address: true,
       twapEnabled: true,
       swapFee: true,

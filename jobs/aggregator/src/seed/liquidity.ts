@@ -5,9 +5,11 @@ import { createClient, Prisma, PrismaClient, Token as PrismaToken } from '@sushi
 import { performance } from 'perf_hooks'
 
 import { PoolType, ProtocolVersion } from '../config.js'
+import { getConcentratedLiquidityPoolReserves, getConstantProductPoolReserves, getStablePoolReserves } from '../lib/reserves.js'
 
-const SUPPORTED_VERSIONS = [ProtocolVersion.V2, ProtocolVersion.LEGACY, ProtocolVersion.TRIDENT]
-const SUPPORTED_TYPES = [PoolType.CONSTANT_PRODUCT_POOL, PoolType.STABLE_POOL]
+
+const SUPPORTED_VERSIONS = [ProtocolVersion.V2, ProtocolVersion.V3, ProtocolVersion.LEGACY, ProtocolVersion.TRIDENT]
+const SUPPORTED_TYPES = [PoolType.CONSTANT_PRODUCT_POOL, PoolType.STABLE_POOL, PoolType.CONCENTRATED_LIQUIDITY_POOL]
 
 export async function liquidity(chainId: ChainId) {
   const client = await createClient()
@@ -16,7 +18,7 @@ export async function liquidity(chainId: ChainId) {
     console.log(`LIQUIDITY - CHAIN_ID: ${chainId}, VERSIONS: ${SUPPORTED_VERSIONS}, TYPE: ${SUPPORTED_TYPES}`)
 
     const pools = await getPools(client, chainId)
-    const poolsToUpdate = transform(pools)
+    const poolsToUpdate = await transform(pools)
     await updatePools(client, poolsToUpdate)
 
     const endTime = performance.now()
@@ -79,8 +81,6 @@ async function getPoolsByPagination(
       token1: true,
       swapFee: true,
       type: true,
-      reserve0: true,
-      reserve1: true,
     },
     where: {
       chainId,
@@ -89,12 +89,6 @@ async function getPoolsByPagination(
       },
       version: {
         in: SUPPORTED_VERSIONS,
-      },
-      reserve0: {
-        notIn: ['0', '1'],
-      },
-      reserve1: {
-        notIn: ['0', '1'],
       },
       token0: {
         derivedUSD: {
@@ -110,12 +104,27 @@ async function getPoolsByPagination(
   })
 }
 
-function transform(pools: Pool[]) {
+async function transform(pools: Pool[]) {
   const poolsToUpdate: PoolWithLiquidity[] = []
+  const constantProductPoolIds = pools.filter((p) => p.type === PoolType.CONSTANT_PRODUCT_POOL).map((p) => p.id)
+  const stablePoolIds = pools.filter((p) => p.type === PoolType.STABLE_POOL).map((p) => p.id)
+  const concentratedLiquidityPools = pools.filter((p) => p.type === PoolType.CONCENTRATED_LIQUIDITY_POOL)
+
+  const [a, b, c] = await Promise.all([getConstantProductPoolReserves(constantProductPoolIds), 
+  getStablePoolReserves(stablePoolIds),
+  getConcentratedLiquidityPoolReserves(concentratedLiquidityPools)])
+  const poolsWithReserves = new Map([...a, ...b, ...c])
+
   for (const pool of pools) {
+    const reserves = poolsWithReserves.get(pool.id)
+    if (!reserves) continue
     const t0 = pool.token0
     const t1 = pool.token1
     if (t0.derivedUSD === null && t1.derivedUSD === null) continue
+
+    const reserve0 = Number(reserves.reserve0)
+    const reserve1 = Number(reserves.reserve1)
+    if (reserve0 < 1000 || reserve1 < 1000) continue
 
     if (
       t0.derivedUSD !== null &&
@@ -125,16 +134,16 @@ function transform(pools: Pool[]) {
       t1.status === 'APPROVED' &&
       t1.derivedUSD.gt(0)
     ) {
-      const amount0 = (Number(pool.reserve0) / 10 ** t0.decimals) * Number(t0.derivedUSD)
-      const amount1 = (Number(pool.reserve1) / 10 ** t1.decimals) * Number(t1.derivedUSD)
+      const amount0 = (reserve0 / 10 ** t0.decimals) * Number(t0.derivedUSD)
+      const amount1 = (reserve1 / 10 ** t1.decimals) * Number(t1.derivedUSD)
       const liquidityUSD = amount0 + amount1
       poolsToUpdate.push({ id: pool.id, liquidityUSD: liquidityUSD.toString() })
     } else if (t0.derivedUSD !== null && t0.derivedUSD.gt(0) && t0.status === 'APPROVED') {
-      const amount0 = (Number(pool.reserve0) / 10 ** t0.decimals) * Number(t0.derivedUSD)
+      const amount0 = (reserve0 / 10 ** t0.decimals) * Number(t0.derivedUSD)
       const liquidityUSD = amount0 * 2
       poolsToUpdate.push({ id: pool.id, liquidityUSD: liquidityUSD.toString() })
     } else if (t1.derivedUSD !== null && t1.derivedUSD.gt(0) && t1.status === 'APPROVED') {
-      const amount1 = (Number(pool.reserve1) / 10 ** t1.decimals) * Number(t1.derivedUSD)
+      const amount1 = (reserve1 / 10 ** t1.decimals) * Number(t1.derivedUSD)
       const liquidityUSD = amount1 * 2
       poolsToUpdate.push({ id: pool.id, liquidityUSD: liquidityUSD.toString() })
     }
@@ -175,8 +184,6 @@ interface Pool {
   token1: PrismaToken
   swapFee: number
   type: string
-  reserve0: string
-  reserve1: string
 }
 
 interface PoolWithLiquidity {
