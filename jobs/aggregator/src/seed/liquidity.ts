@@ -5,8 +5,11 @@ import { createClient, Prisma, PrismaClient, Token as PrismaToken } from '@sushi
 import { performance } from 'perf_hooks'
 
 import { PoolType, ProtocolVersion } from '../config.js'
-import { getConcentratedLiquidityPoolReserves, getConstantProductPoolReserves, getStablePoolReserves } from '../lib/reserves.js'
-
+import {
+  getConcentratedLiquidityPoolReserves,
+  getConstantProductPoolReserves,
+  getStablePoolReserves,
+} from '../lib/reserves.js'
 
 const SUPPORTED_VERSIONS = [ProtocolVersion.V2, ProtocolVersion.V3, ProtocolVersion.LEGACY, ProtocolVersion.TRIDENT]
 const SUPPORTED_TYPES = [PoolType.CONSTANT_PRODUCT_POOL, PoolType.STABLE_POOL, PoolType.CONCENTRATED_LIQUIDITY_POOL]
@@ -110,10 +113,12 @@ async function transform(pools: Pool[]) {
   const stablePoolIds = pools.filter((p) => p.type === PoolType.STABLE_POOL).map((p) => p.id)
   const concentratedLiquidityPools = pools.filter((p) => p.type === PoolType.CONCENTRATED_LIQUIDITY_POOL)
 
-  const [a, b, c] = await Promise.all([getConstantProductPoolReserves(constantProductPoolIds), 
-  getStablePoolReserves(stablePoolIds),
-  getConcentratedLiquidityPoolReserves(concentratedLiquidityPools)])
-  const poolsWithReserves = new Map([...a, ...b, ...c])
+  const [constantProductReserves, stableReserves, concentratedLiquidityReserves] = await Promise.all([
+    getConstantProductPoolReserves(constantProductPoolIds),
+    getStablePoolReserves(stablePoolIds),
+    getConcentratedLiquidityPoolReserves(concentratedLiquidityPools),
+  ])
+  const poolsWithReserves = new Map([...constantProductReserves, ...stableReserves, ...concentratedLiquidityReserves])
 
   for (const pool of pools) {
     const reserves = poolsWithReserves.get(pool.id)

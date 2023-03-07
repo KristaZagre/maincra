@@ -13,17 +13,16 @@ import { netSwapV2 } from './seed/netswap/v2/seed.js'
 import { pancakeSwapV2 } from './seed/pancakeswap/v2/seed.js'
 import { prices } from './seed/price.js'
 import { quickswapV2 } from './seed/quickswap/v2/seed.js'
-import { reserves } from './seed/reserves.js'
 import { spiritSwapV2 } from './seed/spiritswap/v2/seed.js'
 import { spookySwapV2 } from './seed/spookyswap/v2/seed.js'
 import { sushiSwap } from './seed/sushiswap/seed.js'
 import { traderJoeV2 } from './seed/trader-joe/v2/seed.js'
 import { ubeSwapV2 } from './seed/ubeswap/v2/seed.js'
 import { uniswapV2 } from './seed/uniswap/v2/seed.js'
+import { uniswapV3 } from './seed/uniswap/v3/seed.js'
 import { whitelistPools } from './seed/whitelist-pool.js'
 import { whitelistPools2 } from './seed/whitelist-pool-2.js'
 import { whitelistTokens2 } from './seed/whitelist-tokens-2.js'
-import { uniswapV3 } from './seed/uniswap/v3/seed.js'
 
 const app = express()
 
@@ -195,26 +194,26 @@ app.get(
   timeout('300s')
 )
 
-app.get(
-  '/reserves',
-  async (req, res) => {
-    req.setTimeout(300000)
+// app.get(
+//   '/reserves',
+//   async (req, res) => {
+//     req.setTimeout(300000)
 
-    const result = chainIdOnlySchema.safeParse(req.query)
-    if (result.success === false) {
-      return res.status(400).json(result.error.format())
-    }
+//     const result = chainIdOnlySchema.safeParse(req.query)
+//     if (result.success === false) {
+//       return res.status(400).json(result.error.format())
+//     }
 
-    const { chainId } = result.data
-    try {
-      await reserves(chainId)
-      res.sendStatus(200)
-    } catch (err) {
-      res.status(500).send(err)
-    }
-  },
-  timeout('300s')
-)
+//     const { chainId } = result.data
+//     try {
+//       await reserves(chainId)
+//       res.sendStatus(200)
+//     } catch (err) {
+//       res.status(500).send(err)
+//     }
+//   },
+//   timeout('300s')
+// )
 
 app.get(
   '/whitelist-pools',

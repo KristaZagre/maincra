@@ -1,7 +1,7 @@
 /* eslint-disable turbo/no-undeclared-env-vars */
 import { isAddress } from '@ethersproject/address'
 import { BigNumber } from '@ethersproject/bignumber'
-import { balanceOfAbi, liquidityAbi, slot0Abi, totalsAbi } from '@sushiswap/abi'
+import { liquidityAbi, slot0Abi, totalsAbi } from '@sushiswap/abi'
 import { bentoBoxV1Address, BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 import type { ChainId } from '@sushiswap/chain'
 import { Prisma, PrismaClient, Token } from '@sushiswap/database'
@@ -10,20 +10,8 @@ import { Address, readContracts } from '@wagmi/core'
 import { performance } from 'perf_hooks'
 
 import { PoolType, Price, ProtocolName, ProtocolVersion } from '../config.js'
+import { getConcentratedLiquidityPoolReserves, getConstantProductPoolReserves, getStablePoolReserves } from '../lib/reserves.js'
 
-interface V3PoolInfo {
-  address: string
-  balance0: BigNumber
-  balance1: BigNumber
-  liquidity: BigNumber
-  sqrtPriceX96: BigNumber
-  tick: number
-  observationIndex: number
-  observationCardinality: number
-  observationCardinalityNext: number
-  feeProtocol: number
-  unlocked: boolean
-}
 
 const CURRENT_SUPPORTED_VERSIONS = [ProtocolVersion.V2, ProtocolVersion.V3, ProtocolVersion.LEGACY, ProtocolVersion.TRIDENT]
 
@@ -123,12 +111,11 @@ async function getPoolsByPagination(
     select: {
       id: true,
       address: true,
+      chainId: true,
       token0: true,
       token1: true,
       swapFee: true,
       type: true,
-      reserve0: true,
-      reserve1: true,
     },
     where: {
       OR: [
@@ -157,13 +144,23 @@ async function transform(chainId: ChainId, pools: Pool[]) {
   const tokens: Map<string, Token> = new Map()
   const stablePools = pools.filter((pool) => pool.type === PoolType.STABLE_POOL)
   const rebases = isBentoBoxV1ChainId(chainId) ? await fetchRebases(stablePools, chainId) : undefined
+  
+  const constantProductPoolIds = pools.filter((p) => p.type === PoolType.CONSTANT_PRODUCT_POOL).map((p) => p.id)
+  const stablePoolIds = pools.filter((p) => p.type === PoolType.STABLE_POOL).map((p) => p.id)
+  const concentratedLiquidityPools = pools.filter((p) => p.type === PoolType.CONCENTRATED_LIQUIDITY_POOL)
 
-  const concentratedLiquidityPools = pools.filter((pool) => pool.type === PoolType.CONCENTRATED_LIQUIDITY_POOL)
-  // Could run in parallell with rebases..
-  const v3Info = await fetchV3Info(concentratedLiquidityPools, chainId)
+  const [constantProductReserves, stableReserves, concentratedLiquidityReserves, v3Info] = await Promise.all([
+    getConstantProductPoolReserves(constantProductPoolIds),
+    getStablePoolReserves(stablePoolIds),
+    getConcentratedLiquidityPoolReserves(concentratedLiquidityPools),
+    fetchV3Info(concentratedLiquidityPools, chainId)
+  ])
+  const poolsWithReserves = new Map([...constantProductReserves, ...stableReserves, ...concentratedLiquidityReserves])
 
   const rPools: RPool[] = []
   pools.forEach((pool) => {
+    const reserves = poolsWithReserves.get(pool.id)
+    if (!reserves) return
     const token0 = {
       address: pool.token0.address,
       name: pool.token0.name,
@@ -183,8 +180,8 @@ async function transform(chainId: ChainId, pools: Pool[]) {
           token0,
           token1,
           pool.swapFee,
-          BigNumber.from(pool.reserve0),
-          BigNumber.from(pool.reserve1)
+          reserves.reserve0,
+          reserves.reserve1,
         )
       )
     } else if (pool.type === PoolType.STABLE_POOL) {
@@ -197,8 +194,8 @@ async function transform(chainId: ChainId, pools: Pool[]) {
             token0,
             token1,
             pool.swapFee,
-            BigNumber.from(pool.reserve0),
-            BigNumber.from(pool.reserve1),
+            reserves.reserve0,
+            reserves.reserve1,
             pool.token0.decimals,
             pool.token1.decimals,
             total0,
@@ -216,8 +213,8 @@ async function transform(chainId: ChainId, pools: Pool[]) {
               token1,
               pool.swapFee,
               12,
-              v3.balance0,
-              v3.balance1,
+              reserves.reserve0,
+              reserves.reserve1,
               v3.liquidity,
               v3.sqrtPriceX96,
               v3.tick,
@@ -259,26 +256,8 @@ async function fetchRebases(pools: Pool[], chainId: BentoBoxV1ChainId) {
 
 
 async function fetchV3Info(pools: Pool[], chainId: ChainId) {
-  const balanceContracts = pools.map(
-    (p) => 
-      ([
-        {
-        args: [p.address as Address],
-        address: p.token0.address as Address,
-        chainId: chainId,
-        abi: balanceOfAbi,
-        functionName: 'balanceOf',
-      } as const,
-      {
-        args: [p.address as Address],
-        address: p.token1.address as Address,
-        chainId: chainId,
-        abi: balanceOfAbi,
-        functionName: 'balanceOf',
-      } as const,
-    ].flat())
-  )
-  const [slot0, liquidity, balances] = await Promise.all([
+
+  const [slot0, liquidity] = await Promise.all([
     readContracts({
     allowFailure: true,
     contracts: pools.map((pool) => ({
@@ -301,23 +280,15 @@ async function fetchV3Info(pools: Pool[], chainId: ChainId) {
     )
   }),
  
-  readContracts({
-    allowFailure: true,
-    contracts: balanceContracts.flat()
-  })
 ])
   const poolInfo: Map<string, V3PoolInfo> = new Map()
   pools.forEach((pool, i) => {
     const _slot0 = slot0[i]
     const _liquidity = liquidity[i]
-    const balance0 = balances[i * 2]
-    const balance1 = balances[i * 2 + 1]
-    if (_slot0 && _liquidity && balance0 && balance1) {
+    if (_slot0 && _liquidity) {
       poolInfo.set(pool.address, {
         address: pool.address,
         liquidity: _liquidity,
-        balance0: balance0,
-        balance1: balance1,
         sqrtPriceX96: _slot0.sqrtPriceX96,
         tick: _slot0.tick,
         observationIndex: _slot0.observationIndex,
@@ -405,10 +376,21 @@ async function updateTokenPrices(client: PrismaClient, price: Price, tokens: { i
 interface Pool {
   id: string
   address: string
+  chainId: number
   type: string
   token0: Token
   token1: Token
   swapFee: number
-  reserve0: string
-  reserve1: string
+}
+
+interface V3PoolInfo {
+  address: string
+  liquidity: BigNumber
+  sqrtPriceX96: BigNumber
+  tick: number
+  observationIndex: number
+  observationCardinality: number
+  observationCardinalityNext: number
+  feeProtocol: number
+  unlocked: boolean
 }

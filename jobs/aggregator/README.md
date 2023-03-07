@@ -16,7 +16,6 @@ pnpm exec turbo run start --only --filter=aggregator-job
 There are currently 5 different seed scripts:
 
 - `Protocol` - Pool and token discovery.
-- `Reserves` - does web3 calls to fetch reserves for whitelisted pools.
 - `Price` - Fetches all the whitelisted pools, uses tines for price discovery.
 - `liquidity` - Updates liquidityUSD on pools where they contain at least one approved token which has been priced.
 - `Whitelist Pools` - Looks through all the pools if they contains two approved tokens and flag the pools as whitelisted.
@@ -47,7 +46,6 @@ Example: `https://localhost:8080/protocol?name=SushiSwap`
 
 - `http://localhost:8080/whitelist-pools`
 - `http://localhost:8080/price`
-- `http://localhost:8080/reserves`
 
 ## CI/CD
 

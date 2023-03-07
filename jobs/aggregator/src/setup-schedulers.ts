@@ -45,7 +45,7 @@ async function main() {
 
   const chainRequests = TRACKED_CHAIN_IDS.map((chainId) => {
     return [
-      createReserveJobRequest(chainId, baseUrl),
+      // createReserveJobRequest(chainId, baseUrl),
       createPriceJobRequest(chainId, baseUrl),
       createLiquidityJobRequest(chainId, baseUrl),
     ]
@@ -106,10 +106,10 @@ function createProtocolJobRequest(
   return createJobRequest(jobName, baseUrl, urlPath, '* * * * *')
 }
 
-function createReserveJobRequest(chainId: ChainId, baseUrl: string) {
-  const urlPath = `/reserves?chainId=${chainId}`
-  return createJobRequest(`RESERVES-${chainShortName[chainId]}-${chainId}`, baseUrl, urlPath, '10,25,40,55 * * * *')
-}
+// function createReserveJobRequest(chainId: ChainId, baseUrl: string) {
+//   const urlPath = `/reserves?chainId=${chainId}`
+//   return createJobRequest(`RESERVES-${chainShortName[chainId]}-${chainId}`, baseUrl, urlPath, '10,25,40,55 * * * *')
+// }
 
 function createLiquidityJobRequest(chainId: ChainId, baseUrl: string) {
   const urlPath = `/liquidity?chainId=${chainId}`
