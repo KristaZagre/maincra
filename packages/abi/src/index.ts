@@ -1,3 +1,4 @@
+
 export { balanceOfAbi } from './balanceOfAbi'
 export { bentoBoxV1Abi } from './bentoBoxV1Abi'
 export { cloneRewarderTimeAbi } from './cloneRewarderTime'
@@ -26,4 +27,5 @@ export { swapFeeAbi } from './swapFeeAbi'
 export { totalsAbi } from './totalsAbi'
 export { uniswapV2PairAbi } from './uniswapV2PairAbi'
 export { liquidityAbi, slot0Abi } from './uniswapV3PoolAbi'
+export {uniswapV3StateMulticall} from './uniswapV3StateMulticall'
 export { weth9Abi } from './weth9Abi'
