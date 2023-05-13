@@ -9,8 +9,9 @@ import Script from 'next/script'
 import { DefaultSeo } from 'next-seo'
 import React, { FC, useEffect } from 'react'
 import SEO from '../next-seo.config.mjs'
-import { QueryClientProvider } from '../app/QueryClientProvider'
-import { WagmiConfig } from '../app/WagmiConfig'
+import { QueryClientProvider } from '../components/QueryClientProvider'
+import { WagmiConfig } from '@sushiswap/wagmi'
+import { client } from '@sushiswap/wagmi/client'
 
 declare global {
   interface Window {
@@ -63,7 +64,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
         `,
         }}
       />
-      <WagmiConfig>
+      <WagmiConfig client={client}>
         <QueryClientProvider>
           <ThemeProvider>
             <App.Shell>

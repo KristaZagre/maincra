@@ -9,8 +9,8 @@ import Head from 'next/head'
 import React from 'react'
 
 import { Onramper } from '@sushiswap/wagmi/future/components'
-import { WagmiConfig } from './WagmiConfig'
-import { QueryClientProvider } from './QueryClientProvider'
+import { WagmiConfig } from '../components/WagmiConfig'
+import { QueryClientProvider } from '../components/QueryClientProvider'
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

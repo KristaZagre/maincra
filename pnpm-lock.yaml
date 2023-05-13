@@ -323,7 +323,7 @@ importers:
       '@ethersproject/bytes': 5.7.0
       '@ethersproject/constants': 5.7.0
       '@headlessui/react': 1.7.7
-      '@heroicons/react': 2.0.13
+      '@heroicons/react': ^1.0.0
       '@heroicons/react-v1': npm:@heroicons/react@v1
       '@hookform/resolvers': 2.9.10
       '@layerzerolabs/scan-client': 0.0.0-beta.6
@@ -415,7 +415,7 @@ importers:
       '@ethersproject/bytes': 5.7.0
       '@ethersproject/constants': 5.7.0
       '@headlessui/react': 1.7.7_biqbaboplfbrettd7655fr4n2y
-      '@heroicons/react': 2.0.13_react@18.2.0
+      '@heroicons/react': 1.0.6_react@18.2.0
       '@heroicons/react-v1': /@heroicons/react/1.0.6_react@18.2.0
       '@hookform/resolvers': 2.9.10_react-hook-form@7.41.2
       '@layerzerolabs/scan-client': 0.0.0-beta.6
