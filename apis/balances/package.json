@@ -28,7 +28,7 @@
     "@wagmi/core": "0.10.10",
     "lodash.zip": "4.2.0",
     "@whatwg-node/fetch": "0.8.4",
-    "zod": "3.20.2"
+    "zod": "3.21.4"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",

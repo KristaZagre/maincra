@@ -91,14 +91,14 @@ importers:
       lodash.zip: 4.2.0
       typescript: 5.0.4
       vercel: 28.16.7
-      zod: 3.20.2
+      zod: 3.21.4
     dependencies:
       '@sushiswap/chain': link:../../packages/chain
       '@vercel/node': 2.9.8
-      '@wagmi/core': 0.10.10_phjbrgmd4bydmj33olj2sis5hu
+      '@wagmi/core': 0.10.10_z34kx2cq3kivpffalfeqk2ugre
       '@whatwg-node/fetch': 0.8.4
       lodash.zip: 4.2.0
-      zod: 3.20.2
+      zod: 3.21.4
     devDependencies:
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest
@@ -135,7 +135,7 @@ importers:
       eslint: 8.29.0
       typescript: 5.0.4
       vercel: 28.16.7
-      zod: 3.20.2
+      zod: 3.21.4
     dependencies:
       '@sushiswap/abi': link:../../packages/abi
       '@sushiswap/database': link:../../packages/database
@@ -143,9 +143,9 @@ importers:
       '@sushiswap/validate': link:../../packages/validate
       '@sushiswap/wagmi-config': link:../../config/wagmi
       '@vercel/node': 2.9.8
-      '@wagmi/core': 0.10.10_phjbrgmd4bydmj33olj2sis5hu
+      '@wagmi/core': 0.10.10_z34kx2cq3kivpffalfeqk2ugre
       deepmerge-ts: 4.3.0
-      zod: 3.20.2
+      zod: 3.21.4
     devDependencies:
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest
@@ -186,7 +186,7 @@ importers:
       ts-node: 10.9.1
       typescript: 5.0.4
       viem: 0.3.19
-      zod: 3.20.2
+      zod: 3.21.4
     dependencies:
       '@fastify/cors': 8.2.0
       '@fastify/rate-limit': 8.0.0
@@ -199,8 +199,8 @@ importers:
       '@whatwg-node/fetch': 0.8.4
       ethers: 5.7.2
       fastify: 4.11.0
-      viem: 0.3.19_phjbrgmd4bydmj33olj2sis5hu
-      zod: 3.20.2
+      viem: 0.3.19_z34kx2cq3kivpffalfeqk2ugre
+      zod: 3.21.4
     devDependencies:
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest
@@ -260,14 +260,14 @@ importers:
       ioredis: 5.3.1
       typescript: 5.0.4
       vercel: 28.16.7
-      zod: 3.20.2
+      zod: 3.21.4
     dependencies:
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/database': link:../../packages/database
       '@vercel/node': 2.9.8
       date-fns: 2.29.3
       ioredis: 5.3.1
-      zod: 3.20.2
+      zod: 3.21.4
     devDependencies:
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest
@@ -296,14 +296,14 @@ importers:
       eslint: 8.29.0
       typescript: 5.0.4
       vercel: 28.16.7
-      zod: 3.20.2
+      zod: 3.21.4
     dependencies:
       '@sushiswap/database': link:../../packages/database
       '@sushiswap/default-token-list': 41.4.0
       '@sushiswap/wagmi-config': link:../../config/wagmi
       '@vercel/node': 2.9.8
-      '@wagmi/core': 0.10.10_phjbrgmd4bydmj33olj2sis5hu
-      zod: 3.20.2
+      '@wagmi/core': 0.10.10_z34kx2cq3kivpffalfeqk2ugre
+      zod: 3.21.4
     devDependencies:
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest
@@ -378,7 +378,7 @@ importers:
       unimported: ^1.23.0
       wagmi: 0.12.12
       yup: ^0.32.11
-      zod: 3.20.2
+      zod: 3.21.4
     dependencies:
       '@ethersproject/address': 5.7.0
       '@headlessui/react': 1.7.7_biqbaboplfbrettd7655fr4n2y
@@ -423,9 +423,9 @@ importers:
       react-redux: 8.0.5_ie75ejlwqy5zh3tldgt7pftwcu
       react-slider: 2.0.4_react@18.2.0
       swr: 1.3.0_react@18.2.0
-      wagmi: 0.12.12_tqgigql3ylhtuwp7wqflnkncbq
+      wagmi: 0.12.12_ylt6pwwz665g7ztw2tsete3ppe
       yup: 0.32.11
-      zod: 3.20.2
+      zod: 3.21.4
     devDependencies:
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest
@@ -773,7 +773,7 @@ importers:
       tailwindcss: 3.2.4
       typescript: 5.0.4
       wagmi: 0.12.12
-      zod: 3.20.2
+      zod: 3.21.4
     dependencies:
       '@ethersproject/abi': 5.7.0
       '@ethersproject/address': 5.7.0
@@ -835,8 +835,8 @@ importers:
       react-dom: 18.2.0_react@18.2.0
       react-infinite-scroll-component: 6.1.0_react@18.2.0
       swr: 2.1.0_react@18.2.0
-      wagmi: 0.12.12_tqgigql3ylhtuwp7wqflnkncbq
-      zod: 3.20.2
+      wagmi: 0.12.12_ylt6pwwz665g7ztw2tsete3ppe
+      zod: 3.21.4
     devDependencies:
       '@playwright/test': 1.32.1
       '@sushiswap/eslint-config': link:../../config/eslint
@@ -952,7 +952,7 @@ importers:
       typechain: ^8.0.0
       typescript: 5.0.4
       wagmi: 0.12.12
-      zod: 3.20.2
+      zod: 3.21.4
     dependencies:
       '@ethersproject/abi': 5.7.0
       '@ethersproject/abstract-provider': 5.7.0
@@ -1002,7 +1002,7 @@ importers:
       '@visx/text': 2.3.0_react@18.2.0
       '@visx/tooltip': 2.8.0_biqbaboplfbrettd7655fr4n2y
       '@visx/xychart': 2.9.0_6j4h2ynquywxzeasclndxuyqde
-      '@wagmi/core': 0.10.10_nnaosxrdtrdd5tvfvvco5wlzp4
+      '@wagmi/core': 0.10.10_ishaktedllcvpchijqdxe6xm7a
       ajv: 6.12.6
       cids: 1.1.9
       date-fns: 2.29.3
@@ -1020,8 +1020,8 @@ importers:
       redux-devtools-extension: 2.13.9
       redux-persist: 6.0.0_react@18.2.0
       swr: 1.3.0_react@18.2.0
-      wagmi: 0.12.12_tqgigql3ylhtuwp7wqflnkncbq
-      zod: 3.20.2
+      wagmi: 0.12.12_ylt6pwwz665g7ztw2tsete3ppe
+      zod: 3.21.4
     devDependencies:
       '@graphprotocol/client-add-source-name': 1.0.18_graphql@16.6.0
       '@graphprotocol/client-auto-pagination': 1.1.16_graphql@16.6.0
@@ -1112,7 +1112,7 @@ importers:
       typescript: 5.0.4
       viem: 0.3.19
       wagmi: 0.12.12
-      zod: 3.20.2
+      zod: 3.21.4
     dependencies:
       '@ethersproject/abi': 5.7.0
       '@ethersproject/bignumber': 5.7.0
@@ -1149,7 +1149,7 @@ importers:
       '@tanstack/react-query-devtools': 4.28.0_q4teel2yjbizrm4naiaqcdpjum
       '@tanstack/react-query-persist-client': 4.28.0_qfusmmwykmcbgdy37sd3cqxiry
       '@vercel/analytics': 0.1.5_react@18.2.0
-      '@wagmi/core': 0.10.10_nnaosxrdtrdd5tvfvvco5wlzp4
+      '@wagmi/core': 0.10.10_ishaktedllcvpchijqdxe6xm7a
       date-fns: 2.29.3
       ethers: 5.7.2
       nanoid: 4.0.0
@@ -1159,9 +1159,9 @@ importers:
       numeral: 2.0.6
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
-      viem: 0.3.19_phjbrgmd4bydmj33olj2sis5hu
-      wagmi: 0.12.12_tqgigql3ylhtuwp7wqflnkncbq
-      zod: 3.20.2
+      viem: 0.3.19_z34kx2cq3kivpffalfeqk2ugre
+      wagmi: 0.12.12_ylt6pwwz665g7ztw2tsete3ppe
+      zod: 3.21.4
     devDependencies:
       '@playwright/test': 1.32.1
       '@sushiswap/eslint-config': link:../../config/eslint
@@ -1514,7 +1514,7 @@ importers:
       prettier: 2.8.1
       ts-node: 10.9.1
       typescript: 5.0.4
-      zod: 3.20.2
+      zod: 3.21.4
     dependencies:
       '@ethersproject/address': 5.7.0
       '@ethersproject/bignumber': 5.7.0
@@ -1529,11 +1529,11 @@ importers:
       '@sushiswap/tines': link:../../packages/tines
       '@sushiswap/wagmi-config': link:../../config/wagmi
       '@uniswap/v2-core': 1.0.1
-      '@wagmi/core': 0.10.10_phjbrgmd4bydmj33olj2sis5hu
+      '@wagmi/core': 0.10.10_z34kx2cq3kivpffalfeqk2ugre
       connect-timeout: 1.9.0
       express: 4.18.2
       graphql: 16.6.0
-      zod: 3.20.2
+      zod: 3.21.4
     devDependencies:
       '@graphprotocol/client-add-source-name': 1.0.18_graphql@16.6.0
       '@graphprotocol/client-auto-pagination': 1.1.16_graphql@16.6.0
@@ -1773,7 +1773,7 @@ importers:
       tiny-invariant: 1.3.1
       tiny-warning: 1.0.3
       typescript: 5.0.4
-      zod: 3.20.2
+      zod: 3.21.4
     dependencies:
       '@ethersproject/abi': 5.7.0
       '@ethersproject/address': 5.7.0
@@ -1786,7 +1786,7 @@ importers:
       '@sushiswap/trident': link:../../protocols/trident
       tiny-invariant: 1.3.1
       tiny-warning: 1.0.3
-      zod: 3.20.2
+      zod: 3.21.4
     devDependencies:
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest
@@ -1932,7 +1932,7 @@ importers:
       tiny-invariant: 1.3.1
       tsup: 6.5.0
       typescript: 5.0.4
-      zod: 3.20.2
+      zod: 3.21.4
     dependencies:
       '@ethersproject/address': 5.7.0
       '@ethersproject/units': 5.7.0
@@ -1940,7 +1940,7 @@ importers:
       '@sushiswap/math': link:../math
       lodash.flatmap: 4.5.0
       tiny-invariant: 1.3.1
-      zod: 3.20.2
+      zod: 3.21.4
     devDependencies:
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest
@@ -2292,7 +2292,7 @@ importers:
       react-dom: 18.2.0
       tsup: 6.5.0
       typescript: 5.0.4
-      zod: 3.20.2
+      zod: 3.21.4
     dependencies:
       '@ethersproject/address': 5.7.0
       '@ethersproject/bignumber': 5.7.0
@@ -2314,7 +2314,7 @@ importers:
       ethers: 5.7.2
       idb-keyval: 6.2.0
       nanoid: 4.0.0
-      zod: 3.20.2
+      zod: 3.21.4
     devDependencies:
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest
@@ -2463,7 +2463,7 @@ importers:
       tiny-warning: 1.0.3
       typescript: 5.0.4
       viem: 0.3.19
-      zod: 3.20.2
+      zod: 3.21.4
     dependencies:
       '@ethersproject/abi': 5.7.0
       '@ethersproject/address': 5.7.0
@@ -2486,8 +2486,8 @@ importers:
       node-fetch: 2.6.6
       tiny-invariant: 1.3.1
       tiny-warning: 1.0.3
-      viem: 0.3.19_phjbrgmd4bydmj33olj2sis5hu
-      zod: 3.20.2
+      viem: 0.3.19_z34kx2cq3kivpffalfeqk2ugre
+      zod: 3.21.4
     devDependencies:
       '@sushiswap/database': link:../database
       '@sushiswap/eslint-config': link:../../config/eslint
@@ -2737,7 +2737,7 @@ importers:
       tiny-invariant: 1.3.1
       tiny-warning: 1.0.3
       typescript: 5.0.4
-      zod: 3.20.2
+      zod: 3.21.4
     dependencies:
       '@ethersproject/abi': 5.7.0
       '@ethersproject/address': 5.7.0
@@ -2750,7 +2750,7 @@ importers:
       '@sushiswap/trident': link:../../protocols/trident
       tiny-invariant: 1.3.1
       tiny-warning: 1.0.3
-      zod: 3.20.2
+      zod: 3.21.4
     devDependencies:
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest
@@ -2786,7 +2786,7 @@ importers:
       tiny-warning: 1.0.3
       tsup: 6.5.0
       typescript: 5.0.4
-      zod: 3.20.2
+      zod: 3.21.4
     dependencies:
       '@ethersproject/abi': 5.7.0
       '@ethersproject/address': 5.7.0
@@ -2804,7 +2804,7 @@ importers:
       '@uniswap/v3-staker': 1.0.2
       tiny-invariant: 1.3.1
       tiny-warning: 1.0.3
-      zod: 3.20.2
+      zod: 3.21.4
     devDependencies:
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest
@@ -2901,7 +2901,7 @@ importers:
       viem: 0.3.19
       vitest: 0.30.1
       wagmi: 0.12.12
-      zod: 3.20.2
+      zod: 3.21.4
     dependencies:
       '@ethersproject/abi': 5.7.0
       '@ethersproject/address': 5.7.0
@@ -2944,8 +2944,8 @@ importers:
       '@uniswap/v2-core': 1.0.1
       '@uniswap/v3-periphery': 1.4.1
       next-themes: 0.2.1_ivamjty3az7dj3hhadhjniqtwe
-      viem: 0.3.19_phjbrgmd4bydmj33olj2sis5hu
-      zod: 3.20.2
+      viem: 0.3.19_z34kx2cq3kivpffalfeqk2ugre
+      zod: 3.21.4
     optionalDependencies:
       next: 13.3.1_biqbaboplfbrettd7655fr4n2y
     devDependencies:
@@ -2956,7 +2956,7 @@ importers:
       '@types/jest': 29.5.1
       '@types/react': 18.0.26
       '@types/react-dom': 18.0.10
-      '@wagmi/core': 0.10.10_nnaosxrdtrdd5tvfvvco5wlzp4
+      '@wagmi/core': 0.10.10_ishaktedllcvpchijqdxe6xm7a
       eslint: 8.29.0
       ethers: 5.7.2
       react: 18.2.0
@@ -2965,7 +2965,7 @@ importers:
       typechain: 8.1.1_typescript@5.0.4
       typescript: 5.0.4
       vitest: 0.30.1
-      wagmi: 0.12.12_tqgigql3ylhtuwp7wqflnkncbq
+      wagmi: 0.12.12_ylt6pwwz665g7ztw2tsete3ppe
 
   protocols/bentobox:
     specifiers:
@@ -13513,7 +13513,7 @@ packages:
     dependencies:
       typescript: 5.0.4
 
-  /@wagmi/connectors/0.3.16_jsfpbmotqrz4yfkch6tu3pbeey:
+  /@wagmi/connectors/0.3.16_lv2bfbzdhaudnkfesfs52y7l2m:
     resolution: {integrity: sha512-WtiFyvai6IWbV7DhujjmtJF0m+FFQCiIDrtHsNf1xio0gBfpnO8rT9PZQQf0uxuLn0nLxqXqYMMwzPipUNaIcg==}
     peerDependencies:
       '@wagmi/core': '>=0.9.x'
@@ -13529,11 +13529,11 @@ packages:
       '@ledgerhq/connect-kit-loader': 1.0.2
       '@safe-global/safe-apps-provider': 0.15.2
       '@safe-global/safe-apps-sdk': 7.10.1
-      '@wagmi/core': 0.10.10_nnaosxrdtrdd5tvfvvco5wlzp4
+      '@wagmi/core': 0.10.10_ishaktedllcvpchijqdxe6xm7a
       '@walletconnect/ethereum-provider': 2.7.0_aoc3hmsw7olffo4phcufkowxtq
       '@walletconnect/legacy-provider': 2.0.0
       '@web3modal/standalone': 2.3.7_react@18.2.0
-      abitype: 0.3.0_phjbrgmd4bydmj33olj2sis5hu
+      abitype: 0.3.0_z34kx2cq3kivpffalfeqk2ugre
       ethers: 5.7.2
       eventemitter3: 4.0.7
       typescript: 5.0.4
@@ -13653,7 +13653,7 @@ packages:
       - zod
     dev: true
 
-  /@wagmi/connectors/0.3.16_yymbwt55qk2qwilmebcxoiv6mq:
+  /@wagmi/connectors/0.3.16_ywl2iq5dewcsjkhtfvbdoakgd4:
     resolution: {integrity: sha512-WtiFyvai6IWbV7DhujjmtJF0m+FFQCiIDrtHsNf1xio0gBfpnO8rT9PZQQf0uxuLn0nLxqXqYMMwzPipUNaIcg==}
     peerDependencies:
       '@wagmi/core': '>=0.9.x'
@@ -13669,11 +13669,11 @@ packages:
       '@ledgerhq/connect-kit-loader': 1.0.2
       '@safe-global/safe-apps-provider': 0.15.2
       '@safe-global/safe-apps-sdk': 7.10.1
-      '@wagmi/core': 0.10.10_phjbrgmd4bydmj33olj2sis5hu
+      '@wagmi/core': 0.10.10_z34kx2cq3kivpffalfeqk2ugre
       '@walletconnect/ethereum-provider': 2.7.0_aoc3hmsw7olffo4phcufkowxtq
       '@walletconnect/legacy-provider': 2.0.0
       '@web3modal/standalone': 2.3.7
-      abitype: 0.3.0_phjbrgmd4bydmj33olj2sis5hu
+      abitype: 0.3.0_z34kx2cq3kivpffalfeqk2ugre
       eventemitter3: 4.0.7
       typescript: 5.0.4
     transitivePeerDependencies:
@@ -13784,7 +13784,7 @@ packages:
       - zod
     dev: false
 
-  /@wagmi/core/0.10.10_nnaosxrdtrdd5tvfvvco5wlzp4:
+  /@wagmi/core/0.10.10_ishaktedllcvpchijqdxe6xm7a:
     resolution: {integrity: sha512-oghQIASk+QfrRku2m36NJTZnj5gpJNqfID5G3kZlBReWr01iOFbGfTVcS6Pcu2X3rsR2lmky8Tu5DWLXdKeGZg==}
     peerDependencies:
       ethers: '>=5.5.1 <6'
@@ -13794,8 +13794,8 @@ packages:
         optional: true
     dependencies:
       '@wagmi/chains': 0.2.19_typescript@5.0.4
-      '@wagmi/connectors': 0.3.16_jsfpbmotqrz4yfkch6tu3pbeey
-      abitype: 0.3.0_phjbrgmd4bydmj33olj2sis5hu
+      '@wagmi/connectors': 0.3.16_lv2bfbzdhaudnkfesfs52y7l2m
+      abitype: 0.3.0_z34kx2cq3kivpffalfeqk2ugre
       ethers: 5.7.2
       eventemitter3: 4.0.7
       typescript: 5.0.4
@@ -13839,34 +13839,6 @@ packages:
       - utf-8-validate
       - zod
 
-  /@wagmi/core/0.10.10_phjbrgmd4bydmj33olj2sis5hu:
-    resolution: {integrity: sha512-oghQIASk+QfrRku2m36NJTZnj5gpJNqfID5G3kZlBReWr01iOFbGfTVcS6Pcu2X3rsR2lmky8Tu5DWLXdKeGZg==}
-    peerDependencies:
-      ethers: '>=5.5.1 <6'
-      typescript: '>=4.9.4'
-    peerDependenciesMeta:
-      typescript:
-        optional: true
-    dependencies:
-      '@wagmi/chains': 0.2.19_typescript@5.0.4
-      '@wagmi/connectors': 0.3.16_yymbwt55qk2qwilmebcxoiv6mq
-      abitype: 0.3.0_phjbrgmd4bydmj33olj2sis5hu
-      eventemitter3: 4.0.7
-      typescript: 5.0.4
-      zustand: 4.3.7
-    transitivePeerDependencies:
-      - '@react-native-async-storage/async-storage'
-      - bufferutil
-      - debug
-      - encoding
-      - immer
-      - lokijs
-      - react
-      - supports-color
-      - utf-8-validate
-      - zod
-    dev: false
-
   /@wagmi/core/0.10.10_typescript@5.0.4:
     resolution: {integrity: sha512-oghQIASk+QfrRku2m36NJTZnj5gpJNqfID5G3kZlBReWr01iOFbGfTVcS6Pcu2X3rsR2lmky8Tu5DWLXdKeGZg==}
     peerDependencies:
@@ -13894,6 +13866,34 @@ packages:
       - utf-8-validate
       - zod
     dev: true
+
+  /@wagmi/core/0.10.10_z34kx2cq3kivpffalfeqk2ugre:
+    resolution: {integrity: sha512-oghQIASk+QfrRku2m36NJTZnj5gpJNqfID5G3kZlBReWr01iOFbGfTVcS6Pcu2X3rsR2lmky8Tu5DWLXdKeGZg==}
+    peerDependencies:
+      ethers: '>=5.5.1 <6'
+      typescript: '>=4.9.4'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+    dependencies:
+      '@wagmi/chains': 0.2.19_typescript@5.0.4
+      '@wagmi/connectors': 0.3.16_ywl2iq5dewcsjkhtfvbdoakgd4
+      abitype: 0.3.0_z34kx2cq3kivpffalfeqk2ugre
+      eventemitter3: 4.0.7
+      typescript: 5.0.4
+      zustand: 4.3.7
+    transitivePeerDependencies:
+      - '@react-native-async-storage/async-storage'
+      - bufferutil
+      - debug
+      - encoding
+      - immer
+      - lokijs
+      - react
+      - supports-color
+      - utf-8-validate
+      - zod
+    dev: false
 
   /@walletconnect/core/2.7.0:
     resolution: {integrity: sha512-xUeFPpElybgn1a+lknqtHleei4VyuV/4qWgB1nP8qQUAO6a5pNsioODrnB2VAPdUHJYBdx2dCt2maRk6g53IPQ==}
@@ -14583,19 +14583,6 @@ packages:
     resolution: {integrity: sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==}
     dev: true
 
-  /abitype/0.3.0_phjbrgmd4bydmj33olj2sis5hu:
-    resolution: {integrity: sha512-0YokyAV4hKMcy97Pl+6QgZBlBdZJN2llslOs7kiFY+cu7kMlVXDBpxMExfv0krzBCQt2t7hNovpQ3y/zvEm18A==}
-    engines: {pnpm: '>=7'}
-    peerDependencies:
-      typescript: '>=4.9.4'
-      zod: '>=3.19.1'
-    peerDependenciesMeta:
-      zod:
-        optional: true
-    dependencies:
-      typescript: 5.0.4
-      zod: 3.20.2
-
   /abitype/0.3.0_typescript@5.0.4:
     resolution: {integrity: sha512-0YokyAV4hKMcy97Pl+6QgZBlBdZJN2llslOs7kiFY+cu7kMlVXDBpxMExfv0krzBCQt2t7hNovpQ3y/zvEm18A==}
     engines: {pnpm: '>=7'}
@@ -14608,18 +14595,18 @@ packages:
     dependencies:
       typescript: 5.0.4
 
-  /abitype/0.8.2_phjbrgmd4bydmj33olj2sis5hu:
-    resolution: {integrity: sha512-B1ViNMGpfx/qjVQi0RTc2HEFHuR9uoCoTEkwELT5Y7pBPtBbctYijz9BK6+Kd0hQ3S70FhYTO2dWWk0QNUEXMA==}
+  /abitype/0.3.0_z34kx2cq3kivpffalfeqk2ugre:
+    resolution: {integrity: sha512-0YokyAV4hKMcy97Pl+6QgZBlBdZJN2llslOs7kiFY+cu7kMlVXDBpxMExfv0krzBCQt2t7hNovpQ3y/zvEm18A==}
+    engines: {pnpm: '>=7'}
     peerDependencies:
-      typescript: '>=5.0.4'
-      zod: ^3 >=3.19.1
+      typescript: '>=4.9.4'
+      zod: '>=3.19.1'
     peerDependenciesMeta:
       zod:
         optional: true
     dependencies:
       typescript: 5.0.4
-      zod: 3.20.2
-    dev: false
+      zod: 3.21.4
 
   /abitype/0.8.2_typescript@5.0.4:
     resolution: {integrity: sha512-B1ViNMGpfx/qjVQi0RTc2HEFHuR9uoCoTEkwELT5Y7pBPtBbctYijz9BK6+Kd0hQ3S70FhYTO2dWWk0QNUEXMA==}
@@ -14632,6 +14619,19 @@ packages:
     dependencies:
       typescript: 5.0.4
     dev: true
+
+  /abitype/0.8.2_z34kx2cq3kivpffalfeqk2ugre:
+    resolution: {integrity: sha512-B1ViNMGpfx/qjVQi0RTc2HEFHuR9uoCoTEkwELT5Y7pBPtBbctYijz9BK6+Kd0hQ3S70FhYTO2dWWk0QNUEXMA==}
+    peerDependencies:
+      typescript: '>=5.0.4'
+      zod: ^3 >=3.19.1
+    peerDependenciesMeta:
+      zod:
+        optional: true
+    dependencies:
+      typescript: 5.0.4
+      zod: 3.21.4
+    dev: false
 
   /abort-controller/3.0.0:
     resolution: {integrity: sha512-h8lQ8tacZYnR3vNQTgibj+tODHI5/+l06Au2Pcriv/Gmet0eaj4TwWH41sO9wnHDiQsEj19q0drzdWdeAHtweg==}
@@ -32535,25 +32535,6 @@ packages:
       unist-util-stringify-position: 3.0.2
       vfile-message: 3.1.3
 
-  /viem/0.3.19_phjbrgmd4bydmj33olj2sis5hu:
-    resolution: {integrity: sha512-7OlSgiB7e+OFz9OqTOZ/Mpx8GAAVKCxsaPDJRuR8QtixlruUHPfHBHOemkX+O/Drn6B7l04iCUZjCvSB8OtVKg==}
-    dependencies:
-      '@adraffy/ens-normalize': 1.9.0
-      '@noble/curves': 1.0.0
-      '@noble/hashes': 1.3.0
-      '@scure/bip32': 1.3.0
-      '@scure/bip39': 1.2.0
-      '@wagmi/chains': 0.2.16_typescript@5.0.4
-      abitype: 0.8.2_phjbrgmd4bydmj33olj2sis5hu
-      isomorphic-ws: 5.0.0_ws@8.12.0
-      ws: 8.12.0
-    transitivePeerDependencies:
-      - bufferutil
-      - typescript
-      - utf-8-validate
-      - zod
-    dev: false
-
   /viem/0.3.19_typescript@5.0.4:
     resolution: {integrity: sha512-7OlSgiB7e+OFz9OqTOZ/Mpx8GAAVKCxsaPDJRuR8QtixlruUHPfHBHOemkX+O/Drn6B7l04iCUZjCvSB8OtVKg==}
     dependencies:
@@ -32572,6 +32553,25 @@ packages:
       - utf-8-validate
       - zod
     dev: true
+
+  /viem/0.3.19_z34kx2cq3kivpffalfeqk2ugre:
+    resolution: {integrity: sha512-7OlSgiB7e+OFz9OqTOZ/Mpx8GAAVKCxsaPDJRuR8QtixlruUHPfHBHOemkX+O/Drn6B7l04iCUZjCvSB8OtVKg==}
+    dependencies:
+      '@adraffy/ens-normalize': 1.9.0
+      '@noble/curves': 1.0.0
+      '@noble/hashes': 1.3.0
+      '@scure/bip32': 1.3.0
+      '@scure/bip39': 1.2.0
+      '@wagmi/chains': 0.2.16_typescript@5.0.4
+      abitype: 0.8.2_z34kx2cq3kivpffalfeqk2ugre
+      isomorphic-ws: 5.0.0_ws@8.12.0
+      ws: 8.12.0
+    transitivePeerDependencies:
+      - bufferutil
+      - typescript
+      - utf-8-validate
+      - zod
+    dev: false
 
   /vite-node/0.30.1_@types+node@18.11.18:
     resolution: {integrity: sha512-vTikpU/J7e6LU/8iM3dzBo8ZhEiKZEKRznEMm+mJh95XhWaPrJQraT/QsT2NWmuEf+zgAoMe64PKT7hfZ1Njmg==}
@@ -32713,7 +32713,7 @@ packages:
       xml-name-validator: 4.0.0
     dev: false
 
-  /wagmi/0.12.12_tqgigql3ylhtuwp7wqflnkncbq:
+  /wagmi/0.12.12_tvrvbu6r5w7oyqiu4bvze3slou:
     resolution: {integrity: sha512-AEY4res9WCeAEbVv++tgdx6981lkdiAwfpLPj24mawMoocj2Cqr6j304lq7EJiEhnoiPqIwvbBzme3sAmUWYUA==}
     peerDependencies:
       ethers: '>=5.5.1 <6'
@@ -32726,9 +32726,8 @@ packages:
       '@tanstack/query-sync-storage-persister': 4.27.1
       '@tanstack/react-query': 4.28.0_biqbaboplfbrettd7655fr4n2y
       '@tanstack/react-query-persist-client': 4.28.0_qfusmmwykmcbgdy37sd3cqxiry
-      '@wagmi/core': 0.10.10_nnaosxrdtrdd5tvfvvco5wlzp4
-      abitype: 0.3.0_phjbrgmd4bydmj33olj2sis5hu
-      ethers: 5.7.2
+      '@wagmi/core': 0.10.10_oxnxxw5cisuxfd3tsgnto6yp4e
+      abitype: 0.3.0_typescript@5.0.4
       react: 18.2.0
       typescript: 5.0.4
       use-sync-external-store: 1.2.0_react@18.2.0
@@ -32745,7 +32744,7 @@ packages:
       - utf-8-validate
       - zod
 
-  /wagmi/0.12.12_tvrvbu6r5w7oyqiu4bvze3slou:
+  /wagmi/0.12.12_ylt6pwwz665g7ztw2tsete3ppe:
     resolution: {integrity: sha512-AEY4res9WCeAEbVv++tgdx6981lkdiAwfpLPj24mawMoocj2Cqr6j304lq7EJiEhnoiPqIwvbBzme3sAmUWYUA==}
     peerDependencies:
       ethers: '>=5.5.1 <6'
@@ -32758,8 +32757,9 @@ packages:
       '@tanstack/query-sync-storage-persister': 4.27.1
       '@tanstack/react-query': 4.28.0_biqbaboplfbrettd7655fr4n2y
       '@tanstack/react-query-persist-client': 4.28.0_qfusmmwykmcbgdy37sd3cqxiry
-      '@wagmi/core': 0.10.10_oxnxxw5cisuxfd3tsgnto6yp4e
-      abitype: 0.3.0_typescript@5.0.4
+      '@wagmi/core': 0.10.10_ishaktedllcvpchijqdxe6xm7a
+      abitype: 0.3.0_z34kx2cq3kivpffalfeqk2ugre
+      ethers: 5.7.2
       react: 18.2.0
       typescript: 5.0.4
       use-sync-external-store: 1.2.0_react@18.2.0
@@ -33811,12 +33811,8 @@ packages:
     dev: true
     optional: true
 
-  /zod/3.20.2:
-    resolution: {integrity: sha512-1MzNQdAvO+54H+EaK5YpyEy0T+Ejo/7YLHS93G3RnYWh5gaotGHwGeN/ZO687qEDU2y4CdStQYXVHIgrUl5UVQ==}
-
   /zod/3.21.4:
     resolution: {integrity: sha512-m46AKbrzKVzOzs/DZgVnG5H55N1sv1M8qZU3A8RIKbs3mrACDNeIOeilDymVb2HdmP8uwshOCF4uJ8uM9rCqJw==}
-    dev: false
 
   /zrender/5.4.1:
     resolution: {integrity: sha512-M4Z05BHWtajY2241EmMPHglDQAJ1UyHQcYsxDNzD9XLSkPDqMq4bB28v9Pb4mvHnVQ0GxyTklZ/69xCFP6RXBA==}
