@@ -138,18 +138,18 @@ sources:
       graphql:
         endpoint: https://{context.node:api.thegraph.com/index-node/graphql}
 
-  - name: Concentrated
-    handler:
-      graphql:
-        endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:uniswap/uniswap-v3}
-        retry: 3
-    transforms:
-      - prefix:
-          value: CONCENTRATED_
-          includeRootOperations: true
-          includeTypes: true
-          ignore:
-            - _SubgraphErrorPolicy_
+  # - name: Concentrated
+  #   handler:
+  #     graphql:
+  #       endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:uniswap/uniswap-v3}
+  #       retry: 3
+  #   transforms:
+  #     - prefix:
+  #         value: CONCENTRATED_
+  #         includeRootOperations: true
+  #         includeTypes: true
+  #         ignore:
+  #           - _SubgraphErrorPolicy_
 
   - name: SushiSwapV3
     handler:
@@ -157,7 +157,12 @@ sources:
         endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:uniswap/uniswap-v3}
         retry: 3
     transforms:
-
+      # - prefix:
+      #     value: SUSHISWAP_V3_
+      #     includeRootOperations: true
+      #     includeTypes: false
+      #     ignore:
+      #       - _SubgraphErrorPolicy_
 
 # Had to disable global transforms since we have a jsonSchema handler in here now...
 transforms:
@@ -468,12 +473,12 @@ additionalTypeDefs: |
     # CONCENTRADED
     ticksById(
       id: ID!
-    ): [CONCENTRATED_Tick!]!
+    ): [Tick!]!
 
     poolsByTokenPair(
       tokenId0: String!
       tokenId1: String!
-    ): [CONCENTRATED_Pool!]!
+    ): [Pool!]!
 
     # TODO: REFACTOR BELOW
     crossChainChefUser(

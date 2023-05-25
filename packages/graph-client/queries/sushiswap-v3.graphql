@@ -1,10 +1,10 @@
 
 query SushiSwapV3PoolDayData(
     $id: ID!
-    $block: Block_height,
+    $block: Block_height
     $subgraphError: _SubgraphErrorPolicy_! = deny
 ) {
-  poolDayData(
+  poolDayData: poolDayData(
     id: $id,
     block: $block, 
     subgraphError: $subgraphError
@@ -36,10 +36,10 @@ query SushiSwapV3PoolDayData(
 
 query SushiSwapV3PoolHourData(
     $id: ID!
-    $block: Block_height,
+    $block: Block_height
     $subgraphError: _SubgraphErrorPolicy_! = deny
 ) {
-  poolHourData(
+  poolHourData: poolHourData(
     id: $id,
     block: $block, 
     subgraphError: $subgraphError
@@ -66,5 +66,118 @@ query SushiSwapV3PoolHourData(
     high
     low
     close
+  }
+}
+
+query SushiSwapV3Transactions(  
+  $skip: Int = 0
+  $first: Int = 200
+  $orderBy: Transaction_orderBy = timestamp
+  $orderDir: OrderDirection = desc
+  $where: Transaction_filter
+) {
+  transactions: transactions(
+    skip: $skip,
+    first: $first,
+    orderBy: $orderBy,
+    orderDirection: $orderDir,
+    where: $where
+  ) {
+    id
+    timestamp
+    blockNumber
+    mints {
+      id
+      owner
+      sender
+      origin
+      amount
+      amount0
+      amount1
+      amountUSD
+      logIndex
+    }
+    burns {
+      id
+      owner
+      origin
+      amount
+      amount0
+      amount1
+      amountUSD
+      logIndex
+    }
+    swaps {
+      id
+      sender
+      recipient
+      origin
+      amount0
+      amount1
+      amountUSD
+      logIndex
+    }
+    collects {
+      id
+      owner
+      amount0
+      amount1
+      amountUSD
+      logIndex
+    }
+  }
+}
+
+query TicksById($id: ID!) {
+  ticks: ticksById(id: $id) {
+    id
+    poolAddress
+    tickIdx
+    liquidityGross
+    liquidityNet
+    price0
+    price1
+    volumeToken0
+    volumeToken1
+    volumeUSD
+    untrackedVolumeUSD
+    feesUSD
+    collectedFeesToken0
+    collectedFeesToken1
+    collectedFeesUSD
+    createdAtTimestamp
+    createdAtBlockNumber
+    liquidityProviderCount
+    feeGrowthOutside0X128
+    feeGrowthOutside1X128
+  }
+}
+
+query PoolsByTokenPair($tokenId0: String!, $tokenId1: String!) {
+  pools: poolsByTokenPair(tokenId0: $tokenId0, tokenId1: $tokenId1) {
+    id
+    feeTier
+    liquidity
+    sqrtPrice
+    feeGrowthGlobal0X128
+    feeGrowthGlobal1X128
+    token0Price
+    token1Price
+    tick
+    observationIndex
+    volumeToken0
+    volumeToken1
+    volumeUSD
+    untrackedVolumeUSD
+    feesUSD
+    collectedFeesToken0
+    collectedFeesToken1
+    collectedFeesUSD
+    totalValueLockedToken0
+    totalValueLockedToken1
+    totalValueLockedETH
+    totalValueLockedUSD
+    totalValueLockedUSDUntracked
+    liquidityProviderCount
   }
 }

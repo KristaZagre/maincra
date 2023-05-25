@@ -32,7 +32,7 @@ function useTransactionsV3(pool: Pool | undefined | null, poolId: string, opts: 
         subgraphName: SUSHISWAP_V3_SUBGRAPH_NAME[chainId],
       })
 
-      const { transactions } = await sdk.V3Transactions({
+      const { transactions } = await sdk.SushiSwapV3Transactions({
         first: opts.first,
         skip: opts.skip,
         where: {
