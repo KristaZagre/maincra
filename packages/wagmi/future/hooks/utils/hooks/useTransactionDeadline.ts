@@ -1,6 +1,7 @@
 import { ChainId, chainsL2 } from '@sushiswap/chain'
 import { useMemo } from 'react'
 import { useCurrentBlockTimestamp } from '../../../../hooks'
+import { BigNumber } from 'ethers'
 
 const L2_DEADLINE_FROM_NOW = 60 * 5
 const TTL = 30
@@ -15,7 +16,7 @@ export const useTransactionDeadline = ({ chainId, enabled }: UseTransactionDeadl
 
   return useMemo(() => {
     const blockTimestamp = currentBlockTimestampQuery
-    let data = undefined
+    let data: BigNumber | undefined = undefined
     if (blockTimestamp && chainId && Object.keys(chainsL2).includes(chainId.toString())) {
       data = blockTimestamp.add(L2_DEADLINE_FROM_NOW)
     }

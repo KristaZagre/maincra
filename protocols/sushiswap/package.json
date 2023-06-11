@@ -37,7 +37,7 @@
     "@openzeppelin/contracts": "3.1.0",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
-    "@sushiswap/types": "0.0.2",
+    "@sushiswap/types": "workspace:*",
     "@sushiswap/hardhat-config": "workspace:*"
   },
   "devDependencies": {
@@ -46,12 +46,12 @@
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
-    "@tenderly/hardhat-tenderly": "^1.0.13",
+    "@tenderly/hardhat-tenderly": "1.7.7",
     "@types/node": "18.11.18",
     "eslint": "8.41.0",
     "hardhat": "2.12.4",
     "hardhat-deploy": "0.11.22",
     "ts-node": "10.9.1",
-    "typescript": "5.0.4"
+    "typescript": "5.1.3"
   }
 }

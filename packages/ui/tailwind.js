@@ -3,6 +3,7 @@ const defaultTheme = require('tailwindcss/defaultTheme')
 // @ts-check
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  prefix: 'ui-',
   // content: [
   //   './app/**/*.{js,ts,jsx,tsx,mdx}',
   //   './common/**/*.{js,ts,jsx,tsx,mdx}',
@@ -11,12 +12,12 @@ module.exports = {
   //   './ui/**/*.{js,ts,jsx,tsx,mdx}',
   //   // '../../packages/wagmi/!(node_modules)/**/*.{js,ts,jsx,tsx,mdx}',
   //   // '../../packages/ui/!(node_modules)/**/*.{js,ts,jsx,tsx,mdx}',
-  //   // './node_modules/@sushiswap/wagmi/!(node_modules)/**/*.{js,ts,jsx,tsx,mdx}',
   //   // './node_modules/@sushiswap/ui/!(node_modules)/**/*.{js,ts,jsx,tsx,mdx}',
+  //   // './node_modules/@sushiswap/wagmi/!(node_modules)/**/*.{js,ts,jsx,tsx,mdx}',
   // ],
-  future: {
-    hoverOnlyWhenSupported: true,
-  },
+  // future: {
+  //   hoverOnlyWhenSupported: true,
+  // },
   plugins: [require('@tailwindcss/forms'), require('@tailwindcss/aspect-ratio'), require('@tailwindcss/typography')],
   theme: {
     screens: {

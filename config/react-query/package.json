@@ -42,8 +42,8 @@
     "@sushiswap/typescript-config": "workspace:*",
     "@tanstack/react-query": "4.28.0",
     "@tanstack/react-query-devtools": "4.28.0",
-    "tsup": "6.5.0",
-    "typescript": "5.0.4"
+    "tsup": "6.7.0",
+    "typescript": "5.1.3"
   },
   "peerDependencies": {
     "@tanstack/react-query": "4.28.0",

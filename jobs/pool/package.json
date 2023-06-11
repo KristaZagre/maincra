@@ -57,7 +57,7 @@
     "@graphql-mesh/runtime": "0.46.22",
     "@graphql-mesh/cross-helpers": "0.3.4",
     "@graphql-mesh/store": "0.9.20",
-    "@sushiswap/bentobox": "1.0.1",
+    "@sushiswap/bentobox": "workspace:*",
     "@sushiswap/tines": "workspace:*",
     "@sushiswap/abi": "workspace:*",
     "@sushiswap/chain": "workspace:*",
@@ -91,6 +91,6 @@
     "jest": "29.3.1",
     "prettier": "2.8.1",
     "ts-node": "10.9.1",
-    "typescript": "5.0.4"
+    "typescript": "5.1.3"
   }
 }

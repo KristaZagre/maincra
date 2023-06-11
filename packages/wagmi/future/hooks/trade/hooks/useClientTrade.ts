@@ -6,7 +6,7 @@ import { Amount, Native, Price, WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { usePrice, UseTradeParams, UseTradeReturnWriteArgs } from '@sushiswap/react-query'
 import { JSBI, Percent, ZERO } from '@sushiswap/math'
 import { BigNumber } from 'ethers'
-import { LiquidityProviders, Router } from '@sushiswap/router'
+import { LiquidityProviders, RPParams, Router } from '@sushiswap/router'
 import {
   isRouteProcessor3ChainId,
   isRouteProcessorChainId,
@@ -97,7 +97,7 @@ ${logPools}
       //   feeData.gasPrice.toNumber()
       // )
 
-      let args = undefined
+      let args: RPParams | null = null
 
       console.log({ recipient })
 

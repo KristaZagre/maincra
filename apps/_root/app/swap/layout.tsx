@@ -1,3 +1,5 @@
+import './variables.css'
+
 import { Header } from './header'
 import { Providers } from './providers'
 

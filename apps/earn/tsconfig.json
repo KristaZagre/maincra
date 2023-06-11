@@ -12,6 +12,6 @@
   ],
   "compilerOptions": {
     "baseUrl": ".",
-    "strictNullChecks": true
+    "strictNullChecks": false
   }
 }

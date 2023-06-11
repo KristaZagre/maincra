@@ -17,7 +17,7 @@ import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 const tailwind = resolveConfig(tailwindConfig)
 
 interface PoolChartProps {
-  chart: PoolChartType.Volume | PoolChartType.Fees | PoolChartType.TVL | PoolChartType.APR
+  chart: typeof PoolChartType.Volume | typeof PoolChartType.Fees | typeof PoolChartType.TVL | typeof PoolChartType.APR
   period: PoolChartPeriod
   address: string
   chainId: ChainId

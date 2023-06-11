@@ -12,7 +12,7 @@ import {
   useConcentratedMintState,
 } from './ConcentratedLiquidityProvider'
 import { FeeAmount, Position, V3ChainId } from '@sushiswap/v3-sdk'
-import { Type } from '@sushiswap/currency'
+import { Amount, Type } from '@sushiswap/currency'
 import { useConcentratedPositionOwner } from '@sushiswap/wagmi/future/hooks/positions/hooks/useConcentratedPositionOwner'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { getV3NonFungiblePositionManagerConractConfig } from '@sushiswap/wagmi/future/hooks/contracts/useV3NonFungiblePositionManager'
@@ -103,7 +103,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
   )
 
   const amounts = useMemo(() => {
-    const amounts = []
+    const amounts: (Amount<Type> | undefined)[] = []
     if (!depositADisabled) amounts.push(parsedAmounts[Field.CURRENCY_A])
     if (!depositBDisabled) amounts.push(parsedAmounts[Field.CURRENCY_B])
     return amounts
@@ -169,7 +169,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
             </div>
           </Transition>
           <Web3Input.Currency
-            id='add-liquidity-token0'
+            id="add-liquidity-token0"
             type="INPUT"
             className="p-3 bg-white dark:bg-slate-800 rounded-xl"
             chainId={chainId}
@@ -216,7 +216,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
             </div>
           </Transition>
           <Web3Input.Currency
-            id='add-liquidity-token1'
+            id="add-liquidity-token1"
             type="INPUT"
             className="p-3 bg-white dark:bg-slate-800 rounded-xl"
             chainId={chainId}
@@ -265,7 +265,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
                     successLink={successLink}
                   >
                     {({ setOpen }) => (
-                      <Button fullWidth onClick={() => setOpen(true)} size="xl" testId='add-liquidity-preview'>
+                      <Button fullWidth onClick={() => setOpen(true)} size="xl" testId="add-liquidity-preview">
                         Preview
                       </Button>
                     )}
