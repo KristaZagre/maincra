@@ -4,6 +4,7 @@ import '@sushiswap/ui/index.css'
 
 import React from 'react'
 import { Providers } from './providers'
+import StaleCheck from './stale-check'
 
 export const metadata: Metadata = {
   title: {
@@ -25,7 +26,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <link rel="mask-icon" href="/safari-pinned-tab.svg?v=1" color="#fa52a0" />
       <link rel="shortcut icon" href="/favicon.ico?v=1" />
       <body className="h-screen">
-        <Providers>{children}</Providers>
+        <StaleCheck>
+          <Providers>{children}</Providers>
+        </StaleCheck>
       </body>
     </html>
   )
