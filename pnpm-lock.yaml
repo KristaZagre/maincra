@@ -1611,6 +1611,7 @@ importers:
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/pools-api': workspace:*
       '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/tokens-api': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@types/node': '18'
       '@whatwg-node/fetch': 0.8.4
@@ -1629,6 +1630,7 @@ importers:
       '@sushiswap/jest-config': link:../../config/jest
       '@sushiswap/pools-api': link:../../apis/pools
       '@sushiswap/prettier-config': link:../../config/prettier
+      '@sushiswap/tokens-api': link:../../apis/tokens
       '@sushiswap/typescript-config': link:../../config/typescript
       '@types/node': 18.11.18
       eslint: 8.43.0
