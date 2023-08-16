@@ -19,7 +19,7 @@ import {
 import { config } from '@sushiswap/viem-config'
 import { Address, createPublicClient } from 'viem'
 
-import { LogFilterType } from '../src/LogFilter'
+import { LogFilterType } from '../src/LogFilter2'
 
 export const SUPPORTED_CHAIN_IDS = [
   ChainId.ARBITRUM,
@@ -120,7 +120,7 @@ export const EXTRACTOR_CONFIG = {
     tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.ARBITRUM],
     cacheDir: './cache',
     logDepth: 300,
-    logType: LogFilterType.SelfFilter,
+    logType: LogFilterType.Native,
     logging: true,
     RP3Address: ROUTE_PROCESSOR_3_ADDRESS[ChainId.ARBITRUM],
   },
@@ -382,6 +382,7 @@ export const EXTRACTOR_CONFIG = {
   [ChainId.BASE]: {
     client: createPublicClient(config[ChainId.BASE]),
     factoriesV2: [
+      sushiswapV2Factory(ChainId.BASE),
       {
         address: '0xFDa619b6d20975be80A10332cD39b9a4b0FAa8BB' as Address,
         provider: LiquidityProviders.BaseSwap,

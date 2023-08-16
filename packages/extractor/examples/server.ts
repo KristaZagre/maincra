@@ -9,7 +9,7 @@ import path from 'path'
 import { Address } from 'viem'
 import z from 'zod'
 
-import { Extractor, MultiCallAggregator, TokenManager } from '../src'
+import { Extractor, MultiCallAggregator, TokenManager, WarningLevel } from '../src'
 import {
   EXTRACTOR_CONFIG,
   isSupportedChainId,
@@ -41,31 +41,7 @@ const extractors = new Map<SupportedChainId, Extractor>()
 const tokenManagers = new Map<SupportedChainId, TokenManager>()
 const nativeProviders = new Map<SupportedChainId, NativeWrapProvider>()
 
-async function setup() {
-  for (const chainId of SUPPORTED_CHAIN_IDS) {
-    const extractor = new Extractor({
-      ...EXTRACTOR_CONFIG[chainId],
-      warningMessageHandler: (chain: ChainId | number | undefined, message: string) => {
-        Sentry.captureMessage(`${chain}: ${message}`, 'warning')
-      },
-    })
-    await extractor.start(BASES_TO_CHECK_TRADES_AGAINST[chainId])
-    extractors.set(chainId, extractor)
-    const tokenManager = new TokenManager(
-      extractor?.multiCallAggregator as MultiCallAggregator,
-      path.resolve(__dirname, '../cache'),
-      `./tokens-${chainId}`
-    )
-    await tokenManager.addCachedTokens()
-    tokenManagers.set(chainId, tokenManager)
-    const nativeProvider = new NativeWrapProvider(chainId, extractor.client)
-    nativeProviders.set(chainId, nativeProvider)
-  }
-}
-
 async function main() {
-  await setup()
-
   const app: Express = express()
 
   Sentry.init({
@@ -81,8 +57,30 @@ async function main() {
       }),
     ],
     // Performance Monitoring
-    tracesSampleRate: 1.0, // Capture 100% of the transactions, reduce in production!,
+    tracesSampleRate: 0.1, // Capture 10% of the transactions, reduce in production!,
   })
+
+  for (const chainId of SUPPORTED_CHAIN_IDS) {
+    const extractor = new Extractor({
+      ...EXTRACTOR_CONFIG[chainId],
+      warningMessageHandler: (chain: ChainId | number | undefined, message: string, level: WarningLevel) => {
+        Sentry.captureMessage(`${chain}: ${message}`, level)
+      },
+    })
+    await extractor.start(BASES_TO_CHECK_TRADES_AGAINST[chainId])
+    extractors.set(chainId, extractor)
+    const tokenManager = new TokenManager(
+      extractor?.multiCallAggregator as MultiCallAggregator,
+      path.resolve(__dirname, '../cache'),
+      `./tokens-${chainId}`
+    )
+    await tokenManager.addCachedTokens()
+    tokenManagers.set(chainId, tokenManager)
+    const nativeProvider = new NativeWrapProvider(chainId, extractor.client)
+    nativeProviders.set(chainId, nativeProvider)
+  }
+
+  app.use(cors())
 
   // Trace incoming requests
   app.use(Sentry.Handlers.requestHandler())
@@ -202,8 +200,6 @@ async function main() {
     res.statusCode = 500
     res.end(res.sentry + '\n')
   })
-
-  app.use(cors())
 
   app.listen(PORT, () => {
     console.log(`Example app listening on port ${PORT}`)
