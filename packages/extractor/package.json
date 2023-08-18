@@ -32,7 +32,8 @@
     "start": "npx ts-node --transpile-only --files examples/server.ts",
     "test": "jest --passWithNoTests",
     "test:server": "npx ts-node --transpile-only --prefer-ts-exts --files examples/extractor.ts",
-    "test:load": "artillery run test/load.yml"
+    "test:load": "artillery run test/load.yml",
+    "test:load-new-tokens": "artillery run test/load-new-tokens.yml"
   },
   "dependencies": {
     "@sushiswap/abi": "workspace:*",
