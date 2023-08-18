@@ -30,14 +30,20 @@ async function makeSwap(
   to: string,
   amountIn: bigint
 ): Promise<number | undefined> {
-  debugger
   await dataFetcher.fetchPoolsForToken(fromToken, toToken)
   const pcMap = dataFetcher.getCurrentPoolCodeMap(fromToken, toToken)
   console.log('qq', Array.from(pcMap.values()))
   const route = Router.findBestRoute(pcMap, ChainId.ARBITRUM_NOVA, fromToken, amountIn, toToken, 50e9)
   expect(route?.status).equal(RouteStatus.Success)
   if (route && pcMap) {
-    const rpParams = Router.routeProcessor2Params(pcMap, route, fromToken, toToken, to, RouteProcessorAddr)
+    const rpParams = Router.routeProcessor2Params(
+      pcMap,
+      route,
+      fromToken,
+      toToken,
+      to as `0x{string}`,
+      RouteProcessorAddr
+    )
     const RouteProcessorFactory = await ethers.getContractFactory<RouteProcessor3__factory>('RouteProcessor3', signer)
     const RouteProcessor = RouteProcessorFactory.attach(RouteProcessorAddr)
     const res = await RouteProcessor.callStatic.processRoute(

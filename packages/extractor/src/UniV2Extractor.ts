@@ -195,11 +195,11 @@ export class UniV2Extractor {
     this.consoleLog(`${cachedPools.size} pools were taken from cache`)
     await Promise.allSettled(promises)
 
-    warnLog(
-      this.multiCallAggregator.chainId,
-      `ExtractorV2 was started (${Math.round(performance.now() - startTime)}ms)`,
-      'info'
-    )
+    // warnLog(
+    //   this.multiCallAggregator.chainId,
+    //   `ExtractorV2 was started (${Math.round(performance.now() - startTime)}ms)`,
+    //   'info'
+    // )
   }
 
   async updatePoolState(poolState: PoolState) {
