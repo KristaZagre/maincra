@@ -342,22 +342,22 @@ it.skip('Extractor Base infinit work test', async () => {
     logging: true,
     RP3Address: RP3Address[ChainId.BASE],
     account: '0x4200000000000000000000000000000000000006', // just a whale because base eth_call needs gas (
-    // checkTokens: [
-    //   new Token({
-    //     chainId: ChainId.BASE,
-    //     address: '0x8544fe9d190fd7ec52860abbf45088e81ee24a8c',
-    //     symbol: 'TOSHI',
-    //     name: 'Toshi',
-    //     decimals: 18,
-    //   }),
-    //   new Token({
-    //     chainId: ChainId.BASE,
-    //     address: '0xa4220a2B0Cb10BF5FDC3B8c3D9E13728f5E7ca56',
-    //     symbol: 'MOCHI',
-    //     name: 'Moshi',
-    //     decimals: 18,
-    //   }),
-    // ],
+    /*checkTokens: [
+      new Token({
+        chainId: ChainId.BASE,
+        address: '0x8544fe9d190fd7ec52860abbf45088e81ee24a8c',
+        symbol: 'TOSHI',
+        name: 'Toshi',
+        decimals: 18,
+      }),
+      // new Token({
+      //   chainId: ChainId.BASE,
+      //   address: '0xa4220a2B0Cb10BF5FDC3B8c3D9E13728f5E7ca56',
+      //   symbol: 'MOCHI',
+      //   name: 'Moshi',
+      //   decimals: 18,
+      // }),
+    ],*/
   })
 })
 

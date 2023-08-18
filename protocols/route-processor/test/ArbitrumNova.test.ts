@@ -1,5 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
-import { Native, SUSHI, Type } from '@sushiswap/currency'
+import { Native, Token, Type } from '@sushiswap/currency'
 import { DataFetcher, LiquidityProviders, Router } from '@sushiswap/router'
 import { RouteStatus } from '@sushiswap/tines'
 import { expect } from 'chai'
@@ -13,6 +13,14 @@ import { RouteProcessor3__factory } from '../typechain'
 
 const RouteProcessorAddr = '0x05689fCfeE31FCe4a67FbC7Cab13E74F80A4E288' // new Route Processor
 
+const MOON = new Token({
+  chainId: ChainId.ARBITRUM_NOVA,
+  name: 'Moon',
+  symbol: 'MOON',
+  decimals: 18,
+  address: '0x0057ac2d777797d31cd3f8f13bf5e927571d6ad0',
+})
+
 async function makeSwap(
   dataFetcher: DataFetcher,
   signer: Signer,
@@ -22,8 +30,10 @@ async function makeSwap(
   to: string,
   amountIn: bigint
 ): Promise<number | undefined> {
+  debugger
   await dataFetcher.fetchPoolsForToken(fromToken, toToken)
   const pcMap = dataFetcher.getCurrentPoolCodeMap(fromToken, toToken)
+  console.log('qq', Array.from(pcMap.values()))
   const route = Router.findBestRoute(pcMap, ChainId.ARBITRUM_NOVA, fromToken, amountIn, toToken, 50e9)
   expect(route?.status).equal(RouteStatus.Success)
   if (route && pcMap) {
@@ -62,16 +72,16 @@ describe('Arbitrum Nova RP3', async () => {
   const dataFetcher = new DataFetcher(chainId, client)
   dataFetcher.startDataFetching([LiquidityProviders.SushiSwapV2])
 
-  it('ETH => SUSHI', async () => {
+  it('ETH => MOON', async () => {
     const fromToken = Native.onChain(ChainId.ARBITRUM_NOVA)
-    const toToken = SUSHI[ChainId.ARBITRUM_NOVA]
+    const toToken = MOON
     const user = '0x8f54C8c2df62c94772ac14CcFc85603742976312'
     const signer = await provider.getUncheckedSigner(user)
     await makeSwap(dataFetcher, signer, fromToken, toToken, user, user, BigInt(1e17))
   })
 
-  it('SUSHI => ETH', async () => {
-    const fromToken = SUSHI[ChainId.ARBITRUM_NOVA]
+  it('MOON => ETH', async () => {
+    const fromToken = MOON
     const toToken = Native.onChain(ChainId.ARBITRUM_NOVA)
     const user = '0x8f54C8c2df62c94772ac14CcFc85603742976312' // has SUSHI and approved 1e18 to the RP
     const signer = await provider.getUncheckedSigner(user)
