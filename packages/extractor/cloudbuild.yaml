@@ -12,33 +12,16 @@ steps:
     dir: /workspace
     id: Build Docker Image
   - name: gcr.io/cloud-builders/docker
-    env:
-      - '_SCRIPT_PATH=${_SCRIPT_PATH}'
-      - '_TURBO_TEAM=${_TURBO_TEAM}'
-      - '_TURBO_TOKEN=${_TURBO_TOKEN}'
-    args:
-      - build
-      - '--build-arg'
-      - 'SCRIPT_PATH=${_SCRIPT_PATH}'
-      - '--build-arg'
-      - 'TURBO_TEAM=${_TURBO_TEAM}'
-      - '--build-arg'
-      - 'TURBO_TOKEN=${_TURBO_TOKEN}'
-      - '-t'
-      - 'gcr.io/$PROJECT_ID/$TRIGGER_NAME:latest'
-      - .
-    dir: /workspace
-    id: Build Docker Image
-  - name: gcr.io/cloud-builders/docker
     args:
       - push
       - 'gcr.io/$PROJECT_ID/$TRIGGER_NAME:latest'
     id: Push Docker Image
   - name: gcr.io/google.com/cloudsdktool/cloud-sdk
     env:
-      - 'DRPC_ID=${_DRPC_ID}'
-      - 'ALCHEMY_ID=${_ALCHEMY_ID}'
-      - 'SENTRY_DSN=${_SENTRY_DSN}'
+      - '_SCRIPT_PATH=${_SCRIPT_PATH}'
+      - '_TURBO_TEAM=${_TURBO_TEAM}'
+      - '_TURBO_TOKEN=${_TURBO_TOKEN}'
+      - '_DATABASE_URL=${_DATABASE_URL}'
     args:
       - run
       - deploy
