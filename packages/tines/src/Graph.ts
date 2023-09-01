@@ -149,15 +149,12 @@ export class Edge {
   }
 
   applySwap(from: Vertice) {
-    console.assert(this.amountInPrevious * this.amountOutPrevious >= 0)
-    const inPrev = this.direction ? this.amountInPrevious : -this.amountInPrevious
-    const outPrev = this.direction ? this.amountOutPrevious : -this.amountOutPrevious
     const to = from.getNeibour(this)
     if (to) {
       const inInc = from === this.vert0 ? from.bestIncome : -to.bestIncome
       const outInc = from === this.vert0 ? to.bestIncome : -from.bestIncome
-      const inNew = inPrev + inInc
-      const outNew = outPrev + outInc
+      const inNew = this.flow[0] + inInc
+      const outNew = -this.flow[1] + outInc
       console.assert(inNew * outNew >= 0)
       if (inNew >= 0) {
         this.direction = true
@@ -182,18 +179,19 @@ export class Edge {
           precision = 2e-3
         }
       }
-      if (this.direction) {
+
+      if (this.flow[0] >= 0) {
         const granularity = this.pool.granularity1()
         return closeValues(
-          this.amountOutPrevious / granularity,
-          this.pool.calcOutByIn(this.amountInPrevious, this.direction).out / granularity,
+          -this.flow[1] / granularity,
+          this.pool.calcOutByIn2(this.flow[0], 0, 1).out / granularity,
           precision
         )
       } else {
         const granularity = this.pool.granularity0()
         return closeValues(
-          this.amountInPrevious / granularity,
-          this.pool.calcOutByIn(this.amountOutPrevious, this.direction).out / granularity,
+          -this.flow[0] / granularity,
+          this.pool.calcOutByIn2(this.flow[1], 1, 0).out / granularity,
           precision
         )
       }
@@ -653,19 +651,11 @@ export class Graph {
         let totalModule = 0
         v.edges.forEach((e) => {
           if (e.vert0 === v) {
-            if (e.direction) {
-              total -= e.amountInPrevious
-            } else {
-              total += e.amountInPrevious
-            }
-            totalModule += e.amountInPrevious
+            total -= e.flow[0]
+            totalModule += Math.abs(e.flow[0])
           } else {
-            if (e.direction) {
-              total += e.amountOutPrevious
-            } else {
-              total -= e.amountOutPrevious
-            }
-            totalModule += e.amountOutPrevious
+            total -= e.flow[1]
+            totalModule += Math.abs(e.flow[1])
           }
         })
         if (v === from) return total <= 0
@@ -888,14 +878,10 @@ export class Graph {
       // const total = Number(outAmount)
       // const totalTest = outAmount
 
-      // console.debug('BEFORE', { outAmount, total, totalTest })
-
       outEdges.forEach((e, i) => {
         const p = e[2] as number
         const quantity = i + 1 === outEdges.length ? 1 : p / outAmount
         const edge = e[0] as Edge
-
-        // console.debug(`edge iter ${0}`, { e, p })
 
         const poolType =
           edge.pool instanceof StableSwapRPool
@@ -904,23 +890,21 @@ export class Graph {
             ? 'Classic'
             : 'Unknown'
 
+        const to = n.getNeibour(edge) as Vertice
         legs.push({
           poolAddress: edge.pool.address,
           poolType,
           poolFee: edge.pool.fee,
           tokenFrom: n.token,
-          tokenTo: (n.getNeibour(edge) as Vertice).token,
-          assumedAmountIn: edge.direction ? edge.amountInPrevious : edge.amountOutPrevious,
-          assumedAmountOut: edge.direction ? edge.amountOutPrevious : edge.amountInPrevious,
+          tokenTo: to.token,
+          assumedAmountIn: edge.flow[edge.getVertIndex(n)],
+          assumedAmountOut: -edge.flow[edge.getVertIndex(to)],
           swapPortion: quantity,
           absolutePortion: p / total,
         })
         gasSpent += (e[0] as Edge).pool.swapGasCost
-        // console.debug('before amountOut mutation', { total, outAmount })
         outAmount -= p
-        // console.debug('after amountOut mutation', { total, outAmount })
       })
-      // console.debug('AFTER', { outAmount, total, totalTest }, outAmount / total)
       console.assert(outAmount / total < 1e-12, 'Error 281')
     })
     return { legs, gasSpent, topologyWasChanged }
