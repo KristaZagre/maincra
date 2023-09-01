@@ -77,6 +77,16 @@ export abstract class RPool {
   calcOutByInReal(amountIn: number, direction: boolean): number {
     return this.calcOutByIn(amountIn, direction).out
   }
+  calcOutByInReal2(amountIn: number, from: number, to: number): number {
+    return this.calcOutByInReal(amountIn, from < to)
+  }
+
+  calcOutByIn2(amountIn: number, from: number, to: number): { out: number; gasSpent: number } {
+    return this.calcOutByIn(amountIn, from < to)
+  }
+  calcInByOut2(amountOut: number, from: number, to: number): { inp: number; gasSpent: number } {
+    return this.calcInByOut(amountOut, from < to)
+  }
 
   // precision of calcOutByIn
   granularity0() {
