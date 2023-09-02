@@ -6,6 +6,12 @@ import { ASSERT, closeValues, DEBUG, getBigInt } from './Utils'
 
 const ROUTER_DISTRIBUTION_PORTION = 65535
 
+// interface RoutePair {
+//   edge: Edge
+//   fromIndex: number
+//   toIndex: number
+// }
+
 // Routing info about each one swap
 export interface RouteLeg {
   poolType: 'Stable' | 'Classic' | 'Unknown'
@@ -21,6 +27,8 @@ export interface RouteLeg {
   swapPortion: number // for router contract
   absolutePortion: number // to depict at webpage for user
 }
+
+// interface RouteLegFull extends RouteLeg, RoutePair {}
 
 export enum RouteStatus {
   Success = 'Success',
@@ -237,6 +245,10 @@ export class Vertice {
       return true
     })
   }
+
+  getEdgesFlow(): { edge: Edge; flow: number }[] {
+    return this.edges.map((edge) => ({ edge, flow: edge.flow[edge.getVertIndex(this)] }))
+  }
 }
 
 export class Graph {
@@ -352,43 +364,6 @@ export class Graph {
       console.assert(v.price !== 0, 'Error 428')
       v.gasPrice = gasPriceChainId / v.price
     })
-  }
-
-  // Set prices using greedy algorithm
-  setPricesStableInsideChain(from: Vertice, price: number, gasPrice: number) {
-    const processedVert = new Set()
-    let nextEdges: Edge[] = []
-    const edgeValues = new Map<Edge, number>()
-    const value = (e: Edge): number => edgeValues.get(e) as number
-
-    function addVertice(v: Vertice, price: number, gasPrice: number) {
-      v.price = price
-      v.gasPrice = gasPrice
-      const newEdges = v.edges.filter((e) => {
-        const newV = v.getNeibour(e)
-        return newV?.token.chainId === v.token.chainId && !processedVert.has(v.getNeibour(e) as Vertice)
-      })
-      newEdges.forEach((e) => edgeValues.set(e, price * parseInt(e.reserve(v).toString())))
-      newEdges.sort((e1, e2) => value(e1) - value(e2))
-      const res: Edge[] = []
-      while (nextEdges.length && newEdges.length) {
-        if (value(nextEdges[0]) < value(newEdges[0])) res.push(nextEdges.shift() as Edge)
-        else res.push(newEdges.shift() as Edge)
-      }
-      nextEdges = [...res, ...nextEdges, ...newEdges]
-      processedVert.add(v)
-    }
-
-    addVertice(from, price, gasPrice)
-    while (nextEdges.length > 0) {
-      const bestEdge = nextEdges.pop() as Edge
-      const [vFrom, vTo] = processedVert.has(bestEdge.vert1)
-        ? [bestEdge.vert1, bestEdge.vert0]
-        : [bestEdge.vert0, bestEdge.vert1]
-      if (processedVert.has(vTo)) continue
-      const p = bestEdge.pool.calcCurrentPriceWithoutFee(vFrom === bestEdge.vert1)
-      addVertice(vTo, vFrom.price * p, vFrom.gasPrice / p)
-    }
   }
 
   getOrCreateVertice(token: RToken) {
@@ -629,17 +604,8 @@ export class Graph {
 
     ASSERT(() => {
       const res = this.vertices.every((v) => {
-        let total = 0
-        let totalModule = 0
-        v.edges.forEach((e) => {
-          if (e.vert0 === v) {
-            total -= e.flow[0]
-            totalModule += Math.abs(e.flow[0])
-          } else {
-            total -= e.flow[1]
-            totalModule += Math.abs(e.flow[1])
-          }
-        })
+        const total = v.getEdgesFlow().reduce((a, { flow }) => a - flow, 0)
+        const totalModule = v.getEdgesFlow().reduce((a, { flow }) => a + Math.abs(flow), 0)
         if (v === from) return total <= 0
         if (v === to) return total >= 0
         if (totalModule === 0) return total === 0
@@ -647,18 +613,6 @@ export class Graph {
       })
       return res
     }, 'Error 290')
-  }
-
-  getPrimaryPriceForPath(from: Vertice, path: Edge[]): number {
-    let p = 1
-    let prevToken = from
-    path.forEach((edge) => {
-      const direction = edge.vert0 === prevToken
-      const edgePrice = edge.pool.calcCurrentPriceWithoutFee(direction)
-      p *= edgePrice
-      prevToken = prevToken.getNeibour(edge) as Vertice
-    })
-    return p
   }
 
   findBestRouteExactIn(from: RToken, to: RToken, amountIn: bigint | number, mode: number | number[]): MultiRoute {
