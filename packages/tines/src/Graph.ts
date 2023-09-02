@@ -6,11 +6,11 @@ import { ASSERT, closeValues, DEBUG, getBigInt } from './Utils'
 
 const ROUTER_DISTRIBUTION_PORTION = 65535
 
-// interface RoutePair {
-//   edge: Edge
-//   fromIndex: number
-//   toIndex: number
-// }
+interface RoutePair {
+  edge: Edge
+  fromIndex: number
+  toIndex: number
+}
 
 // Routing info about each one swap
 export interface RouteLeg {
@@ -28,7 +28,20 @@ export interface RouteLeg {
   absolutePortion: number // to depict at webpage for user
 }
 
-// interface RouteLegFull extends RouteLeg, RoutePair {}
+interface RouteLegFull extends RouteLeg, RoutePair {}
+function toRouteLeg(leg: RouteLegFull): RouteLeg {
+  return {
+    poolType: leg.poolType,
+    poolAddress: leg.poolAddress,
+    poolFee: leg.poolFee,
+    tokenFrom: leg.tokenFrom,
+    tokenTo: leg.tokenTo,
+    assumedAmountIn: leg.assumedAmountIn,
+    assumedAmountOut: leg.assumedAmountOut,
+    swapPortion: leg.swapPortion,
+    absolutePortion: leg.absolutePortion,
+  } as RouteLeg
+}
 
 export enum RouteStatus {
   Success = 'Success',
@@ -694,7 +707,7 @@ export class Graph {
       amountInBI: status === RouteStatus.Success ? amountInBI : getBigInt(amountIn * totalrouted),
       amountOut: output,
       amountOutBI: getBigInt(output),
-      legs,
+      legs: legs.map(toRouteLeg),
       gasSpent,
       totalAmountOut: totalOutput,
       totalAmountOutBI: getBigInt(totalOutput),
@@ -770,7 +783,7 @@ export class Graph {
       amountInBI: getBigInt(input),
       amountOut: amountOut * totalrouted,
       amountOutBI: getBigInt(amountOut * totalrouted),
-      legs,
+      legs: legs.map(toRouteLeg),
       gasSpent,
       totalAmountOut: amountOut - gasSpent * toVert.gasPrice, // TODO: should be totalAmountIn instead !!!!
       totalAmountOutBI: getBigInt(amountOut - gasSpent * toVert.gasPrice), // TODO: should be totalAmountInBI instead !!!!
@@ -781,12 +794,12 @@ export class Graph {
     from: Vertice,
     to: Vertice
   ): {
-    legs: RouteLeg[]
+    legs: RouteLegFull[]
     gasSpent: number
     topologyWasChanged: boolean
   } {
     const { vertices, topologyWasChanged } = this.cleanTopology(from, to)
-    const legs: RouteLeg[] = []
+    const legs: RouteLegFull[] = []
     let gasSpent = 0
     vertices.forEach((n) => {
       const outEdges = n.getOutputEdges().map((e) => {
@@ -827,6 +840,9 @@ export class Graph {
           assumedAmountOut: -edge.flow[edge.getVertIndex(to)],
           swapPortion: quantity,
           absolutePortion: p / total,
+          edge,
+          fromIndex: edge.getVertIndex(n),
+          toIndex: edge.getVertIndex(to),
         })
         gasSpent += (e[0] as Edge).pool.swapGasCost
         outAmount -= p
@@ -871,27 +887,19 @@ export class Graph {
   }
 
   // returns route output
-  updateLegsAmountOut(legs: RouteLeg[], amountIn: number): number {
+  updateLegsAmountOut(legs: RouteLegFull[], amountIn: number): number {
     const amounts = new Map<string, number>()
     amounts.set(legs[0].tokenFrom.tokenId as string, amountIn)
     legs.forEach((l) => {
-      const vert = this.getVert(l.tokenFrom)
-      console.assert(vert !== undefined, 'Internal Error 570')
-      const edge = (vert as Vertice).edges.find((e) => e.pool.address === l.poolAddress)
-      console.assert(edge !== undefined, 'Internel Error 569')
-      const pool = (edge as Edge).pool
-      const direction = vert === (edge as Edge).vert0
-
       const inputTotal = amounts.get(l.tokenFrom.tokenId as string)
       console.assert(inputTotal !== undefined, 'Internal Error 564')
       const routerPortion = Math.round(l.swapPortion * ROUTER_DISTRIBUTION_PORTION) / ROUTER_DISTRIBUTION_PORTION
       const input = Math.floor((inputTotal as number) * routerPortion)
       amounts.set(l.tokenFrom.tokenId as string, (inputTotal as number) - input)
-      const output = pool.calcOutByInReal(input, direction)
+      const output = l.edge.pool.calcOutByInReal2(input, l.fromIndex, l.toIndex)
 
-      const vertNext = (vert as Vertice).getNeibour(edge) as Vertice
-      const prevAmount = amounts.get(vertNext.token.tokenId as string)
-      amounts.set(vertNext.token.tokenId as string, (prevAmount || 0) + output)
+      const prevAmount = amounts.get(l.tokenTo.tokenId as string) || 0
+      amounts.set(l.tokenTo.tokenId as string, prevAmount + output)
 
       l.assumedAmountIn = input
       l.assumedAmountOut = output
