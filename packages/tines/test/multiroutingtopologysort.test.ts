@@ -17,12 +17,10 @@ function createTopology(t: Topology): [Graph, Vertice, Vertice] {
   })
   const g = new Graph(pools, tokens[0], tokens[0], 0) // just a dummy
   g.edges.forEach((e) => {
-    e.amountInPrevious = 1
-    e.amountOutPrevious = 1
     const edge = t[1][parseInt(e.pool.address)]
     console.assert(edge[0] === parseInt(e.vert0.token.name), 'internal Error 28')
     console.assert(edge[1] === parseInt(e.vert1.token.name), 'internal Error 29')
-    e.direction = edge[0] === parseInt(e.vert0.token.name)
+    e.flow = edge[0] === parseInt(e.vert0.token.name) ? [1, -1] : [-1, 1]
   })
   g.getOrCreateVertice(tokens[0])
   g.getOrCreateVertice(tokens[tokens.length - 1])
@@ -64,21 +62,15 @@ function generatePath(g: Graph, from: Vertice, to: Vertice, used: Set<Vertice>):
 function applyPath(p: Edge[], from: Vertice, to: Vertice) {
   let v = from
   p.forEach((e) => {
-    if (e.amountInPrevious === 0) {
-      e.direction = v === e.vert0
-      e.amountInPrevious = 1
-      e.amountOutPrevious = 1
+    if (e.flow[0] == 0) e.flow = v === e.vert0 ? [1, -1] : [-1, 1]
+    else if (e.flow[0] > 0 == (v === e.vert0)) {
+      e.flow[0] += Math.sign(e.flow[0])
+      e.flow[1] += Math.sign(e.flow[1])
     } else {
-      if (e.direction === (v === e.vert0)) {
-        e.amountInPrevious++
-        e.amountOutPrevious++
-      } else {
-        e.amountInPrevious--
-        e.amountOutPrevious--
-      }
+      e.flow[0] -= Math.sign(e.flow[0])
+      e.flow[1] -= Math.sign(e.flow[1])
     }
-    console.assert(e.amountOutPrevious >= 0)
-    console.assert(e.amountInPrevious >= 0)
+
     v = v.getNeibour(e) as Vertice
   })
   console.assert(v === to)

@@ -75,9 +75,6 @@ export class Edge {
   // deprecated
   vert0: Vertice
   vert1: Vertice
-  direction: boolean
-  amountInPrevious: number // How many liquidity were passed from vert0 to vert1
-  amountOutPrevious: number // How many liquidity were passed from vert0 to vert1
   // instead
   verts: Vertice[] // use this !!!
   flow: number[]
@@ -93,21 +90,15 @@ export class Edge {
     this.vert1 = v1
     this.verts = [v0, v1]
     this.flow = [0, 0]
-    this.amountInPrevious = 0
-    this.amountOutPrevious = 0
     this.canBeUsed = true
-    this.direction = true
     this.spentGas = 0
     this.spentGasNew = 0
     this.bestEdgeIncome = 0
   }
 
   cleanTmpData() {
-    this.amountInPrevious = 0
-    this.amountOutPrevious = 0
     this.flow = [0, 0]
     this.canBeUsed = true
-    this.direction = true
     this.spentGas = 0
     this.spentGasNew = 0
     this.bestEdgeIncome = 0
@@ -156,15 +147,6 @@ export class Edge {
       const inNew = this.flow[0] + inInc
       const outNew = -this.flow[1] + outInc
       console.assert(inNew * outNew >= 0)
-      if (inNew >= 0) {
-        this.direction = true
-        this.amountInPrevious = inNew
-        this.amountOutPrevious = outNew
-      } else {
-        this.direction = false
-        this.amountInPrevious = -inNew
-        this.amountOutPrevious = -outNew
-      }
       this.flow = [inNew, -outNew]
     } else console.error('Error 221')
     this.spentGas = this.spentGasNew
@@ -241,8 +223,8 @@ export class Vertice {
   getOutputEdges(): Edge[] {
     return this.edges.filter((e) => {
       if (!e.canBeUsed) return false
-      if (e.amountInPrevious === 0) return false
-      if (e.direction !== (e.vert0 === this)) return false
+      if (e.flow[0] === 0) return false
+      if (e.flow[0] > 0 !== (e.vert0 === this)) return false
       return true
     })
   }
@@ -250,8 +232,8 @@ export class Vertice {
   getInputEdges(): Edge[] {
     return this.edges.filter((e) => {
       if (!e.canBeUsed) return false
-      if (e.amountInPrevious === 0) return false
-      if (e.direction === (e.vert0 === this)) return false
+      if (e.flow[0] === 0) return false
+      if (e.flow[0] > 0 === (e.vert0 === this)) return false
       return true
     })
   }
@@ -696,12 +678,7 @@ export class Graph {
       for (let i = 0; i < mode; ++i) routeValues.push(1 / mode)
     }
 
-    this.edges.forEach((e) => {
-      e.amountInPrevious = 0
-      e.amountOutPrevious = 0
-      e.direction = true
-      e.flow = [0, 0]
-    })
+    this.edges.forEach((e) => (e.flow = [0, 0]))
     let output = 0
     let gasSpentInit = 0
     let totalOutput = 0
@@ -779,12 +756,7 @@ export class Graph {
       for (let i = 0; i < mode; ++i) routeValues.push(1 / mode)
     }
 
-    this.edges.forEach((e) => {
-      e.amountInPrevious = 0
-      e.amountOutPrevious = 0
-      e.direction = true
-      e.flow = [0, 0]
-    })
+    this.edges.forEach((e) => (e.flow = [0, 0]))
     let input = 0
     let gasSpentInit = 0
     //let totalInput = 0
@@ -911,8 +883,8 @@ export class Graph {
   }
 
   edgeFrom(e: Edge): { vert: Vertice; amount: number } | undefined {
-    if (e.amountInPrevious === 0) return undefined
-    return e.direction ? { vert: e.vert0, amount: e.amountInPrevious } : { vert: e.vert1, amount: e.amountOutPrevious }
+    if (e.flow[0] === 0) return undefined
+    return e.flow[0] > 0 ? { vert: e.vert0, amount: e.flow[0] } : { vert: e.vert1, amount: e.flow[1] }
   }
 
   // Removes all edges that have lesser than minFraction portion of vertex output liquidity
@@ -1046,7 +1018,7 @@ export class Graph {
       let out = 0
       v1.getOutputEdges().forEach((e) => {
         if (v1.getNeibour(e) !== v2) return
-        out += e.direction ? e.amountOutPrevious : e.amountInPrevious
+        out += -Math.min(e.flow[0], e.flow[1])
       })
       if (out < minOutput) {
         minVert = v1
