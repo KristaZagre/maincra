@@ -8,7 +8,7 @@ import { Switch } from '../switch'
 import { typographyVariants } from '../typography'
 
 export const SwapApi: FC = () => {
-  const [swapApi, setSwapApi] = useLocalStorage('swapApi', true)
+  const [swapApi, setSwapApi] = useLocalStorage('swapApi', false)
 
   return (
     <div className="p-4 rounded-lg">
