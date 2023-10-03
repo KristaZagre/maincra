@@ -1,4 +1,4 @@
-import { createClient, Pool,validatePool } from '@sushiswap/rockset-client'
+import { SimplePool, createClient, validatePool, validateSimplePool } from '@sushiswap/rockset-client'
 import { NextResponse } from 'next/server'
 // import { z } from 'zod'
 
@@ -90,9 +90,7 @@ export async function GET() {
       },
     })
     .then((value: { results: [] }) => {
-      return value.results 
-        ? value.results.filter( p => validatePool(p)) as Pool[]
-        : []
+      return value.results ? (value.results.filter((p) => validateSimplePool(p).success) as SimplePool[]) : []
     })
 
   return NextResponse.json(result)
