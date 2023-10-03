@@ -577,6 +577,7 @@ importers:
       '@sushiswap/nextjs-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/react-query': workspace:*
+      '@sushiswap/rockset-client': workspace:*
       '@sushiswap/route-processor-sdk': workspace:*
       '@sushiswap/router': workspace:*
       '@sushiswap/router-config': workspace:*
@@ -674,6 +675,7 @@ importers:
       '@sushiswap/math': link:../../packages/math
       '@sushiswap/nextjs-config': link:../../config/nextjs
       '@sushiswap/react-query': link:../../packages/react-query
+      '@sushiswap/rockset-client': link:../../packages/rockset-client
       '@sushiswap/route-processor-sdk': link:../../packages/route-processor-sdk
       '@sushiswap/router': link:../../packages/router
       '@sushiswap/router-config': link:../../config/router
@@ -2062,6 +2064,37 @@ importers:
       next: 13.4.8_biqbaboplfbrettd7655fr4n2y
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
+      tsup: 7.1.0_typescript@5.1.6
+      typescript: 5.1.6
+
+  packages/rockset-client:
+    specifiers:
+      '@rockset/client': ^0.9.1
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@types/jest': ^29.2.0
+      '@types/node': '18'
+      dotenv: 16.0.3
+      eslint: 8.43.0
+      jest: 29.3.1
+      tsup: 7.1.0
+      typescript: 5.1.6
+      zod: 3.21.4
+    dependencies:
+      '@rockset/client': 0.9.1
+      zod: 3.21.4
+    devDependencies:
+      '@sushiswap/eslint-config': link:../../config/eslint
+      '@sushiswap/jest-config': link:../../config/jest
+      '@sushiswap/prettier-config': link:../../config/prettier
+      '@sushiswap/typescript-config': link:../../config/typescript
+      '@types/jest': 29.5.3
+      '@types/node': 18.17.5
+      dotenv: 16.0.3
+      eslint: 8.43.0
+      jest: 29.3.1_@types+node@18.17.5
       tsup: 7.1.0_typescript@5.1.6
       typescript: 5.1.6
 
@@ -14512,6 +14545,17 @@ packages:
       url: 0.11.1
     transitivePeerDependencies:
       - supports-color
+    dev: false
+
+  /@rockset/client/0.9.1:
+    resolution: {integrity: sha512-o0WhcBTALIz78stnbs8JKt4iNwopxU20Y7wI2wgQGqYnuZ0JMDpffiMBv8jTmjPdrjBychlbavU3Ay1j/gm+zw==}
+    dependencies:
+      '@types/node-fetch': 2.6.4
+      fetch-ponyfill: 7.1.0
+      node-fetch: 2.6.12
+      url: 0.11.1
+    transitivePeerDependencies:
+      - encoding
     dev: false
 
   /@rollup/plugin-commonjs/24.0.0_rollup@2.78.0:
@@ -27274,6 +27318,14 @@ packages:
     resolution: {integrity: sha512-knK9sGskIg2T7OnYLdZ2hZXn0CtDrAIBxYQLpmEf0BqfdWnwmM1weccUl5+4EdA44tzNSFAuxITPbXtPehUB3g==}
     dependencies:
       node-fetch: 1.7.3
+    dev: false
+
+  /fetch-ponyfill/7.1.0:
+    resolution: {integrity: sha512-FhbbL55dj/qdVO3YNK7ZEkshvj3eQ7EuIGV2I6ic/2YiocvyWv+7jg2s4AyS0wdRU75s3tA8ZxI/xPigb0v5Aw==}
+    dependencies:
+      node-fetch: 2.6.12
+    transitivePeerDependencies:
+      - encoding
     dev: false
 
   /fetch-retry/5.0.6:

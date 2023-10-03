@@ -29,6 +29,7 @@
     "@sushiswap/client": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/database": "workspace:*",
+    "@sushiswap/rockset-client": "workspace:*",
     "@sushiswap/dexie": "workspace:*",
     "@sushiswap/format": "workspace:*",
     "@sushiswap/gas": "workspace:*",
