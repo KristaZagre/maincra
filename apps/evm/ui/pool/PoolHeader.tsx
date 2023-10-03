@@ -2,9 +2,9 @@
 
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/20/solid'
 import { Chain } from '@sushiswap/chain'
-import { Pool as PoolV2 } from '@sushiswap/client'
 import { Token } from '@sushiswap/currency'
 import { formatPercent, shortenAddress } from '@sushiswap/format'
+import { SimplePool } from '@sushiswap/rockset-client'
 import { Button, classNames, Currency, LinkExternal, LinkInternal, typographyVariants } from '@sushiswap/ui'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@sushiswap/ui/components/tooltip'
 import { SushiSwapV3Pool } from '@sushiswap/v3-sdk'
@@ -16,7 +16,7 @@ import { APRHoverCard } from './APRHoverCard'
 type PoolHeader = {
   backUrl: string
   address: string
-  pool: SushiSwapV3Pool | null | undefined | PoolV2
+  pool: SimplePool
   apy?: {
     fees: number | undefined
     rewards: number | undefined
@@ -36,17 +36,17 @@ export const PoolHeader: FC<PoolHeader> = ({ backUrl, address, pool, apy, priceR
       unwrapToken(
         new Token({
           chainId: pool.chainId,
-          address: pool.token0.address,
-          decimals: pool.token0.decimals,
-          symbol: pool.token0.symbol,
+          address: pool.token0Address,
+          decimals: pool.token0Decimals,
+          symbol: pool.token0Symbol,
         })
       ),
       unwrapToken(
         new Token({
           chainId: pool.chainId,
-          address: pool.token1.address,
-          decimals: pool.token1.decimals,
-          symbol: pool.token1.symbol,
+          address: pool.token1Address,
+          decimals: pool.token1Decimals,
+          symbol: pool.token1Symbol,
         })
       ),
     ]
@@ -56,7 +56,7 @@ export const PoolHeader: FC<PoolHeader> = ({ backUrl, address, pool, apy, priceR
     return (
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-4">
-          <LinkInternal href={backUrl} className="text-blue hover:underline text-sm">
+          <LinkInternal href={backUrl} className="text-sm text-blue hover:underline">
             ← Pools
           </LinkInternal>
           <div className="relative flex items-center gap-3">
@@ -101,7 +101,7 @@ export const PoolHeader: FC<PoolHeader> = ({ backUrl, address, pool, apy, priceR
         <div className="flex flex-wrap items-center gap-y-5 gap-x-[32px] text-secondary-foreground mb-8 mt-1.5">
           {apy ? (
             <div className="flex items-center gap-1.5">
-              <span className="tracking-tighter font-semibold">APR</span>
+              <span className="font-semibold tracking-tighter">APR</span>
               {pool instanceof SushiSwapV3Pool ? (
                 <TooltipProvider>
                   <Tooltip delayDuration={0}>
@@ -124,20 +124,20 @@ export const PoolHeader: FC<PoolHeader> = ({ backUrl, address, pool, apy, priceR
           ) : null}
           {priceRange ? (
             <div className="flex items-center gap-1.5">
-              <span className="tracking-tighter font-semibold">Price Range</span>
+              <span className="font-semibold tracking-tighter">Price Range</span>
               {priceRange}
             </div>
           ) : null}
           <div className="flex items-center gap-1.5">
-            <span className="tracking-tighter font-semibold">Fee</span>
+            <span className="font-semibold tracking-tighter">Fee</span>
             {pool instanceof SushiSwapV3Pool ? pool.fee / 10000 : pool.swapFee * 100}%
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="tracking-tighter font-semibold">Network</span>
+            <span className="font-semibold tracking-tighter">Network</span>
             {Chain.from(pool.chainId).name}
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="tracking-tighter font-semibold">{token0.symbol}</span>
+            <span className="font-semibold tracking-tighter">{token0.symbol}</span>
             <LinkExternal href={Chain.from(pool.chainId).getTokenUrl(token0.wrapped.address)}>
               <Button asChild variant="link" size="sm" className="!font-medium !text-secondary-foreground">
                 {shortenAddress(token0.wrapped.address, 4)}
@@ -146,7 +146,7 @@ export const PoolHeader: FC<PoolHeader> = ({ backUrl, address, pool, apy, priceR
             </LinkExternal>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="tracking-tighter font-semibold">{token1.symbol}</span>
+            <span className="font-semibold tracking-tighter">{token1.symbol}</span>
             <LinkExternal target="_blank" href={Chain.from(pool.chainId).getTokenUrl(token1.wrapped.address)}>
               <Button asChild variant="link" size="sm" className="!font-medium !text-secondary-foreground">
                 {shortenAddress(token1.wrapped.address, 4)}

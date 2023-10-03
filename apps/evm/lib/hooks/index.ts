@@ -1,6 +1,7 @@
 export * from './api'
 export * from './useIsTickAtLimit'
 export * from './usePersistedSlippageError'
+export * from './usePools'
 export * from './usePriceInverter'
 export * from './useTicks'
 export * from './useTokenAmountDollarValues'

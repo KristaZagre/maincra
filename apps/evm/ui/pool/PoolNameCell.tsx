@@ -13,6 +13,7 @@ import { useTokensFromPool } from 'lib/hooks'
 import { FC } from 'react'
 
 import { PositionWithPool } from '../../types'
+import { SimplePool } from '@sushiswap/rockset-client'
 
 const ProtocolBadge: Record<Protocol, JSX.Element> = {
   [Protocol.BENTOBOX_STABLE]: (
@@ -80,10 +81,11 @@ export const PoolNameCell: FC<Row<PositionWithPool>> = ({ original }) => {
   )
 }
 
-export const PoolNameCellPool: FC<Row<Pool>> = ({ original }) => {
+export const PoolNameCellPool: FC<Row<SimplePool>> = ({ original }) => {
   const { token0, token1 } = useTokensFromPool(original)
 
-  const incentives = original.incentives.filter((i) => i.rewardPerDay > 0)
+  // const incentives = original.incentives.filter((i) => i.rewardPerDay > 0)
+  const incentives = []
 
   return (
     <div className="flex items-center gap-5">

@@ -1,6 +1,7 @@
-import { Pool } from '@sushiswap/client'
+
 import { formatNumber, formatPercent, formatUSD, shortenAddress } from '@sushiswap/format'
 import { AngleRewardsPool } from '@sushiswap/react-query'
+import { SimplePool } from '@sushiswap/rockset-client'
 import { classNames, NetworkIcon, Tooltip, TooltipPrimitive, TooltipProvider, TooltipTrigger } from '@sushiswap/ui'
 import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi/future'
@@ -56,7 +57,7 @@ export const REWARDS_V3_APR_COLUMN: ColumnDef<AngleRewardsPool, unknown> = {
     <TooltipProvider>
       <Tooltip delayDuration={0}>
         <TooltipTrigger asChild>
-          <span className="underline decoration-dotted flex items-center justify-end gap-1 text-sm text-gray-900 dark:text-slate-50">
+          <span className="flex items-center justify-end gap-1 text-sm text-gray-900 underline decoration-dotted dark:text-slate-50">
             {formatNumber(props.row.original.meanAPR)}%
           </span>
         </TooltipTrigger>
@@ -89,16 +90,16 @@ export const REWARDS_V3_CLAIMABLE_COLUMN: ColumnDef<AngleRewardsPool, unknown> =
   },
 }
 
-export const NETWORK_COLUMN_POOL: ColumnDef<Pool, unknown> = {
+export const NETWORK_COLUMN_POOL: ColumnDef<SimplePool, unknown> = {
   id: 'network',
   header: 'Network',
-  cell: (props) => <NetworkIcon type="naked" chainId={props.row.original.chainId} width={26} height={26} />,
+  cell: (props) => <NetworkIcon type="naked" chainId={Number(props.row.original.chainId)} width={26} height={26} />,
   meta: {
     skeleton: <SkeletonCircle radius={26} />,
   },
 }
 
-export const NAME_COLUMN_POOL: ColumnDef<Pool, unknown> = {
+export const NAME_COLUMN_POOL: ColumnDef<SimplePool, unknown> = {
   id: 'name',
   header: 'Name',
   cell: (props) => <PoolNameCellPool {...props.row} />,
@@ -118,24 +119,24 @@ export const NAME_COLUMN_POOL: ColumnDef<Pool, unknown> = {
   size: 300,
 }
 
-export const TVL_COLUMN: ColumnDef<Pool, unknown> = {
+export const TVL_COLUMN: ColumnDef<SimplePool, unknown> = {
   id: 'liquidityUSD',
   header: 'TVL',
-  accessorFn: (row) => row.liquidityUSD,
+  accessorFn: (row) => row.liquidityUsd,
   cell: (props) =>
-    formatUSD(props.row.original.liquidityUSD).includes('NaN') ? '$0.00' : formatUSD(props.row.original.liquidityUSD),
+    formatUSD(props.row.original.liquidityUsd).includes('NaN') ? '$0.00' : formatUSD(props.row.original.liquidityUsd),
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
   },
 }
 
-export const APR_COLUMN_POOL: ColumnDef<Pool, unknown> = {
+export const APR_COLUMN_POOL: ColumnDef<SimplePool, unknown> = {
   id: 'totalApr1d',
   header: 'APR',
-  accessorFn: (row) => row.totalApr1d,
+  accessorFn: (row) => row.last1DFeeApr,
   cell: (props) => (
     <APRHoverCard pool={props.row.original}>
-      <span className="underline decoration-dotted">{formatPercent(props.row.original.totalApr1d)}</span>
+      <span className="underline decoration-dotted">{formatPercent(props.row.original.last1DFeeApr)}</span>
     </APRHoverCard>
   ),
   meta: {
@@ -143,56 +144,26 @@ export const APR_COLUMN_POOL: ColumnDef<Pool, unknown> = {
   },
 }
 
-export const VOLUME_1H_COLUMN: ColumnDef<Pool, unknown> = {
-  id: 'volume1h',
-  header: 'Volume (1h)',
-  accessorFn: (row) => row.volume1h,
-  cell: (props) =>
-    formatUSD(props.row.original.volume1h).includes('NaN') ? '$0.00' : formatUSD(props.row.original.volume1h),
-  meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
-  },
-}
 
-export const VOLUME_1D_COLUMN: ColumnDef<Pool, unknown> = {
+
+export const VOLUME_1D_COLUMN: ColumnDef<SimplePool, unknown> = {
   id: 'volume1d',
   header: 'Volume (24h)',
-  accessorFn: (row) => row.volume1d,
+  accessorFn: (row) => row.last1DVolumeUsd,
   cell: (props) =>
-    formatUSD(props.row.original.volume1d).includes('NaN') ? '$0.00' : formatUSD(props.row.original.volume1d),
+    formatUSD(props.row.original.last1DVolumeUsd).includes('NaN') ? '$0.00' : formatUSD(props.row.original.last1DVolumeUsd),
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
   },
 }
 
-export const VOLUME_7D_COLUMN: ColumnDef<Pool, unknown> = {
-  id: 'volume1w',
-  header: 'Volume (1w)',
-  accessorFn: (row) => row.volume1w,
-  cell: (props) =>
-    formatUSD(props.row.original.volume1w).includes('NaN') ? '$0.00' : formatUSD(props.row.original.volume1w),
-  meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
-  },
-}
 
-export const VOLUME_1M_COLUMN: ColumnDef<Pool, unknown> = {
-  id: 'volume1m',
-  header: 'Volume (1m)',
-  accessorFn: (row) => row.volume1m,
-  cell: (props) =>
-    formatUSD(props.row.original.volume1m).includes('NaN') ? '$0.00' : formatUSD(props.row.original.volume1m),
-  meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
-  },
-}
-
-export const FEES_COLUMN: ColumnDef<Pool, unknown> = {
+export const FEES_COLUMN: ColumnDef<SimplePool, unknown> = {
   id: 'fees1d',
   header: 'Fees (24h)',
-  accessorFn: (row) => row.fees1d,
+  accessorFn: (row) => row.last1DFeeUsd,
   cell: (props) =>
-    formatUSD(props.row.original.fees1d).includes('NaN') ? '$0.00' : formatUSD(props.row.original.fees1d),
+    formatUSD(props.row.original.last1DFeeUsd).includes('NaN') ? '$0.00' : formatUSD(props.row.original.last1DFeeUsd),
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
   },

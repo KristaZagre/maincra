@@ -1,9 +1,10 @@
 'use client'
 
 import { Slot } from '@radix-ui/react-slot'
-import { GetPoolsArgs, Pool, usePoolCount, usePoolsInfinite } from '@sushiswap/client'
+import { SimplePool } from '@sushiswap/rockset-client'
 import { Card, CardHeader, CardTitle, DataTable, Loader } from '@sushiswap/ui'
 import { ColumnDef, Row, SortingState, TableState } from '@tanstack/react-table'
+import { GetPoolsArgs, usePoolsInfinite } from 'lib/hooks'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { useSWRConfig } from 'swr'
@@ -14,8 +15,6 @@ import {
   NAME_COLUMN_POOL,
   TVL_COLUMN,
   VOLUME_1D_COLUMN,
-  VOLUME_1M_COLUMN,
-  VOLUME_7D_COLUMN,
 } from './columns'
 import { usePoolFilters } from './PoolsFiltersProvider'
 
@@ -23,14 +22,12 @@ const COLUMNS = [
   NAME_COLUMN_POOL,
   TVL_COLUMN,
   VOLUME_1D_COLUMN,
-  VOLUME_7D_COLUMN,
-  VOLUME_1M_COLUMN,
   FEES_COLUMN,
   APR_COLUMN_POOL,
-] satisfies ColumnDef<Pool, unknown>[]
+] satisfies ColumnDef<SimplePool, unknown>[]
 
 interface PositionsTableProps {
-  onRowClick?(row: Pool): void
+  onRowClick?(row: SimplePool): void
 }
 
 export const PoolsTable: FC<PositionsTableProps> = ({ onRowClick }) => {
@@ -54,7 +51,8 @@ export const PoolsTable: FC<PositionsTableProps> = ({ onRowClick }) => {
     isValidating,
     setSize,
   } = usePoolsInfinite({ args, shouldFetch: true, swrConfig: useSWRConfig() })
-  const { data: poolCount } = usePoolCount({ args, shouldFetch: true, swrConfig: useSWRConfig() })
+  // const { data: poolCount } = usePoolCount({ args, shouldFetch: true, swrConfig: useSWRConfig() })
+  const poolCount = { count: 999 }
   const data = useMemo(() => pools?.flat() || [], [pools])
 
   const state: Partial<TableState> = useMemo(() => {
@@ -68,7 +66,7 @@ export const PoolsTable: FC<PositionsTableProps> = ({ onRowClick }) => {
   }, [data?.length, sorting])
 
   const rowRenderer = useCallback(
-    (row: Row<Pool>, rowNode: ReactNode) => {
+    (row: Row<SimplePool>, rowNode: ReactNode) => {
       if (onRowClick)
         return (
           <Slot className="cursor-pointer" onClick={() => onRowClick?.(row.original)}>
