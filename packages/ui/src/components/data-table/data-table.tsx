@@ -38,6 +38,7 @@ declare module '@tanstack/react-table' {
 interface DataTableProps<TData, TValue> {
   testId?: string
   columns: ColumnDef<TData, TValue>[]
+  pageCount?: number
   data: TData[]
   toolbar?: (table: TableType<TData>) => ReactNode
   pagination?: boolean
@@ -53,6 +54,7 @@ interface DataTableProps<TData, TValue> {
 export function DataTable<TData, TValue>({
   testId,
   columns,
+  pageCount,
   data,
   toolbar,
   pagination = false,
@@ -72,6 +74,7 @@ export function DataTable<TData, TValue>({
   const table = useReactTable({
     data,
     columns,
+    pageCount: pageCount ?? -1,
     state: {
       rowSelection,
       columnFilters,
@@ -80,6 +83,7 @@ export function DataTable<TData, TValue>({
       ...(state?.pagination && { pagination: state?.pagination }),
     },
     autoResetPageIndex: false,
+    manualPagination: true,
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: onSortingChange ? onSortingChange : setSorting,

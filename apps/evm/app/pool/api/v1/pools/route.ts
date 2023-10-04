@@ -1,5 +1,4 @@
 import { SimplePool, createClient, validatePool, validateSimplePool } from '@sushiswap/rockset-client'
-import { NextResponse } from 'next/server'
 // import { z } from 'zod'
 
 enum OrderBy {
@@ -25,9 +24,13 @@ const orderByToField = {
 //   orderField: z.nativeEnum(OrderBy).optional().default(OrderBy.LIQUIDITY),
 // })
 
-export async function GET() {
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url)
+  const index = searchParams.get('index')
   // export async function GET(request: Request) {
   // const { orderBy, orderField } = schema.parse(params)
+  const size = 20 // add to param later
+  const offset = (Number(index) ?? 0) * size
 
   const orderDirection: 'DESC' | 'ASC' = 'DESC'
 
@@ -73,7 +76,8 @@ export async function GET() {
       ON p.token1Id = t1.entityId
 			WHERE ${_orderBy} IS NOT NULL
 			ORDER BY ${_orderBy} ${orderDirection}
-      LIMIT 20
+      OFFSET ${offset} ROWS 
+      FETCH NEXT ${size} ROWS ONLY;
       `,
         parameters: [
           {
@@ -93,5 +97,12 @@ export async function GET() {
       return value.results ? (value.results.filter((p) => validateSimplePool(p).success) as SimplePool[]) : []
     })
 
-  return NextResponse.json(result)
+  return Response.json(result, {
+    status: 200,
+    headers: {
+      'Cache-Control': 'public, s-maxage=60',
+      'CDN-Cache-Control': 'public, s-maxage=60',
+      'Vercel-CDN-Cache-Control': 'public, s-maxage=3600',
+    },
+  });
 }
