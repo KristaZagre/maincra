@@ -1,8 +1,7 @@
-
 import { formatNumber, formatPercent, formatUSD, shortenAddress } from '@sushiswap/format'
 import { AngleRewardsPool } from '@sushiswap/react-query'
 import { SimplePool } from '@sushiswap/rockset-client'
-import { classNames, NetworkIcon, Tooltip, TooltipPrimitive, TooltipProvider, TooltipTrigger } from '@sushiswap/ui'
+import { classNames,NetworkIcon, Tooltip, TooltipPrimitive, TooltipProvider, TooltipTrigger } from '@sushiswap/ui'
 import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi/future'
 import { ColumnDef } from '@tanstack/react-table'
@@ -144,19 +143,18 @@ export const APR_COLUMN_POOL: ColumnDef<SimplePool, unknown> = {
   },
 }
 
-
-
 export const VOLUME_1D_COLUMN: ColumnDef<SimplePool, unknown> = {
   id: 'volume1d',
   header: 'Volume (24h)',
   accessorFn: (row) => row.last1DVolumeUsd,
   cell: (props) =>
-    formatUSD(props.row.original.last1DVolumeUsd).includes('NaN') ? '$0.00' : formatUSD(props.row.original.last1DVolumeUsd),
+    formatUSD(props.row.original.last1DVolumeUsd).includes('NaN')
+      ? '$0.00'
+      : formatUSD(props.row.original.last1DVolumeUsd),
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
   },
 }
-
 
 export const FEES_COLUMN: ColumnDef<SimplePool, unknown> = {
   id: 'fees1d',

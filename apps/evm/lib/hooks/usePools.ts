@@ -1,6 +1,5 @@
 import { SimplePool } from '@sushiswap/rockset-client'
 import { useQuery } from '@tanstack/react-query'
-import useSWR from 'swr'
 import { z } from 'zod'
 
 /**

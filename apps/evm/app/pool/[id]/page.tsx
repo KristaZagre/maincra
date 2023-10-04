@@ -18,15 +18,16 @@ import { PoolPageV3 } from '../../../ui/pool/PoolPageV3'
 import { PoolPosition } from '../../../ui/pool/PoolPosition'
 import { PoolRewards } from '../../../ui/pool/PoolRewards'
 import { PoolStats } from '../../../ui/pool/PoolStats'
+import { Pool } from '@sushiswap/rockset-client'
 
 export async function getPool({ chainId, address }: { chainId: ChainId; address: string }) {
   try {
     if (typeof +chainId !== 'number' || !isAddress(address)) {
       return
     }
-    const res = await fetch(`https://pools.sushi.com/api/v0/${chainId}/${address}`, { next: { revalidate: 60 } })
+    const res = await fetch(`/pool/api/v1/pools/${chainId}/${address}`, { next: { revalidate: 60 } })
     const data = await res.json()
-    return data
+    return data as Pool
   } catch (e) {
     return
   }
@@ -47,7 +48,7 @@ export default async function PoolPage({ params }: { params: { id: string } }) {
 
   return (
     <>
-      <UnknownTokenAlert pool={pool} />
+      {/* <UnknownTokenAlert pool={pool} /> */}
       <div className="flex flex-col gap-6">
         <div className="grid grid-cols-1 md:grid-cols-[auto_400px] gap-6">
           <div>

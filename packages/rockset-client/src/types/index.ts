@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod'
 
 export const simplePoolSchema = z.object({
   id: z.string(),
@@ -101,10 +101,32 @@ const poolSchema = z.object({
   token1Symbol: z.string(),
   token0Price: z.number(),
   token1Price: z.number(),
+})
+
+const poolBucketSchema = z.object({
+  feeApr: z.number(),
+  feeUsd: z.number(),
+  granularity: z.string(),
+  id: z.string(),
+  liquidityUsd: z.number(),
+  timeBucket: z.string(),
+  timestamp: z.number(),
+  volumeUsd: z.number(),
+})
+
+const transactionSchema = z.object({
+  amount0: z.string(),
+  amount1: z.string(),
+  amountUsd: z.number(),
+  sender: z.string(),
+  timestamp: z.number(),
 });
 
+
 export type SimplePool = Required<z.infer<typeof simplePoolSchema>>
-export type Pool = z.infer<typeof poolSchema>
+export type Pool = Required<z.infer<typeof poolSchema>>
+export type PoolBucket = Required<z.infer<typeof poolBucketSchema>>
+export type Transaction = Required<z.infer<typeof transactionSchema>>
 
 export const validateSimplePool = (inputs: unknown) => {
   return simplePoolSchema.safeParse(inputs)
@@ -112,4 +134,12 @@ export const validateSimplePool = (inputs: unknown) => {
 
 export const validatePool = (inputs: unknown) => {
   return poolSchema.safeParse(inputs)
+}
+
+export const validatePoolBucket = (inputs: unknown) => {
+  return poolBucketSchema.safeParse(inputs)
+}
+
+export const validateTransaction = (inputs: unknown) => {
+  return transactionSchema.safeParse(inputs)
 }

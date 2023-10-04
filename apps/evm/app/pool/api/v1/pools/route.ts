@@ -1,4 +1,4 @@
-import { SimplePool, createClient, validatePool, validateSimplePool } from '@sushiswap/rockset-client'
+import { SimplePool, createClient, validateSimplePool } from '@sushiswap/rockset-client'
 // import { z } from 'zod'
 
 enum OrderBy {
@@ -104,5 +104,5 @@ export async function GET(request: Request) {
       'CDN-Cache-Control': 'public, s-maxage=60',
       'Vercel-CDN-Cache-Control': 'public, s-maxage=3600',
     },
-  });
+  })
 }

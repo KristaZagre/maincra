@@ -2,14 +2,13 @@
 
 import { Slot } from '@radix-ui/react-slot'
 import { SimplePool } from '@sushiswap/rockset-client'
-import {  Card, CardHeader, CardTitle, DataTable } from '@sushiswap/ui'
+import { Card, CardHeader, CardTitle, DataTable } from '@sushiswap/ui'
 import { ColumnDef, PaginationState, Row, SortingState, TableState } from '@tanstack/react-table'
 import { GetPoolsArgs, usePoolCount, usePools } from 'lib/hooks'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
 
-
-import { APR_COLUMN_POOL, FEES_COLUMN, NAME_COLUMN_POOL, TVL_COLUMN, VOLUME_1D_COLUMN } from './columns'
 import { usePoolFilters } from './PoolsFiltersProvider'
+import { APR_COLUMN_POOL, FEES_COLUMN, NAME_COLUMN_POOL, TVL_COLUMN, VOLUME_1D_COLUMN } from './columns'
 
 const COLUMNS = [NAME_COLUMN_POOL, TVL_COLUMN, VOLUME_1D_COLUMN, FEES_COLUMN, APR_COLUMN_POOL] satisfies ColumnDef<
   SimplePool,
@@ -52,7 +51,7 @@ export const PoolsTable: FC<PositionsTableProps> = ({ onRowClick }) => {
 
   const { data: pools, isLoading: isValidatingPools } = usePools({ args })
   const { data: poolCount, isLoading: isValidatingCount } = usePoolCount({ args })
-  console.log({poolCount})
+  console.log({ poolCount })
   const data = useMemo(() => pools?.flat() || [], [pools])
 
   const rowRenderer = useCallback(
