@@ -1,8 +1,9 @@
 'use client'
 
 import { ChainId } from '@sushiswap/chain'
-import { Pool, Protocol } from '@sushiswap/client'
+import { Protocol } from '@sushiswap/client'
 import { formatNumber } from '@sushiswap/format'
+import { SimplePool } from '@sushiswap/rockset-client'
 import { classNames } from '@sushiswap/ui'
 import { Badge } from '@sushiswap/ui/components/Badge'
 import { Currency } from '@sushiswap/ui/components/currency'
@@ -13,7 +14,6 @@ import { useTokensFromPool } from 'lib/hooks'
 import { FC } from 'react'
 
 import { PositionWithPool } from '../../types'
-import { SimplePool } from '@sushiswap/rockset-client'
 
 const ProtocolBadge: Record<Protocol, JSX.Element> = {
   [Protocol.BENTOBOX_STABLE]: (
@@ -33,7 +33,8 @@ const ProtocolBadge: Record<Protocol, JSX.Element> = {
 export const PoolNameCell: FC<Row<PositionWithPool>> = ({ original }) => {
   const { token0, token1 } = useTokensFromPool(original.pool)
 
-  const incentives = original.pool.incentives.filter((i) => i.rewardPerDay > 0)
+  // const incentives = original.pool.incentives.filter((i) => i.rewardPerDay > 0)
+  const incentives = []
 
   return (
     <div className="flex items-center gap-5">

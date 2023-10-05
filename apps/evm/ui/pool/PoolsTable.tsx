@@ -51,7 +51,7 @@ export const PoolsTable: FC<PositionsTableProps> = ({ onRowClick }) => {
 
   const { data: pools, isLoading: isValidatingPools } = usePools({ args })
   const { data: poolCount, isLoading: isValidatingCount } = usePoolCount({ args })
-  console.log({ poolCount })
+
   const data = useMemo(() => pools?.flat() || [], [pools])
 
   const rowRenderer = useCallback(

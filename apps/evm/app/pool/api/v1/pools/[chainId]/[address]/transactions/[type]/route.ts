@@ -18,7 +18,7 @@ export async function GET(
   request: Request,
   params: { params: { chainId: string; address: string; type: TransactionType } }
 ) {
-  console.log({params})
+
   const parsedParams = schema.safeParse(params.params)
 
   if (!parsedParams.success) {
@@ -37,7 +37,9 @@ export async function GET(
   const data = await client.queries.query({
     sql: {
       query: `
-      SELECT 
+      SELECT
+        chainId,
+        txHash,
         sender,
         amount0,
         amount1,
@@ -47,7 +49,7 @@ export async function GET(
 			AND entityType = '${entityName}'
 			AND poolId = :id
       ORDER BY blockTimestamp DESC
-      LIMIT 100
+      LIMIT 10
       `,
       parameters: [
         {

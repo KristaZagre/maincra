@@ -19,20 +19,25 @@ import { PoolPosition } from '../../../ui/pool/PoolPosition'
 import { PoolRewards } from '../../../ui/pool/PoolRewards'
 import { PoolStats } from '../../../ui/pool/PoolStats'
 import { Pool } from '@sushiswap/rockset-client'
+import { Native, Token } from '@sushiswap/currency'
+import { useExtendedPool } from 'lib/hooks/api/useFlairPoolGraphData'
+
 
 export async function getPool({ chainId, address }: { chainId: ChainId; address: string }) {
   try {
     if (typeof +chainId !== 'number' || !isAddress(address)) {
       return
     }
-    const res = await fetch(`/pool/api/v1/pools/${chainId}/${address}`, { next: { revalidate: 60 } })
-    const data = await res.json()
-    return data as Pool
+    const pool = await fetch(`http://localhost:3000/pool/api/v1/pools/${chainId}/${address}`, 
+      { next: { revalidate: 60 } }
+    ).then((data) => data.json()) as Pool
+
+    return pool
   } catch (e) {
+    console.log({e})
     return
   }
 }
-
 export default async function PoolPage({ params }: { params: { id: string } }) {
   const [_chainId, address] = params.id.split(params.id.includes('%3A') ? '%3A' : ':') as [string, string]
   const chainId = Number(_chainId) as ChainId
@@ -42,9 +47,9 @@ export default async function PoolPage({ params }: { params: { id: string } }) {
     notFound()
   }
 
-  if (pool.protocol === 'SUSHISWAP_V3') {
-    return <PoolPageV3 pool={pool} />
-  }
+  // if (pool.protocol === 'SUSHISWAP_V3') {
+  //   return <PoolPageV3 pool={pool} />
+  // }
 
   return (
     <>
@@ -55,14 +60,14 @@ export default async function PoolPage({ params }: { params: { id: string } }) {
             <ManageV2LiquidityCard pool={pool} />
           </div>
           <div className="flex flex-col gap-6">
-            <PoolPositionProvider pool={pool}>
+            {/* <PoolPositionProvider pool={pool}>
               <PoolPositionStakedProvider pool={pool}>
                 <PoolPositionRewardsProvider pool={pool}>
                   <PoolPosition pool={pool} />
                   <PoolMyRewards pool={pool} />
                 </PoolPositionRewardsProvider>
               </PoolPositionStakedProvider>
-            </PoolPositionProvider>
+            </PoolPositionProvider> */}
           </div>
         </div>
         <div className="py-4">

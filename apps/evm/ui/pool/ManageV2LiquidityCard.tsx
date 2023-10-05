@@ -1,6 +1,6 @@
 'use client'
 
-import { Pool, Protocol } from '@sushiswap/client'
+import { Protocol } from '@sushiswap/client'
 import {
   Card,
   CardContent,
@@ -24,14 +24,15 @@ import { PoolPositionStakedProvider } from './PoolPositionStakedProvider'
 import { RemoveSectionLegacy } from './RemoveSectionLegacy'
 import { RemoveSectionTrident } from './RemoveSectionTrident'
 import { RemoveSectionUnstake } from './RemoveSectionUnstake'
+import { Pool } from '@sushiswap/rockset-client'
 
 interface ManageV2LiquidityCardProps {
   pool: Pool
 }
 
 export const ManageV2LiquidityCard: FC<ManageV2LiquidityCardProps> = ({ pool }) => {
-  const isFarm = pool.wasIncentivized || pool.isIncentivized
-  console.debug('ManageV2LiquidityCard (client)', pool)
+  // const isFarm = pool.wasIncentivized || pool.isIncentivized
+  const isFarm = false
   return (
     <Card>
       <CardHeader>
@@ -55,7 +56,7 @@ export const ManageV2LiquidityCard: FC<ManageV2LiquidityCardProps> = ({ pool }) 
             </TabsTrigger>
           </TabsList>
         </CardContent>
-        <div className="pb-4 px-6">
+        <div className="px-6 pb-4">
           <Separator />
         </div>
         <PoolPositionProvider pool={pool}>

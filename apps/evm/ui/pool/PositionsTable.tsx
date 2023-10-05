@@ -11,7 +11,7 @@ import { PositionWithPool } from 'types'
 import { APR_COLUMN, NAME_COLUMN_POSITION_WITH_POOL, VALUE_COLUMN } from './columns'
 import { usePoolFilters } from './PoolsFiltersProvider'
 
-const COLUMNS = [NAME_COLUMN_POSITION_WITH_POOL, VALUE_COLUMN, APR_COLUMN] satisfies ColumnDef<
+const COLUMNS = [VALUE_COLUMN, APR_COLUMN] satisfies ColumnDef<
   PositionWithPool,
   unknown
 >[]

@@ -167,7 +167,7 @@ export const FEES_COLUMN: ColumnDef<SimplePool, unknown> = {
   },
 }
 
-export const NETWORK_COLUMN: ColumnDef<PositionWithPool, unknown> = {
+export const NETWORK_COLUMN: ColumnDef<SimplePool, unknown> = {
   id: 'network',
   header: 'Network',
   cell: (props) => <NetworkIcon type="naked" chainId={props.row.original.chainId} width={26} height={26} />,
@@ -176,7 +176,7 @@ export const NETWORK_COLUMN: ColumnDef<PositionWithPool, unknown> = {
   },
 }
 
-export const NAME_COLUMN_POSITION_WITH_POOL: ColumnDef<PositionWithPool, unknown> = {
+export const NAME_COLUMN_POSITION_WITH_POOL: ColumnDef<SimplePool, unknown> = {
   id: 'name',
   header: 'Name',
   cell: (props) => <PoolNameCell {...props.row} />,
@@ -305,12 +305,11 @@ export const TX_AMOUNT_IN_V2_COLUMN = (
   id: 'amounts_in',
   header: type === TransactionType.Swap ? 'Amount in' : 'Token 0',
   cell: ({ row }) => {
-    switch (row.original.type) {
+    switch (type) {
       case TransactionType.Swap:
-        return `${row.original.amountIn.toPrecision(2)} ${row.original.tokenIn.symbol}`
       case TransactionType.Mint:
       case TransactionType.Burn:
-        return `${row.original.amount0.toPrecision(6)} ${row.original.pool.token0.symbol}`
+        return `${row.original.amountIn.toFixed(3)} ${row.original.amountIn.currency.symbol}`
     }
   },
   meta: {
@@ -324,12 +323,11 @@ export const TX_AMOUNT_OUT_V2_COLUMN = (
   id: 'amount_out',
   header: type === TransactionType.Swap ? 'Amount out' : 'Token 1',
   cell: ({ row }) => {
-    switch (row.original.type) {
+    switch (type) {
       case TransactionType.Swap:
-        return `${Math.abs(row.original.amountOut).toFixed(2)} ${row.original.tokenOut.symbol}`
       case TransactionType.Mint:
       case TransactionType.Burn:
-        return `${row.original.amount1.toFixed(2)} ${row.original.pool.token1.symbol}`
+        return `${row.original.amountOut.toFixed(3)} ${row.original.amountOut.currency.symbol}`
     }
   },
   meta: {
@@ -340,7 +338,7 @@ export const TX_AMOUNT_OUT_V2_COLUMN = (
 export const TX_AMOUNT_USD_V2_COLUMN: ColumnDef<Transaction, unknown> = {
   id: 'amountUSD',
   header: 'Amount (USD)',
-  cell: (props) => formatUSD(props.row.original.amountUSD),
+  cell: (props) => formatUSD(props.row.original.amountUsd),
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
   },
@@ -349,20 +347,12 @@ export const TX_AMOUNT_USD_V2_COLUMN: ColumnDef<Transaction, unknown> = {
 export const TX_CREATED_TIME_V2_COLUMN: ColumnDef<Transaction, unknown> = {
   id: 'time',
   header: 'Time',
-  cell: (props) => formatDistance(props.row.original.createdAtTimestamp * 1000, new Date(), { addSuffix: true }),
+  cell: (props) => formatDistance(props.row.original.timestamp * 1000, new Date(), { addSuffix: true }),
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
   },
 }
 
-export const TX_TYPE_COLUMN: ColumnDef<Transaction, unknown> = {
-  id: 'type',
-  header: 'Type',
-  cell: (props) => TransactionType[props.row.original.type],
-  meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
-  },
-}
 
 export const TX_ORIGIN_V3_COLUMN: ColumnDef<TransactionV3, unknown> = {
   id: 'sender',

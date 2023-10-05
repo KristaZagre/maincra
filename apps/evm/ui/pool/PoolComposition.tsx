@@ -1,10 +1,10 @@
 'use client'
 
 import { ChainId } from '@sushiswap/chain'
-import { Pool } from '@sushiswap/client'
 import { Native } from '@sushiswap/currency'
 import { formatUSD } from '@sushiswap/format'
 import { usePrices } from '@sushiswap/react-query'
+import { Pool } from '@sushiswap/rockset-client'
 import {
   Card,
   CardContent,

@@ -8,7 +8,7 @@ import { SkeletonBox } from '@sushiswap/ui/components/skeleton'
 import { format } from 'date-fns'
 import ReactECharts from 'echarts-for-react'
 import { EChartsOption } from 'echarts-for-react/lib/types'
-import { usePoolGraphData } from 'lib/hooks'
+import { usePoolGraphData } from 'lib/hooks/api/useFlairPoolGraphData'
 import { useTheme } from 'next-themes'
 import { FC, useCallback, useMemo } from 'react'
 import tailwindConfig from 'tailwind.config.js'
@@ -29,29 +29,36 @@ const tailwind = resolveConfig(tailwindConfig)
 export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, address, chainId }) => {
   const { resolvedTheme } = useTheme()
 
-  const { data: graphPair, isLoading } = usePoolGraphData({ poolAddress: address, chainId })
+  const { data: hourBuckets, isLoading: isLoadingHourly } = usePoolGraphData({
+    poolAddress: address,
+    chainId,
+    granularity: 'hour'
+  })
+  
+  const { data: dailyBuckets, isLoading: isLoadingDaily } = usePoolGraphData({
+    poolAddress: address,
+    chainId,
+    granularity: 'day'
+  })
 
-  const swapFee = graphPair ? graphPair?.swapFee / 10000 : 0
+  const isLoading = useMemo(() => isLoadingHourly || isLoadingDaily, [isLoadingHourly, isLoadingDaily])
 
   const [xData, yData]: [number[], number[]] = useMemo(() => {
-    const data =
-      (chartPeriods[period] < chartPeriods[PoolChartPeriod.Week]
-        ? graphPair?.hourSnapshots
-        : graphPair?.daySnapshots) || []
+    const data = (chartPeriods[period] < chartPeriods[PoolChartPeriod.Week] ? hourBuckets : dailyBuckets) || []
 
     const currentDate = Math.round(Date.now())
     const [x, y] = data.reduce<[number[], number[]]>(
       (acc, cur) => {
-        if (cur.date * 1000 >= currentDate - chartPeriods[period]) {
-          acc[0].push(cur.date)
+        if (cur.timestamp * 1000 >= currentDate - chartPeriods[period]) {
+          acc[0].push(cur.timestamp)
           if (chart === PoolChartType.Fees) {
-            acc[1].push(Number(cur.volumeUSD * Number(swapFee)))
+            acc[1].push(Number(cur.feeUsd))
           } else if (chart === PoolChartType.Volume) {
-            acc[1].push(Number(cur.volumeUSD))
+            acc[1].push(Number(cur.volumeUsd))
           } else if (chart === PoolChartType.TVL) {
-            acc[1].push(Number(cur.liquidityUSD))
+            acc[1].push(Number(cur.liquidityUsd))
           } else if (chart === PoolChartType.APR) {
-            acc[1].push(Number(cur.apr))
+            acc[1].push(Number(cur.feeApr))
           }
         }
         return acc
@@ -60,7 +67,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, address, cha
     )
 
     return [x.reverse(), y.reverse()]
-  }, [chart, graphPair?.hourSnapshots, graphPair?.daySnapshots, period, swapFee])
+  }, [chart, period, hourBuckets, dailyBuckets])
 
   // Transient update for performance
   const onMouseOver = useCallback(
@@ -77,8 +84,8 @@ export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, address, cha
       }
 
       if (valueNodes[1]) {
-        if (chart === PoolChartType.Volume) {
-          valueNodes[1].innerHTML = formatUSD(value * Number(swapFee))
+        if (chart === PoolChartType.Fees) {
+          valueNodes[1].innerHTML = formatUSD(value)
         }
       }
 
@@ -89,7 +96,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, address, cha
         )
       }
     },
-    [period, chart, swapFee]
+    [period, chart]
   )
 
   const DEFAULT_OPTION: EChartsOption = useMemo(
@@ -192,8 +199,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, address, cha
           {chart === PoolChartType.Volume && (
             <span className="text-sm font-medium text-gray-600 dark:text-slate-300">
               <span className="text-xs top-[-2px] relative">•</span>{' '}
-              <span className="hoveredItemValue">{formatUSD(Number(yData[yData.length - 1]) * Number(swapFee))}</span>{' '}
-              earned
+              <span className="hoveredItemValue">{formatUSD(Number(yData[yData.length - 1]))}</span> earned
             </span>
           )}
         </CardTitle>

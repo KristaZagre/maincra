@@ -3,23 +3,24 @@ import { NextResponse } from 'next/server'
 import { z } from 'zod'
 
 export enum BucketGranularity {
-  HOUR= 'hour',
-  DAY= 'day',
-  WEEK= 'week',
-  MONTH= 'month',
-};
+  HOUR = 'hour',
+  DAY = 'day',
+  WEEK = 'week',
+  MONTH = 'month',
+}
 
 const schema = z.object({
   chainId: z.string(),
   address: z.string(),
-  granularity: z.nativeEnum(BucketGranularity).optional().default(BucketGranularity.DAY),
+  granularity: z.nativeEnum(BucketGranularity),
 })
 
-
-// uses thegraph, not the pools api
-export async function GET(request: Request, params: { params: { chainId: string; address: string, granularity: BucketGranularity} }) {
-  const parsedParams = schema.safeParse(params.params)
-
+export async function GET(
+  request: Request,
+  params: { params: { chainId: string; address: string; granularity: BucketGranularity } }
+) {
+  const { searchParams } = new URL(request.url)
+  const parsedParams = schema.safeParse({ ...params.params, granularity: searchParams.get('granularity') })
   if (!parsedParams.success) {
     return new Response(parsedParams.error.message, { status: 400 })
   }
@@ -45,17 +46,17 @@ export async function GET(request: Request, params: { params: { chainId: string;
 			ORDER BY timestamp DESC
       LIMIT 100
       `,
-      parameters: [ 
+      parameters: [
         {
-        name: 'id',
-        type: 'string',
-        value: id,
-      },
-      {
-        name: 'granularity',
-        type: 'string',
-        value: parsedParams.data.granularity,
-      },
+          name: 'id',
+          type: 'string',
+          value: id,
+        },
+        {
+          name: 'granularity',
+          type: 'string',
+          value: parsedParams.data.granularity,
+        },
       ],
     },
   })
@@ -63,8 +64,9 @@ export async function GET(request: Request, params: { params: { chainId: string;
   if (!data.results.length) {
     return new Response(`no buckets found for pool ${id}`, { status: 404 })
   }
-  
-  const validatedBuckets = data.results ? data.results.filter((b: unknown) => validatePoolBucket(b).success) as PoolBucket[] : []
-  return NextResponse.json(validatedBuckets)
 
+  const validatedBuckets = data.results
+    ? (data.results.filter((b: unknown) => validatePoolBucket(b).success) as PoolBucket[])
+    : []
+  return NextResponse.json(validatedBuckets)
 }

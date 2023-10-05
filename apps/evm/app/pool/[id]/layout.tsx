@@ -26,7 +26,7 @@ export default async function Layout({ children, params }: { children: React.Rea
       <Container maxWidth="5xl" className="px-4">
         <Breadcrumb />
       </Container>
-      <Container maxWidth="5xl" className="pt-10 px-4">
+      <Container maxWidth="5xl" className="px-4 pt-10">
         <PoolHeader
           backUrl={referer && referer.includes('/pool?') ? referer.toString() : '/pool'}
           address={pool.address}

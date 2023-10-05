@@ -38,6 +38,10 @@ const poolSchema = z.object({
   last1DFeeChangeUsd: z.number().nullable(),
   last1DFeeUsd: z.number().nullable(),
   last1DLiquidityUsd: z.number().nullable(),
+  last1DLiquidityChangePercent: z.number().nullable(),
+  last1DVolumeChangeUsd: z.number().nullable(),
+  last1DVolumeChangePercent: z.number().nullable(),
+  last1DTxCountChangePercent: z.number().nullable(),
   last1DTxCount: z.number().nullable(),
   last1DVolumeUsd: z.number().nullable(),
   last1HFeeApr: z.number().nullable(),
@@ -115,6 +119,8 @@ const poolBucketSchema = z.object({
 })
 
 const transactionSchema = z.object({
+  chainId: z.number().int(),
+  txHash: z.string(),
   amount0: z.string(),
   amount1: z.string(),
   amountUsd: z.number(),
