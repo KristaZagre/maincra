@@ -86,3 +86,34 @@ export const isStargateAdapterChainId = (
   STARGATE_ADAPTER_SUPPORTED_CHAIN_IDS.includes(
     chainId as StargateAdapterChainId,
   )
+
+export const AXELAR_ADAPTER_SUPPORTED_CHAIN_IDS = [
+  ChainId.ETHEREUM,
+  ChainId.BSC,
+  ChainId.AVALANCHE,
+  ChainId.POLYGON,
+  ChainId.ARBITRUM,
+  ChainId.OPTIMISM,
+  ChainId.BASE,
+] as const
+
+export type AxelarAdapterChainId =
+  typeof AXELAR_ADAPTER_SUPPORTED_CHAIN_IDS[number]
+
+export const AXELAR_ADAPTER_ADDRESS: Record<
+  AxelarAdapterChainId,
+  `0x${string}`
+> = {
+  [ChainId.ETHEREUM]: '0x5AbEdAc449A8301467c3e124B98e7151641F1e56',
+  [ChainId.BSC]: '0x580ED43F3BBa06555785C81c2957efCCa71f7483',
+  [ChainId.AVALANCHE]: '0x580ED43F3BBa06555785C81c2957efCCa71f7483',
+  [ChainId.POLYGON]: '0xA62eC622DbA415Aa94110739B1f951B1202Cf322',
+  [ChainId.ARBITRUM]: '0x078047150F8efa223B3d407f00E462e38f4B1b9C',
+  [ChainId.OPTIMISM]: '0x580ED43F3BBa06555785C81c2957efCCa71f7483',
+  [ChainId.BASE]: '0x5AbEdAc449A8301467c3e124B98e7151641F1e56',
+} as const
+
+export const isAxelarAdapterChainId = (
+  chainId: ChainId,
+): chainId is AxelarAdapterChainId =>
+  AXELAR_ADAPTER_SUPPORTED_CHAIN_IDS.includes(chainId as AxelarAdapterChainId)

@@ -1,12 +1,7 @@
 'use client'
 
 import { useSlippageTolerance } from '@sushiswap/hooks'
-import {
-  useAccount,
-  useNetwork,
-  useTokenWithCache,
-  watchNetwork,
-} from '@sushiswap/wagmi'
+import { useAccount, useNetwork, useTokenWithCache, watchNetwork } from '@sushiswap/wagmi'
 import { nanoid } from 'nanoid'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import {
@@ -20,7 +15,7 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { useCrossChainTrade } from 'src/lib/swap/useCrossChainTrade/useCrossChainTrade'
+import { useAxelarCrossChainTrade } from 'src/lib/swap/useCrossChainTrade/useAxelarCrossChainTrade'
 import { ChainId } from 'sushi/chain'
 import { SushiXSwap2ChainId, isSushiXSwap2ChainId } from 'sushi/config'
 import {
@@ -37,8 +32,8 @@ const getTokenAsString = (token: Type | string) =>
   typeof token === 'string'
     ? token
     : token.isNative
-    ? 'NATIVE'
-    : token.wrapped.address
+      ? 'NATIVE'
+      : token.wrapped.address
 const getQuoteCurrency = (chainId: number) =>
   defaultQuoteCurrency[chainId as keyof typeof defaultQuoteCurrency].wrapped
     .address
@@ -373,8 +368,8 @@ const useCrossChainSwapTrade = () => {
   } = useDerivedStateCrossChainSwap()
 
   const [slippageTolerance] = useSlippageTolerance()
-
-  return useCrossChainTrade({
+  return useAxelarCrossChainTrade({
+    // return useCrossChainTrade({
     tradeId,
     network0: chainId0 as SushiXSwap2ChainId,
     network1: chainId1 as SushiXSwap2ChainId,
@@ -386,8 +381,8 @@ const useCrossChainSwapTrade = () => {
     recipient: recipient as Address,
     enabled: Boolean(
       isSushiXSwap2ChainId(chainId0) &&
-        isSushiXSwap2ChainId(chainId1) &&
-        swapAmount?.greaterThan(ZERO),
+      isSushiXSwap2ChainId(chainId1) &&
+      swapAmount?.greaterThan(ZERO),
     ),
   })
 }
