@@ -293,7 +293,7 @@ export const POSITION_UNCLAIMED_CELL: ColumnDef<ConcentratedLiquidityPositionWit
 export const TX_SENDER_V2_COLUMN: ColumnDef<Transaction, unknown> = {
   id: 'sender',
   header: 'Maker',
-  cell: (props) => shortenAddress(props.row.original.sender),
+  cell: (props) => shortenAddress(props.row.original.maker),
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
   },
@@ -357,7 +357,7 @@ export const TX_CREATED_TIME_V2_COLUMN: ColumnDef<Transaction, unknown> = {
 export const TX_ORIGIN_V3_COLUMN: ColumnDef<TransactionV3, unknown> = {
   id: 'sender',
   header: 'Maker',
-  cell: (props) => shortenAddress(props.row.original.origin),
+  cell: (props) => shortenAddress(props.row.original.maker),
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
   },
@@ -370,17 +370,12 @@ export const TX_AMOUNT_IN_V3_COLUMN = (
   header: type === TransactionTypeV3.Swap ? 'Amount in' : 'Token 0',
   cell: (props) => {
     const row = props.row.original
-    switch (row.type) {
-      case TransactionTypeV3.Swap: {
-        const amounts = row.amount0 < 0 ? [row.amount0, row.amount1] : [row.amount1, row.amount0]
-        const tokens = row.amount0 < 0 ? [row.pool.token0, row.pool.token1] : [row.pool.token1, row.pool.token0]
-
-        return `${Math.abs(amounts[0]).toPrecision(6)} ${tokens[0].symbol}`
-      }
+    switch (type) {
+      case TransactionTypeV3.Swap: 
       case TransactionTypeV3.Mint:
       case TransactionTypeV3.Burn:
       case TransactionTypeV3.Collect:
-        return `${row.amount0.toPrecision(6)} ${row.pool.token0.symbol}`
+        return `${row.amountIn.toFixed(6)} ${row.amountIn.currency.symbol}`
     }
   },
   meta: {
@@ -395,17 +390,12 @@ export const TX_AMOUNT_OUT_V3_COLUMN = (
   header: type === TransactionTypeV3.Swap ? 'Amount out' : 'Token 1',
   cell: (props) => {
     const row = props.row.original
-    switch (row.type) {
-      case TransactionTypeV3.Swap: {
-        const amounts = row.amount0 < 0 ? [row.amount0, row.amount1] : [row.amount1, row.amount0]
-        const tokens = row.amount0 < 0 ? [row.pool.token0, row.pool.token1] : [row.pool.token1, row.pool.token0]
-
-        return `${Math.abs(amounts[1]).toFixed(2)} ${tokens[1].symbol}`
-      }
+    switch (type) {
+      case TransactionTypeV3.Swap: 
       case TransactionTypeV3.Mint:
       case TransactionTypeV3.Burn:
       case TransactionTypeV3.Collect:
-        return `${row.amount1.toFixed(2)} ${row.pool.token1.symbol}`
+        return `${row.amountOut.toFixed(6)} ${row.amountOut.currency.symbol}`
     }
   },
   meta: {
@@ -416,7 +406,7 @@ export const TX_AMOUNT_OUT_V3_COLUMN = (
 export const TX_AMOUNT_USD_V3_COLUMN: ColumnDef<TransactionV3, unknown> = {
   id: 'amountUSD',
   header: 'Amount (USD)',
-  cell: (props) => formatUSD(props.row.original.amountUSD),
+  cell: (props) => formatUSD(props.row.original.amountUsd),
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
   },

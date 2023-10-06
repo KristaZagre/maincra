@@ -28,7 +28,7 @@ export async function getPool({ chainId, address }: { chainId: ChainId; address:
     if (typeof +chainId !== 'number' || !isAddress(address)) {
       return
     }
-    const pool = await fetch(`http://localhost:3000/pool/api/v1/pools/${chainId}/${address}`, 
+    const pool = await fetch(`http://localhost:3000/pool/api/v1/pool/${chainId}/${address}`, 
       { next: { revalidate: 60 } }
     ).then((data) => data.json()) as Pool
 
@@ -47,9 +47,9 @@ export default async function PoolPage({ params }: { params: { id: string } }) {
     notFound()
   }
 
-  // if (pool.protocol === 'SUSHISWAP_V3') {
-  //   return <PoolPageV3 pool={pool} />
-  // }
+  if (pool.protocol === 'SUSHISWAP_V3') {
+    return <PoolPageV3 pool={pool} />
+  }
 
   return (
     <>

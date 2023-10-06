@@ -6,7 +6,7 @@ import { FundSource } from '@sushiswap/hooks'
 import { Pool } from '@sushiswap/rockset-client'
 import { _useBalance as useBalance, useAccount } from '@sushiswap/wagmi'
 import { useTokenAmountDollarValues, useUnderlyingTokenBalanceFromPool } from 'lib/hooks'
-import { useExtendedPool, usePoolGraphData } from 'lib/hooks/api/useFlairPoolGraphData'
+import { useExtendedPool } from 'lib/hooks/api/useFlairPoolGraphData'
 import { createContext, FC, ReactNode, useContext, useMemo } from 'react'
 
 interface PoolPositionContext {

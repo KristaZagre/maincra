@@ -1,12 +1,8 @@
 'use client'
 
-import { ChainId } from '@sushiswap/chain'
 import { formatNumber, formatPercent, formatUSD } from '@sushiswap/format'
 import { Pool } from '@sushiswap/rockset-client'
 import { Card, CardContent, CardHeader, CardLabel, CardTitle, classNames } from '@sushiswap/ui'
-import { SkeletonText } from '@sushiswap/ui/components/skeleton'
-import { usePoolGraphData } from 'lib/hooks/api/useFlairPoolGraphData'
-// import { usePoolGraphData } from 'lib/hooks'
 import { FC } from 'react'
 
 interface PoolStats {

@@ -76,17 +76,17 @@ const poolSchema = z.object({
   last7DVolumeChangePercent: z.number().nullable(),
   last7DVolumeChangeUsd: z.number().nullable(),
   last7DVolumeUsd: z.number().nullable(),
-  liquidity: z.nullable(z.number()).nullable(),
+  liquidity: z.string().nullable(),
   liquidityUsd: z.number().nullable(),
   protocol: z.string(),
   reserve0: z.number(),
   reserve0Usd: z.number().nullable(),
   reserve1: z.number(),
   reserve1Usd: z.number().nullable(),
-  sqrtPriceX96: z.nullable(z.number()),
+  sqrtPriceX96: z.string().nullable(),
   tick: z.nullable(z.number()),
-  feeGrowthGlobal0X128: z.nullable(z.number()),
-  feeGrowthGlobal1X128: z.nullable(z.number()),
+  feeGrowthGlobal0X128: z.string().nullable(),
+  feeGrowthGlobal1X128: z.string().nullable(),
   txCount: z.number(),
   volumeToken0: z.string(),
   volumeToken0Usd: z.number().nullable(),
@@ -123,11 +123,10 @@ const transactionSchema = z.object({
   txHash: z.string(),
   amount0: z.string(),
   amount1: z.string(),
-  amountUsd: z.number(),
-  sender: z.string(),
+  amountUsd: z.number().nullable(),
+  maker: z.string(),
   timestamp: z.number(),
-});
-
+})
 
 export type SimplePool = Required<z.infer<typeof simplePoolSchema>>
 export type Pool = Required<z.infer<typeof poolSchema>>

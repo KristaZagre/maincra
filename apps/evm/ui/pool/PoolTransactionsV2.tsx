@@ -43,7 +43,7 @@ function useTransactionsV2(pool: ExtendedPool, poolId: string, opts: UseTransact
 
       if (!pool || !isSushiSwapV2ChainId(chainId)) return []
 
-      const txs = await fetch(`/pool/api/v1/pools/${chainId}/${pool.address}/transactions/${opts.type.toLowerCase()}s`).then((data) => data.json()) as _Transaction[]
+      const txs = await fetch(`/pool/api/v1/pool/${chainId}/${pool.address}/transactions/${opts.type.toLowerCase()}s`).then((data) => data.json()) as _Transaction[]
       
       const transformed = txs.map((tx) => ({
         ...tx,

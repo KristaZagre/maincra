@@ -40,7 +40,7 @@ export async function GET(
       SELECT
         chainId,
         txHash,
-        sender,
+        txFrom as maker,
         amount0,
         amount1,
         amountUsd,

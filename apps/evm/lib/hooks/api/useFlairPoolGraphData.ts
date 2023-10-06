@@ -65,7 +65,7 @@ export const usePoolGraphData = ({ poolAddress, chainId, enabled = true, granula
   return useQuery({
     queryKey: ['useFlairPoolGraphData', { poolAddress, chainId, granularity }],
     queryFn: async () =>
-      fetch(`/pool/api/v1/pools/${chainId}/${poolAddress}/buckets?granularity=${granularity}`).then((data) => data.json()) as Promise<
+      fetch(`/pool/api/v1/pool/${chainId}/${poolAddress}/buckets?granularity=${granularity}`).then((data) => data.json()) as Promise<
         PoolBucket[]
       >,
     keepPreviousData: true,

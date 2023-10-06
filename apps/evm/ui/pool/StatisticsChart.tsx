@@ -6,15 +6,17 @@ import { LiquidityDepthWidget } from './LiquidityDepthWidget'
 import { PoolChartGraph } from './PoolChartGraph'
 import { PoolChartPeriod, PoolChartPeriods } from './PoolChartPeriods'
 import { PoolChartType, PoolChartTypes } from './PoolChartTypes'
+import { ExtendedPool } from 'lib/hooks/api/useFlairPoolGraphData'
 
 const statisticsChart = [PoolChartType.Volume, PoolChartType.TVL, PoolChartType.Fees, PoolChartType.Depth]
 
 interface Charts {
+  pool: ExtendedPool
   address: string
   chainId: SushiSwapV3ChainId
 }
 
-export const StatisticsCharts: FC<Charts> = ({ address, chainId }) => {
+export const StatisticsCharts: FC<Charts> = ({ pool, address, chainId }) => {
   const [chart, setChart] = useState<PoolChartType>(statisticsChart[0])
   const [period, setPeriod] = useState<PoolChartPeriod>(PoolChartPeriod.Month)
 
@@ -26,12 +28,12 @@ export const StatisticsCharts: FC<Charts> = ({ address, chainId }) => {
 
   return (
     <Card>
-      <div className="border-b border-accent px-6 py-4 flex flex-col items-center justify-between gap-4 md:flex-row">
+      <div className="flex flex-col items-center justify-between gap-4 px-6 py-4 border-b border-accent md:flex-row">
         <PoolChartTypes charts={statisticsChart} selectedChart={chart} setChart={setChart} />
         <PoolChartPeriods periods={periods} selectedPeriod={period} setPeriod={setPeriod} />
       </div>
       {chart === PoolChartType.Depth ? (
-        <LiquidityDepthWidget chainId={chainId} address={address} />
+        <LiquidityDepthWidget pool={pool} chainId={chainId} address={address} />
       ) : (
         <PoolChartGraph chart={chart} period={period} address={address} chainId={chainId} />
       )}
