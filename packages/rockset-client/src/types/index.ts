@@ -128,10 +128,25 @@ const transactionSchema = z.object({
   timestamp: z.number(),
 })
 
+const v2PositionSchema = z.object({
+  chainId: z.number().int(),
+  amountDepositedUsd: z.number(),
+  amountWithdrawnUsd: z.number(),
+  balance: z.string(),
+  name: z.string(),
+  poolId: z.string(),
+  protocol: z.string(),
+  token0AmountDeposited: z.number().or(z.string()),
+  token0AmountWithdrawn: z.number().or(z.string()),
+  token1AmountDeposited: z.number().or(z.string()),
+  token1AmountWithdrawn: z.number().or(z.string()),
+})
+
 export type SimplePool = Required<z.infer<typeof simplePoolSchema>>
 export type Pool = Required<z.infer<typeof poolSchema>>
 export type PoolBucket = Required<z.infer<typeof poolBucketSchema>>
 export type Transaction = Required<z.infer<typeof transactionSchema>>
+export type V2Position = Required<z.infer<typeof v2PositionSchema>>
 
 export const validateSimplePool = (inputs: unknown) => {
   return simplePoolSchema.safeParse(inputs)
@@ -147,4 +162,8 @@ export const validatePoolBucket = (inputs: unknown) => {
 
 export const validateTransaction = (inputs: unknown) => {
   return transactionSchema.safeParse(inputs)
+}
+
+export const validateV2Position = (inputs: unknown) => {
+  return v2PositionSchema.safeParse(inputs)
 }
