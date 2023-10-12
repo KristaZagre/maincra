@@ -5,12 +5,13 @@
     "compilerOptions": {
       "outDir": "./dist",
       "rootDir": "./src",
-      "module": "esnext",
-      "target": "esnext",
+      "target": "ESNext",
+      "lib": ["ESNext"],
+      "module": "NodeNext",
+      "moduleResolution": "NodeNext",
       "skipLibCheck": true,
       "declaration": true,
       "declarationMap": true,
       "sourceMap": true,
-      "moduleResolution": "nodenext"
     }
   }

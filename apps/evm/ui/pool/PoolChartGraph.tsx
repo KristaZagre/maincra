@@ -1,8 +1,13 @@
 'use client'
 
-import { ChainId } from '@sushiswap/chain'
-import { formatPercent, formatUSD } from '@sushiswap/format'
-import { CardContent, CardHeader, classNames, SkeletonText } from '@sushiswap/ui'
+import { ChainId } from 'sushi/chain'
+import { formatPercent, formatUSD } from 'sushi'
+import {
+  CardContent,
+  CardHeader,
+  classNames,
+  SkeletonText,
+} from '@sushiswap/ui'
 import { CardDescription, CardTitle } from '@sushiswap/ui/components/card'
 import { SkeletonBox } from '@sushiswap/ui/components/skeleton'
 import { format } from 'date-fns'
@@ -18,7 +23,11 @@ import { chartPeriods, PoolChartPeriod } from './PoolChartPeriods'
 import { PoolChartType } from './PoolChartTypes'
 
 interface PoolChartProps {
-  chart: PoolChartType.Volume | PoolChartType.Fees | PoolChartType.TVL | PoolChartType.APR
+  chart:
+    | PoolChartType.Volume
+    | PoolChartType.Fees
+    | PoolChartType.TVL
+    | PoolChartType.APR
   period: PoolChartPeriod
   address: string
   chainId: ChainId
@@ -26,25 +35,36 @@ interface PoolChartProps {
 
 const tailwind = resolveConfig(tailwindConfig)
 
-export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, address, chainId }) => {
+export const PoolChartGraph: FC<PoolChartProps> = ({
+  chart,
+  period,
+  address,
+  chainId,
+}) => {
   const { resolvedTheme } = useTheme()
 
   const { data: hourBuckets, isLoading: isLoadingHourly } = usePoolGraphData({
     poolAddress: address,
     chainId,
-    granularity: 'hour'
+    granularity: 'hour',
   })
-  
+
   const { data: dailyBuckets, isLoading: isLoadingDaily } = usePoolGraphData({
     poolAddress: address,
     chainId,
-    granularity: 'day'
+    granularity: 'day',
   })
 
-  const isLoading = useMemo(() => isLoadingHourly || isLoadingDaily, [isLoadingHourly, isLoadingDaily])
+  const isLoading = useMemo(
+    () => isLoadingHourly || isLoadingDaily,
+    [isLoadingHourly, isLoadingDaily],
+  )
 
   const [xData, yData]: [number[], number[]] = useMemo(() => {
-    const data = (chartPeriods[period] < chartPeriods[PoolChartPeriod.Week] ? hourBuckets : dailyBuckets) || []
+    const data =
+      (chartPeriods[period] < chartPeriods[PoolChartPeriod.Week]
+        ? hourBuckets
+        : dailyBuckets) || []
 
     const currentDate = Math.round(Date.now())
     const [x, y] = data.reduce<[number[], number[]]>(
@@ -60,10 +80,10 @@ export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, address, cha
           } else if (chart === PoolChartType.APR) {
             acc[1].push(Number(cur.feeApr))
           }
-        }
+        } 
         return acc
       },
-      [[], []]
+      [[], []],
     )
 
     return [x.reverse(), y.reverse()]
@@ -92,18 +112,23 @@ export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, address, cha
       if (nameNodes[0]) {
         nameNodes[0].innerHTML = format(
           new Date(name * 1000),
-          `dd MMM yyyy${chartPeriods[period] < chartPeriods[PoolChartPeriod.Week] ? ' p' : ''}`
+          `dd MMM yyyy${
+            chartPeriods[period] < chartPeriods[PoolChartPeriod.Week]
+              ? ' p'
+              : ''
+          }`,
         )
       }
     },
-    [period, chart]
+    [period, chart],
   )
 
   const DEFAULT_OPTION: EChartsOption = useMemo(
     () => ({
       tooltip: {
         trigger: 'axis',
-        extraCssText: 'z-index: 1000; padding: 0 !important; box-shadow: none !important',
+        extraCssText:
+          'z-index: 1000; padding: 0 !important; box-shadow: none !important',
         responsive: true,
         // @ts-ignore
         backgroundColor: 'transparent',
@@ -117,11 +142,20 @@ export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, address, cha
           const date = new Date(Number(params[0].name * 1000))
           return `<div class="flex flex-col gap-0.5 paper bg-white/50 dark:bg-slate-800/50 px-3 py-2 rounded-xl overflow-hidden shadow-lg">
             <span class="text-sm dark:text-slate-50 text-gray-900 font-medium">${
-              chart === PoolChartType.APR ? formatPercent(params[0].value) : formatUSD(params[0].value)
+              chart === PoolChartType.APR
+                ? formatPercent(params[0].value)
+                : formatUSD(params[0].value)
             }</span>
             <span class="text-xs text-gray-500 dark:text-slate-400 font-medium">${
               date instanceof Date && !isNaN(date?.getTime())
-                ? format(date, `dd MMM yyyy${chartPeriods[period] < chartPeriods[PoolChartPeriod.Week] ? ' p' : ''}`)
+                ? format(
+                    date,
+                    `dd MMM yyyy${
+                      chartPeriods[period] < chartPeriods[PoolChartPeriod.Week]
+                        ? ' p'
+                        : ''
+                    }`,
+                  )
                 : ''
             }</span>
           </div>`
@@ -164,7 +198,10 @@ export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, address, cha
       series: [
         {
           name: 'Volume',
-          type: chart === PoolChartType.TVL || chart === PoolChartType.APR ? 'line' : 'bar',
+          type:
+            chart === PoolChartType.TVL || chart === PoolChartType.APR
+              ? 'line'
+              : 'bar',
           smooth: true,
           xAxisIndex: 0,
           yAxisIndex: 0,
@@ -186,7 +223,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, address, cha
         },
       ],
     }),
-    [xData, chart, yData, onMouseOver, period]
+    [xData, chart, yData, onMouseOver, period],
   )
 
   return (
@@ -194,19 +231,27 @@ export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, address, cha
       <CardHeader>
         <CardTitle>
           <span className="hoveredItemValue">
-            {chart === PoolChartType.APR ? formatPercent(yData[yData.length - 1]) : formatUSD(yData[yData.length - 1])}
+            {chart === PoolChartType.APR
+              ? formatPercent(yData[yData.length - 1])
+              : formatUSD(yData[yData.length - 1])}
           </span>{' '}
           {chart === PoolChartType.Volume && (
             <span className="text-sm font-medium text-gray-600 dark:text-slate-300">
               <span className="text-xs top-[-2px] relative">•</span>{' '}
-              <span className="hoveredItemValue">{formatUSD(Number(yData[yData.length - 1]))}</span> earned
+              <span className="hoveredItemValue">
+                {formatUSD(Number(yData[yData.length - 1]))}
+              </span>{' '}
+              earned
             </span>
           )}
         </CardTitle>
         <CardDescription>
           {xData.length ? (
             <div className="text-sm text-gray-500 dark:text-slate-500 hoveredItemName">
-              {format(new Date(xData[xData.length - 1] * 1000), 'dd MMM yyyy HH:mm')}
+              {format(
+                new Date(xData[xData.length - 1] * 1000),
+                'dd MMM yyyy HH:mm',
+              )}
             </div>
           ) : (
             <SkeletonText fontSize="sm" />
@@ -215,7 +260,11 @@ export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, address, cha
       </CardHeader>
       <CardContent>
         {isLoading ? (
-          <SkeletonBox className={classNames('h-[400px] w-full dark:via-slate-800 dark:to-slate-900')} />
+          <SkeletonBox
+            className={classNames(
+              'h-[400px] w-full dark:via-slate-800 dark:to-slate-900',
+            )}
+          />
         ) : (
           <ReactECharts option={DEFAULT_OPTION} style={{ height: 400 }} />
         )}

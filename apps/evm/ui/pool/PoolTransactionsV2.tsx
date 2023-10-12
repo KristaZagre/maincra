@@ -1,14 +1,23 @@
 'use client'
 
-import { Chain, ChainId } from '@sushiswap/chain'
-import { Amount, Token } from '@sushiswap/currency'
+import { Chain, ChainId } from 'sushi/chain'
+import { Amount, Token } from 'sushi/currency'
 import { Pool, Transaction as _Transaction } from '@sushiswap/rockset-client'
-import { Card, CardContent, CardHeader, CardTitle, DataTable } from '@sushiswap/ui'
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  DataTable,
+} from '@sushiswap/ui'
 import { Toggle } from '@sushiswap/ui/components/toggle'
 import { isSushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import { useQuery } from '@tanstack/react-query'
 import { PaginationState } from '@tanstack/react-table'
-import { ExtendedPool, useExtendedPool } from 'lib/hooks/api/useFlairPoolGraphData'
+import {
+  ExtendedPool,
+  useExtendedPool,
+} from 'lib/hooks/api/useFlairPoolGraphData'
 import { FC, useMemo, useState } from 'react'
 
 import {
@@ -32,10 +41,13 @@ interface UseTransactionsV2Opts {
   skip?: number
 }
 
-
 // Will only support the last 1k txs
 // The fact that there are different subtransactions aggregated under one transaction makes paging a bit difficult
-function useTransactionsV2(pool: ExtendedPool, poolId: string, opts: UseTransactionsV2Opts) {
+function useTransactionsV2(
+  pool: ExtendedPool,
+  poolId: string,
+  opts: UseTransactionsV2Opts,
+) {
   return useQuery({
     queryKey: ['poolTransactionsV2', poolId, pool?.chainId, opts],
     queryFn: async () => {
@@ -43,15 +55,18 @@ function useTransactionsV2(pool: ExtendedPool, poolId: string, opts: UseTransact
 
       if (!pool || !isSushiSwapV2ChainId(chainId)) return []
 
-      const txs = await fetch(`/pool/api/v1/pool/${chainId}/${pool.address}/transactions/${opts.type.toLowerCase()}s`).then((data) => data.json()) as _Transaction[]
-      
+      const txs = (await fetch(
+        `/pool/api/v1/pool/${chainId}/${
+          pool.address
+        }/transactions/${opts.type.toLowerCase()}s`,
+      ).then((data) => data.json())) as _Transaction[]
+
       const transformed = txs.map((tx) => ({
         ...tx,
         amountIn: Amount.fromRawAmount(pool.token0, tx.amount0),
         amountOut: Amount.fromRawAmount(pool.token1, tx.amount1),
       }))
       return transformed
-
     },
     enabled: !!pool && isSushiSwapV2ChainId(pool?.chainId as ChainId),
     refetchInterval: opts?.refetchInterval,
@@ -59,7 +74,7 @@ function useTransactionsV2(pool: ExtendedPool, poolId: string, opts: UseTransact
 }
 
 type Transaction = _Transaction & {
-  amountIn: Amount<Token>,
+  amountIn: Amount<Token>
   amountOut: Amount<Token>
 }
 
@@ -69,7 +84,9 @@ interface PoolTransactionsV2Props {
 }
 
 const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({ pool, poolId }) => {
-  const [type, setType] = useState<Parameters<typeof useTransactionsV2>['2']['type']>(TransactionType.Swap)
+  const [type, setType] = useState<
+    Parameters<typeof useTransactionsV2>['2']['type']
+  >(TransactionType.Swap)
   const [paginationState, setPaginationState] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
@@ -89,10 +106,11 @@ const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({ pool, poolId }) => {
     () =>
       ({
         refetchInterval: 60_000,
-        first: paginationState.pageSize === 0 ? paginationState.pageIndex + 1 : 100,
+        first:
+          paginationState.pageSize === 0 ? paginationState.pageIndex + 1 : 100,
         type,
-      } as const),
-    [paginationState.pageIndex, paginationState.pageSize, type]
+      }) as const,
+    [paginationState.pageIndex, paginationState.pageSize, type],
   )
   const extendedPool = useExtendedPool({ pool })
   const { data, isLoading } = useTransactionsV2(extendedPool, poolId, opts)
@@ -156,4 +174,3 @@ const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({ pool, poolId }) => {
 
 export { PoolTransactionsV2, useTransactionsV2 }
 export type { Transaction }
-

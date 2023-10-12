@@ -1,6 +1,6 @@
 'use client'
 
-import { Native, Token } from '@sushiswap/currency'
+import { Native, Token } from 'sushi/currency'
 import { SimplePool } from '@sushiswap/rockset-client'
 import { useMemo } from 'react'
 
@@ -23,10 +23,12 @@ export const useTokensFromPool = (pool: SimplePool) => {
     })
 
     const [token0, token1, liquidityToken] = [
-      _token0.wrapped.address === Native.onChain(_token0.chainId).wrapped.address
+      _token0.wrapped.address ===
+      Native.onChain(_token0.chainId).wrapped.address
         ? Native.onChain(_token0.chainId)
         : _token0,
-      _token1.wrapped.address === Native.onChain(_token1.chainId).wrapped.address
+      _token1.wrapped.address ===
+      Native.onChain(_token1.chainId).wrapped.address
         ? Native.onChain(_token1.chainId)
         : _token1,
       new Token({

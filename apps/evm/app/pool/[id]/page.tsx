@@ -1,26 +1,24 @@
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { Separator } from '@sushiswap/ui'
 import { notFound } from 'next/navigation'
 import { ManageV2LiquidityCard } from 'ui/pool/ManageV2LiquidityCard'
 import { PoolTransactionsV2 } from 'ui/pool/PoolTransactionsV2'
 import { isAddress } from 'viem'
 
-import {
-  PoolPositionProvider,
-  PoolPositionRewardsProvider,
-  PoolPositionStakedProvider,
-  UnknownTokenAlert,
-} from '../../../ui/pool'
+// import {
+//   PoolPositionProvider,
+//   PoolPositionRewardsProvider,
+//   PoolPositionStakedProvider,
+//   UnknownTokenAlert,
+// } from '../../../ui/pool'
 import { PoolChartV2 } from '../../../ui/pool/PoolChartV2'
 import { PoolComposition } from '../../../ui/pool/PoolComposition'
-import { PoolMyRewards } from '../../../ui/pool/PoolMyRewards'
+// import { PoolMyRewards } from '../../../ui/pool/PoolMyRewards'
 import { PoolPageV3 } from '../../../ui/pool/PoolPageV3'
-import { PoolPosition } from '../../../ui/pool/PoolPosition'
+// import { PoolPosition } from '../../../ui/pool/PoolPosition'
 import { PoolRewards } from '../../../ui/pool/PoolRewards'
 import { PoolStats } from '../../../ui/pool/PoolStats'
 import { Pool } from '@sushiswap/rockset-client'
-import { Native, Token } from '@sushiswap/currency'
-import { useExtendedPool } from 'lib/hooks/api/useFlairPoolGraphData'
 
 
 export async function getPool({ chainId, address }: { chainId: ChainId; address: string }) {
@@ -39,9 +37,13 @@ export async function getPool({ chainId, address }: { chainId: ChainId; address:
   }
 }
 export default async function PoolPage({ params }: { params: { id: string } }) {
-  const [_chainId, address] = params.id.split(params.id.includes('%3A') ? '%3A' : ':') as [string, string]
-  const chainId = Number(_chainId) as ChainId
-  const pool = await getPool({ chainId, address })
+  const [chainId, address] = params.id.split(
+    params.id.includes('%3A') ? '%3A' : ':',
+  ) as [string, string]
+
+  const pool = await fetch(`http://localhost:3000/pool/api/v1/pool/${chainId}/${address}`, 
+  { next: { revalidate: 60 } }
+).then((data) => data.json()) as Pool
 
   if (!pool) {
     notFound()
@@ -57,7 +59,7 @@ export default async function PoolPage({ params }: { params: { id: string } }) {
       <div className="flex flex-col gap-6">
         <div className="grid grid-cols-1 md:grid-cols-[auto_400px] gap-6">
           <div>
-            <ManageV2LiquidityCard pool={pool} />
+            {/* <ManageV2LiquidityCard pool={pool} /> */}
           </div>
           <div className="flex flex-col gap-6">
             {/* <PoolPositionProvider pool={pool}>
@@ -75,7 +77,10 @@ export default async function PoolPage({ params }: { params: { id: string } }) {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-[auto_400px] gap-6">
           <div>
-            <PoolChartV2 address={pool.address} chainId={pool.chainId as ChainId} />
+            <PoolChartV2
+              address={pool.address}
+              chainId={pool.chainId as ChainId}
+            />
           </div>
           <div className="flex flex-col gap-6">
             <PoolComposition pool={pool} />

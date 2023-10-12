@@ -8,7 +8,12 @@ import { PoolChartPeriod, PoolChartPeriods } from './PoolChartPeriods'
 import { PoolChartType, PoolChartTypes } from './PoolChartTypes'
 import { ExtendedPool } from 'lib/hooks/api/useFlairPoolGraphData'
 
-const statisticsChart = [PoolChartType.Volume, PoolChartType.TVL, PoolChartType.Fees, PoolChartType.Depth]
+const statisticsChart = [
+  PoolChartType.Volume,
+  PoolChartType.TVL,
+  PoolChartType.Fees,
+  PoolChartType.Depth,
+]
 
 interface Charts {
   pool: ExtendedPool
@@ -23,19 +28,38 @@ export const StatisticsCharts: FC<Charts> = ({ pool, address, chainId }) => {
   const periods = useMemo(() => {
     if (chart === PoolChartType.Depth) return []
 
-    return [PoolChartPeriod.Day, PoolChartPeriod.Week, PoolChartPeriod.Month, PoolChartPeriod.Year, PoolChartPeriod.All]
+    return [
+      PoolChartPeriod.Day,
+      PoolChartPeriod.Week,
+      PoolChartPeriod.Month,
+      PoolChartPeriod.Year,
+      PoolChartPeriod.All,
+    ]
   }, [chart])
 
   return (
     <Card>
       <div className="flex flex-col items-center justify-between gap-4 px-6 py-4 border-b border-accent md:flex-row">
-        <PoolChartTypes charts={statisticsChart} selectedChart={chart} setChart={setChart} />
-        <PoolChartPeriods periods={periods} selectedPeriod={period} setPeriod={setPeriod} />
+        <PoolChartTypes
+          charts={statisticsChart}
+          selectedChart={chart}
+          setChart={setChart}
+        />
+        <PoolChartPeriods
+          periods={periods}
+          selectedPeriod={period}
+          setPeriod={setPeriod}
+        />
       </div>
       {chart === PoolChartType.Depth ? (
         <LiquidityDepthWidget pool={pool} chainId={chainId} address={address} />
       ) : (
-        <PoolChartGraph chart={chart} period={period} address={address} chainId={chainId} />
+        <PoolChartGraph
+          chart={chart}
+          period={period}
+          address={address}
+          chainId={chainId}
+        />
       )}
     </Card>
   )

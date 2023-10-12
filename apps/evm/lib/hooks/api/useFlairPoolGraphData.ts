@@ -1,10 +1,10 @@
 'use client'
 
-import { ChainId } from '@sushiswap/chain'
-import { Amount, Native, Token } from '@sushiswap/currency'
 import { Pool, PoolBucket } from '@sushiswap/rockset-client'
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
+import { ChainId } from 'sushi/chain'
+import { Amount, Native, Token } from 'sushi/currency'
 
 interface UsePoolGraphDataParams {
   poolAddress: string
@@ -32,10 +32,12 @@ export const useExtendedPool = ({ pool }: { pool: Pool }) => {
     })
 
     const [token0, token1, liquidityToken] = [
-      _token0.wrapped.address === Native.onChain(_token0.chainId).wrapped.address
+      _token0.wrapped.address ===
+      Native.onChain(_token0.chainId).wrapped.address
         ? Native.onChain(_token0.chainId)
         : _token0,
-      _token1.wrapped.address === Native.onChain(_token1.chainId).wrapped.address
+      _token1.wrapped.address ===
+      Native.onChain(_token1.chainId).wrapped.address
         ? Native.onChain(_token1.chainId)
         : _token1,
       new Token({
@@ -49,9 +51,18 @@ export const useExtendedPool = ({ pool }: { pool: Pool }) => {
 
     return {
       ...pool,
-      reserve0: token0 && pool ? Amount.fromRawAmount(token0, Math.ceil(pool.reserve0)) : null,
-      reserve1: token1 && pool ? Amount.fromRawAmount(token1, Math.ceil(pool.reserve1)) : null,
-      totalSupply: liquidityToken && pool ? Amount.fromRawAmount(liquidityToken, Math.ceil(pool.liquidity)) : null,
+      reserve0:
+        token0 && pool
+          ? Amount.fromRawAmount(token0, Math.ceil(pool.reserve0))
+          : null,
+      reserve1:
+        token1 && pool
+          ? Amount.fromRawAmount(token1, Math.ceil(pool.reserve1))
+          : null,
+      totalSupply:
+        liquidityToken && pool
+          ? Amount.fromRawAmount(liquidityToken, Math.ceil(pool.liquidity))
+          : null,
       token0,
       token1,
       liquidityToken,
@@ -61,13 +72,18 @@ export const useExtendedPool = ({ pool }: { pool: Pool }) => {
 
 export type ExtendedPool = ReturnType<typeof useExtendedPool>
 
-export const usePoolGraphData = ({ poolAddress, chainId, enabled = true, granularity }: UsePoolGraphDataParams) => {
+export const usePoolGraphData = ({
+  poolAddress,
+  chainId,
+  enabled = true,
+  granularity,
+}: UsePoolGraphDataParams) => {
   return useQuery({
     queryKey: ['useFlairPoolGraphData', { poolAddress, chainId, granularity }],
     queryFn: async () =>
-      fetch(`/pool/api/v1/pool/${chainId}/${poolAddress}/buckets?granularity=${granularity}`).then((data) => data.json()) as Promise<
-        PoolBucket[]
-      >,
+      fetch(
+        `/pool/api/v1/pool/${chainId}/${poolAddress}/buckets?granularity=${granularity}`,
+      ).then((data) => data.json()) as Promise<PoolBucket[]>,
     keepPreviousData: true,
     staleTime: 60,
     cacheTime: 86400000, // 24hs

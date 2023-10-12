@@ -1,9 +1,8 @@
 'use client'
 
-import { ChainId } from '@sushiswap/chain'
-import { getPool } from '@sushiswap/client'
-import { formatUSD } from '@sushiswap/format'
-import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
+import { ChainId } from 'sushi/chain'
+import { formatUSD } from 'sushi'
+// import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
 import { CardLabel, classNames, Separator, SkeletonText } from '@sushiswap/ui'
 import {
   Card,
@@ -15,13 +14,16 @@ import {
 } from '@sushiswap/ui/components/card'
 import { Toggle } from '@sushiswap/ui/components/toggle'
 import { SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
-import { useConcentratedLiquidityPool, useConcentratedLiquidityPoolReserves } from '@sushiswap/wagmi/future/hooks'
+import {
+  useConcentratedLiquidityPool,
+  useConcentratedLiquidityPoolReserves,
+} from '@sushiswap/wagmi/future/hooks'
 import { useTokenAmountDollarValues } from 'lib/hooks'
-import React, { FC, useMemo, useState } from 'react'
+import React, { FC, useState } from 'react'
 
 import { ConcentratedLiquidityProvider } from './ConcentratedLiquidityProvider'
 import { ConcentratedPositionsTable } from './ConcentratedPositionsTable'
-import { PoolRewardDistributionsCard } from './PoolRewardDistributionsCard'
+// import { PoolRewardDistributionsCard } from './PoolRewardDistributionsCard'
 import { PoolsFiltersProvider } from './PoolsFiltersProvider'
 import { PoolTransactionsV3 } from './PoolTransactionsV3'
 import { StatisticsCharts } from './StatisticsChart'
@@ -55,30 +57,43 @@ const _Pool: FC<{ pool: Pool }> = ({ pool }) => {
     feeAmount: extendedPool?.fee * 1000000,
   })
 
-  const { data: reserves, isLoading: isReservesLoading } = useConcentratedLiquidityPoolReserves({
-    pool: cPool,
-    chainId,
-  })
+  const { data: reserves, isLoading: isReservesLoading } =
+    useConcentratedLiquidityPoolReserves({
+      pool: cPool,
+      chainId,
+    })
   const fiatValues = useTokenAmountDollarValues({ chainId, amounts: reserves })
   // const incentiveAmounts = useMemo(() => poolStats?.incentives.map((el) => el.reward), [poolStats?.incentives])
   const incentiveAmounts = null
-  const fiatValuesIncentives = useTokenAmountDollarValues({ chainId, amounts: incentiveAmounts })
+  const fiatValuesIncentives = useTokenAmountDollarValues({
+    chainId,
+    amounts: incentiveAmounts,
+  })
 
   return (
     <div className="flex flex-col gap-6">
       <PoolsFiltersProvider>
-        <ConcentratedPositionsTable chainId={pool.chainId as ChainId} poolId={pool.address} />
+        <ConcentratedPositionsTable
+          chainId={pool.chainId as ChainId}
+          poolId={pool.address}
+        />
       </PoolsFiltersProvider>
       <div className="py-4">
         <Separator />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-[auto_400px] gap-6">
-        <StatisticsCharts pool={extendedPool} address={address} chainId={chainId} />
+        <StatisticsCharts
+          pool={extendedPool}
+          address={address}
+          chainId={chainId}
+        />
         <div className="flex flex-col gap-6">
           <Card>
             <CardHeader>
               <CardTitle>Pool Liquidity</CardTitle>
-              <CardDescription>{formatUSD(fiatValues[0] + fiatValues[1])}</CardDescription>
+              <CardDescription>
+                {formatUSD(fiatValues[0] + fiatValues[1])}
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <CardCurrencyAmountItem
@@ -125,16 +140,29 @@ const _Pool: FC<{ pool: Pool }> = ({ pool }) => {
                   <CardLabel>Volume</CardLabel>
                   {pool ? (
                     <div className="text-xl font-semibold">
-                      {formatUSD(granularity === Granularity.Week ? pool.last7DVolumeUsd : pool.last1DVolumeUsd ?? 0)}{' '}
+                      {formatUSD(
+                        granularity === Granularity.Week
+                          ? pool.last7DVolumeUsd
+                          : pool.last1DVolumeUsd ?? 0,
+                      )}{' '}
                       <span
                         className={classNames(
                           'text-xs',
-                          pool[granularity === Granularity.Week ? 'last7DVolumeChangePercent' : 'last1DVolumeChangePercent'] > 0
+                          pool[
+                            granularity === Granularity.Week
+                              ? 'last7DVolumeChangePercent'
+                              : 'last1DVolumeChangePercent'
+                          ] > 0
                             ? 'text-green'
-                            : 'text-red'
+                            : 'text-red',
                         )}
                       >
-                        ({pool[granularity === Granularity.Week ? 'last7DVolumeChangePercent' : 'last1DVolumeChangePercent'].toFixed(2)}
+                        (
+                        {pool[
+                          granularity === Granularity.Week
+                            ? 'last7DVolumeChangePercent'
+                            : 'last1DVolumeChangePercent'
+                        ].toFixed(2)}
                         %)
                       </span>
                     </div>
@@ -146,16 +174,29 @@ const _Pool: FC<{ pool: Pool }> = ({ pool }) => {
                   <CardLabel>Fees</CardLabel>
                   {pool ? (
                     <div className="text-xl font-semibold">
-                      {formatUSD(granularity === Granularity.Week ? pool.last7DFeeUsd : pool.last1DFeeUsd ?? 0)}{' '}
+                      {formatUSD(
+                        granularity === Granularity.Week
+                          ? pool.last7DFeeUsd
+                          : pool.last1DFeeUsd ?? 0,
+                      )}{' '}
                       <span
                         className={classNames(
                           'text-xs',
-                          pool[granularity === Granularity.Week ? 'last7DFeeChangeUsd' : 'last1DFeeChangeUsd'] > 0
+                          pool[
+                            granularity === Granularity.Week
+                              ? 'last7DFeeChangeUsd'
+                              : 'last1DFeeChangeUsd'
+                          ] > 0
                             ? 'text-green'
-                            : 'text-red'
+                            : 'text-red',
                         )}
                       >
-                        ({pool[granularity === Granularity.Week ? 'last7DFeeChangeUsd' : 'last1DFeeChangeUsd'].toFixed(2)}
+                        (
+                        {pool[
+                          granularity === Granularity.Week
+                            ? 'last7DFeeChangeUsd'
+                            : 'last1DFeeChangeUsd'
+                        ].toFixed(2)}
                         %)
                       </span>
                     </div>
