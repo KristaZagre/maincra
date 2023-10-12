@@ -1,4 +1,5 @@
-import { createClient, processV2Position } from '@sushiswap/rockset-client'
+import { processV2Position } from '@sushiswap/rockset-client'
+import { createClient } from '@sushiswap/rockset-client/client'
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
 

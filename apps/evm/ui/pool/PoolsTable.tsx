@@ -1,7 +1,7 @@
 'use client'
 
 import { Slot } from '@radix-ui/react-slot'
-import { SimplePool } from '@sushiswap/rockset-client'
+import { SimplePool, SimplePoolArgs } from '@sushiswap/rockset-client'
 import { Card, CardHeader, CardTitle, DataTable } from '@sushiswap/ui'
 import {
   ColumnDef,
@@ -10,7 +10,7 @@ import {
   SortingState,
   TableState,
 } from '@tanstack/react-table'
-import { GetPoolsArgs, usePoolCount, usePools } from 'lib/hooks'
+import { useSimplePoolCount, useSimplePools } from 'lib/hooks'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
 
 import { usePoolFilters } from './PoolsFiltersProvider'
@@ -40,7 +40,7 @@ export const PoolsTable: FC<PositionsTableProps> = ({ onRowClick }) => {
     { id: 'liquidityUSD', desc: true },
   ])
 
-  // const { data: poolCount } = usePoolCount({ args, shouldFetch: true, swrConfig: useSWRConfig() })
+  // const { data: poolCount } = useSimplePoolCount({ args, shouldFetch: true, swrConfig: useSWRConfig() })
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 20,
@@ -52,9 +52,9 @@ export const PoolsTable: FC<PositionsTableProps> = ({ onRowClick }) => {
     }
   }, [pagination, sorting])
 
-  const args = useMemo<GetPoolsArgs>(() => {
+  const args = useMemo<SimplePoolArgs>(() => {
     return {
-      index: pagination.pageIndex,
+      pageIndex: pagination.pageIndex,
       // chainIds: chainIds,
       // tokenSymbols,
       // isIncentivized: farmsOnly || undefined, // will filter farms out if set to false, undefined will be filtered out by the parser
@@ -66,10 +66,11 @@ export const PoolsTable: FC<PositionsTableProps> = ({ onRowClick }) => {
     // }, [chainIds, tokenSymbols, protocols, farmsOnly, sorting])
   }, [pagination])
 
-  const { data: pools, isLoading: isValidatingPools } = usePools({ args })
-  const { data: poolCount, isLoading: isValidatingCount } = usePoolCount({
-    args,
-  })
+  const { data: pools, isLoading: isValidatingPools } = useSimplePools({ args })
+  const { data: poolCount /*, isLoading: isValidatingCount*/ } =
+    useSimplePoolCount({
+      args,
+    })
 
   const data = useMemo(() => pools?.flat() || [], [pools])
 

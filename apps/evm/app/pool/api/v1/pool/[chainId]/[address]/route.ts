@@ -1,4 +1,5 @@
-import { createClient, processPool } from '@sushiswap/rockset-client'
+import { processPool } from '@sushiswap/rockset-client'
+import { createClient } from '@sushiswap/rockset-client/client'
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
 

@@ -11,5 +11,3 @@ export async function createClient() {
     process.env['ROCKSET_HOST'],
   )
 }
-
-export * from './types/index.js'

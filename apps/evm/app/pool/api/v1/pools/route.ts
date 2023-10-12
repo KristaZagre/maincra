@@ -1,41 +1,28 @@
-import { createClient, processSimplePool } from '@sushiswap/rockset-client'
-// import { z } from 'zod'
+import {
+  SimplePoolOrderBy,
+  processSimplePool,
+  simplePoolInputSchema,
+} from '@sushiswap/rockset-client'
+import { createClient } from '@sushiswap/rockset-client/client'
+import { NextApiRequest } from 'next'
 
-enum OrderBy {
-  LIQUIDITY = 'liquidityUsd',
-  VOLUME_1D = 'vol1d',
-  VOLUME_1W = 'vol1w',
-  VOLUME_1M = 'vol1m',
-  FEE_1D = 'fee1d',
-  APR = 'apr',
+const orderByToField: Record<SimplePoolOrderBy, string> = {
+  [SimplePoolOrderBy.LIQUIDITY]: 'p.liquidityUsd',
+  [SimplePoolOrderBy.VOLUME_1D]: 'p.last1DVolumeUsd',
+  [SimplePoolOrderBy.VOLUME_1W]: 'p.last7DVolumeUsd',
+  [SimplePoolOrderBy.VOLUME_1M]: 'p.last30DVolumeUsd',
+  [SimplePoolOrderBy.FEE_1D]: 'p.last1DFeeUsd',
+  [SimplePoolOrderBy.APR]: 'p.last1DFeeApr',
 }
 
-const orderByToField = {
-  [OrderBy.LIQUIDITY]: 'p.liquidityUsd',
-  [OrderBy.VOLUME_1D]: 'p.last1DVolumeUsd',
-  [OrderBy.VOLUME_1W]: 'p.last7DVolumeUsd',
-  [OrderBy.VOLUME_1M]: 'p.last30DVolumeUsd',
-  [OrderBy.FEE_1D]: 'p.last1DFeeUsd',
-  [OrderBy.APR]: 'p.last1DFeeApr',
-}
+export async function GET(request: NextApiRequest) {
+  const parsedParams = simplePoolInputSchema.safeParse(request.body || {})
 
-// const schema = z.object({
-//   orderBy: z.string().optional().default('DESC'),
-//   orderField: z.nativeEnum(OrderBy).optional().default(OrderBy.LIQUIDITY),
-// })
+  if (!parsedParams.success) {
+    return new Response(parsedParams.error.message, { status: 400 })
+  }
 
-export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url)
-  const index = searchParams.get('index')
-  // export async function GET(request: Request) {
-  // const { orderBy, orderField } = schema.parse(params)
-  const size = 20 // add to param later
-  const offset = (Number(index) ?? 0) * size
-
-  const orderDirection: 'DESC' | 'ASC' = 'DESC'
-
-  // const _orderBy = orderByToField[orderField]
-  const _orderBy = 'p.liquidityUsd'
+  const orderBy = orderByToField[parsedParams.data.orderBy]
 
   const client = await createClient()
   const result = await client.queries.query({
@@ -73,21 +60,21 @@ export async function GET(request: Request) {
       JOIN
           (SELECT * FROM entities WHERE namespace = '${process.env.ROCKSET_ENV}' AND entityType = 'Token' AND isWhitelisted = true) AS t1
       ON p.token1Id = t1.entityId
-			WHERE ${_orderBy} IS NOT NULL
-			ORDER BY ${_orderBy} ${orderDirection}
-      OFFSET ${offset} ROWS 
-      FETCH NEXT ${size} ROWS ONLY;
+			WHERE ${orderBy} IS NOT NULL
+			ORDER BY ${orderBy} ${parsedParams.data.orderDir}
+      OFFSET ${parsedParams.data.offset} ROWS 
+      FETCH NEXT ${parsedParams.data.size} ROWS ONLY;
       `,
       parameters: [
         {
           name: 'orderBy',
           type: 'string',
-          value: _orderBy,
+          value: orderBy,
         },
         {
           name: 'orderDirection',
           type: 'string',
-          value: orderDirection,
+          value: parsedParams.data.orderDir,
         },
       ],
     },

@@ -1,42 +1,21 @@
-import { createClient, processTransaction } from '@sushiswap/rockset-client'
+import {
+  processTransaction,
+  transactionInputSchema,
+} from '@sushiswap/rockset-client'
+import { createClient } from '@sushiswap/rockset-client/client'
+import { NextApiRequest } from 'next'
 import { NextResponse } from 'next/server'
-import { z } from 'zod'
 
-enum TransactionType {
-  SWAPS = 'swaps',
-  MINTS = 'mints',
-  BURNS = 'burns',
-}
-
-const schema = z.object({
-  chainId: z.string(),
-  address: z.string(),
-  type: z.nativeEnum(TransactionType),
-})
-
-export async function GET(
-  request: Request,
-  params: {
-    params: { chainId: string; address: string; type: TransactionType }
-  },
-) {
-  const parsedParams = schema.safeParse(params.params)
+export async function GET(request: NextApiRequest) {
+  const parsedParams = transactionInputSchema.safeParse(request.body)
 
   if (!parsedParams.success) {
     return new Response(parsedParams.error.message, { status: 400 })
   }
-  const id =
-    `${parsedParams.data.chainId}:${parsedParams.data.address}`.toLowerCase()
-
-  const entityName =
-    parsedParams.data.type === TransactionType.SWAPS
-      ? 'Swap'
-      : parsedParams.data.type === TransactionType.MINTS
-      ? 'Mint'
-      : 'Burn'
+  const id = `${parsedParams.data.chainId}:${parsedParams.data.address}`
 
   const client = await createClient()
-  const data = await client.queries.query({
+  const result = await client.queries.query({
     sql: {
       query: `
       SELECT
@@ -48,7 +27,7 @@ export async function GET(
         amountUsd,
         blockTimestamp as timestamp
       FROM entities WHERE namespace = '${process.env.ROCKSET_ENV}'
-			AND entityType = '${entityName}'
+			AND entityType = '${parsedParams.data.type}'
 			AND poolId = :id
       ORDER BY blockTimestamp DESC
       LIMIT 10
@@ -63,14 +42,14 @@ export async function GET(
     },
   })
 
-  if (!data.results.length) {
+  const results = result.results as unknown[]
+
+  if (!results.length) {
     return new Response(`no txs found for pool with id: ${id}`, { status: 404 })
   }
 
-  const processedTransactions = data.results
-    ? (data.results as unknown[]).filter(
-        (b: unknown) => processTransaction(b).success,
-      )
+  const processedTransactions = results
+    ? results.filter((b) => processTransaction(b).success)
     : []
   return NextResponse.json(processedTransactions)
 }

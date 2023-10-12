@@ -1,4 +1,22 @@
 import { z } from 'zod'
+import type { GetApiInputFromOutput } from '../types.js'
+
+enum TransactionType {
+  SWAPS = 'Swap',
+  MINTS = 'Mint',
+  BURNS = 'Burn',
+}
+
+export const transactionInputSchema = z.object({
+  chainId: z.string(),
+  address: z.string().toLowerCase(),
+  type: z.nativeEnum(TransactionType),
+})
+
+export type TransactionArgs = GetApiInputFromOutput<
+  typeof transactionInputSchema['_input'],
+  typeof transactionInputSchema['_output']
+>
 
 const transactionOutputSchema = z.object({
   chainId: z.number().int(),

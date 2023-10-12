@@ -1,4 +1,9 @@
 import { z } from 'zod'
+import { type BasePoolArgs, basePoolInputSchema } from '../base.js'
+
+export const poolInputSchema = basePoolInputSchema
+
+export type PoolArgs = BasePoolArgs
 
 const poolOutputSchema = z.object({
   id: z.string(),
