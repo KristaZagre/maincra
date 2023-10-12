@@ -51,17 +51,17 @@ const poolOutputSchema = z.object({
   last7DVolumeChangePercent: z.number(),
   last7DVolumeChangeUsd: z.number(),
   last7DVolumeUsd: z.number(),
-  liquidity: z.string(),
+  liquidity: z.string().nullable(),
   liquidityUsd: z.number(),
   protocol: z.string(),
   reserve0: z.number(),
   reserve0Usd: z.number(),
   reserve1: z.number(),
   reserve1Usd: z.number(),
-  sqrtPriceX96: z.string(),
+  sqrtPriceX96: z.string().nullable(),
   tick: z.nullable(z.number()),
-  feeGrowthGlobal0X128: z.string(),
-  feeGrowthGlobal1X128: z.string(),
+  feeGrowthGlobal0X128: z.string().nullable(),
+  feeGrowthGlobal1X128: z.string().nullable(),
   txCount: z.number(),
   volumeToken0: z.string(),
   volumeToken0Usd: z.number(),
@@ -92,8 +92,8 @@ export const processPool = (input: unknown) => {
   const parsed = poolOutputSchema.safeParse(input)
 
   if (parsed.success === false) {
-    throw new Error(parsed.error.message)
+    return parsed
   }
 
-  return transformPool(parsed.data)
+  return { success: true as const, data: transformPool(parsed.data) }
 }

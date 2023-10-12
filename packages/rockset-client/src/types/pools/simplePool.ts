@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-export const simplePoolSchema = z.object({
+export const simplePoolOutputSchema = z.object({
   id: z.string(),
   chainId: z.number().int(),
   name: z.string(),
@@ -25,18 +25,18 @@ export const simplePoolSchema = z.object({
   token1Symbol: z.string(),
 })
 
-export type SimplePool = z.infer<typeof simplePoolSchema>
+export type SimplePool = z.infer<typeof simplePoolOutputSchema>
 
 export const transformSimplePool = (input: SimplePool) => {
   return input
 }
 
 export const processSimplePool = (input: unknown) => {
-  const parsed = simplePoolSchema.safeParse(input)
+  const parsed = simplePoolOutputSchema.safeParse(input)
 
   if (parsed.success === false) {
-    throw new Error(parsed.error.message)
+    return parsed
   }
 
-  return transformSimplePool(parsed.data)
+  return { success: true as const, data: transformSimplePool(parsed.data) }
 }

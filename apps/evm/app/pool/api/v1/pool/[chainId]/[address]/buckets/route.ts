@@ -1,4 +1,4 @@
-import { PoolBucket, createClient, validatePoolBucket } from '@sushiswap/rockset-client'
+import { createClient, processPoolBucket } from '@sushiswap/rockset-client'
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
 
@@ -17,17 +17,23 @@ const schema = z.object({
 
 export async function GET(
   request: Request,
-  params: { params: { chainId: string; address: string; granularity: BucketGranularity } }
+  params: {
+    params: { chainId: string; address: string; granularity: BucketGranularity }
+  },
 ) {
   const { searchParams } = new URL(request.url)
-  const parsedParams = schema.safeParse({ ...params.params, granularity: searchParams.get('granularity') })
+  const parsedParams = schema.safeParse({
+    ...params.params,
+    granularity: searchParams.get('granularity'),
+  })
   if (!parsedParams.success) {
     return new Response(parsedParams.error.message, { status: 400 })
   }
-  const id = `${parsedParams.data.chainId}:${parsedParams.data.address}`.toLowerCase()
+  const id =
+    `${parsedParams.data.chainId}:${parsedParams.data.address}`.toLowerCase()
 
   const client = await createClient()
-  const data = await client.queries.query({
+  const result: unknown[] = await client.queries.query({
     sql: {
       query: `
       SELECT 
@@ -61,12 +67,13 @@ export async function GET(
     },
   })
 
-  if (!data.results.length) {
+  if (!result.length) {
     return new Response(`no buckets found for pool ${id}`, { status: 404 })
   }
 
-  const validatedBuckets = data.results
-    ? (data.results.filter((b: unknown) => validatePoolBucket(b).success) as PoolBucket[])
+  const processedBuckets = result
+    ? result.filter((b) => processPoolBucket(b).success)
     : []
-  return NextResponse.json(validatedBuckets)
+
+  return NextResponse.json(processedBuckets)
 }

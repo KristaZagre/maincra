@@ -1,4 +1,4 @@
-import { createClient, Transaction, validateTransaction } from '@sushiswap/rockset-client'
+import { createClient, processTransaction } from '@sushiswap/rockset-client'
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
 
@@ -16,15 +16,17 @@ const schema = z.object({
 
 export async function GET(
   request: Request,
-  params: { params: { chainId: string; address: string; type: TransactionType } }
+  params: {
+    params: { chainId: string; address: string; type: TransactionType }
+  },
 ) {
-
   const parsedParams = schema.safeParse(params.params)
 
   if (!parsedParams.success) {
     return new Response(parsedParams.error.message, { status: 400 })
   }
-  const id = `${parsedParams.data.chainId}:${parsedParams.data.address}`.toLowerCase()
+  const id =
+    `${parsedParams.data.chainId}:${parsedParams.data.address}`.toLowerCase()
 
   const entityName =
     parsedParams.data.type === TransactionType.SWAPS
@@ -65,8 +67,10 @@ export async function GET(
     return new Response(`no txs found for pool with id: ${id}`, { status: 404 })
   }
 
-  const validated = data.results
-    ? (data.results.filter((b: unknown) => validateTransaction(b).success) as Transaction[])
+  const processedTransactions = data.results
+    ? (data.results as unknown[]).filter(
+        (b: unknown) => processTransaction(b).success,
+      )
     : []
-  return NextResponse.json(validated)
+  return NextResponse.json(processedTransactions)
 }

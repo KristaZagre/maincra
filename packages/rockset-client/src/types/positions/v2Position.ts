@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-const v2PositionSchema = z.object({
+const v2PositionOutputSchema = z.object({
   chainId: z.number().int(),
   amountDepositedUsd: z.number(),
   amountWithdrawnUsd: z.number(),
@@ -14,18 +14,18 @@ const v2PositionSchema = z.object({
   token1AmountWithdrawn: z.number().or(z.string()),
 })
 
-export type V2Position = z.infer<typeof v2PositionSchema>
+export type V2Position = z.infer<typeof v2PositionOutputSchema>
 
 export const transformV2Position = (input: V2Position) => {
   return input
 }
 
 export const processV2Position = (input: unknown) => {
-  const parsed = v2PositionSchema.safeParse(input)
+  const parsed = v2PositionOutputSchema.safeParse(input)
 
   if (parsed.success === false) {
-    throw new Error(parsed.error.message)
+    return parsed
   }
 
-  return transformV2Position(parsed.data)
+  return { success: true as const, data: transformV2Position(parsed.data) }
 }

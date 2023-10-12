@@ -1,4 +1,4 @@
-import { createClient, validatePool } from '@sushiswap/rockset-client'
+import { createClient, processPool } from '@sushiswap/rockset-client'
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
 
@@ -8,13 +8,17 @@ const schema = z.object({
 })
 
 // uses thegraph, not the pools api
-export async function GET(request: Request, params: { params: { chainId: string; address: string } }) {
+export async function GET(
+  request: Request,
+  params: { params: { chainId: string; address: string } },
+) {
   const parsedParams = schema.safeParse(params.params)
 
   if (!parsedParams.success) {
     return new Response(parsedParams.error.message, { status: 400 })
   }
-  const id = `${parsedParams.data.chainId}:${parsedParams.data.address}`.toLowerCase()
+  const id =
+    `${parsedParams.data.chainId}:${parsedParams.data.address}`.toLowerCase()
 
   const client = await createClient()
   const data = await client.queries.query({
@@ -124,11 +128,11 @@ export async function GET(request: Request, params: { params: { chainId: string;
     // TODO: check the lp token name etc.
   }
 
-  const validatedPool = validatePool(data.results[0])
+  const processedPool = processPool(data.results[0])
 
-  if (validatedPool.success) {
-    return NextResponse.json(validatedPool.data)
+  if (processedPool.success === true) {
+    return NextResponse.json(processedPool.data)
   } else {
-    return new Response(validatedPool.error.message, { status: 400 })
+    return new Response(processedPool.error.message, { status: 400 })
   }
 }

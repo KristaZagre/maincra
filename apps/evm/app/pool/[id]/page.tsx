@@ -1,10 +1,11 @@
-import { ChainId } from 'sushi/chain'
 import { Separator } from '@sushiswap/ui'
 import { notFound } from 'next/navigation'
-import { ManageV2LiquidityCard } from 'ui/pool/ManageV2LiquidityCard'
+import { ChainId } from 'sushi/chain'
+// import { ManageV2LiquidityCard } from 'ui/pool/ManageV2LiquidityCard'
 import { PoolTransactionsV2 } from 'ui/pool/PoolTransactionsV2'
 import { isAddress } from 'viem'
 
+import { Pool } from '@sushiswap/rockset-client'
 // import {
 //   PoolPositionProvider,
 //   PoolPositionRewardsProvider,
@@ -18,21 +19,23 @@ import { PoolPageV3 } from '../../../ui/pool/PoolPageV3'
 // import { PoolPosition } from '../../../ui/pool/PoolPosition'
 import { PoolRewards } from '../../../ui/pool/PoolRewards'
 import { PoolStats } from '../../../ui/pool/PoolStats'
-import { Pool } from '@sushiswap/rockset-client'
 
-
-export async function getPool({ chainId, address }: { chainId: ChainId; address: string }) {
+export async function getPool({
+  chainId,
+  address,
+}: { chainId: ChainId; address: string }) {
   try {
     if (typeof +chainId !== 'number' || !isAddress(address)) {
       return
     }
-    const pool = await fetch(`http://localhost:3000/pool/api/v1/pool/${chainId}/${address}`, 
-      { next: { revalidate: 60 } }
-    ).then((data) => data.json()) as Pool
+    const pool = (await fetch(
+      `http://localhost:3000/pool/api/v1/pool/${chainId}/${address}`,
+      { next: { revalidate: 60 } },
+    ).then((data) => data.json())) as Pool
 
     return pool
   } catch (e) {
-    console.log({e})
+    console.log({ e })
     return
   }
 }
@@ -41,9 +44,10 @@ export default async function PoolPage({ params }: { params: { id: string } }) {
     params.id.includes('%3A') ? '%3A' : ':',
   ) as [string, string]
 
-  const pool = await fetch(`http://localhost:3000/pool/api/v1/pool/${chainId}/${address}`, 
-  { next: { revalidate: 60 } }
-).then((data) => data.json()) as Pool
+  const pool = (await fetch(
+    `http://localhost:3000/pool/api/v1/pool/${chainId}/${address}`,
+    { next: { revalidate: 60 } },
+  ).then((data) => data.json())) as Pool
 
   if (!pool) {
     notFound()
@@ -58,9 +62,7 @@ export default async function PoolPage({ params }: { params: { id: string } }) {
       {/* <UnknownTokenAlert pool={pool} /> */}
       <div className="flex flex-col gap-6">
         <div className="grid grid-cols-1 md:grid-cols-[auto_400px] gap-6">
-          <div>
-            {/* <ManageV2LiquidityCard pool={pool} /> */}
-          </div>
+          <div>{/* <ManageV2LiquidityCard pool={pool} /> */}</div>
           <div className="flex flex-col gap-6">
             {/* <PoolPositionProvider pool={pool}>
               <PoolPositionStakedProvider pool={pool}>

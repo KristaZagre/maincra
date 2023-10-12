@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-const transactionSchema = z.object({
+const transactionOutputSchema = z.object({
   chainId: z.number().int(),
   txHash: z.string(),
   amount0: z.string(),
@@ -10,18 +10,18 @@ const transactionSchema = z.object({
   timestamp: z.number(),
 })
 
-export type Transaction = z.infer<typeof transactionSchema>
+export type Transaction = z.infer<typeof transactionOutputSchema>
 
 export const transformTransaction = (input: Transaction) => {
   return input
 }
 
 export const processTransaction = (input: unknown) => {
-  const parsed = transactionSchema.safeParse(input)
+  const parsed = transactionOutputSchema.safeParse(input)
 
   if (parsed.success === false) {
-    throw new Error(parsed.error.message)
+    return parsed
   }
 
-  return transformTransaction(parsed.data)
+  return { success: true as const, data: transformTransaction(parsed.data) }
 }

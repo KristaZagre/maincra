@@ -1,4 +1,4 @@
-import { createClient, validateV2Position } from '@sushiswap/rockset-client'
+import { createClient, processV2Position } from '@sushiswap/rockset-client'
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
 
@@ -17,7 +17,7 @@ export async function GET(request: Request) {
   const user = parsedParams.data.user.toLowerCase()
 
   const client = await createClient()
-  const data = await client.queries.query({
+  const result = await client.queries.query({
     sql: {
       query: `
       SELECT 
@@ -79,15 +79,12 @@ export async function GET(request: Request) {
       ],
     },
   })
-  .then((value: { results: [] }) => {
-    return value.results ? (value.results.filter((p) => validateV2Position(p).success)) : []
-  })
-  
 
-  // if (data) {
-    return NextResponse.json(data)
-  // } 
-  // else {
-  //   return new Response(validatedPool.error.message, { status: 400 })
-  // }
+  const results = result.results as unknown[]
+
+  const processedV2Positions = results
+    ? results.filter((p) => processV2Position(p).success)
+    : []
+
+  return NextResponse.json(processedV2Positions)
 }
