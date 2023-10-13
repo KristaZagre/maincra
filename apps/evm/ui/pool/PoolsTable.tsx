@@ -1,7 +1,7 @@
 'use client'
 
 import { Slot } from '@radix-ui/react-slot'
-import { SimplePool, SimplePoolArgs } from '@sushiswap/rockset-client'
+import { SimplePool, SimplePoolsArgs } from '@sushiswap/rockset-client'
 import { Card, CardHeader, CardTitle, DataTable } from '@sushiswap/ui'
 import {
   ColumnDef,
@@ -10,7 +10,7 @@ import {
   SortingState,
   TableState,
 } from '@tanstack/react-table'
-import { useSimplePoolCount, useSimplePools } from 'lib/hooks'
+import { usePoolsCount, useSimplePools } from 'lib/hooks'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
 
 import { usePoolFilters } from './PoolsFiltersProvider'
@@ -40,7 +40,7 @@ export const PoolsTable: FC<PositionsTableProps> = ({ onRowClick }) => {
     { id: 'liquidityUSD', desc: true },
   ])
 
-  // const { data: poolCount } = useSimplePoolCount({ args, shouldFetch: true, swrConfig: useSWRConfig() })
+  // const { data: poolCount } = usePoolsCount({ args, shouldFetch: true, swrConfig: useSWRConfig() })
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 20,
@@ -52,7 +52,7 @@ export const PoolsTable: FC<PositionsTableProps> = ({ onRowClick }) => {
     }
   }, [pagination, sorting])
 
-  const args = useMemo<SimplePoolArgs>(() => {
+  const args = useMemo<SimplePoolsArgs>(() => {
     return {
       pageIndex: pagination.pageIndex,
       // chainIds: chainIds,
@@ -67,10 +67,9 @@ export const PoolsTable: FC<PositionsTableProps> = ({ onRowClick }) => {
   }, [pagination])
 
   const { data: pools, isLoading: isValidatingPools } = useSimplePools({ args })
-  const { data: poolCount /*, isLoading: isValidatingCount*/ } =
-    useSimplePoolCount({
-      args,
-    })
+  const { data: poolCount /*, isLoading: isValidatingCount*/ } = usePoolsCount({
+    args,
+  })
 
   const data = useMemo(() => pools?.flat() || [], [pools])
 

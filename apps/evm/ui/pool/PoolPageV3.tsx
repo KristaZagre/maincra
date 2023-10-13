@@ -1,9 +1,7 @@
 'use client'
 
-import { ChainId } from 'sushi/chain'
-import { formatUSD } from 'sushi'
 // import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
-import { CardLabel, classNames, Separator, SkeletonText } from '@sushiswap/ui'
+import { CardLabel, Separator, SkeletonText, classNames } from '@sushiswap/ui'
 import {
   Card,
   CardContent,
@@ -20,15 +18,17 @@ import {
 } from '@sushiswap/wagmi/future/hooks'
 import { useTokenAmountDollarValues } from 'lib/hooks'
 import React, { FC, useState } from 'react'
+import { formatUSD } from 'sushi'
+import { ChainId } from 'sushi/chain'
 
-import { ConcentratedLiquidityProvider } from './ConcentratedLiquidityProvider'
-import { ConcentratedPositionsTable } from './ConcentratedPositionsTable'
-// import { PoolRewardDistributionsCard } from './PoolRewardDistributionsCard'
-import { PoolsFiltersProvider } from './PoolsFiltersProvider'
-import { PoolTransactionsV3 } from './PoolTransactionsV3'
-import { StatisticsCharts } from './StatisticsChart'
 import { Pool } from '@sushiswap/rockset-client'
 import { useExtendedPool } from 'lib/hooks/api/useFlairPoolGraphData'
+import { ConcentratedLiquidityProvider } from './ConcentratedLiquidityProvider'
+import { ConcentratedPositionsTable } from './ConcentratedPositionsTable'
+import { PoolTransactionsV3 } from './PoolTransactionsV3'
+// import { PoolRewardDistributionsCard } from './PoolRewardDistributionsCard'
+import { PoolsFiltersProvider } from './PoolsFiltersProvider'
+import { StatisticsCharts } from './StatisticsChart'
 
 enum Granularity {
   Day = 0,
@@ -64,11 +64,11 @@ const _Pool: FC<{ pool: Pool }> = ({ pool }) => {
     })
   const fiatValues = useTokenAmountDollarValues({ chainId, amounts: reserves })
   // const incentiveAmounts = useMemo(() => poolStats?.incentives.map((el) => el.reward), [poolStats?.incentives])
-  const incentiveAmounts = null
-  const fiatValuesIncentives = useTokenAmountDollarValues({
-    chainId,
-    amounts: incentiveAmounts,
-  })
+  // const incentiveAmounts = null
+  // const fiatValuesIncentives = useTokenAmountDollarValues({
+  //   chainId,
+  //   amounts: incentiveAmounts,
+  // })
 
   return (
     <div className="flex flex-col gap-6">

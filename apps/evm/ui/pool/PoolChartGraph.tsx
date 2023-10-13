@@ -1,12 +1,10 @@
 'use client'
 
-import { ChainId } from 'sushi/chain'
-import { formatPercent, formatUSD } from 'sushi'
 import {
   CardContent,
   CardHeader,
-  classNames,
   SkeletonText,
+  classNames,
 } from '@sushiswap/ui'
 import { CardDescription, CardTitle } from '@sushiswap/ui/components/card'
 import { SkeletonBox } from '@sushiswap/ui/components/skeleton'
@@ -14,12 +12,14 @@ import { format } from 'date-fns'
 import ReactECharts from 'echarts-for-react'
 import { EChartsOption } from 'echarts-for-react/lib/types'
 import { usePoolGraphData } from 'lib/hooks/api/useFlairPoolGraphData'
-import { useTheme } from 'next-themes'
+// import { useTheme } from 'next-themes'
 import { FC, useCallback, useMemo } from 'react'
+import { formatPercent, formatUSD } from 'sushi'
 import tailwindConfig from 'tailwind.config.js'
 import resolveConfig from 'tailwindcss/resolveConfig'
 
-import { chartPeriods, PoolChartPeriod } from './PoolChartPeriods'
+import { ID } from 'sushi/types'
+import { PoolChartPeriod, chartPeriods } from './PoolChartPeriods'
 import { PoolChartType } from './PoolChartTypes'
 
 interface PoolChartProps {
@@ -28,30 +28,23 @@ interface PoolChartProps {
     | PoolChartType.Fees
     | PoolChartType.TVL
     | PoolChartType.APR
+
   period: PoolChartPeriod
-  address: string
-  chainId: ChainId
+  id: ID
 }
 
 const tailwind = resolveConfig(tailwindConfig)
 
-export const PoolChartGraph: FC<PoolChartProps> = ({
-  chart,
-  period,
-  address,
-  chainId,
-}) => {
-  const { resolvedTheme } = useTheme()
+export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, id }) => {
+  // const { resolvedTheme } = useTheme()
 
   const { data: hourBuckets, isLoading: isLoadingHourly } = usePoolGraphData({
-    poolAddress: address,
-    chainId,
+    id,
     granularity: 'hour',
   })
 
   const { data: dailyBuckets, isLoading: isLoadingDaily } = usePoolGraphData({
-    poolAddress: address,
-    chainId,
+    id,
     granularity: 'day',
   })
 
@@ -80,7 +73,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
           } else if (chart === PoolChartType.APR) {
             acc[1].push(Number(cur.feeApr))
           }
-        } 
+        }
         return acc
       },
       [[], []],

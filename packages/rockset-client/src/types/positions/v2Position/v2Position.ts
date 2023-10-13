@@ -1,12 +1,13 @@
 import { z } from 'zod'
+import { cz } from '../../misc/zodObjects.js'
 
-const v2PositionOutputSchema = z.object({
+export const v2PositionOutputSchema = z.object({
+  poolId: cz.id(),
   chainId: z.number().int(),
   amountDepositedUsd: z.number(),
   amountWithdrawnUsd: z.number(),
   balance: z.string(),
   name: z.string(),
-  poolId: z.string(),
   protocol: z.string(),
   token0AmountDeposited: z.number().or(z.string()),
   token0AmountWithdrawn: z.number().or(z.string()),
@@ -14,11 +15,13 @@ const v2PositionOutputSchema = z.object({
   token1AmountWithdrawn: z.number().or(z.string()),
 })
 
-export type V2Position = z.infer<typeof v2PositionOutputSchema>
-
-export const transformV2Position = (input: V2Position) => {
+export const transformV2Position = (
+  input: z.infer<typeof v2PositionOutputSchema>,
+) => {
   return input
 }
+
+export type V2Position = ReturnType<typeof transformV2Position>
 
 export const processV2Position = (input: unknown) => {
   const parsed = v2PositionOutputSchema.safeParse(input)

@@ -1,7 +1,5 @@
 'use client'
 
-import { Chain, ChainId } from 'sushi/chain'
-import { Amount, Token } from 'sushi/currency'
 import { Pool, Transaction as _Transaction } from '@sushiswap/rockset-client'
 import {
   Card,
@@ -19,7 +17,10 @@ import {
   useExtendedPool,
 } from 'lib/hooks/api/useFlairPoolGraphData'
 import { FC, useMemo, useState } from 'react'
+import { Chain, ChainId } from 'sushi/chain'
+import { Amount, Token } from 'sushi/currency'
 
+import { parseArgs } from '@sushiswap/client'
 import {
   TX_AMOUNT_IN_V2_COLUMN,
   TX_AMOUNT_OUT_V2_COLUMN,
@@ -56,9 +57,7 @@ function useTransactionsV2(
       if (!pool || !isSushiSwapV2ChainId(chainId)) return []
 
       const txs = (await fetch(
-        `/pool/api/v1/pool/${chainId}/${
-          pool.address
-        }/transactions/${opts.type.toLowerCase()}s`,
+        `/pool/api/v1/pool/${pool.id}/transactions${parseArgs(opts)}`,
       ).then((data) => data.json())) as _Transaction[]
 
       const transformed = txs.map((tx) => ({

@@ -42,7 +42,7 @@ const Params = () => {
 
 export const Breadcrumb = () => {
   const pathname = usePathname()
-  const items = pathname.split('/').slice(2)
+  const items = pathname.replace('%3A', ':').split('/').slice(2)
 
   return (
     <div className="flex gap-x-1.5 items-center text-sm py-4">

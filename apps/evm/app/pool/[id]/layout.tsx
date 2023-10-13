@@ -3,6 +3,7 @@ import { Breadcrumb, Container } from '@sushiswap/ui'
 import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
 import React from 'react'
+import { ID } from 'sushi/types'
 import { PoolHeader } from '../../../ui/pool/PoolHeader'
 
 export const metadata = {
@@ -13,13 +14,12 @@ export default async function Layout({
   children,
   params,
 }: { children: React.ReactNode; params: { id: string } }) {
-  const [chainId, address] = params.id.split(
-    params.id.includes('%3A') ? '%3A' : ':',
-  ) as [string, string]
-  const pool = (await fetch(
-    `http://localhost:3000/pool/api/v1/pool/${chainId}/${address}`,
-    { next: { revalidate: 60 } },
-  ).then((data) => data.json())) as Pool
+  // TODO: Add validation, use unsanitize from 'sushi/format'
+  const id = params.id.replace('%3A', ':') as ID
+
+  const pool = (await fetch(`http://localhost:3000/pool/api/v1/pool/${id}`, {
+    next: { revalidate: 60 },
+  }).then((data) => data.json())) as Pool
 
   if (!pool) {
     notFound()

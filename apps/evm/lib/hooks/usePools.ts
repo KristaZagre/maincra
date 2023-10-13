@@ -1,8 +1,8 @@
 import {
+  PoolsCount,
+  PoolsCountArgs,
   SimplePool,
-  SimplePoolArgs,
-  SimplePoolCount,
-  SimplePoolCountArgs,
+  SimplePoolsArgs,
 } from '@sushiswap/rockset-client'
 import { useQuery } from '@tanstack/react-query'
 
@@ -22,11 +22,11 @@ export function parseArgs<T>(args?: Partial<T>) {
     }, '?')
 }
 
-export const getSimplePoolsUrl = (args: SimplePoolArgs) => {
-  return `/pool/api/v1/pools${parseArgs(args)}`
+export const getSimplePoolsUrl = (args: SimplePoolsArgs) => {
+  return `/pool/api/v1/simplePools${parseArgs(args)}`
 }
 
-export const useSimplePools = ({ args }: { args: SimplePoolArgs }) => {
+export const useSimplePools = ({ args }: { args: SimplePoolsArgs }) => {
   const url = getSimplePoolsUrl(args)
 
   return useQuery<SimplePool[]>({
@@ -39,14 +39,14 @@ export const useSimplePools = ({ args }: { args: SimplePoolArgs }) => {
   })
 }
 
-export const getSimplePoolCountUrl = (args: SimplePoolCountArgs) => {
+export const getPoolsCountUrl = (args: PoolsCountArgs) => {
   return `/pool/api/v1/pools/count${parseArgs(args)}`
 }
 
-export const useSimplePoolCount = ({ args }: { args: SimplePoolCountArgs }) => {
-  const url = getSimplePoolCountUrl(args)
+export const usePoolsCount = ({ args }: { args: PoolsCountArgs }) => {
+  const url = getPoolsCountUrl(args)
 
-  return useQuery<SimplePoolCount>({
+  return useQuery<PoolsCount>({
     queryKey: [url],
     queryFn: () => fetch(url).then((data) => data.json()),
     keepPreviousData: true,

@@ -1,40 +1,36 @@
 import { z } from 'zod'
-import { type BasePoolArgs, basePoolInputSchema } from '../base.js'
+import { convertToken } from '../../misc/convertToken.js'
+import { cz } from '../../misc/zodObjects.js'
 
-export const simplePoolInputSchema = basePoolInputSchema
+export const simplePoolOutputSchema = z
+  .object({
+    id: cz.id(),
+    chainId: z.number().int(),
+    name: z.string(),
+    address: cz.address(),
+    fee: z.number(),
+    last1DFeeApr: z.number().catch(0),
+    last1DFeeUsd: z.number().catch(0),
+    last1DVolumeUsd: z.number().catch(0),
+    last30DVolumeUsd: z.number().catch(0),
+    last7DVolumeUsd: z.number().catch(0),
+    liquidityUsd: z.number().catch(0),
+    protocol: z.string(),
+  })
+  .merge(cz.token0())
+  .merge(cz.token1())
 
-export type SimplePoolArgs = BasePoolArgs
-
-export const simplePoolOutputSchema = z.object({
-  id: z.string(),
-  chainId: z.number().int(),
-  name: z.string(),
-  address: z.string(),
-  fee: z.number(),
-  last1DFeeApr: z.number().catch(0),
-  last1DFeeUsd: z.number().catch(0),
-  last1DVolumeUsd: z.number().catch(0),
-  last30DVolumeUsd: z.number().catch(0),
-  last7DVolumeUsd: z.number().catch(0),
-  liquidityUsd: z.number().catch(0),
-  protocol: z.string(),
-  token0Id: z.string(),
-  token0Name: z.string(),
-  token0Address: z.string(),
-  token0Decimals: z.number().int(),
-  token0Symbol: z.string(),
-  token1Id: z.string(),
-  token1Name: z.string(),
-  token1Address: z.string(),
-  token1Decimals: z.number().int(),
-  token1Symbol: z.string(),
-})
-
-export type SimplePool = z.infer<typeof simplePoolOutputSchema>
-
-export const transformSimplePool = (input: SimplePool) => {
-  return input
+export const transformSimplePool = (
+  input: z.infer<typeof simplePoolOutputSchema>,
+) => {
+  return {
+    ...input,
+    token0: convertToken({ no: 0, obj: input }),
+    token1: convertToken({ no: 1, obj: input }),
+  }
 }
+
+export type SimplePool = ReturnType<typeof transformSimplePool>
 
 export const processSimplePool = (input: unknown) => {
   const parsed = simplePoolOutputSchema.safeParse(input)

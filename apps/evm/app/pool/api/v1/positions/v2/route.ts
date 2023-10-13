@@ -1,21 +1,19 @@
-import { processV2Position } from '@sushiswap/rockset-client'
+import {
+  processArray,
+  processV2Position,
+  v2PositionsInputSchema,
+} from '@sushiswap/rockset-client'
 import { createClient } from '@sushiswap/rockset-client/client'
-import { NextResponse } from 'next/server'
-import { z } from 'zod'
+import { NextRequest, NextResponse } from 'next/server'
 
-const schema = z.object({
-  user: z.string(),
-})
-
-// uses thegraph, not the pools api
-export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url)
-  const parsedParams = schema.safeParse({ user: searchParams.get('user') })
+export async function GET(request: NextRequest) {
+  const parsedParams = v2PositionsInputSchema.safeParse(
+    Object.fromEntries(request.nextUrl.searchParams),
+  )
 
   if (!parsedParams.success) {
     return new Response(parsedParams.error.message, { status: 400 })
   }
-  const user = parsedParams.data.user.toLowerCase()
 
   const client = await createClient()
   const result = await client.queries.query({
@@ -75,17 +73,18 @@ export async function GET(request: Request) {
         {
           name: 'user',
           type: 'string',
-          value: user,
+          value: parsedParams.data.user,
         },
       ],
     },
   })
 
-  const results = result.results as unknown[]
+  const results = (result.results || []) as unknown[]
 
-  const processedV2Positions = results
-    ? results.filter((p) => processV2Position(p).success)
-    : []
+  const processedV2Positions = processArray.filterErrors(
+    results,
+    processV2Position,
+  )
 
   return NextResponse.json(processedV2Positions)
 }

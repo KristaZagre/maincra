@@ -3,33 +3,19 @@
 import { Pool, PoolBucket } from '@sushiswap/rockset-client'
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
-import { ChainId } from 'sushi/chain'
 import { Amount, Native, Token } from 'sushi/currency'
+import { ID } from 'sushi/types'
 
 interface UsePoolGraphDataParams {
-  poolAddress: string
-  chainId: ChainId
+  id: ID
   enabled?: boolean
   granularity: 'hour' | 'day' | 'week' | 'month'
 }
 
 export const useExtendedPool = ({ pool }: { pool: Pool }) => {
   return useMemo(() => {
-    const _token0 = new Token({
-      address: pool.token0Address,
-      name: pool.token0Name,
-      decimals: Number(pool.token0Decimals),
-      symbol: pool.token0Symbol,
-      chainId: Number(pool.chainId),
-    })
-
-    const _token1 = new Token({
-      address: pool.token1Address,
-      name: pool.token1Name,
-      decimals: Number(pool.token1Decimals),
-      symbol: pool.token1Symbol,
-      chainId: Number(pool.chainId),
-    })
+    const _token0 = new Token(pool.token0)
+    const _token1 = new Token(pool.token1)
 
     const [token0, token1, liquidityToken] = [
       _token0.wrapped.address ===
@@ -61,7 +47,10 @@ export const useExtendedPool = ({ pool }: { pool: Pool }) => {
           : null,
       totalSupply:
         liquidityToken && pool
-          ? Amount.fromRawAmount(liquidityToken, Math.ceil(pool.liquidity))
+          ? Amount.fromRawAmount(
+              liquidityToken,
+              Math.ceil(Number(pool.liquidity)),
+            )
           : null,
       token0,
       token1,
@@ -73,20 +62,19 @@ export const useExtendedPool = ({ pool }: { pool: Pool }) => {
 export type ExtendedPool = ReturnType<typeof useExtendedPool>
 
 export const usePoolGraphData = ({
-  poolAddress,
-  chainId,
+  id,
   enabled = true,
   granularity,
 }: UsePoolGraphDataParams) => {
   return useQuery({
-    queryKey: ['useFlairPoolGraphData', { poolAddress, chainId, granularity }],
+    queryKey: ['useFlairPoolGraphData', { id, granularity }],
     queryFn: async () =>
-      fetch(
-        `/pool/api/v1/pool/${chainId}/${poolAddress}/buckets?granularity=${granularity}`,
-      ).then((data) => data.json()) as Promise<PoolBucket[]>,
+      fetch(`/pool/api/v1/pool/${id}/buckets?granularity=${granularity}`).then(
+        (data) => data.json(),
+      ) as Promise<PoolBucket[]>,
     keepPreviousData: true,
     staleTime: 60,
     cacheTime: 86400000, // 24hs
-    enabled: Boolean(poolAddress && chainId && enabled && granularity),
+    enabled: Boolean(id && enabled && granularity),
   })
 }

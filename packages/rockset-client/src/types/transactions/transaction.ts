@@ -1,5 +1,6 @@
 import { z } from 'zod'
-import type { GetApiInputFromOutput } from '../types.js'
+import type { GetApiInputFromOutput } from '../misc/GetApiInputFromOutput.js'
+import { cz } from '../misc/zodObjects.js'
 
 enum TransactionType {
   SWAPS = 'Swap',
@@ -8,8 +9,7 @@ enum TransactionType {
 }
 
 export const transactionInputSchema = z.object({
-  chainId: z.string(),
-  address: z.string().toLowerCase(),
+  id: cz.id(),
   type: z.nativeEnum(TransactionType),
 })
 
@@ -24,15 +24,17 @@ const transactionOutputSchema = z.object({
   amount0: z.string(),
   amount1: z.string(),
   amountUsd: z.number().nullable(),
-  maker: z.string(),
+  maker: cz.address(),
   timestamp: z.number(),
 })
 
-export type Transaction = z.infer<typeof transactionOutputSchema>
-
-export const transformTransaction = (input: Transaction) => {
+export const transformTransaction = (
+  input: z.infer<typeof transactionOutputSchema>,
+) => {
   return input
 }
+
+export type Transaction = ReturnType<typeof transformTransaction>
 
 export const processTransaction = (input: unknown) => {
   const parsed = transactionOutputSchema.safeParse(input)

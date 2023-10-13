@@ -6,6 +6,7 @@ import { PoolTransactionsV2 } from 'ui/pool/PoolTransactionsV2'
 import { isAddress } from 'viem'
 
 import { Pool } from '@sushiswap/rockset-client'
+import { ID } from 'sushi/types'
 // import {
 //   PoolPositionProvider,
 //   PoolPositionRewardsProvider,
@@ -20,34 +21,15 @@ import { PoolPageV3 } from '../../../ui/pool/PoolPageV3'
 import { PoolRewards } from '../../../ui/pool/PoolRewards'
 import { PoolStats } from '../../../ui/pool/PoolStats'
 
-export async function getPool({
-  chainId,
-  address,
-}: { chainId: ChainId; address: string }) {
-  try {
-    if (typeof +chainId !== 'number' || !isAddress(address)) {
-      return
-    }
-    const pool = (await fetch(
-      `http://localhost:3000/pool/api/v1/pool/${chainId}/${address}`,
-      { next: { revalidate: 60 } },
-    ).then((data) => data.json())) as Pool
-
-    return pool
-  } catch (e) {
-    console.log({ e })
-    return
-  }
-}
 export default async function PoolPage({ params }: { params: { id: string } }) {
-  const [chainId, address] = params.id.split(
-    params.id.includes('%3A') ? '%3A' : ':',
-  ) as [string, string]
+  // TODO: Add validation, use unsanitize from 'sushi/format'
+  const id = params.id.replace('%3A', ':') as ID
 
-  const pool = (await fetch(
-    `http://localhost:3000/pool/api/v1/pool/${chainId}/${address}`,
-    { next: { revalidate: 60 } },
-  ).then((data) => data.json())) as Pool
+  const pool = (await fetch(`http://localhost:3000/pool/api/v1/pool/${id}`, {
+    next: { revalidate: 60 },
+  }).then((data) => data.json())) as Pool
+
+  console.log(pool)
 
   if (!pool) {
     notFound()
@@ -79,10 +61,7 @@ export default async function PoolPage({ params }: { params: { id: string } }) {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-[auto_400px] gap-6">
           <div>
-            <PoolChartV2
-              address={pool.address}
-              chainId={pool.chainId as ChainId}
-            />
+            <PoolChartV2 id={id} />
           </div>
           <div className="flex flex-col gap-6">
             <PoolComposition pool={pool} />

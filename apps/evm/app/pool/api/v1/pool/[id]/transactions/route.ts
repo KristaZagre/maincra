@@ -1,18 +1,23 @@
 import {
+  processArray,
   processTransaction,
   transactionInputSchema,
 } from '@sushiswap/rockset-client'
 import { createClient } from '@sushiswap/rockset-client/client'
-import { NextApiRequest } from 'next'
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 
-export async function GET(request: NextApiRequest) {
-  const parsedParams = transactionInputSchema.safeParse(request.body)
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { id: string } },
+) {
+  const parsedParams = transactionInputSchema.safeParse({
+    ...Object.fromEntries(request.nextUrl.searchParams),
+    id: params.id,
+  })
 
   if (!parsedParams.success) {
-    return new Response(parsedParams.error.message, { status: 400 })
+    return NextResponse.json(parsedParams.error, { status: 400 })
   }
-  const id = `${parsedParams.data.chainId}:${parsedParams.data.address}`
 
   const client = await createClient()
   const result = await client.queries.query({
@@ -36,7 +41,7 @@ export async function GET(request: NextApiRequest) {
         {
           name: 'id',
           type: 'string',
-          value: id,
+          value: parsedParams.data.id,
         },
       ],
     },
@@ -44,12 +49,10 @@ export async function GET(request: NextApiRequest) {
 
   const results = result.results as unknown[]
 
-  if (!results.length) {
-    return new Response(`no txs found for pool with id: ${id}`, { status: 404 })
-  }
+  const processedTransactions = processArray.filterErrors(
+    results,
+    processTransaction,
+  )
 
-  const processedTransactions = results
-    ? results.filter((b) => processTransaction(b).success)
-    : []
   return NextResponse.json(processedTransactions)
 }
