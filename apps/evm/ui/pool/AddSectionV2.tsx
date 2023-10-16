@@ -1,27 +1,27 @@
 'use client'
 
-import { ChainId } from 'sushi/chain'
 import { Pool } from '@sushiswap/client'
-import { tryParseAmount } from 'sushi/currency'
 import { useIsMounted } from '@sushiswap/hooks'
 import { Button } from '@sushiswap/ui/components/button'
 import { SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import {
   Address,
-  getSushiSwapRouterContractConfig,
   SushiSwapV2PoolState,
+  getSushiSwapRouterContractConfig,
   useSushiSwapV2Pool,
 } from '@sushiswap/wagmi'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { CheckerProvider } from '@sushiswap/wagmi/future/systems/Checker/Provider'
-import { APPROVE_TAG_ADD_LEGACY } from 'lib/constants'
+import { APPROVE_TAG_ADD_V2 } from 'lib/constants'
 import { useTokensFromPool } from 'lib/hooks'
 import { FC, useCallback, useMemo, useState } from 'react'
+import { ChainId } from 'sushi/chain'
+import { tryParseAmount } from 'sushi/currency'
 
-import { AddSectionReviewModalLegacy } from './AddSectionReviewModalLegacy'
+import { AddSectionReviewModalV2 } from './AddSectionReviewModalV2'
 import { AddSectionWidget } from './AddSectionWidget'
 
-export const AddSectionLegacy: FC<{ pool: Pool }> = ({ pool: _pool }) => {
+export const AddSectionV2: FC<{ pool: Pool }> = ({ pool: _pool }) => {
   const chainId = _pool.chainId as SushiSwapV2ChainId
   const isMounted = useIsMounted()
   const { token0, token1 } = useTokensFromPool(_pool)
@@ -143,8 +143,8 @@ export const AddSectionLegacy: FC<{ pool: Pool }> = ({ pool: _pool }) => {
                         .address as Address
                     }
                   >
-                    <Checker.Success tag={APPROVE_TAG_ADD_LEGACY}>
-                      <AddSectionReviewModalLegacy
+                    <Checker.Success tag={APPROVE_TAG_ADD_V2}>
+                      <AddSectionReviewModalV2
                         poolAddress={pool?.liquidityToken.address}
                         poolState={poolState}
                         chainId={_pool.chainId as SushiSwapV2ChainId}
@@ -159,7 +159,7 @@ export const AddSectionLegacy: FC<{ pool: Pool }> = ({ pool: _pool }) => {
                         <Button size="default" fullWidth>
                           Add Liquidity
                         </Button>
-                      </AddSectionReviewModalLegacy>
+                      </AddSectionReviewModalV2>
                     </Checker.Success>
                   </Checker.ApproveERC20>
                 </Checker.ApproveERC20>

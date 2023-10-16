@@ -15,16 +15,16 @@ import {
 } from '@sushiswap/ui'
 import { FC } from 'react'
 
-import { AddSectionLegacy } from './AddSectionLegacy'
+import { Pool } from '@sushiswap/rockset-client'
 import { AddSectionStake } from './AddSectionStake'
 import { AddSectionTrident } from './AddSectionTrident'
+import { AddSectionV2 } from './AddSectionV2'
 import { PoolPositionProvider } from './PoolPositionProvider'
 import { PoolPositionRewardsProvider } from './PoolPositionRewardsProvider'
 import { PoolPositionStakedProvider } from './PoolPositionStakedProvider'
-import { RemoveSectionLegacy } from './RemoveSectionLegacy'
 import { RemoveSectionTrident } from './RemoveSectionTrident'
 import { RemoveSectionUnstake } from './RemoveSectionUnstake'
-import { Pool } from '@sushiswap/rockset-client'
+import { RemoveSectionV2 } from './RemoveSectionV2'
 
 interface ManageV2LiquidityCardProps {
   pool: Pool
@@ -88,10 +88,10 @@ export const ManageV2LiquidityCard: FC<ManageV2LiquidityCardProps> = ({
                   pool.protocol === Protocol.BENTOBOX_STABLE ? (
                     <AddSectionTrident pool={pool} />
                   ) : null} */}
-                  {pool.protocol === Protocol.SUSHISWAP_V2 ? (
-                    // <AddSectionLegacy pool={pool} /> 
-                    null
-                  ) : null}
+                  {pool.protocol === Protocol.SUSHISWAP_V2
+                    ? // <AddSectionLegacy pool={pool} />
+                      null
+                    : null}
                 </CardContent>
               </TabsContent>
               <TabsContent value="remove">

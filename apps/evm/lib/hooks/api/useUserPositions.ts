@@ -46,7 +46,7 @@ export function useUserPositions(args: GetUserArgs, shouldFetch = true) {
   )
 
   const { data: pools } = useSimplePools({
-    args: { chainIds: args.chainIds, ids: poolIds },
+    args: { chainIds: args.chainIds, ids: poolIds, pageSize: poolIds.length },
   })
   const isValidating =
     !positions || !pools || (positions.length > 0 && pools.length === 0)

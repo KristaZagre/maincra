@@ -1,19 +1,16 @@
 'use client'
 
 import { calculateSlippageAmount } from '@sushiswap/amm'
-import { ChainId } from 'sushi/chain'
 import { Pool } from '@sushiswap/client'
-import { Amount, Native } from 'sushi/currency'
 import { FundSource, useDebounce, useIsMounted } from '@sushiswap/hooks'
-import { Percent } from 'sushi'
 import { Dots } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { createToast } from '@sushiswap/ui/components/toast'
 import { SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import {
   Address,
-  getSushiSwapRouterContractConfig,
   SushiSwapV2PoolState,
+  getSushiSwapRouterContractConfig,
   useAccount,
   useNetwork,
   usePrepareSendTransaction,
@@ -32,7 +29,7 @@ import {
   withCheckerRoot,
 } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
-import { APPROVE_TAG_REMOVE_LEGACY } from 'lib/constants'
+import { APPROVE_TAG_REMOVE_V2 } from 'lib/constants'
 import {
   useTokensFromPool,
   useTransactionDeadline,
@@ -40,21 +37,24 @@ import {
 } from 'lib/hooks'
 import { useSlippageTolerance } from 'lib/hooks/useSlippageTolerance'
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
+import { Percent } from 'sushi'
 import { calculateGasMargin } from 'sushi'
+import { ChainId } from 'sushi/chain'
+import { Amount, Native } from 'sushi/currency'
 import { encodeFunctionData } from 'viem'
 
 import { usePoolPosition } from './PoolPositionProvider'
 import { RemoveSectionWidget } from './RemoveSectionWidget'
 
-interface RemoveSectionLegacyProps {
+interface RemoveSectionV2Props {
   pool: Pool
 }
 
-export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
-  withCheckerRoot(({ pool: _pool }) => {
+export const RemoveSectionV2: FC<RemoveSectionV2Props> = withCheckerRoot(
+  ({ pool: _pool }) => {
     const { token0, token1, liquidityToken } = useTokensFromPool(_pool)
     const { chain } = useNetwork()
-    const { approved } = useApproved(APPROVE_TAG_REMOVE_LEGACY)
+    const { approved } = useApproved(APPROVE_TAG_REMOVE_V2)
     const isMounted = useIsMounted()
     const { address } = useAccount()
     const deadline = useTransactionDeadline(_pool.chainId)
@@ -362,7 +362,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
                       ).address as Address
                     }
                   >
-                    <Checker.Success tag={APPROVE_TAG_REMOVE_LEGACY}>
+                    <Checker.Success tag={APPROVE_TAG_REMOVE_V2}>
                       <Button
                         size="default"
                         onClick={() => sendTransaction?.()}
@@ -387,4 +387,5 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
         </RemoveSectionWidget>
       </div>
     )
-  })
+  },
+)

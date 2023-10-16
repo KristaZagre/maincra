@@ -1,15 +1,14 @@
 import {
-  findMultiRouteExactIn,
-  findSingleRouteExactIn,
   SushiSwapV2Pool,
   Trade,
   TradeType,
   TridentConstantPool,
   TridentStablePool,
   Version as TradeVersion,
+  findMultiRouteExactIn,
+  findSingleRouteExactIn,
 } from '@sushiswap/amm'
 import { BentoBoxChainId, isBentoBoxChainId } from '@sushiswap/bentobox-sdk'
-import { Amount, Type as Currency, WNATIVE } from 'sushi/currency'
 import { RouteProcessor3ChainId } from '@sushiswap/route-processor-sdk'
 import { RouteStatus } from '@sushiswap/tines'
 import {
@@ -18,9 +17,9 @@ import {
   TridentChainId,
 } from '@sushiswap/trident-sdk'
 import {
-  isSushiSwapV2ChainId,
   SUSHISWAP_V2_FACTORY_ADDRESS,
   SushiSwapV2ChainId,
+  isSushiSwapV2ChainId,
 } from '@sushiswap/v2-sdk'
 import {
   SushiSwapV2PoolState,
@@ -34,6 +33,7 @@ import {
   useSushiSwapV2Pools,
 } from '@sushiswap/wagmi'
 import { useMemo } from 'react'
+import { Amount, Type as Currency, WNATIVE } from 'sushi/currency'
 
 export type UseTradeOutput =
   | Trade<
@@ -78,7 +78,7 @@ export function useTrade(
     currencyOut,
   )
 
-  // Legacy SushiSwap pairs
+  // SushiSwapV2 pairs
   const { data: pairs } = useSushiSwapV2Pools(
     chainId as SushiSwapV2ChainId,
     currencyCombinations,
@@ -105,13 +105,13 @@ export function useTrade(
     },
   )
 
-  // Combined legacy and trident pools
+  // Combined SushiSwapV2 and trident pools
   const pools = useMemo(
     () => [...pairs, ...constantProductPools, ...stablePools],
     [pairs, constantProductPools, stablePools],
   )
 
-  // Filter legacy and trident pools by existance
+  // Filter SushiSwapV2 and trident pools by existance
   const filteredPools = useMemo(
     () =>
       Object.values(
@@ -170,7 +170,7 @@ export function useTrade(
           (chainId in TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS ||
             chainId in TRIDENT_STABLE_POOL_FACTORY_ADDRESS)
         ) {
-          const legacyRoute = findSingleRouteExactIn(
+          const v2Route = findSingleRouteExactIn(
             currencyIn.wrapped,
             currencyOut.wrapped,
             amountSpecified.quotient,
@@ -211,9 +211,9 @@ export function useTrade(
             Number(data.gasPrice),
           )
 
-          const useLegacy = Amount.fromRawAmount(
+          const useV2 = Amount.fromRawAmount(
             currencyOut.wrapped,
-            legacyRoute.amountOutBI.toString(),
+            v2Route.amountOutBI.toString(),
           ).greaterThan(
             Amount.fromShare(
               currencyOut.wrapped,
@@ -223,16 +223,16 @@ export function useTrade(
           )
 
           return Trade.exactIn(
-            useLegacy ? legacyRoute : tridentRoute,
+            useV2 ? v2Route : tridentRoute,
             amountSpecified,
             currencyOut,
-            useLegacy ? TradeVersion.V1 : TradeVersion.V2,
-            !useLegacy ? currencyInRebase : undefined,
-            !useLegacy ? currencyOutRebase : undefined,
+            useV2 ? TradeVersion.V1 : TradeVersion.V2,
+            !useV2 ? currencyInRebase : undefined,
+            !useV2 ? currencyOutRebase : undefined,
           )
         }
 
-        const legacyRoute = findSingleRouteExactIn(
+        const v2Route = findSingleRouteExactIn(
           currencyIn.wrapped,
           currencyOut.wrapped,
           amountSpecified.quotient,
@@ -243,16 +243,16 @@ export function useTrade(
           Number(data.gasPrice),
         )
 
-        if (legacyRoute.status === RouteStatus.Success) {
-          console.debug('Found legacy route', legacyRoute)
+        if (v2Route.status === RouteStatus.Success) {
+          console.debug('Found v2 route', v2Route)
           return Trade.exactIn(
-            legacyRoute,
+            v2Route,
             amountSpecified,
             currencyOut,
             TradeVersion.V1,
           )
         } else {
-          console.debug('No legacy route', legacyRoute)
+          console.debug('No v2 route', v2Route)
         }
 
         // TODO: Switch to shares

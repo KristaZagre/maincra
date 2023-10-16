@@ -1,26 +1,26 @@
 import { Trade, TradeType, Version as TradeVersion } from '@sushiswap/amm'
-import { Amount, Currency, Native, Share, Token } from 'sushi/currency'
-import { BigintIsh } from 'sushi'
 import {
-  isStargateBridgeToken,
   STARGATE_BRIDGE_TOKENS,
   STARGATE_CHAIN_ID,
   STARGATE_POOL_ID,
   StargateChainId,
+  isStargateBridgeToken,
 } from '@sushiswap/stargate'
 import { SushiXSwapChainId } from '@sushiswap/sushixswap-sdk'
 import { getBigInt } from '@sushiswap/tines'
 import {
   Address,
-  getSushiXSwapContractConfig,
   SushiXSwap as SushiXSwapContract,
+  getSushiXSwapContractConfig,
 } from '@sushiswap/wagmi'
 import { readContract } from '@sushiswap/wagmi/actions'
+import { BigintIsh } from 'sushi'
+import { Amount, Currency, Native, Share, Token } from 'sushi/currency'
 import {
-  encodeAbiParameters,
   Hex,
-  parseAbiParameters,
   Signature,
+  encodeAbiParameters,
+  parseAbiParameters,
   stringToHex,
   zeroAddress,
 } from 'viem'
@@ -64,8 +64,8 @@ export enum Action {
   // Unwrap (to native)
   UNWRAP_AND_TRANSFER = 6,
 
-  // Legacy AMM
-  LEGACY_EXACT_INPUT = 7,
+  // SushiSwapV2 AMM
+  V2_EXACT_INPUT = 7,
 
   // Trident AMM
   TRIDENT_EXACT_INPUT = 8,
@@ -223,7 +223,7 @@ export abstract class Cooker implements Cooker {
     this.add(Action.DST_WITHDRAW_FROM_BENTOBOX, data, value)
   }
 
-  legacyExactInput(
+  v2ExactInput(
     trade: Trade<
       Currency,
       Currency,
@@ -235,7 +235,7 @@ export abstract class Cooker implements Cooker {
     recipient: Address = this.user,
   ): void {
     this.add(
-      Action.LEGACY_EXACT_INPUT,
+      Action.V2_EXACT_INPUT,
 
       encodeAbiParameters(
         parseAbiParameters('uint256, uint256, address[], address'),
@@ -429,7 +429,7 @@ export class SrcCooker extends Cooker {
     )
   }
 
-  legacyExactInput(
+  v2ExactInput(
     trade: Trade<
       Currency,
       Currency,
@@ -440,8 +440,8 @@ export class SrcCooker extends Cooker {
     amountOutMinimum: BigintIsh,
     recipient: Address = this.user,
   ): void {
-    if (this.debug) console.debug('cook src legacy exact input')
-    super.legacyExactInput(trade, amountIn, amountOutMinimum, recipient)
+    if (this.debug) console.debug('cook src v2 exact input')
+    super.v2ExactInput(trade, amountIn, amountOutMinimum, recipient)
   }
 
   tridentExactInput(
@@ -645,7 +645,7 @@ export class SushiXSwap {
         shareIn.quotient.toString(),
         true,
       )
-      this.srcCooker.legacyExactInput(
+      this.srcCooker.v2ExactInput(
         this.srcTrade,
         0,
         minimumAmountOut.quotient.toString(),
@@ -775,7 +775,7 @@ export class SushiXSwap {
         srcShare.quotient.toString(),
         true,
       )
-      this.srcCooker.legacyExactInput(
+      this.srcCooker.v2ExactInput(
         this.srcTrade,
         0,
         srcMinimumAmountOut.quotient.toString(),
@@ -847,8 +847,8 @@ export class SushiXSwap {
         this.dstUseBentoBox ? 'dstDepositToBentoBox' : 'dstWithdraw'
       ](this.dstToken)
     } else if (this.dstTrade?.isV1() && this.dstTrade.route.legs.length) {
-      console.debug('cook teleport legacy exact in')
-      this.dstCooker.legacyExactInput(
+      console.debug('cook teleport v2 exact in')
+      this.dstCooker.v2ExactInput(
         this.dstTrade,
         0,
         dstMinimumAmountOut.quotient.toString(),

@@ -2,29 +2,21 @@
 
 import { PlusIcon } from '@heroicons/react-v1/solid'
 import { SushiSwapV2Pool } from '@sushiswap/amm'
-import { ChainId, TESTNET_CHAIN_IDS } from 'sushi/chain'
-import {
-  defaultQuoteCurrency,
-  Native,
-  tryParseAmount,
-  Type,
-} from 'sushi/currency'
-import { ZERO } from 'sushi'
 import { FormSection } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Loader } from '@sushiswap/ui/components/loader'
 import {
-  isSushiSwapV2ChainId,
   SUSHISWAP_V2_ROUTER_ADDRESS,
   SUSHISWAP_V2_SUPPORTED_CHAIN_IDS,
   SushiSwapV2ChainId,
+  isSushiSwapV2ChainId,
 } from '@sushiswap/v2-sdk'
 import { PoolFinder, SushiSwapV2PoolState } from '@sushiswap/wagmi'
 import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { CheckerProvider } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { DISABLED_CHAIN_IDS } from 'config'
-import { APPROVE_TAG_ADD_LEGACY } from 'lib/constants'
+import { APPROVE_TAG_ADD_V2 } from 'lib/constants'
 import { isSushiSwapV2Pool } from 'lib/functions'
 import { useRouter } from 'next/navigation'
 import React, {
@@ -37,9 +29,17 @@ import React, {
   useMemo,
   useState,
 } from 'react'
+import { ZERO } from 'sushi'
+import { ChainId, TESTNET_CHAIN_IDS } from 'sushi/chain'
+import {
+  Native,
+  Type,
+  defaultQuoteCurrency,
+  tryParseAmount,
+} from 'sushi/currency'
 import { SWRConfig } from 'swr'
 
-import { AddSectionReviewModalLegacy } from '../../../../../ui/pool/AddSectionReviewModalLegacy'
+import { AddSectionReviewModalV2 } from '../../../../../ui/pool/AddSectionReviewModalV2'
 import { SelectNetworkWidget } from '../../../../../ui/pool/SelectNetworkWidget'
 import { SelectTokensWidget } from '../../../../../ui/pool/SelectTokensWidget'
 
@@ -300,8 +300,8 @@ const _Add: FC<AddProps> = ({
                             amount={parsedInput1}
                             contract={SUSHISWAP_V2_ROUTER_ADDRESS[chainId]}
                           >
-                            <Checker.Success tag={APPROVE_TAG_ADD_LEGACY}>
-                              <AddSectionReviewModalLegacy
+                            <Checker.Success tag={APPROVE_TAG_ADD_V2}>
+                              <AddSectionReviewModalV2
                                 poolAddress={pool?.liquidityToken.address}
                                 poolState={poolState as SushiSwapV2PoolState}
                                 chainId={chainId}
@@ -320,7 +320,7 @@ const _Add: FC<AddProps> = ({
                                 >
                                   {title}
                                 </Button>
-                              </AddSectionReviewModalLegacy>
+                              </AddSectionReviewModalV2>
                             </Checker.Success>
                           </Checker.ApproveERC20>
                         </Checker.ApproveERC20>
