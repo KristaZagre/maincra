@@ -15,7 +15,10 @@ export async function GET(request: NextRequest) {
   if (!parsedParams.success) {
     return new Response(parsedParams.error.message, { status: 400 })
   }
-
+  const protocols = parsedParams.data.protocols
+  const chainIds = parsedParams.data.chainIds
+  const symbols = parsedParams.data.tokenSymbols
+  const onlyIncentivized = parsedParams.data.isIncentivized
   const orderBy = poolOrderByToField[parsedParams.data.orderBy]
 
   const client = await createClient()
@@ -45,18 +48,43 @@ export async function GET(request: NextRequest) {
         p.token1Id,
         t1.name AS token1Name,
         t1.symbol AS token1Symbol,
-        t1.decimals AS token1Decimals
+        t1.decimals AS token1Decimals,
+        CASE
+          WHEN i.poolId IS NOT NULL THEN true
+          ELSE false
+        END AS isIncentivized
       FROM 
           (SELECT * FROM entities WHERE namespace = '${process.env.ROCKSET_ENV}' AND entityType = 'Pool' AND isWhitelisted = true) AS p
+      ${`
+      ${
+        onlyIncentivized ? 'INNER JOIN' : 'LEFT JOIN'}
+        (SELECT poolId FROM entities WHERE namespace = '${process.env.ROCKSET_ENV}' AND entityType = 'Incentive') AS i
+      ON p.entityId = i.poolId
+      `}
       JOIN
-          (SELECT * FROM entities WHERE namespace = '${process.env.ROCKSET_ENV}' AND entityType = 'Token' AND isWhitelisted = true) AS t0
+        (SELECT * FROM entities WHERE namespace = '${process.env.ROCKSET_ENV}' AND entityType = 'Token' AND isWhitelisted = true) AS t0
       ON p.token0Id = t0.entityId
       JOIN
-          (SELECT * FROM entities WHERE namespace = '${process.env.ROCKSET_ENV}' AND entityType = 'Token' AND isWhitelisted = true) AS t1
+        (SELECT * FROM entities WHERE namespace = '${process.env.ROCKSET_ENV}' AND entityType = 'Token' AND isWhitelisted = true) AS t1
       ON p.token1Id = t1.entityId
-			WHERE ${orderBy} IS NOT NULL
-			ORDER BY ${orderBy} ${parsedParams.data.orderDir}
-      OFFSET ${parsedParams.data.pageIndex} ROWS 
+			WHERE :orderBy IS NOT NULL
+      ${
+        protocols ? `AND p.protocol IN (${protocols.map((p) => `'${p}'`)})` : ''
+      }
+      ${chainIds ? `AND p.chainId IN (${chainIds.join(', ')})` : ''}
+      ${
+        symbols
+          ? symbols.length === 1
+            ? `AND (t0.symbol IN (${symbols.map(
+                (s) => `'${s}'`,
+              )}) OR t1.symbol IN (${symbols.map((s) => `'${s}'`)}))`
+            : `AND (t0.symbol IN (${symbols.map(
+                (s) => `'${s}'`,
+              )}) AND t1.symbol IN (${symbols.map((s) => `'${s}'`)}))`
+          : ''
+      }
+			ORDER BY :orderBy ${parsedParams.data.orderDir}
+      OFFSET ${parsedParams.data.pageIndex} * ${parsedParams.data.pageSize} ROWS 
       FETCH NEXT ${parsedParams.data.pageSize} ROWS ONLY;
       `,
       parameters: [
@@ -65,15 +93,9 @@ export async function GET(request: NextRequest) {
           type: 'string',
           value: orderBy,
         },
-        {
-          name: 'orderDirection',
-          type: 'string',
-          value: parsedParams.data.orderDir,
-        },
       ],
     },
   })
-
   const results = (result.results || []) as unknown[]
 
   const processedSimplePools = processArray.filterErrors(

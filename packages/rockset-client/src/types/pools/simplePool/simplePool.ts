@@ -16,6 +16,7 @@ export const simplePoolOutputSchema = z
     last7DVolumeUsd: z.number().catch(0),
     liquidityUsd: z.number().catch(0),
     protocol: z.string(),
+    isIncentivized: z.boolean(),
   })
   .merge(cz.token0())
   .merge(cz.token1())
