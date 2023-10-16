@@ -1,24 +1,19 @@
-import {
-  formatNumber,
-  formatPercent,
-  formatUSD,
-  shortenAddress,
-} from 'sushi'
 import { AngleRewardsPool } from '@sushiswap/react-query'
 import { SimplePool } from '@sushiswap/rockset-client'
 import {
-  classNames,
   NetworkIcon,
   Tooltip,
   TooltipPrimitive,
   TooltipProvider,
   TooltipTrigger,
+  classNames,
 } from '@sushiswap/ui'
 import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi/future'
 import { ColumnDef } from '@tanstack/react-table'
 import { formatDistance } from 'date-fns'
 import React from 'react'
+import { formatNumber, formatPercent, formatUSD, shortenAddress } from 'sushi'
 
 import { PositionWithPool } from '../../types'
 import { APRHoverCard } from './APRHoverCard'
@@ -220,7 +215,10 @@ export const NETWORK_COLUMN: ColumnDef<SimplePool, unknown> = {
   },
 }
 
-export const NAME_COLUMN_POSITION_WITH_POOL: ColumnDef<SimplePool, unknown> = {
+export const NAME_COLUMN_POSITION_WITH_POOL: ColumnDef<
+  PositionWithPool,
+  unknown
+> = {
   id: 'name',
   header: 'Name',
   cell: (props) => <PoolNameCell {...props.row} />,
@@ -242,11 +240,11 @@ export const NAME_COLUMN_POSITION_WITH_POOL: ColumnDef<SimplePool, unknown> = {
 export const APR_COLUMN: ColumnDef<PositionWithPool, unknown> = {
   id: 'apr',
   header: 'APR',
-  accessorFn: (row) => row.pool.totalApr1d,
+  accessorFn: (row) => row.pool.last1DFeeApr,
   cell: (props) => (
     <APRHoverCard pool={props.row.original.pool}>
       <span className="underline decoration-dotted">
-        {formatPercent(props.row.original.pool.totalApr1d)}
+        {formatPercent(props.row.original.pool.last1DFeeApr)}
       </span>
     </APRHoverCard>
   ),
@@ -260,12 +258,12 @@ export const VALUE_COLUMN: ColumnDef<PositionWithPool, unknown> = {
   header: 'Value',
   accessorFn: (row) =>
     (Number(row.balance) / Number(row.pool.totalSupply)) *
-    Number(row.pool.liquidityUSD),
+    Number(row.pool.liquidityUsd),
   cell: (props) =>
     formatUSD(
       (Number(props.row.original.balance) /
         Number(props.row.original.pool.totalSupply)) *
-        Number(props.row.original.pool.liquidityUSD),
+        Number(props.row.original.pool.liquidityUsd),
     ),
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
@@ -276,9 +274,9 @@ export const VOLUME_COLUMN: ColumnDef<PositionWithPool, unknown> = {
   id: 'volume',
   header: 'Volume (24h)',
   cell: (props) =>
-    formatUSD(props.row.original.pool.volume1d).includes('NaN')
+    formatUSD(props.row.original.pool.last1DVolumeUsd).includes('NaN')
       ? '$0.00'
-      : formatUSD(props.row.original.pool.volume1d),
+      : formatUSD(props.row.original.pool.last1DVolumeUsd),
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
   },

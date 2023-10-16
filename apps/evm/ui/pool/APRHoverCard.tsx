@@ -1,7 +1,4 @@
-import { ChainId } from 'sushi/chain'
-import { tryParseAmount } from 'sushi/currency'
-import { formatPercent } from 'sushi'
-import { Pool } from '@sushiswap/rockset-client'
+import { SimplePool } from '@sushiswap/rockset-client'
 import {
   CardContent,
   CardDescription,
@@ -18,12 +15,15 @@ import {
   ReplyContent,
 } from '@sushiswap/ui'
 import { FC, ReactNode } from 'react'
+import { formatPercent } from 'sushi'
+import { ChainId } from 'sushi/chain'
+import { tryParseAmount } from 'sushi/currency'
 
 import { incentiveRewardToToken } from '../../lib/functions'
 
 interface APRHoverCardProps {
   children: ReactNode
-  pool: Pool
+  pool: SimplePool
   showEmissions?: boolean
 }
 
@@ -32,7 +32,7 @@ export const APRHoverCard: FC<APRHoverCardProps> = ({
   pool,
   showEmissions = true,
 }) => {
-  const incentives = []
+  const incentives = [] as any[]
   const incentiveApr = 0
   const card = (
     <>

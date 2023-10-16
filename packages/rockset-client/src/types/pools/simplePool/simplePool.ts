@@ -14,6 +14,7 @@ export const simplePoolOutputSchema = z
     last1DVolumeUsd: z.number().catch(0),
     last30DVolumeUsd: z.number().catch(0),
     last7DVolumeUsd: z.number().catch(0),
+    liquidity: z.string().nullable().default('0'),
     liquidityUsd: z.number().catch(0),
     protocol: z.string(),
   })

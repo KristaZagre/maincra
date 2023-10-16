@@ -34,6 +34,7 @@ export async function GET(request: NextRequest) {
         p.last1DVolumeUsd,
         p.last30DVolumeUsd,
         p.last7DVolumeUsd,
+        p.liquidity,
         p.liquidityUsd,
         p.protocol,
         p.token0Address,

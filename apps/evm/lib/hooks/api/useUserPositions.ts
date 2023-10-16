@@ -1,13 +1,15 @@
 'use client'
 
-import { ChainId } from 'sushi/chain'
-import { parseArgs, Pools } from '@sushiswap/client'
+import { parseArgs } from '@sushiswap/client'
 import { UserPosition } from '@sushiswap/graph-client'
 import { useMemo } from 'react'
-import useSWR from 'swr'
+import { ChainId } from 'sushi/chain'
 
+import { SimplePool } from '@sushiswap/rockset-client'
+import { useQuery } from '@tanstack/react-query'
+import { ID } from 'sushi/types'
+import { useSimplePools } from '..'
 import { PositionWithPool } from '../../../types'
-import { useGraphPools } from './useGraphPools'
 
 export interface GetUserArgs {
   id?: string
@@ -18,7 +20,7 @@ export function getUserPositionsUrl(args: GetUserArgs) {
   return `/pool/api/user/${parseArgs(args)}`
 }
 
-const transformPositions = (positions?: UserPosition[], pools?: Pools) =>
+const transformPositions = (positions?: UserPosition[], pools?: SimplePool[]) =>
   positions && pools
     ? positions
         .map((position) => {
@@ -30,16 +32,22 @@ const transformPositions = (positions?: UserPosition[], pools?: Pools) =>
     : undefined
 
 export function useUserPositions(args: GetUserArgs, shouldFetch = true) {
-  const { data: positions } = useSWR<UserPosition[]>(
-    shouldFetch && args.id ? getUserPositionsUrl(args) : null,
-    async (url) => fetch(url).then((data) => data.json()),
-  )
+  const url = getUserPositionsUrl(args)
 
-  const _positions = useMemo(
-    () => positions?.map((position) => position.pool) || [],
+  const { data: positions } = useQuery<UserPosition[]>({
+    queryKey: [url],
+    queryFn: () => fetch(url).then((data) => data.json()),
+    enabled: shouldFetch && !!args.id,
+  })
+
+  const poolIds = useMemo(
+    () => positions?.map((position) => position.pool as ID) || [],
     [positions],
   )
-  const pools = useGraphPools(_positions)
+
+  const { data: pools } = useSimplePools({
+    args: { chainIds: args.chainIds, ids: poolIds },
+  })
   const isValidating =
     !positions || !pools || (positions.length > 0 && pools.length === 0)
 

@@ -9,12 +9,17 @@ import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
 import { PositionWithPool } from 'types'
 
 import { usePoolFilters } from './PoolsFiltersProvider'
-import { APR_COLUMN, VALUE_COLUMN } from './columns'
+import {
+  APR_COLUMN,
+  NAME_COLUMN_POSITION_WITH_POOL,
+  VALUE_COLUMN,
+} from './columns'
 
-const COLUMNS = [VALUE_COLUMN, APR_COLUMN] satisfies ColumnDef<
-  PositionWithPool,
-  unknown
->[]
+const COLUMNS = [
+  NAME_COLUMN_POSITION_WITH_POOL,
+  VALUE_COLUMN,
+  APR_COLUMN,
+] satisfies ColumnDef<PositionWithPool, unknown>[]
 
 interface PositionsTableProps {
   protocol: Protocol
