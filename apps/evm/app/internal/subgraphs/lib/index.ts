@@ -1,4 +1,3 @@
-import { ChainId } from 'sushi/chain'
 import { getBuiltGraphSDK } from '@sushiswap/graph-client'
 import {
   BENTOBOX_SUBGRAPH_NAME,
@@ -9,8 +8,8 @@ import {
   KASHI_SUBGRAPH_NAME,
   MINICHEF_SUBGRAPH_NAME,
   SUBGRAPH_HOST,
-  TRIDENT_SUBGRAPH_NAME,
 } from '@sushiswap/graph-config'
+import { ChainId } from 'sushi/chain'
 
 export type Subgraph = Awaited<ReturnType<typeof getSubgraphs>>[0]
 
@@ -18,12 +17,11 @@ const CATEGORIES = {
   BENTOBOX: { ...BENTOBOX_SUBGRAPH_NAME },
   BLOCKS: { ...BLOCKS_SUBGRAPH_NAME },
   EXCHANGE: { ...EXCHANGE_SUBGRAPH_NAME },
-  TRIDENT: { ...TRIDENT_SUBGRAPH_NAME },
   KASHI: { ...KASHI_SUBGRAPH_NAME },
   CHEF: {
     ...MINICHEF_SUBGRAPH_NAME,
-    [ChainId.ETHEREUM + '-1']: 'jiro-ono/masterchef-staging',
-    [ChainId.ETHEREUM + '-2']: 'sushiswap/master-chefv2',
+    [`${ChainId.ETHEREUM}-1`]: 'jiro-ono/masterchef-staging',
+    [`${ChainId.ETHEREUM}-2`]: 'sushiswap/master-chefv2',
   },
   FURO: { ...FURO_SUBGRAPH_NAME },
   OTHER: {},

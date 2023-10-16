@@ -1,58 +1,37 @@
+import { SushiSwapV2Pool } from '@sushiswap/amm'
+import { Pool } from '@sushiswap/client'
 import {
-  SushiSwapV2Pool,
-  TridentConstantPool,
-  TridentStablePool,
-} from '@sushiswap/amm'
+  FeeAmount,
+  Position,
+  TICK_SPACINGS,
+  TickMath,
+  encodeSqrtRatioX96,
+  nearestUsableTick,
+  priceToClosestTick,
+  tickToPrice,
+} from '@sushiswap/v3-sdk'
 import { ChainId } from 'sushi/chain'
-import { Pool, Protocol } from '@sushiswap/client'
 import {
   DAI,
   Native,
   Price,
   Token,
-  tryParseAmount,
   Type,
   USDC,
   USDT,
   WBTC,
+  tryParseAmount,
 } from 'sushi/currency'
-import {
-  encodeSqrtRatioX96,
-  FeeAmount,
-  nearestUsableTick,
-  Position,
-  priceToClosestTick,
-  TICK_SPACINGS,
-  TickMath,
-  tickToPrice,
-} from '@sushiswap/v3-sdk'
 
 import { Bound } from './constants'
 import { useTicks } from './hooks'
 import { TickProcessed } from './hooks/useConcentratedActiveLiquidity'
 
-export const isTridentConstantPool = (
-  pool: SushiSwapV2Pool | TridentConstantPool | TridentStablePool | null,
-): pool is TridentConstantPool => {
-  return pool instanceof TridentConstantPool
-}
-
-export const isTridentStablePool = (
-  pool: SushiSwapV2Pool | TridentStablePool | null,
-): pool is TridentStablePool => {
-  return pool instanceof TridentStablePool
-}
-
 export const isSushiSwapV2Pool = (
-  pool: SushiSwapV2Pool | TridentConstantPool | TridentStablePool | null,
+  pool: SushiSwapV2Pool | null,
 ): pool is SushiSwapV2Pool => {
   return pool instanceof SushiSwapV2Pool
 }
-
-export const isTridentPoolProtocol = (protocol: Protocol) =>
-  (
-    [Protocol.BENTOBOX_CLASSIC, Protocol.BENTOBOX_STABLE] as Protocol[]
-  ).includes(protocol)
 
 export const incentiveRewardToToken = (
   chainId: ChainId,

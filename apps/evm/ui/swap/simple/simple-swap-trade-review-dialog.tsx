@@ -224,7 +224,6 @@ export const SimpleSwapTradeReviewDialog: FC<{
                   leg.poolName.startsWith('Wrap') ||
                   leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
                   leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) ||
-                  leg.poolName.startsWith(LiquidityProviders.Trident) ||
                   leg.poolName.startsWith(Bridge.BentoBox),
               )
             ) {
@@ -240,7 +239,6 @@ export const SimpleSwapTradeReviewDialog: FC<{
                   !leg.poolName.startsWith('Wrap') &&
                   (leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
                     leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) ||
-                    leg.poolName.startsWith(LiquidityProviders.Trident) ||
                     leg.poolName.startsWith(Bridge.BentoBox)),
               ) &&
               trade?.route?.legs?.some(
@@ -248,7 +246,6 @@ export const SimpleSwapTradeReviewDialog: FC<{
                   !leg.poolName.startsWith('Wrap') &&
                   (!leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
                     !leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) ||
-                    !leg.poolName.startsWith(LiquidityProviders.Trident) ||
                     !leg.poolName.startsWith(Bridge.BentoBox)),
               )
             ) {
@@ -264,7 +261,6 @@ export const SimpleSwapTradeReviewDialog: FC<{
                   leg.poolName.startsWith('Wrap') ||
                   (!leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) &&
                     !leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) &&
-                    !leg.poolName.startsWith(LiquidityProviders.Trident) &&
                     !leg.poolName.startsWith(Bridge.BentoBox)),
               )
             ) {
@@ -290,7 +286,6 @@ export const SimpleSwapTradeReviewDialog: FC<{
                   leg.poolName.startsWith('Wrap') ||
                   leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
                   leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) ||
-                  leg.poolName.startsWith(LiquidityProviders.Trident) ||
                   leg.poolName.startsWith(Bridge.BentoBox),
               )
             ) {
@@ -305,7 +300,6 @@ export const SimpleSwapTradeReviewDialog: FC<{
                   !leg.poolName.startsWith('Wrap') &&
                   (leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
                     leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) ||
-                    leg.poolName.startsWith(LiquidityProviders.Trident) ||
                     leg.poolName.startsWith(Bridge.BentoBox)),
               ) &&
               trade?.route?.legs?.some(
@@ -313,7 +307,6 @@ export const SimpleSwapTradeReviewDialog: FC<{
                   !leg.poolName.startsWith('Wrap') &&
                   (!leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
                     !leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) ||
-                    !leg.poolName.startsWith(LiquidityProviders.Trident) ||
                     !leg.poolName.startsWith(Bridge.BentoBox)),
               )
             ) {
@@ -328,7 +321,6 @@ export const SimpleSwapTradeReviewDialog: FC<{
                   leg.poolName.startsWith('Wrap') ||
                   (!leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) &&
                     !leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) &&
-                    !leg.poolName.startsWith(LiquidityProviders.Trident) &&
                     !leg.poolName.startsWith(Bridge.BentoBox)),
               )
             ) {

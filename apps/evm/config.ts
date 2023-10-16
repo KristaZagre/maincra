@@ -1,7 +1,6 @@
-import { ChainId, TESTNET_CHAIN_IDS } from 'sushi/chain'
-import { TridentChainIds } from '@sushiswap/trident-sdk'
 import { SushiSwapV2ChainIds } from '@sushiswap/v2-sdk'
 import { SushiSwapV3ChainIds } from '@sushiswap/v3-sdk'
+import { ChainId, TESTNET_CHAIN_IDS } from 'sushi/chain'
 
 export const ANGLE_ENABLED_NETWORKS = [
   ChainId.ETHEREUM,
@@ -52,11 +51,7 @@ const PREFERRED_CHAINID_ORDER: ChainId[] = [
 // const INCLUDED_PREFERRED_CHAIN_IDS = PREFERRED_CHAINID_ORDER.filter((el) => networks.includes(el as T))
 // return Array.from(new Set([...INCLUDED_PREFERRED_CHAIN_IDS, ...networks]))
 
-export const CHAIN_IDS = [
-  ...TridentChainIds,
-  ...SushiSwapV2ChainIds,
-  ...SushiSwapV3ChainIds,
-]
+export const CHAIN_IDS = [...SushiSwapV2ChainIds, ...SushiSwapV3ChainIds]
 
 export const SUPPORTED_CHAIN_IDS = Array.from(
   new Set([

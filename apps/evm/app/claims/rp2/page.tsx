@@ -37,11 +37,11 @@ const RP2ClaimPage = () => {
             On April 8, 2023, Sushi core contributors soft launched V3 upgrades
             for the protocol that included a new router called RouteProcessor2
             to facilitate swaps from the frontend. The router was planned to be
-            used across each iteration of Sushi’s AMM pools (v2, Trident, v3),
-            and to also be used for future aggregating across other protocols
-            (Uni, Pancake, etc.). The RouteProcessor2 contract was deployed to
-            14 networks including: Arbitrum, Arbitrum Nova, Avalanche, Boba,
-            BSC, Ethereum, Fantom, Fuse, Gnosis, Moonbeam, Moonriver, Optimism,
+            used across each iteration of Sushi’s AMM pools (V2, V3), and to
+            also be used for future aggregating across other protocols (Uni,
+            Pancake, etc.). The RouteProcessor2 contract was deployed to 14
+            networks including: Arbitrum, Arbitrum Nova, Avalanche, Boba, BSC,
+            Ethereum, Fantom, Fuse, Gnosis, Moonbeam, Moonriver, Optimism,
             Polygon, and Polygon ZkEVM. Unfortunately the contract had a
             critical vulnerability. To read more about what happened, please
             refer to our{' '}

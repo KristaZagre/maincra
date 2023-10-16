@@ -38,24 +38,6 @@ const ITEMS: { value: string; children: React.ReactNode }[] = [
       </div>
     ),
   },
-  {
-    value: 'stable',
-    children: (
-      <div className="flex items-center gap-2">
-        <span>🍱</span>
-        <span>Trident Stable</span>
-      </div>
-    ),
-  },
-  {
-    value: 'classic',
-    children: (
-      <div className="flex items-center gap-2">
-        <span>🍱</span>
-        <span>Trident Classic</span>
-      </div>
-    ),
-  },
 ]
 
 export const PositionsTab = () => {

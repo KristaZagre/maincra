@@ -1,11 +1,11 @@
-import { ChainId } from 'sushi/chain'
-import { SUSHI_ADDRESS } from 'sushi/currency'
-import { formatNumber, formatUSD } from 'sushi'
 import { getBuiltGraphSDK } from '@sushiswap/graph-client'
 import { BENTOBOX_ENABLED_NETWORKS } from '@sushiswap/graph-config'
 import { SUSHISWAP_V2_SUPPORTED_CHAIN_IDS } from '@sushiswap/v2-sdk'
 import { SUSHISWAP_V3_SUPPORTED_CHAIN_IDS } from '@sushiswap/v3-sdk'
 import { NextResponse } from 'next/server'
+import { formatNumber, formatUSD } from 'sushi'
+import { ChainId } from 'sushi/chain'
+import { SUSHI_ADDRESS } from 'sushi/currency'
 import { getAddress } from 'viem'
 
 const getSushiPriceUSD = async () => {
@@ -30,22 +30,6 @@ const getV2Data = async () => {
   return {
     v2: factories
       .filter(({ id }) => id !== 'ALL')
-      .reduce<ExchangeData>(
-        (acc, cur) => {
-          return {
-            tvlUSD: acc.tvlUSD + Number(cur.liquidityUSD),
-            volumeUSD: acc.volumeUSD + Number(cur.volumeUSD),
-            pairCount: acc.pairCount + Number(cur.pairCount),
-          }
-        },
-        {
-          tvlUSD: 0,
-          volumeUSD: 0,
-          pairCount: 0,
-        },
-      ),
-    trident: factories
-      .filter(({ id }) => id === 'ALL')
       .reduce<ExchangeData>(
         (acc, cur) => {
           return {
@@ -120,14 +104,8 @@ export async function GET() {
 
   let totalTVL =
     Number(bentoTVL) + Number(v2Data.v2.tvlUSD) + Number(v3Data.tvlUSD)
-  let totalVolume =
-    Number(v2Data.v2.volumeUSD) +
-    Number(v2Data.trident.volumeUSD) +
-    Number(v3Data.volumeUSD)
-  const totalPoolCount =
-    Number(v2Data.v2.pairCount) +
-    Number(v2Data.trident.pairCount) +
-    Number(v3Data.pairCount)
+  let totalVolume = Number(v2Data.v2.volumeUSD) + Number(v3Data.volumeUSD)
+  const totalPoolCount = Number(v2Data.v2.pairCount) + Number(v3Data.pairCount)
 
   totalTVL = totalTVL > 10_000_000_000 ? 0 : totalTVL
   totalVolume = totalVolume > 5_000_000_000_000 ? 0 : totalVolume

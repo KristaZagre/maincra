@@ -3,14 +3,6 @@
 import { Page } from '@playwright/test'
 import { Fee } from '@sushiswap/base-sdk'
 import {
-  TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS,
-  TRIDENT_STABLE_POOL_FACTORY_ADDRESS,
-  TRIDENT_SUPPORTED_CHAIN_IDS,
-  TridentChainId,
-  computeTridentConstantPoolAddress,
-  computeTridentStablePoolAddress,
-} from '@sushiswap/trident-sdk'
-import {
   SUSHISWAP_V2_FACTORY_ADDRESS,
   computeSushiSwapV2PoolAddress,
 } from '@sushiswap/v2-sdk'
@@ -28,15 +20,6 @@ import { Native, SUSHI, Token, Type } from 'sushi/currency'
 import { zeroAddress } from 'viem'
 
 import { createERC20 } from '../create-erc20'
-
-interface TridentPoolArgs {
-  token0: Type
-  token1: Type
-  amount0: string
-  amount1: string
-  fee: string
-  type: 'CREATE' | 'ADD'
-}
 
 interface V2PoolArgs {
   token0: Type
@@ -174,126 +157,6 @@ test.describe('V3', () => {
   })
 })
 
-test.describe('Trident', () => {
-  console.log(
-    'trident',
-    !TRIDENT_SUPPORTED_CHAIN_IDS.includes(CHAIN_ID as TridentChainId),
-  )
-  test.skip(!TRIDENT_SUPPORTED_CHAIN_IDS.includes(CHAIN_ID as TridentChainId))
-  test.beforeEach(async ({ page }) => {
-    const url = BASE_URL.concat(`/add/trident/${CHAIN_ID}`)
-    await page.goto(url)
-    await switchNetwork(page, CHAIN_ID)
-  })
-
-  test('Create pool', async ({ page, next }) => {
-    test.slow()
-    await createOrAddTridentPool(page, next, {
-      // 0.01% fee is not created at block 42259027
-      token0: NATIVE_TOKEN,
-      token1: FAKE_TOKEN,
-      amount0: '0.0001',
-      amount1: '0.0001',
-      fee: Fee.DEFAULT.toString(),
-      type: 'CREATE',
-    })
-  })
-
-  test('Add liquidity', async ({ page, next }) => {
-    test.slow()
-    await createOrAddTridentPool(page, next, {
-      token0: NATIVE_TOKEN,
-      token1: FAKE_TOKEN,
-      amount0: '0.0001',
-      amount1: '0.0001',
-      fee: Fee.DEFAULT.toString(),
-      type: 'ADD',
-    })
-  })
-
-  test('Remove liquidity', async ({ page, next }) => {
-    test.slow()
-    await mockPoolApi(
-      page,
-      next,
-      NATIVE_TOKEN.wrapped,
-      FAKE_TOKEN,
-      Fee.DEFAULT,
-      'BENTOBOX_CLASSIC',
-    )
-    const poolAddress = computeTridentConstantPoolAddress({
-      factoryAddress: TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS[CHAIN_ID],
-      tokenA: NATIVE_TOKEN.wrapped,
-      tokenB: FAKE_TOKEN,
-      fee: Fee.DEFAULT,
-      twap: false,
-    })
-    const removeLiquidityUrl = BASE_URL.concat(`/${CHAIN_ID}:${poolAddress}`)
-    await page.goto(removeLiquidityUrl, { timeout: 25_000 })
-    await removeLiquidityV2(page, next)
-  })
-
-  test.skip('Add, stake, unstake and remove', async ({ page, next }) => {
-    test.slow()
-    await createOrAddTridentPool(page, next, {
-      token0: NATIVE_TOKEN,
-      token1: FAKE_TOKEN,
-      amount0: '0.0001',
-      amount1: '0.0001',
-      fee: Fee.DEFAULT.toString(),
-      type: 'ADD',
-    })
-
-    const poolAddress = computeTridentConstantPoolAddress({
-      factoryAddress: TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS[CHAIN_ID],
-      tokenA: NATIVE_TOKEN.wrapped,
-      tokenB: FAKE_TOKEN,
-      fee: Fee.DEFAULT,
-      twap: false,
-    })
-
-    await mockPoolApi(
-      page,
-      next,
-      NATIVE_TOKEN.wrapped,
-      FAKE_TOKEN,
-      Fee.DEFAULT,
-      'BENTOBOX_CLASSIC',
-    )
-
-    const addLiquidityUrl = BASE_URL.concat(`/${CHAIN_ID}:${poolAddress}`)
-    await page.goto(addLiquidityUrl, { timeout: 25_000 })
-    await manageStaking(page, 'STAKE')
-
-    const removeLiquidityUrl = BASE_URL.concat(`/${CHAIN_ID}:${poolAddress}`)
-    await page.goto(removeLiquidityUrl, { timeout: 25_000 })
-    await manageStaking(page, 'UNSTAKE')
-    await page.reload({ timeout: 25_000 })
-    await removeLiquidityV2(page, next)
-  })
-
-  // test('Migrate', async ({ page }) => {
-  //   test.slow()
-  //   await createOrAddTridentPool(page, {
-  //     token0: NATIVE_TOKEN,
-  //     token1: USDC,
-  //     amount0: '0.0001',
-  //     amount1: '0.0001',
-  //     fee: '5',
-  //     type: 'ADD',
-  //   })
-
-  //   const addLiquidityUrl = BASE_URL.concat('/137:0x846fea3d94976ef9862040d9fba9c391aa75a44b')
-  //   await page.goto(addLiquidityUrl, { timeout: 25_000 })
-  //   await manageStaking(page, 'STAKE')
-
-  //   const migrateURL = BASE_URL.concat('/137:0x846fea3d94976ef9862040d9fba9c391aa75a44b/migrate')
-  //   await page.goto(migrateURL, { timeout: 25_000 })
-  //   await manageUnstakeAndClaim(page)
-  //   await migrateV2(page, { minPrice: '0.4', maxPrice: '1' })
-  // })
-})
-
 test.describe('V2', () => {
   test.beforeEach(async ({ page }) => {
     const url = BASE_URL.concat(`/add/v2/${CHAIN_ID}`)
@@ -401,74 +264,6 @@ async function createOrAddLiquidityV3(
   expect(page.getByText(regex))
 }
 
-async function createOrAddTridentPool(
-  page: Page,
-  next: NextFixture,
-  args: TridentPoolArgs,
-) {
-  await handleToken(page, args.token0, 'FIRST')
-  await handleToken(page, args.token1, 'SECOND')
-
-  const poolTypeSelector = page.locator('[testdata-id=pool-type-classic-pool]')
-  await expect(poolTypeSelector).toBeVisible()
-  await poolTypeSelector.click()
-  await page.locator(`[testdata-id=fee-option-${args.fee}]`).click()
-
-  const feeOptionSelector = page.locator(`[testdata-id=fee-option-${args.fee}]`)
-  await expect(feeOptionSelector).toBeVisible()
-  await feeOptionSelector.click()
-
-  await page
-    .locator('[testdata-id=add-liquidity-token0-input]')
-    .fill(args.amount0)
-  await page
-    .locator('[testdata-id=add-liquidity-token1-input]')
-    .fill(args.amount1)
-
-  if (args.type === 'CREATE') {
-    const approveBentoLocator = page.locator(
-      `[testdata-id=create-trident-approve-bentobox-button]`,
-    )
-    await expect(approveBentoLocator).toBeVisible()
-    await expect(approveBentoLocator).toBeEnabled()
-    await approveBentoLocator.click()
-  }
-  const approveTokenId =
-    args.type === 'CREATE'
-      ? `create-trident-approve-token${args.token0.isNative ? 1 : 0}-button`
-      : `add-liquidity-trident-approve-token${
-          args.token0.isNative ? 1 : 0
-        }-button`
-
-  // create-trident-approve-token1-button
-  // add-liquidity-trident-approve-token1-button
-  console.log('approveTokenId', approveTokenId)
-  const approveTokenLocator = page.locator(`[testdata-id=${approveTokenId}]`)
-  await expect(approveTokenLocator).toBeVisible()
-  await expect(approveTokenLocator).toBeEnabled()
-  await approveTokenLocator.click()
-
-  const reviewSelector =
-    args.type === 'CREATE'
-      ? '[testdata-id=create-pool-button]'
-      : '[testdata-id=add-liquidity-button]'
-  const reviewButton = page.locator(reviewSelector)
-  await expect(reviewButton).toBeVisible()
-  await expect(reviewButton).toBeEnabled()
-  await reviewButton.click()
-
-  const confirmButton = page.locator(
-    '[testdata-id=confirm-add-liquidity-button]',
-  )
-  await expect(confirmButton).toBeVisible()
-  await expect(confirmButton).toBeEnabled()
-  await confirmButton.click()
-
-  const expectedText = `(Successfully added liquidity to the ${args.token0.symbol}/${args.token1.symbol} pair)`
-  const regex = new RegExp(expectedText)
-  expect(page.getByText(regex))
-}
-
 async function createOrAddV2Pool(
   page: Page,
   next: NextFixture,
@@ -571,13 +366,13 @@ async function removeLiquidityV3(page: Page, next: NextFixture) {
 async function manageUnstakeAndClaim(page: Page) {
   await switchNetwork(page, CHAIN_ID)
 
-  const approveSlpId = `approve-token0-button`
+  const approveSlpId = 'approve-token0-button'
   const approveSlpLocator = page.locator(`[testdata-id=${approveSlpId}]`)
   await expect(approveSlpLocator).toBeVisible()
   await expect(approveSlpLocator).toBeEnabled()
   await approveSlpLocator.click()
 
-  const unstakeId = `unstake-liquidity-button`
+  const unstakeId = 'unstake-liquidity-button'
   const unstakeLocator = page.locator(`[testdata-id=${unstakeId}]`)
   await expect(unstakeLocator).toBeVisible()
   await expect(unstakeLocator).toBeEnabled()
@@ -599,7 +394,7 @@ async function migrateV2(page: Page, args: MigrateArgs) {
   await page.locator('[testdata-id=max-price-input]').fill(args.maxPrice)
   await page.locator('[testdata-id=max-price-input]').blur()
 
-  const approveMigrateButton = `approve-migrate-button`
+  const approveMigrateButton = 'approve-migrate-button'
   const approveMigrateButtonLocator = page.locator(
     `[testdata-id=${approveMigrateButton}]`,
   )
@@ -609,7 +404,7 @@ async function migrateV2(page: Page, args: MigrateArgs) {
   await expect(approveMigrateButtonLocator).toBeEnabled()
   await approveMigrateButtonLocator.click()
 
-  const migrateButton = `migrate-button`
+  const migrateButton = 'migrate-button'
   const migrateButtonLocator = page.locator(`[testdata-id=${migrateButton}]`)
   await migrateButtonLocator.scrollIntoViewIfNeeded()
 
@@ -617,7 +412,7 @@ async function migrateV2(page: Page, args: MigrateArgs) {
   await expect(migrateButtonLocator).toBeEnabled()
   await migrateButtonLocator.click()
 
-  const migrateConfirmButton = `migrate-confirm-button`
+  const migrateConfirmButton = 'migrate-confirm-button'
   const migrateConfirmButtonLocator = page.locator(
     `[testdata-id=${migrateConfirmButton}]`,
   )
@@ -671,7 +466,7 @@ async function manageStaking(page: Page, type: 'STAKE' | 'UNSTAKE') {
 async function removeLiquidityV2(page: Page, next: NextFixture) {
   await switchNetwork(page, CHAIN_ID)
 
-  const removeLiquidityTabSelector = page.locator(`[testdata-id=remove-tab]`)
+  const removeLiquidityTabSelector = page.locator('[testdata-id=remove-tab]')
   await expect(removeLiquidityTabSelector).toBeVisible()
   await removeLiquidityTabSelector.click()
 
@@ -881,21 +676,6 @@ async function mockPoolApi(
         factoryAddress: SUSHISWAP_V2_FACTORY_ADDRESS[CHAIN_ID],
         tokenA,
         tokenB,
-      })
-    } else if (protocol === 'BENTOBOX_CLASSIC') {
-      address = computeTridentConstantPoolAddress({
-        factoryAddress: TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS[CHAIN_ID],
-        tokenA,
-        tokenB,
-        fee,
-        twap: false,
-      })
-    } else if (protocol === 'BENTOBOX_STABLE') {
-      address = computeTridentStablePoolAddress({
-        factoryAddress: TRIDENT_STABLE_POOL_FACTORY_ADDRESS[CHAIN_ID],
-        tokenA,
-        tokenB,
-        fee,
       })
     }
 

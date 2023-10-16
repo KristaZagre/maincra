@@ -17,12 +17,10 @@ import { FC } from 'react'
 
 import { Pool } from '@sushiswap/rockset-client'
 import { AddSectionStake } from './AddSectionStake'
-import { AddSectionTrident } from './AddSectionTrident'
 import { AddSectionV2 } from './AddSectionV2'
 import { PoolPositionProvider } from './PoolPositionProvider'
 import { PoolPositionRewardsProvider } from './PoolPositionRewardsProvider'
 import { PoolPositionStakedProvider } from './PoolPositionStakedProvider'
-import { RemoveSectionTrident } from './RemoveSectionTrident'
 import { RemoveSectionUnstake } from './RemoveSectionUnstake'
 import { RemoveSectionV2 } from './RemoveSectionV2'
 
@@ -84,26 +82,17 @@ export const ManageV2LiquidityCard: FC<ManageV2LiquidityCardProps> = ({
             <PoolPositionRewardsProvider pool={pool}>
               <TabsContent value="add">
                 <CardContent>
-                  {/* {pool.protocol === Protocol.BENTOBOX_CLASSIC ||
-                  pool.protocol === Protocol.BENTOBOX_STABLE ? (
-                    <AddSectionTrident pool={pool} />
-                  ) : null} */}
-                  {pool.protocol === Protocol.SUSHISWAP_V2
-                    ? // <AddSectionLegacy pool={pool} />
-                      null
-                    : null}
+                  {pool.protocol === Protocol.SUSHISWAP_V2 ? (
+                    <AddSectionV2 pool={pool} />
+                  ) : null}
                 </CardContent>
               </TabsContent>
               <TabsContent value="remove">
-                {/* <CardContent>
-                  {pool.protocol === Protocol.BENTOBOX_CLASSIC ||
-                  pool.protocol === Protocol.BENTOBOX_STABLE ? (
-                    <RemoveSectionTrident pool={pool} />
-                  ) : null}
+                <CardContent>
                   {pool.protocol === Protocol.SUSHISWAP_V2 ? (
-                    <RemoveSectionLegacy pool={pool} />
+                    <RemoveSectionV2 pool={pool} />
                   ) : null}
-                </CardContent> */}
+                </CardContent>
               </TabsContent>
               <TabsContent value="stake">
                 <CardContent>

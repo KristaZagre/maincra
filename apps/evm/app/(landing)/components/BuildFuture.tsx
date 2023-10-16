@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import React, { FC } from 'react'
 
 import { ExpandableCard } from './ExpandableCard'
-import { BentoBoxSVG, SwitchSVG } from './svgs'
+import { BentoBoxSVG } from './svgs'
 
 const DATA = [
   {
@@ -35,35 +35,6 @@ const DATA = [
       </>
     ),
     link: 'https://dev.sushi.com/docs/Products/Bentobox',
-    linkText: 'Visit Docs',
-  },
-  {
-    caption: 'For Developers',
-    category: 'Trident AMM',
-    title: 'A future-proof framework for building AMMs',
-    icon: SwitchSVG,
-    content: (
-      <>
-        <h3>Benefits Of Learning Trident?</h3>
-        <p>
-          Trident is an AMM production framework that can be used to quickly
-          iterate over and develop custom AMMs on top of. As most AMMs currently
-          hardcode their environments, they all have the same underlying
-          methods; we have abstracted these methods into a single interface,
-          called IPool. Using the IPool interface and simply extending it to any
-          number of pools, developers can quickly and efficiently engineer high
-          volume pools of different types, earning on the fees.
-        </p>
-        <p>
-          Currently, Classic Pools (traditional pool model) and Stable Pools
-          (for trading like-kind assets) are supported pool types, with more on
-          the way. Any pool type that passes an audit and an internal review are
-          eligible to be whitelisted on Trident, allowing external developers to
-          create custom types if they wish.
-        </p>
-      </>
-    ),
-    link: 'https://dev.sushi.com/docs/Products/Trident%20AMM%20Framework',
     linkText: 'Visit Docs',
   },
 ]
