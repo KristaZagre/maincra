@@ -1,7 +1,7 @@
 import {
   processArray,
   processTransaction,
-  transactionInputSchema,
+  transactionsInputSchema,
 } from '@sushiswap/rockset-client'
 import { createClient } from '@sushiswap/rockset-client/client'
 import { NextRequest, NextResponse } from 'next/server'
@@ -10,7 +10,7 @@ export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } },
 ) {
-  const parsedParams = transactionInputSchema.safeParse({
+  const parsedParams = transactionsInputSchema.safeParse({
     ...Object.fromEntries(request.nextUrl.searchParams),
     id: params.id,
   })

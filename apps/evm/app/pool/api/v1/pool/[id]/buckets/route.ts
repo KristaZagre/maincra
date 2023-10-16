@@ -1,5 +1,5 @@
 import {
-  poolBucketInputSchema,
+  poolBucketsInputSchema,
   processArray,
   processPoolBucket,
 } from '@sushiswap/rockset-client'
@@ -10,7 +10,7 @@ export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } },
 ) {
-  const parsedParams = poolBucketInputSchema.safeParse({
+  const parsedParams = poolBucketsInputSchema.safeParse({
     ...Object.fromEntries(request.nextUrl.searchParams),
     id: params.id,
   })

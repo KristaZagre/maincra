@@ -1,22 +1,5 @@
 import { z } from 'zod'
-import type { GetApiInputFromOutput } from '../misc/GetApiInputFromOutput.js'
 import { cz } from '../misc/zodObjects.js'
-
-enum TransactionType {
-  SWAPS = 'Swap',
-  MINTS = 'Mint',
-  BURNS = 'Burn',
-}
-
-export const transactionInputSchema = z.object({
-  id: cz.id(),
-  type: z.nativeEnum(TransactionType),
-})
-
-export type TransactionArgs = GetApiInputFromOutput<
-  typeof transactionInputSchema['_input'],
-  typeof transactionInputSchema['_output']
->
 
 const transactionOutputSchema = z.object({
   chainId: z.number().int(),

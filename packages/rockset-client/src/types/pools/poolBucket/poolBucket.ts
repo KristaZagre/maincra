@@ -1,18 +1,6 @@
 import { z } from 'zod'
 import { cz } from '../../misc/zodObjects.js'
 
-export enum PoolBucketGranularity {
-  HOUR = 'hour',
-  DAY = 'day',
-  WEEK = 'week',
-  MONTH = 'month',
-}
-
-export const poolBucketInputSchema = z.object({
-  id: cz.id(),
-  granularity: z.nativeEnum(PoolBucketGranularity),
-})
-
 export const poolBucketOutputSchema = z.object({
   id: cz.id(),
   feeApr: z.number(),
