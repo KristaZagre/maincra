@@ -57,9 +57,10 @@ export async function GET(request: NextRequest) {
       FROM 
           (SELECT * FROM entities WHERE namespace = '${process.env.ROCKSET_ENV}' AND entityType = 'Pool' AND isWhitelisted = true) AS p
       ${`
-      ${
-        onlyIncentivized ? 'INNER JOIN' : 'LEFT JOIN'}
-        (SELECT poolId FROM entities WHERE namespace = '${process.env.ROCKSET_ENV}' AND entityType = 'Incentive') AS i
+      ${onlyIncentivized ? 'INNER JOIN' : 'LEFT JOIN'}
+        (SELECT poolId FROM entities WHERE namespace = '${
+          process.env.ROCKSET_ENV
+        }' AND entityType = 'Incentive') AS i
       ON p.entityId = i.poolId
       `}
       JOIN

@@ -1,17 +1,12 @@
 {
-    "extends": ["//"],
-    "pipeline": {
-      "build": {
-        "outputs": ["dist/**/*"],
-        "env": [
-          "ROCKSET_API_KEY",
-          "ROCKSET_HOST",
-          "ROCKSET_ENV"
-        ]
-      },
-      "check": {
-        "cache": false
-      }
+  "extends": ["//"],
+  "pipeline": {
+    "build": {
+      "outputs": ["dist/**/*"],
+      "env": ["ROCKSET_API_KEY", "ROCKSET_HOST", "ROCKSET_ENV"]
+    },
+    "check": {
+      "cache": false
     }
   }
-  
+}

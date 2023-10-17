@@ -1,6 +1,5 @@
 import { z } from 'zod'
 
-
 const processArrayKeepErrors = <T, P extends z.SafeParseReturnType<unknown, T>>(
   inputs: unknown[],
   process: (input: unknown) => P,

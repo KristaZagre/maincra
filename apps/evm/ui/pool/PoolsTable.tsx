@@ -71,7 +71,7 @@ export const PoolsTable: FC<PositionsTableProps> = ({ onRowClick }) => {
     args,
   })
 
-  const data = useMemo(() => pools?.flat() || [], [pools])
+  const data = useMemo(() => pools?.flat() ?? [], [pools])
 
   const rowRenderer = useCallback(
     (row: Row<SimplePool>, rowNode: ReactNode) => {
@@ -111,7 +111,7 @@ export const PoolsTable: FC<PositionsTableProps> = ({ onRowClick }) => {
           onSortingChange={setSorting}
           onPaginationChange={setPagination}
           loading={!pools && isValidatingPools}
-          linkFormatter={(row) => `/pool/${row.chainId}%3A${row.address}`}
+          linkFormatter={(row) => `/pool/${row.chainId}:${row.address}`}
           rowRenderer={rowRenderer}
           columns={COLUMNS}
           data={data}

@@ -20,7 +20,6 @@ interface PoolStats {
 }
 
 export const PoolStats: FC<PoolStats> = ({ pool }) => {
-
   return (
     <Card>
       <CardHeader>
@@ -33,19 +32,33 @@ export const PoolStats: FC<PoolStats> = ({ pool }) => {
             {pool ? (
               <div className="text-xl font-semibold">
                 {formatUSD(pool.liquidityUsd ?? 0)}{' '}
-                <span className={classNames('text-xs', pool.last1DLiquidityChangePercent > 0 ? 'text-green' : 'text-red')}>
+                <span
+                  className={classNames(
+                    'text-xs',
+                    pool.last1DLiquidityChangePercent > 0
+                      ? 'text-green'
+                      : 'text-red',
+                  )}
+                >
                   {pool.last1DLiquidityChangePercent > 0 ? '+' : '-'}
                   {formatPercent(Math.abs(pool.last1DLiquidityChangePercent))}
                 </span>
               </div>
-            ): null}
+            ) : null}
           </div>
           <div>
             <CardLabel>Volume (24h)</CardLabel>
             {pool ? (
               <div className="text-xl font-semibold">
                 {formatUSD(pool.last1DVolumeUsd ?? 0)}{' '}
-                <span className={classNames('text-xs', pool.last1DVolumeChangePercent > 0 ? 'text-green' : 'text-red')}>
+                <span
+                  className={classNames(
+                    'text-xs',
+                    pool.last1DVolumeChangePercent > 0
+                      ? 'text-green'
+                      : 'text-red',
+                  )}
+                >
                   {pool.last1DVolumeChangePercent > 0 ? '+' : '-'}
                   {formatPercent(Math.abs(pool.last1DVolumeChangePercent))}
                 </span>
@@ -57,7 +70,12 @@ export const PoolStats: FC<PoolStats> = ({ pool }) => {
             {pool ? (
               <div className="text-xl font-semibold">
                 {formatUSD(pool.last1DFeeUsd ?? 0)}{' '}
-                <span className={classNames('text-xs', pool.last1DFeeChangeUsd > 0 ? 'text-green' : 'text-red')}>
+                <span
+                  className={classNames(
+                    'text-xs',
+                    pool.last1DFeeChangeUsd > 0 ? 'text-green' : 'text-red',
+                  )}
+                >
                   {pool.last1DFeeChangeUsd > 0 ? '+' : '-'}
                   {formatPercent(Math.abs(pool.last1DFeeChangeUsd))}
                 </span>
@@ -69,7 +87,14 @@ export const PoolStats: FC<PoolStats> = ({ pool }) => {
             {pool ? (
               <div className="text-xl font-semibold">
                 {formatNumber(pool.last1DTxCount).replace('.00', '')}{' '}
-                <span className={classNames('text-xs', pool.last1DTxCountChangePercent > 0 ? 'text-green' : 'text-red')}>
+                <span
+                  className={classNames(
+                    'text-xs',
+                    pool.last1DTxCountChangePercent > 0
+                      ? 'text-green'
+                      : 'text-red',
+                  )}
+                >
                   {pool.last1DTxCountChangePercent > 0 ? '+' : '-'}
                   {formatPercent(Math.abs(pool.last1DTxCountChangePercent))}
                 </span>
