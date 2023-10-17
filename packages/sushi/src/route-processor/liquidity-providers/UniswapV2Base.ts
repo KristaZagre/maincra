@@ -2,7 +2,7 @@ import { getCreate2Address } from '@ethersproject/address'
 import {
   ADDITIONAL_BASES,
   BASES_TO_CHECK_TRADES_AGAINST,
-} from '@sushiswap/router-config'
+} from '@sushiswap/C-config'
 import { ConstantProductRPool, RToken } from '@sushiswap/tines'
 import { add, getUnixTime } from 'date-fns'
 import { getReservesAbi } from 'sushi/abi'
