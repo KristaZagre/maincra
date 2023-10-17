@@ -781,9 +781,6 @@ importers:
       '@sushiswap/token-lists':
         specifier: workspace:*
         version: link:../../packages/token-lists
-      '@sushiswap/trident-sdk':
-        specifier: workspace:*
-        version: link:../../packages/trident-sdk
       '@sushiswap/ui':
         specifier: workspace:*
         version: link:../../packages/ui
