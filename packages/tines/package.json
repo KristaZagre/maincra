@@ -27,8 +27,7 @@
     "preset": "@sushiswap/jest-config"
   },
   "dependencies": {
-    "seedrandom": "3.0.5",
-    "sushi": "workspace:*"
+    "seedrandom": "3.0.5"
   },
   "devDependencies": {
     "@sushiswap/jest-config": "workspace:*",
@@ -39,7 +38,11 @@
     "@types/node": "18",
     "@types/seedrandom": "3.0.1",
     "jest": "29.7.0",
+    "sushi": "workspace:*",
     "typescript": "5.2.2",
     "viem": "1.16.6"
+  },
+  "peerDependencies": {
+    "sushi": "workspace:*"
   }
 }

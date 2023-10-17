@@ -1,5 +1,5 @@
 {
-  "name": "@sushiswap/route-processor",
+  "name": "@sushiswap/route-processor-contract",
   "version": "0.0.0",
   "private": true,
   "description": "Router",
