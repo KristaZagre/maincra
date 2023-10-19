@@ -6,7 +6,7 @@ import { PoolProtocol, PoolsOrderBy } from './common.js'
 const basePoolsOrderDirs = ['DESC', 'ASC'] as const
 
 export const basePoolsInputSchema = z.object({
-  pageSize: z.coerce.number().int().lte(50).gte(10).optional().default(20),
+  pageSize: z.coerce.number().int().optional().default(20),
   pageIndex: z.coerce.number().int().optional().default(0),
   ids: cz.ids().optional(),
   chainIds: cz

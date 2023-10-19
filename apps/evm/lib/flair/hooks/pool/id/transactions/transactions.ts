@@ -1,12 +1,17 @@
-import { TransactionsArgs } from '@sushiswap/rockset-client'
+import { Transaction, TransactionsArgs } from '@sushiswap/rockset-client'
 import { useQuery } from '@tanstack/react-query'
+import type { QueryParams } from 'lib/flair/hooks/types.js'
 import {
   getTransactions,
   getTransactionsUrl,
-} from '../../../../fetchers/pool/id/transactions/transactions.js'
+} from '../../../../fetchers/pool/id/transactions/transactions'
 
-export const useTransactions = async (args: TransactionsArgs) => {
+export const useTransactions = (
+  args: TransactionsArgs,
+  queryParams?: QueryParams<Transaction[]>,
+) => {
   return useQuery({
+    ...queryParams,
     queryKey: [getTransactionsUrl(args)],
     queryFn: () => getTransactions(args),
   })

@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import { convertToken } from '../../misc/convertToken.js'
 import { cz } from '../../misc/zodObjects.js'
+import type { PoolProtocol } from '../common.js'
 
 export const simplePoolOutputSchema = z
   .object({
@@ -16,7 +17,7 @@ export const simplePoolOutputSchema = z
     last7DVolumeUsd: z.number().catch(0),
     liquidity: z.string().nullable().default('0'),
     liquidityUsd: z.number().catch(0),
-    protocol: z.string(),
+    protocol: z.string().transform((p) => p as PoolProtocol),
     isIncentivized: z.boolean(),
   })
   .merge(cz.token0())

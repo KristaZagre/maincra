@@ -1,12 +1,17 @@
-import { PoolBucketsArgs } from '@sushiswap/rockset-client'
+import { PoolBucket, PoolBucketsArgs } from '@sushiswap/rockset-client'
 import { useQuery } from '@tanstack/react-query'
+import type { QueryParams } from 'lib/flair/hooks/types'
 import {
   getPoolBuckets,
   getPoolBucketsUrl,
 } from '../../../../fetchers/pool/id/buckets/buckets'
 
-export const usePoolBuckets = async (args: PoolBucketsArgs) => {
+export const usePoolBuckets = (
+  args: PoolBucketsArgs,
+  queryParams?: QueryParams<PoolBucket[]>,
+) => {
   return useQuery({
+    ...queryParams,
     queryKey: [getPoolBucketsUrl(args)],
     queryFn: () => getPoolBuckets(args),
   })

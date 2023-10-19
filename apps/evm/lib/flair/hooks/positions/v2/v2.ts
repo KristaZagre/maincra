@@ -1,13 +1,18 @@
-import { parseArgs } from '@sushiswap/client'
 import { V2Position, V2PositionsArgs } from '@sushiswap/rockset-client'
+import { useQuery } from '@tanstack/react-query'
+import {
+  getV2Positions,
+  getV2PositionsUrl,
+} from '../../../fetchers/positions/v2/v2'
+import type { QueryParams } from '../../types.js'
 
-export const getV2PositionsUrl = (args: V2PositionsArgs) => {
-  return `/pool/api/v1/positions/v2${parseArgs(args)}`
-}
-
-export const getV2Positions = async (
+export const useV2Positions = (
   args: V2PositionsArgs,
-): Promise<V2Position[]> => {
-  const url = getV2PositionsUrl(args)
-  return fetch(url).then((data) => data.json())
+  queryParams?: QueryParams<V2Position[]>,
+) => {
+  return useQuery({
+    ...queryParams,
+    queryKey: [getV2PositionsUrl(args)],
+    queryFn: () => getV2Positions(args),
+  })
 }

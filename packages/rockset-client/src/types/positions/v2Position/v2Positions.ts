@@ -4,6 +4,10 @@ import { cz } from '../../misc/zodObjects.js'
 
 export const v2PositionsInputSchema = z.object({
   user: cz.address(),
+  chainIds: cz
+    .commaArray()
+    .transform((chainIds) => chainIds.map((v) => parseInt(v)))
+    .optional(),
 })
 
 export type V2PositionsArgs = GetApiInputFromOutput<

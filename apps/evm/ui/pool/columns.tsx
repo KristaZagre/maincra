@@ -1,5 +1,5 @@
 import { AngleRewardsPool } from '@sushiswap/react-query'
-import { SimplePool } from '@sushiswap/rockset-client'
+import { SimplePool, V2Position } from '@sushiswap/rockset-client'
 import {
   NetworkIcon,
   Tooltip,
@@ -215,13 +215,10 @@ export const NETWORK_COLUMN: ColumnDef<SimplePool, unknown> = {
   },
 }
 
-export const NAME_COLUMN_POSITION_WITH_POOL: ColumnDef<
-  PositionWithPool,
-  unknown
-> = {
+export const NAME_COLUMN_POSITION_WITH_POOL: ColumnDef<V2Position, unknown> = {
   id: 'name',
   header: 'Name',
-  cell: (props) => <PoolNameCell {...props.row} />,
+  cell: (props) => <PoolNameCell pool={props.row.original.pool} />,
   meta: {
     skeleton: (
       <div className="flex items-center w-full gap-2">
@@ -237,7 +234,7 @@ export const NAME_COLUMN_POSITION_WITH_POOL: ColumnDef<
   },
 }
 
-export const APR_COLUMN: ColumnDef<PositionWithPool, unknown> = {
+export const APR_COLUMN: ColumnDef<V2Position, unknown> = {
   id: 'apr',
   header: 'APR',
   accessorFn: (row) => row.pool.last1DFeeApr,
@@ -253,16 +250,16 @@ export const APR_COLUMN: ColumnDef<PositionWithPool, unknown> = {
   },
 }
 
-export const VALUE_COLUMN: ColumnDef<PositionWithPool, unknown> = {
+export const VALUE_COLUMN: ColumnDef<V2Position, unknown> = {
   id: 'value',
   header: 'Value',
   accessorFn: (row) =>
-    (Number(row.balance) / Number(row.pool.totalSupply)) *
+    (Number(row.balance) / Number(row.pool.liquidity)) *
     Number(row.pool.liquidityUsd),
   cell: (props) =>
     formatUSD(
       (Number(props.row.original.balance) /
-        Number(props.row.original.pool.totalSupply)) *
+        Number(props.row.original.pool.liquidity)) *
         Number(props.row.original.pool.liquidityUsd),
     ),
   meta: {
@@ -406,7 +403,7 @@ export const TX_AMOUNT_OUT_V2_COLUMN = (
 export const TX_AMOUNT_USD_V2_COLUMN: ColumnDef<Transaction, unknown> = {
   id: 'amountUSD',
   header: 'Amount (USD)',
-  cell: (props) => formatUSD(props.row.original.amountUsd),
+  cell: (props) => formatUSD(props.row.original.amountUsd || ''),
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
   },
@@ -476,7 +473,7 @@ export const TX_AMOUNT_OUT_V3_COLUMN = (
 export const TX_AMOUNT_USD_V3_COLUMN: ColumnDef<TransactionV3, unknown> = {
   id: 'amountUSD',
   header: 'Amount (USD)',
-  cell: (props) => formatUSD(props.row.original.amountUsd),
+  cell: (props) => formatUSD(props.row.original.amountUsd || ''),
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
   },

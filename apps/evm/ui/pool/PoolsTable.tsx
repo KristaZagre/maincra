@@ -14,9 +14,10 @@ import {
   SortingState,
   TableState,
 } from '@tanstack/react-table'
-import { usePoolsCount, useSimplePools } from 'lib/hooks'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
 
+import { usePoolsCount } from 'lib/flair/hooks/pools/count/count'
+import { useSimplePools } from 'lib/flair/hooks/simplePools/simplePools'
 import { usePoolFilters } from './PoolsFiltersProvider'
 import {
   APR_COLUMN_POOL,
@@ -70,10 +71,9 @@ export const PoolsTable: FC<PositionsTableProps> = ({ onRowClick }) => {
     // }, [chainIds, tokenSymbols, protocols, farmsOnly, sorting])
   }, [pagination, chainIds, tokenSymbols, protocols, farmsOnly, sorting])
 
-  const { data: pools, isLoading: isValidatingPools } = useSimplePools({ args })
-  const { data: poolCount /*, isLoading: isValidatingCount*/ } = usePoolsCount({
-    args,
-  })
+  const { data: pools, isLoading: isValidatingPools } = useSimplePools(args)
+  const { data: poolCount /*, isLoading: isValidatingCount*/ } =
+    usePoolsCount(args)
 
   const data = useMemo(() => pools ?? [], [pools])
 

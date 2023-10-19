@@ -3,7 +3,7 @@
 import { ChainId } from 'sushi/chain'
 import { Protocol } from '@sushiswap/client'
 import { formatNumber } from 'sushi'
-import { SimplePool } from '@sushiswap/rockset-client'
+import { PoolProtocol, SimplePool } from '@sushiswap/rockset-client'
 import { classNames } from '@sushiswap/ui'
 import { Badge } from '@sushiswap/ui/components/badge'
 import { Currency } from '@sushiswap/ui/components/currency'
@@ -18,19 +18,17 @@ import { Row } from '@tanstack/react-table'
 import { useTokensFromPool } from 'lib/hooks'
 import { FC } from 'react'
 
-import { PositionWithPool } from '../../types'
-
-const ProtocolBadge: Record<Protocol, JSX.Element> = {
-  [Protocol.BENTOBOX_STABLE]: (
-    <div className="whitespace-nowrap bg-green/20 text-green text-[10px] px-2 rounded-full">
-      Trident Stable
-    </div>
-  ),
-  [Protocol.BENTOBOX_CLASSIC]: (
-    <div className="whitespace-nowrap bg-green/20 text-green text-[10px] px-2 rounded-full">
-      Trident Classic
-    </div>
-  ),
+const ProtocolBadge: Record<PoolProtocol, JSX.Element> = {
+  // [Protocol.BENTOBOX_STABLE]: (
+  //   <div className="whitespace-nowrap bg-green/20 text-green text-[10px] px-2 rounded-full">
+  //     Trident Stable
+  //   </div>
+  // ),
+  // [Protocol.BENTOBOX_CLASSIC]: (
+  //   <div className="whitespace-nowrap bg-green/20 text-green text-[10px] px-2 rounded-full">
+  //     Trident Classic
+  //   </div>
+  // ),
   [Protocol.SUSHISWAP_V2]: (
     <div className="whitespace-nowrap bg-pink/20 text-pink text-[10px] px-2 rounded-full">
       V2
@@ -43,10 +41,10 @@ const ProtocolBadge: Record<Protocol, JSX.Element> = {
   ),
 }
 
-export const PoolNameCell: FC<Row<PositionWithPool>> = ({ original }) => {
-  const { token0, token1 } = useTokensFromPool(original.pool)
+export const PoolNameCell: FC<{pool: SimplePool}> = ({ pool }) => {
+  const { token0, token1 } = useTokensFromPool(pool)
 
-  // const incentives = original.pool.incentives.filter((i) => i.rewardPerDay > 0)
+  // const incentives = pool.incentives.filter((i) => i.rewardPerDay > 0)
   const incentives = []
 
   return (
@@ -58,7 +56,7 @@ export const PoolNameCell: FC<Row<PositionWithPool>> = ({ original }) => {
             position="bottom-right"
             badgeContent={
               <NetworkIcon
-                chainId={original.chainId as ChainId}
+                chainId={pool.chainId as ChainId}
                 width={14}
                 height={14}
               />
@@ -85,9 +83,9 @@ export const PoolNameCell: FC<Row<PositionWithPool>> = ({ original }) => {
           />
         </span>
         <div className="flex gap-1">
-          {ProtocolBadge[original.pool.protocol]}
+          {ProtocolBadge[pool.protocol]}
           <div className="bg-gray-200 text-gray-700 dark:bg-slate-800 dark:text-slate-300 text-[10px] px-2 rounded-full">
-            {formatNumber(original.pool.swapFee * 100)}%
+            {formatNumber(pool.fee * 100)}%
           </div>
           {incentives && incentives.length > 0 && (
             <TooltipProvider>
@@ -111,10 +109,10 @@ export const PoolNameCell: FC<Row<PositionWithPool>> = ({ original }) => {
   )
 }
 
-export const PoolNameCellPool: FC<Row<SimplePool>> = ({ original }) => {
-  const { token0, token1 } = useTokensFromPool(original)
+export const PoolNameCellPool: FC<Row<SimplePool>> = ({ pool }) => {
+  const { token0, token1 } = useTokensFromPool(pool)
 
-  // const incentives = original.incentives.filter((i) => i.rewardPerDay > 0)
+  // const incentives = pool.incentives.filter((i) => i.rewardPerDay > 0)
   const incentives = []
 
   return (
@@ -126,7 +124,7 @@ export const PoolNameCellPool: FC<Row<SimplePool>> = ({ original }) => {
             position="bottom-right"
             badgeContent={
               <NetworkIcon
-                chainId={original.chainId as ChainId}
+                chainId={pool.chainId as ChainId}
                 width={14}
                 height={14}
               />
@@ -153,9 +151,9 @@ export const PoolNameCellPool: FC<Row<SimplePool>> = ({ original }) => {
           />
         </span>
         <div className="flex gap-1">
-          {ProtocolBadge[original.protocol]}
+          {ProtocolBadge[pool.protocol]}
           <div className="bg-gray-200 text-gray-700 dark:bg-slate-800 dark:text-slate-300 text-[10px] px-2 rounded-full">
-            {formatNumber(original.swapFee * 100)}%
+            {formatNumber(pool.fee * 100)}%
           </div>
           {incentives && incentives.length > 0 && (
             <TooltipProvider>

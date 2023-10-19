@@ -1,11 +1,15 @@
-import { parseArgs } from '@sushiswap/client'
 import { Pool, PoolsArgs } from '@sushiswap/rockset-client'
+import { useQuery } from '@tanstack/react-query'
+import { getPools, getPoolsUrl } from '../../fetchers/pools/pools'
+import type { QueryParams } from '../types.js'
 
-export const getPoolsUrl = (args: PoolsArgs) => {
-  return `/pool/api/v1/pools${parseArgs(args)}`
-}
-
-export const getPools = async (args: PoolsArgs): Promise<Pool[]> => {
-  const url = getPoolsUrl(args)
-  return fetch(url).then((data) => data.json())
+export const usePools = (
+  args: PoolsArgs,
+  queryParams?: QueryParams<Pool[]>,
+) => {
+  return useQuery({
+    ...queryParams,
+    queryKey: [getPoolsUrl(args)],
+    queryFn: () => getPools(args),
+  })
 }

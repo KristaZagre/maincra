@@ -4,10 +4,11 @@ import { Card, CardHeader, CardTitle, DataTable } from '@sushiswap/ui'
 import { useAccount } from '@sushiswap/wagmi'
 import { ColumnDef, PaginationState, Row } from '@tanstack/react-table'
 import { SUPPORTED_CHAIN_IDS } from 'config'
-import { useUserPositions } from 'lib/hooks'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
 import { PositionWithPool } from 'types'
 
+import { V2Position } from '@sushiswap/rockset-client'
+import { useV2Positions } from 'lib/flair/hooks/positions/v2/v2'
 import { usePoolFilters } from './PoolsFiltersProvider'
 import {
   APR_COLUMN,
@@ -41,12 +42,15 @@ export const PositionsTable: FC<PositionsTableProps> = ({
     pageSize: 10,
   })
 
-  const { data: positions, isValidating } = useUserPositions({
-    id: address,
-    chainIds: SUPPORTED_CHAIN_IDS,
-  })
+  const { data: positions, isLoading } = useV2Positions(
+    {
+      user: address!,
+      chainIds: SUPPORTED_CHAIN_IDS,
+    },
+    { enabled: !!address },
+  )
 
-  const _positions = useMemo(() => {
+  const _positions = useMemo<V2Position[]>(() => {
     if (!positions) return []
 
     const _tokenSymbols = tokenSymbols?.filter((el) => el !== '') || []
@@ -60,7 +64,7 @@ export const PositionsTable: FC<PositionsTableProps> = ({
         : true,
     )
     const chainFiltered = searchFiltered.filter((el) =>
-      chainIds.includes(el.chainId),
+      chainIds.includes(el.pool.chainId),
     )
     return chainFiltered.filter((el) => el.pool?.protocol === protocol)
   }, [positions, tokenSymbols, chainIds, protocol])
@@ -92,7 +96,7 @@ export const PositionsTable: FC<PositionsTableProps> = ({
         </CardTitle>
       </CardHeader>
       <DataTable
-        loading={isValidating}
+        loading={isLoading}
         rowRenderer={rowRenderer}
         linkFormatter={rowLink}
         columns={COLUMNS}

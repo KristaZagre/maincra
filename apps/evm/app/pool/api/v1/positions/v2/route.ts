@@ -14,16 +14,39 @@ export async function GET(request: NextRequest) {
   if (!parsedParams.success) {
     return new Response(parsedParams.error.message, { status: 400 })
   }
+  const chainIds = parsedParams.data.chainIds
+
+  console.log(parsedParams.data)
 
   const client = await createClient()
   const result = await client.queries.query({
     sql: {
       query: `
       SELECT 
-        CONCAT(t0.symbol, '-', t1.symbol) AS name, 
-        lp.chainId,
-        lp.poolId,
-        lp.protocol,
+        p.entityId as id,
+        p.chainId,
+        CONCAT(t0.symbol, '-', t1.symbol) AS name,
+        p.address,
+        p.fee,
+        p.last1DFeeApr,
+        p.last1DFeeUsd,
+        p.last1DVolumeUsd,
+        p.last1DVolumeUsd,
+        p.last30DVolumeUsd,
+        p.last7DVolumeUsd,
+        p.liquidity,
+        p.liquidityUsd,
+        p.protocol,
+        p.token0Address,
+        p.token0Id,
+        t0.name AS token0Name,
+        t0.symbol AS token0Symbol,
+        t0.decimals AS token0Decimals,
+        p.token1Address,
+        p.token1Id,
+        t1.name AS token1Name,
+        t1.symbol AS token1Symbol,
+        t1.decimals AS token1Decimals,
         lp.amountDepositedUsd,
         lp.amountWithdrawnUsd,
         lp.token0AmountDeposited,
@@ -31,16 +54,6 @@ export async function GET(request: NextRequest) {
         lp.token1AmountDeposited,
         lp.token1AmountWithdrawn,
         lp.balance,
-        t0.entityId AS token0Id,
-        t0.address AS token0Address,
-        t0.name AS token0Name,
-        t0.symbol AS token0Symbol,
-        t0.decimals AS token0Decimals,
-        t1.entityId AS token1Id,
-        t1.address AS token1Address,
-        t1.name AS token1Name,
-        t1.symbol AS token1Symbol,
-        t1.decimals AS token1Decimals,
       FROM (
           SELECT 
             chainId, poolId, protocol, amountDepositedUsd, amountWithdrawnUsd, token0AmountDeposited, token0AmountWithdrawn, token1AmountDeposited, token1AmountWithdrawn, balance
@@ -52,7 +65,7 @@ export async function GET(request: NextRequest) {
             AND protocol = 'SUSHISWAP_V2'
         ) AS lp
       JOIN
-          (SELECT entityId, token0Id, token1Id FROM entities WHERE namespace = 'sushiswap-staging' AND entityType = 'Pool') AS p
+          (SELECT * FROM entities WHERE namespace = '${process.env.ROCKSET_ENV}' AND entityType = 'Pool') AS p
       ON lp.poolId = p.entityId
       JOIN
           (
@@ -67,7 +80,9 @@ export async function GET(request: NextRequest) {
             FROM entities 
             WHERE namespace = 'sushiswap-staging' AND entityType = 'Token'
           ) AS t1
-      ON p.token1Id = t1.entityId;
+      ON p.token1Id = t1.entityId
+      WHERE true = true
+      ${chainIds ? `AND p.chainId IN (${chainIds.join(', ')})` : ''}
       `,
       parameters: [
         {
