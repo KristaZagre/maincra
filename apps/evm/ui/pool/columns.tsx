@@ -145,7 +145,7 @@ export const NAME_COLUMN_POOL: ColumnDef<SimplePool, unknown> = {
 }
 
 export const TVL_COLUMN: ColumnDef<SimplePool, unknown> = {
-  id: 'liquidityUSD',
+  id: 'liquidityUsd',
   header: 'TVL',
   accessorFn: (row) => row.liquidityUsd,
   cell: (props) =>
@@ -158,7 +158,7 @@ export const TVL_COLUMN: ColumnDef<SimplePool, unknown> = {
 }
 
 export const APR_COLUMN_POOL: ColumnDef<SimplePool, unknown> = {
-  id: 'totalApr1d',
+  id: 'last1DFeeApr',
   header: 'APR',
   accessorFn: (row) => row.last1DFeeApr,
   cell: (props) => (
@@ -174,7 +174,7 @@ export const APR_COLUMN_POOL: ColumnDef<SimplePool, unknown> = {
 }
 
 export const VOLUME_1D_COLUMN: ColumnDef<SimplePool, unknown> = {
-  id: 'volume1d',
+  id: 'vol1d',
   header: 'Volume (24h)',
   accessorFn: (row) => row.last1DVolumeUsd,
   cell: (props) =>
@@ -187,7 +187,7 @@ export const VOLUME_1D_COLUMN: ColumnDef<SimplePool, unknown> = {
 }
 
 export const FEES_COLUMN: ColumnDef<SimplePool, unknown> = {
-  id: 'fees1d',
+  id: 'fee1d',
   header: 'Fees (24h)',
   accessorFn: (row) => row.last1DFeeUsd,
   cell: (props) =>

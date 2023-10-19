@@ -32,10 +32,8 @@ export const useSimplePools = ({ args }: { args: SimplePoolsArgs }) => {
   return useQuery<SimplePool[]>({
     queryKey: [url],
     queryFn: () => fetch(url).then((data) => data.json()),
-    keepPreviousData: true,
-    staleTime: 0,
-    cacheTime: 86400000, // 24hs
-    enabled: true,
+    // staleTime: 60 * 5,
+    // cacheTime: 86400000, // 24hs
   })
 }
 
@@ -49,9 +47,7 @@ export const usePoolsCount = ({ args }: { args: PoolsCountArgs }) => {
   return useQuery<PoolsCount>({
     queryKey: [url],
     queryFn: () => fetch(url).then((data) => data.json()),
-    keepPreviousData: true,
-    staleTime: 0,
-    cacheTime: 86400000, // 24hs
-    enabled: true,
+    // staleTime: 60 * 5,
+    // cacheTime: 86400000, // 24hs
   })
 }

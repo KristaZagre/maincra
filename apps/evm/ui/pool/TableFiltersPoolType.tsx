@@ -1,7 +1,6 @@
 'use client'
 
 import { PlusCircleIcon } from '@heroicons/react/24/outline'
-import { Protocol } from '@sushiswap/client'
 import { useMutationObserver } from '@sushiswap/hooks'
 import {
   Chip,
@@ -25,28 +24,20 @@ import {
 import { CheckIcon } from '@sushiswap/ui/components/icons'
 import React, { FC, useCallback, useState, useTransition } from 'react'
 
+import { PoolProtocol } from '@sushiswap/rockset-client'
 import { PROTOCOL_MAP } from '../../lib/constants'
 import { usePoolFilters, useSetPoolFilters } from './PoolsFiltersProvider'
 
-export const POOL_TYPES = [
-  Protocol.SUSHISWAP_V3,
-  Protocol.SUSHISWAP_V2,
-  Protocol.BENTOBOX_STABLE,
-  Protocol.BENTOBOX_CLASSIC,
-]
+export const POOL_TYPES = [PoolProtocol.SUSHISWAP_V3, PoolProtocol.SUSHISWAP_V2]
 
 const POOL_DESCRIPTIONS = {
-  [Protocol.SUSHISWAP_V3]:
+  [PoolProtocol.SUSHISWAP_V3]:
     'A pool type known as concentrated liquidity, which maximizes capital efficiency by providing the liquidity in a pre-defined range around the current price of the pair. If a user’s position moves out of range, it will not be capturing fees and will need to adjust their range or wait for the price to return to it.',
-  [Protocol.SUSHISWAP_V2]:
+  [PoolProtocol.SUSHISWAP_V2]:
     'The traditional pool type with a fixed fee of .30% that utilizes a constant product formula to ensure a 50/50 composition of each asset in the pool.',
-  [Protocol.BENTOBOX_STABLE]:
-    'A customizable pool type with a user-defined fee tier that is best suited for like-kind assets (eg. stablecoin pairs, ETH/stETH) that efficiently captures fees and utilizes a constant product formula to ensure a 50/50 composition of each asset in the pool.',
-  [Protocol.BENTOBOX_CLASSIC]:
-    'A customizable pool type with a user-defined fee tier that utilizes a constant product formula to ensure a 50/50 composition of each asset in the pool.',
 }
 
-const isAllThenNone = (protocols: Protocol[]) =>
+const isAllThenNone = (protocols: PoolProtocol[]) =>
   protocols.length === POOL_TYPES.length ? [] : protocols
 
 export const TableFiltersPoolType: FC = () => {
@@ -54,16 +45,18 @@ export const TableFiltersPoolType: FC = () => {
   const [open, setOpen] = useState(false)
   const { protocols } = usePoolFilters()
   const setFilters = useSetPoolFilters()
-  const [peekedProtocol, setPeekedProtocol] = React.useState<Protocol>(
+  const [peekedProtocol, setPeekedProtocol] = React.useState<PoolProtocol>(
     POOL_TYPES[0],
   )
-  const [localValue, setValues] = useState<Protocol[]>(isAllThenNone(protocols))
+  const [localValue, setValues] = useState<PoolProtocol[]>(
+    isAllThenNone(protocols),
+  )
 
   const values = pending ? localValue : isAllThenNone(protocols)
 
   const protocolHandler = useCallback(
-    (item: Protocol) => {
-      let _newValues: Protocol[]
+    (item: PoolProtocol) => {
+      let _newValues: PoolProtocol[]
       if (values?.includes(item)) {
         _newValues = values.filter((el) => el !== item)
       } else {
@@ -149,7 +142,7 @@ export const TableFiltersPoolType: FC = () => {
                     protocol={el}
                     onPeek={(protocol) => setPeekedProtocol(protocol)}
                     onSelect={() =>
-                      protocolHandler(el.toUpperCase() as Protocol)
+                      protocolHandler(el.toUpperCase() as PoolProtocol)
                     }
                   />
                 ))}
@@ -163,10 +156,10 @@ export const TableFiltersPoolType: FC = () => {
 }
 
 interface ProtocolItemProps {
-  protocol: Protocol
+  protocol: PoolProtocol
   onSelect: () => void
-  selected: Protocol[]
-  onPeek: (model: Protocol) => void
+  selected: PoolProtocol[]
+  onPeek: (model: PoolProtocol) => void
 }
 
 const ProtocolItem: FC<ProtocolItemProps> = ({

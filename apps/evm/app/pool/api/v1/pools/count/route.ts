@@ -14,19 +14,54 @@ export async function GET(request: NextRequest) {
     return new Response(parsedParams.error.message, { status: 400 })
   }
 
+  const protocols = parsedParams.data.protocols
+  const chainIds = parsedParams.data.chainIds
+  const symbols = parsedParams.data.tokenSymbols
+  const onlyIncentivized = parsedParams.data.isIncentivized
+
   const client = await createClient()
   const result = await client.queries.query({
     sql: {
       query: `
           SELECT COUNT(p.entityId)
           FROM 
-              (SELECT * FROM entities WHERE namespace = '${process.env.ROCKSET_ENV}' AND entityType = 'Pool' AND isWhitelisted = true) AS p
+              (SELECT * FROM entities WHERE namespace = '${
+                process.env.ROCKSET_ENV
+              }' AND entityType = 'Pool' AND isWhitelisted = true) AS p
           JOIN
-              (SELECT * FROM entities WHERE namespace = '${process.env.ROCKSET_ENV}' AND entityType = 'Token' AND isWhitelisted = true) AS t0
+              (SELECT * FROM entities WHERE namespace = '${
+                process.env.ROCKSET_ENV
+              }' AND entityType = 'Token' AND isWhitelisted = true) AS t0
           ON p.token0Id = t0.entityId
+          ${`
+            ${onlyIncentivized ? 'INNER JOIN' : 'LEFT JOIN'}
+              (SELECT poolId FROM entities WHERE namespace = '${
+                process.env.ROCKSET_ENV
+              }' AND entityType = 'Incentive') AS i
+            ON p.entityId = i.poolId
+          `}
           JOIN
-              (SELECT * FROM entities WHERE namespace = '${process.env.ROCKSET_ENV}' AND entityType = 'Token' AND isWhitelisted = true) AS t1
+              (SELECT * FROM entities WHERE namespace = '${
+                process.env.ROCKSET_ENV
+              }' AND entityType = 'Token' AND isWhitelisted = true) AS t1
           ON p.token1Id = t1.entityId
+          WHERE true = true ${
+            protocols
+              ? `AND p.protocol IN (${protocols.map((p) => `'${p}'`)})`
+              : ''
+          }
+          ${chainIds ? `AND p.chainId IN (${chainIds.join(', ')})` : ''}
+          ${
+            symbols
+              ? symbols.length === 1
+                ? `AND (t0.symbol IN (${symbols.map(
+                    (s) => `'${s}'`,
+                  )}) OR t1.symbol IN (${symbols.map((s) => `'${s}'`)}))`
+                : `AND (t0.symbol IN (${symbols.map(
+                    (s) => `'${s}'`,
+                  )}) AND t1.symbol IN (${symbols.map((s) => `'${s}'`)}))`
+              : ''
+          }
       `,
     },
   })

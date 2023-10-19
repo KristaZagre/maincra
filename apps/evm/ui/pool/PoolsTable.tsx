@@ -1,7 +1,11 @@
 'use client'
 
 import { Slot } from '@radix-ui/react-slot'
-import { SimplePool, SimplePoolsArgs } from '@sushiswap/rockset-client'
+import {
+  PoolsOrderBy,
+  SimplePool,
+  SimplePoolsArgs,
+} from '@sushiswap/rockset-client'
 import { Card, CardHeader, CardTitle, DataTable } from '@sushiswap/ui'
 import {
   ColumnDef,
@@ -37,7 +41,7 @@ interface PositionsTableProps {
 export const PoolsTable: FC<PositionsTableProps> = ({ onRowClick }) => {
   const { chainIds, tokenSymbols, protocols, farmsOnly } = usePoolFilters()
   const [sorting, setSorting] = useState<SortingState>([
-    { id: 'liquidityUSD', desc: true },
+    { id: 'liquidityUsd', desc: true },
   ])
 
   // const { data: poolCount } = usePoolsCount({ args, shouldFetch: true, swrConfig: useSWRConfig() })
@@ -55,23 +59,23 @@ export const PoolsTable: FC<PositionsTableProps> = ({ onRowClick }) => {
   const args = useMemo<SimplePoolsArgs>(() => {
     return {
       pageIndex: pagination.pageIndex,
-      // chainIds: chainIds,
-      // tokenSymbols,
-      // isIncentivized: farmsOnly || undefined, // will filter farms out if set to false, undefined will be filtered out by the parser
-      // isWhitelisted: true, // can be added to filters later, need to put it here so fallback works
-      // orderBy: sorting[0]?.id,
-      // orderDir: sorting[0] ? (sorting[0].desc ? 'desc' : 'asc') : 'desc',
-      // protocols,
+      chainIds: chainIds,
+      tokenSymbols,
+      isIncentivized: farmsOnly || undefined, // will filter farms out if set to false, undefined will be filtered out by the parser
+      isWhitelisted: true, // can be added to filters later, need to put it here so fallback works
+      orderBy: sorting[0]?.id as PoolsOrderBy,
+      orderDir: sorting[0] ? (sorting[0].desc ? 'DESC' : 'ASC') : 'DESC',
+      protocols,
     }
     // }, [chainIds, tokenSymbols, protocols, farmsOnly, sorting])
-  }, [pagination])
+  }, [pagination, chainIds, tokenSymbols, protocols, farmsOnly, sorting])
 
   const { data: pools, isLoading: isValidatingPools } = useSimplePools({ args })
   const { data: poolCount /*, isLoading: isValidatingCount*/ } = usePoolsCount({
     args,
   })
 
-  const data = useMemo(() => pools?.flat() ?? [], [pools])
+  const data = useMemo(() => pools ?? [], [pools])
 
   const rowRenderer = useCallback(
     (row: Row<SimplePool>, rowNode: ReactNode) => {

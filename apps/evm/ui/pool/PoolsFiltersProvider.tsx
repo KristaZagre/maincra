@@ -1,19 +1,20 @@
 'use client'
 
-import { parseArgs, Protocol } from '@sushiswap/client'
+import { parseArgs } from '@sushiswap/client'
 import { SUPPORTED_CHAIN_IDS } from 'config'
 import { useRouter } from 'next/navigation'
 import {
-  createContext,
   Dispatch,
   FC,
   ReactNode,
   SetStateAction,
+  createContext,
   useContext,
   useMemo,
 } from 'react'
 import { z } from 'zod'
 
+import { PoolProtocol } from '@sushiswap/rockset-client'
 import { useTypedSearchParams } from '../../lib/hooks'
 import { POOL_TYPES } from './TableFiltersPoolType'
 
@@ -44,7 +45,7 @@ export const poolFiltersSchema = z.object({
     .string()
     .transform((protocols) =>
       protocols !== null && protocols !== ','
-        ? (protocols.split(',') as Protocol[])
+        ? (protocols.split(',') as PoolProtocol[])
         : [],
     ),
   farmsOnly: z
