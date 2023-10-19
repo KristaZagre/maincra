@@ -46,6 +46,7 @@ import {
   //  optimismGoerli,
   polygon,
   polygonZkEvm,
+  scroll,
   // polygonMumbai,
   // sepolia,
   //  taraxa,
@@ -641,5 +642,9 @@ export const config: Record<
     transport: fallback([
       http(`https://lb.drpc.org/ogrpc?network=base&dkey=${drpcId}`),
     ]),
+  },
+  [ChainId.SCROLL]: {
+    chain: scroll,
+    transport: http(`https://lb.drpc.org/ogrpc?network=scroll&dkey=${drpcId}`),
   },
 } as const
