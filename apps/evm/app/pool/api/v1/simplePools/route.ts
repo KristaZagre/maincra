@@ -20,7 +20,6 @@ export async function GET(request: NextRequest) {
   const symbols = parsedParams.data.tokenSymbols
   const onlyIncentivized = parsedParams.data.isIncentivized
   const orderBy = poolOrderByToField[parsedParams.data.orderBy]
-
   const client = await createClient()
   const result = await client.queries.query({
     sql: {
@@ -38,7 +37,7 @@ export async function GET(request: NextRequest) {
         p.last30DVolumeUsd,
         p.last7DVolumeUsd,
         p.liquidity,
-        p.liquidityUsd,
+        COALESCE(p.liquidityUsd, 0) as liquidityUsd,
         p.protocol,
         p.token0Address,
         p.token0Id,
@@ -69,7 +68,6 @@ export async function GET(request: NextRequest) {
       JOIN
         (SELECT * FROM entities WHERE namespace = '${process.env.ROCKSET_ENV}' AND entityType = 'Token' AND isWhitelisted = true) AS t1
       ON p.token1Id = t1.entityId
-			WHERE :orderBy IS NOT NULL
       ${
         protocols ? `AND p.protocol IN (${protocols.map((p) => `'${p}'`)})` : ''
       }
@@ -85,17 +83,10 @@ export async function GET(request: NextRequest) {
               )}) AND t1.symbol IN (${symbols.map((s) => `'${s}'`)}))`
           : ''
       }
-			ORDER BY :orderBy ${parsedParams.data.orderDir}
-      OFFSET ${parsedParams.data.pageIndex} * ${parsedParams.data.pageSize} ROWS 
+      ORDER BY ${orderBy} ${parsedParams.data.orderDir}
+      OFFSET ${parsedParams.data.pageIndex * parsedParams.data.pageSize} ROWS 
       FETCH NEXT ${parsedParams.data.pageSize} ROWS ONLY;
       `,
-      parameters: [
-        {
-          name: 'orderBy',
-          type: 'string',
-          value: orderBy,
-        },
-      ],
     },
   })
   const results = (result.results || []) as unknown[]

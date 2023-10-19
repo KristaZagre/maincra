@@ -13,7 +13,7 @@ export enum PoolsOrderBy {
 }
 
 export const poolOrderByToField: Record<PoolsOrderBy, string> = {
-  [PoolsOrderBy.LIQUIDITY]: 'p.liquidityUsd',
+  [PoolsOrderBy.LIQUIDITY]: 'liquidityUsd',
   [PoolsOrderBy.VOLUME_1D]: 'p.last1DVolumeUsd',
   [PoolsOrderBy.VOLUME_1W]: 'p.last7DVolumeUsd',
   [PoolsOrderBy.VOLUME_1M]: 'p.last30DVolumeUsd',
