@@ -4,7 +4,7 @@ import {
   getV2Positions,
   getV2PositionsUrl,
 } from '../../../fetchers/positions/v2/v2'
-import type { QueryParams } from '../../types.js'
+import type { QueryParams } from '../../common.js'
 
 export const useV2Positions = (
   args: V2PositionsArgs,

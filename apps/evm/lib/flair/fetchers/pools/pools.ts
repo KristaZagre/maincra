@@ -1,11 +1,15 @@
 import { parseArgs } from '@sushiswap/client'
 import { Pool, PoolsArgs } from '@sushiswap/rockset-client'
+import { FLAIR_API_URL } from '../common'
 
 export const getPoolsUrl = (args: PoolsArgs) => {
-  return `/pool/api/v1/pools${parseArgs(args)}`
+  return `${FLAIR_API_URL}/pools${parseArgs(args)}`
 }
 
-export const getPools = async (args: PoolsArgs): Promise<Pool[]> => {
+export const getPools = async (
+  args: PoolsArgs,
+  init?: RequestInit,
+): Promise<Pool[]> => {
   const url = getPoolsUrl(args)
-  return fetch(url).then((data) => data.json())
+  return fetch(url, init).then((data) => data.json())
 }

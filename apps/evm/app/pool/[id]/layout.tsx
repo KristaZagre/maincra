@@ -1,5 +1,5 @@
-import { Pool } from '@sushiswap/rockset-client'
 import { Breadcrumb, Container } from '@sushiswap/ui'
+import { getPool } from 'lib/flair/fetchers/pool/id/pool'
 import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
 import React from 'react'
@@ -17,9 +17,12 @@ export default async function Layout({
   // TODO: Add validation, use unsanitize from 'sushi/format'
   const id = params.id.replace('%3A', ':') as ID
 
-  const pool = (await fetch(`http://localhost:3000/pool/api/v1/pool/${id}`, {
-    next: { revalidate: 60 },
-  }).then((data) => data.json())) as Pool
+  const pool = await getPool(
+    { id },
+    {
+      next: { revalidate: 60 },
+    },
+  )
 
   if (!pool) {
     notFound()
@@ -36,7 +39,7 @@ export default async function Layout({
           backUrl={referer?.includes('/pool?') ? referer?.toString() : '/pool'}
           address={pool.address}
           pool={pool}
-          apy={{ rewards: pool?.incentiveApr, fees: pool?.last1DFeeApr }}
+          apy={{ rewards: /*pool?.incentiveApr*/ 0, fees: pool?.feeApr1d }}
         />
       </Container>
       <section className="flex flex-col flex-1 mt-4">

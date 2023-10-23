@@ -1,8 +1,6 @@
 'use client'
 
 import { Pool } from '@sushiswap/rockset-client'
-// import { ChainId } from 'sushi/chain'
-import { formatNumber, formatPercent, formatUSD } from 'sushi'
 import {
   Card,
   CardContent,
@@ -14,6 +12,8 @@ import {
 // import { SkeletonText } from '@sushiswap/ui/components/skeleton'
 // import { usePoolGraphData } from 'lib/hooks'
 import { FC } from 'react'
+// import { ChainId } from 'sushi/chain'
+import { formatNumber, formatPercent, formatUSD } from 'sushi'
 
 interface PoolStats {
   pool: Pool
@@ -31,17 +31,17 @@ export const PoolStats: FC<PoolStats> = ({ pool }) => {
             <CardLabel>Liquidity</CardLabel>
             {pool ? (
               <div className="text-xl font-semibold">
-                {formatUSD(pool.liquidityUsd ?? 0)}{' '}
+                {formatUSD(pool.liquidityUSD ?? 0)}{' '}
                 <span
                   className={classNames(
                     'text-xs',
-                    pool.last1DLiquidityChangePercent > 0
+                    pool.liquidityUSDChangePercent1d > 0
                       ? 'text-green'
                       : 'text-red',
                   )}
                 >
-                  {pool.last1DLiquidityChangePercent > 0 ? '+' : '-'}
-                  {formatPercent(Math.abs(pool.last1DLiquidityChangePercent))}
+                  {pool.liquidityUSDChangePercent1d > 0 ? '+' : '-'}
+                  {formatPercent(Math.abs(pool.liquidityUSDChangePercent1d))}
                 </span>
               </div>
             ) : null}
@@ -50,17 +50,17 @@ export const PoolStats: FC<PoolStats> = ({ pool }) => {
             <CardLabel>Volume (24h)</CardLabel>
             {pool ? (
               <div className="text-xl font-semibold">
-                {formatUSD(pool.last1DVolumeUsd ?? 0)}{' '}
+                {formatUSD(pool.volumeUSD1d ?? 0)}{' '}
                 <span
                   className={classNames(
                     'text-xs',
-                    pool.last1DVolumeChangePercent > 0
+                    pool.volumeUSDChangePercent1d > 0
                       ? 'text-green'
                       : 'text-red',
                   )}
                 >
-                  {pool.last1DVolumeChangePercent > 0 ? '+' : '-'}
-                  {formatPercent(Math.abs(pool.last1DVolumeChangePercent))}
+                  {pool.volumeUSDChangePercent1d > 0 ? '+' : '-'}
+                  {formatPercent(Math.abs(pool.volumeUSDChangePercent1d))}
                 </span>
               </div>
             ) : null}
@@ -69,15 +69,15 @@ export const PoolStats: FC<PoolStats> = ({ pool }) => {
             <CardLabel>Fees (24h)</CardLabel>
             {pool ? (
               <div className="text-xl font-semibold">
-                {formatUSD(pool.last1DFeeUsd ?? 0)}{' '}
+                {formatUSD(pool.feeUSD1d ?? 0)}{' '}
                 <span
                   className={classNames(
                     'text-xs',
-                    pool.last1DFeeChangeUsd > 0 ? 'text-green' : 'text-red',
+                    pool.feeUSDChange1d > 0 ? 'text-green' : 'text-red',
                   )}
                 >
-                  {pool.last1DFeeChangeUsd > 0 ? '+' : '-'}
-                  {formatPercent(Math.abs(pool.last1DFeeChangeUsd))}
+                  {pool.feeUSDChangePercent1d > 0 ? '+' : '-'}
+                  {formatPercent(Math.abs(pool.feeUSDChangePercent1d))}
                 </span>
               </div>
             ) : null}
@@ -86,17 +86,15 @@ export const PoolStats: FC<PoolStats> = ({ pool }) => {
             <CardLabel>Transactions (24h)</CardLabel>
             {pool ? (
               <div className="text-xl font-semibold">
-                {formatNumber(pool.last1DTxCount).replace('.00', '')}{' '}
+                {formatNumber(pool.txCount1d).replace('.00', '')}{' '}
                 <span
                   className={classNames(
                     'text-xs',
-                    pool.last1DTxCountChangePercent > 0
-                      ? 'text-green'
-                      : 'text-red',
+                    pool.txCountChangePercent1d > 0 ? 'text-green' : 'text-red',
                   )}
                 >
-                  {pool.last1DTxCountChangePercent > 0 ? '+' : '-'}
-                  {formatPercent(Math.abs(pool.last1DTxCountChangePercent))}
+                  {pool.txCountChangePercent1d > 0 ? '+' : '-'}
+                  {formatPercent(Math.abs(pool.txCountChangePercent1d))}
                 </span>
               </div>
             ) : null}

@@ -38,9 +38,9 @@ export const APRHoverCard: FC<APRHoverCardProps> = ({
     <>
       <CardHeader>
         <CardTitle>
-          {formatPercent(pool.last1DFeeApr)}{' '}
+          {formatPercent(pool.feeApr1d)}{' '}
           <span className="ml-1 text-sm font-normal text-muted-foreground">
-            {formatPercent(pool.last1DFeeApr)} fees{' '}
+            {formatPercent(pool.feeApr1d)} fees{' '}
             {incentives.length > 0
               ? `+ ${formatPercent(incentiveApr)} rewards`
               : ''}

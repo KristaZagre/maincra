@@ -15,11 +15,13 @@ export async function GET(request: NextRequest) {
   if (!parsedParams.success) {
     return new Response(parsedParams.error.message, { status: 400 })
   }
+
   const protocols = parsedParams.data.protocols
   const chainIds = parsedParams.data.chainIds
   const symbols = parsedParams.data.tokenSymbols
   const onlyIncentivized = parsedParams.data.isIncentivized
   const orderBy = poolOrderByToField[parsedParams.data.orderBy]
+
   const client = await createClient()
   const result = await client.queries.query({
     sql: {
@@ -29,30 +31,39 @@ export async function GET(request: NextRequest) {
         p.chainId,
         CONCAT(t0.symbol, '-', t1.symbol) AS name,
         p.address,
-        p.fee,
-        p.last1DFeeApr,
-        p.last1DFeeUsd,
-        p.last1DVolumeUsd,
-        p.last1DVolumeUsd,
-        p.last30DVolumeUsd,
-        p.last7DVolumeUsd,
-        p.liquidity,
-        COALESCE(p.liquidityUsd, 0) as liquidityUsd,
+        p.fee as swapFee,
         p.protocol,
-        p.token0Address,
-        p.token0Id,
-        t0.name AS token0Name,
-        t0.symbol AS token0Symbol,
-        t0.decimals AS token0Decimals,
-        p.token1Address,
-        p.token1Id,
-        t1.name AS token1Name,
-        t1.symbol AS token1Symbol,
-        t1.decimals AS token1Decimals,
+
+        p.last1DFeeApr as feeApr1d,
+        p.last1DFeeUsd as feeUSD1d,
+
+        p.last1DVolumeUsd as volumeUSD1d,
+        p.last7DVolumeUsd as volumeUSD1w,
+        p.last30DVolumeUsd as volumeUSD1m,
+
+        p.liquidity,
+        p.liquidityUsd as liquidityUSD,
+        
         CASE
           WHEN i.poolId IS NOT NULL THEN true
           ELSE false
-        END AS isIncentivized
+        END AS isIncentivized,
+        {
+          'id': p.token0Id,
+          'address': t0.address,
+          'chainId': t0.chainId,
+          'name': t0.name,
+          'symbol': t0.symbol,
+          'decimals': t0.decimals,
+        } as token0,
+        {
+          'id': p.token1Id,
+          'address': t1.address,
+          'chainId': t1.chainId,
+          'name': t1.name,
+          'symbol': t1.symbol,
+          'decimals': t1.decimals,
+        } as token1
       FROM 
           (SELECT * FROM entities WHERE namespace = '${process.env.ROCKSET_ENV}' AND entityType = 'Pool' AND isWhitelisted = true) AS p
       ${`

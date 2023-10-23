@@ -23,18 +23,20 @@ export async function GET(
     sql: {
       query: `
       SELECT 
-			entityId as id,
-			timeBucket,
-			timestamp,
-			granularity,
-			volumeUsd,
-			liquidityUsd,
-			feeUsd,
-			feeApr
-			FROM entities WHERE namespace = '${process.env.ROCKSET_ENV}'
-			AND entityType = 'PoolStat'
-			AND granularity = :granularity
-			AND poolId = :id
+        entityId as id,
+        timeBucket,
+        timestamp,
+        granularity,
+        volumeUsd as volumeUSD,
+        liquidityUsd as liquidityUSD,
+        feeUsd as feeUSD,
+        feeApr
+			FROM
+        entities
+      WHERE namespace = '${process.env.ROCKSET_ENV}'
+        AND entityType = 'PoolStat'
+        AND granularity = :granularity
+        AND poolId = :id
 			ORDER BY timestamp DESC
       LIMIT 100
       `,

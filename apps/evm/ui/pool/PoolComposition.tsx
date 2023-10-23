@@ -1,9 +1,5 @@
 'use client'
 
-import { ChainId } from 'sushi/chain'
-import { Native } from 'sushi/currency'
-import { formatUSD } from 'sushi'
-import { usePrices } from '@sushiswap/react-query'
 import { Pool } from '@sushiswap/rockset-client'
 import {
   Card,
@@ -15,50 +11,47 @@ import {
   CardLabel,
   CardTitle,
 } from '@sushiswap/ui/components/card'
-import { usePoolGraphData, useTokenAmountDollarValues } from 'lib/hooks'
-import React, { FC } from 'react'
+import { useTokenAmountDollarValues } from 'lib/hooks'
+import React, { FC, useMemo } from 'react'
+import { formatUSD } from 'sushi'
+import { Amount, Token } from 'sushi/currency'
 
 interface PoolCompositionProps {
   pool: Pool
 }
 
 export const PoolComposition: FC<PoolCompositionProps> = ({ pool }) => {
-  const { data: prices } = usePrices({ chainId: pool.chainId })
-  const { data, isLoading } = usePoolGraphData({
-    poolAddress: pool.address,
-    chainId: pool.chainId as ChainId,
-  })
+  console.log(pool)
+  const { amount0, amount1 } = useMemo(() => {
+    const token0 = new Token(pool.token0)
+    const token1 = new Token(pool.token1)
+
+    const amount0 = Amount.fromRawAmount(token0, pool.reserve0BI)
+    const amount1 = Amount.fromRawAmount(token1, pool.reserve1BI)
+
+    return { amount0, amount1 }
+  }, [pool])
+
   const fiatValues = useTokenAmountDollarValues({
     chainId: pool.chainId,
-    amounts: [data?.reserve0, data?.reserve1],
+    amounts: [amount0, amount1],
   })
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>Pool Liquidity</CardTitle>
-        <CardDescription>
-          {formatUSD(
-            (data?.liquidityNative ?? 0) *
-              Number(
-                prices?.[Native.onChain(pool.chainId).wrapped.address]?.toFixed(
-                  10,
-                ),
-              ),
-          )}
-        </CardDescription>
+        <CardDescription>{formatUSD(pool.liquidityUSD)}</CardDescription>
       </CardHeader>
       <CardContent>
         <CardGroup>
           <CardLabel>Tokens</CardLabel>
           <CardCurrencyAmountItem
-            isLoading={isLoading}
-            amount={data?.reserve0}
+            amount={amount0}
             fiatValue={formatUSD(fiatValues?.[0] || 0)}
           />
           <CardCurrencyAmountItem
-            isLoading={isLoading}
-            amount={data?.reserve1}
+            amount={amount1}
             fiatValue={formatUSD(fiatValues?.[1] || 0)}
           />
         </CardGroup>

@@ -1,6 +1,6 @@
 import { Transaction, TransactionsArgs } from '@sushiswap/rockset-client'
 import { useQuery } from '@tanstack/react-query'
-import type { QueryParams } from 'lib/flair/hooks/types.js'
+import type { QueryParams } from 'lib/flair/hooks/common.js'
 import {
   getTransactions,
   getTransactionsUrl,

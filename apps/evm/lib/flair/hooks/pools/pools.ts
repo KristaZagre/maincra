@@ -1,7 +1,7 @@
 import { Pool, PoolsArgs } from '@sushiswap/rockset-client'
 import { useQuery } from '@tanstack/react-query'
 import { getPools, getPoolsUrl } from '../../fetchers/pools/pools'
-import type { QueryParams } from '../types.js'
+import type { QueryParams } from '../common.js'
 
 export const usePools = (
   args: PoolsArgs,

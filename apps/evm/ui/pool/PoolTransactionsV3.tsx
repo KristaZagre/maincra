@@ -1,7 +1,9 @@
 'use client'
 
-import { Chain, ChainId } from 'sushi/chain'
-import { Transaction as _Transaction } from '@sushiswap/rockset-client'
+import {
+  Transaction as _Transaction,
+  TransactionType,
+} from '@sushiswap/rockset-client'
 import {
   Card,
   CardContent,
@@ -14,7 +16,14 @@ import { isSushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { useQuery } from '@tanstack/react-query'
 import { PaginationState } from '@tanstack/react-table'
 import { FC, useMemo, useState } from 'react'
+import { Chain, ChainId } from 'sushi/chain'
 
+import {
+  getTransactions,
+  getTransactionsUrl,
+} from 'lib/flair/fetchers/pool/id/transactions/transactions'
+import { ExtendedPool } from 'lib/hooks/api/useFlairPoolGraphData'
+import { Amount } from 'sushi/currency'
 import {
   TX_AMOUNT_IN_V3_COLUMN,
   TX_AMOUNT_OUT_V3_COLUMN,
@@ -22,18 +31,9 @@ import {
   TX_ORIGIN_V3_COLUMN,
   TX_TIME_V3_COLUMN,
 } from './columns'
-import { Amount } from 'sushi/currency'
-import { ExtendedPool } from 'lib/hooks/api/useFlairPoolGraphData'
-
-export enum TransactionTypeV3 {
-  Mint = 'Mint',
-  Burn = 'Burn',
-  Swap = 'Swap',
-  Collect = 'Collect',
-}
 
 interface UseTransactionsV3Opts {
-  type: TransactionTypeV3
+  type: TransactionType
   refetchInterval?: number
   first: number
   skip?: number
@@ -41,23 +41,18 @@ interface UseTransactionsV3Opts {
 
 // Will only support the last 1k txs
 // The fact that there are different subtransactions aggregated under one transaction makes paging a bit difficult
-function useTransactionsV3(
-  pool: ExtendedPool,
-  poolId: string,
-  opts: UseTransactionsV3Opts,
-) {
+function useTransactionsV3(pool: ExtendedPool, opts: UseTransactionsV3Opts) {
   return useQuery({
-    queryKey: ['poolTransactionsV2', poolId, pool?.chainId, opts],
+    queryKey: [getTransactionsUrl({ id: pool.id, type: opts.type })],
     queryFn: async () => {
       const chainId = pool?.chainId as ChainId
 
       if (!pool || !isSushiSwapV3ChainId(chainId)) return []
 
-      const txs = (await fetch(
-        `/pool/api/v1/pool/${chainId}/${
-          pool.address
-        }/transactions/${opts.type.toLowerCase()}s`,
-      ).then((data) => data.json())) as _Transaction[]
+      const txs = await getTransactions({
+        id: pool.id,
+        type: opts.type,
+      })
 
       const transformed = txs.map((tx) => ({
         ...tx,
@@ -68,6 +63,7 @@ function useTransactionsV3(
           ? Amount.fromRawAmount(pool.token1, tx.amount1)
           : Amount.fromRawAmount(pool.token1, tx.amount1).multiply(-1),
       }))
+
       return transformed
     },
     enabled: !!pool && isSushiSwapV3ChainId(pool?.chainId as ChainId),
@@ -81,13 +77,12 @@ type TransactionV3 = NonNullable<
 
 interface PoolTransactionsV3Props {
   pool: ExtendedPool
-  poolId: string
 }
 
-const PoolTransactionsV3: FC<PoolTransactionsV3Props> = ({ pool, poolId }) => {
+const PoolTransactionsV3: FC<PoolTransactionsV3Props> = ({ pool }) => {
   const [type, setType] = useState<
-    Parameters<typeof useTransactionsV3>['2']['type']
-  >(TransactionTypeV3.Swap)
+    Parameters<typeof useTransactionsV3>['1']['type']
+  >(TransactionType.SWAPS)
   const [paginationState, setPaginationState] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
@@ -114,7 +109,7 @@ const PoolTransactionsV3: FC<PoolTransactionsV3Props> = ({ pool, poolId }) => {
     [paginationState.pageIndex, paginationState.pageSize, type],
   )
 
-  const { data, isLoading } = useTransactionsV3(pool, poolId, opts)
+  const { data, isLoading } = useTransactionsV3(pool, opts)
 
   const _data = useMemo(() => {
     return data ?? []
@@ -130,24 +125,24 @@ const PoolTransactionsV3: FC<PoolTransactionsV3Props> = ({ pool, poolId }) => {
               <Toggle
                 variant="outline"
                 size="xs"
-                pressed={type === TransactionTypeV3.Swap}
-                onClick={() => setType(TransactionTypeV3.Swap)}
+                pressed={type === TransactionType.SWAPS}
+                onClick={() => setType(TransactionType.SWAPS)}
               >
                 Swaps
               </Toggle>
               <Toggle
                 variant="outline"
                 size="xs"
-                pressed={type === TransactionTypeV3.Mint}
-                onClick={() => setType(TransactionTypeV3.Mint)}
+                pressed={type === TransactionType.MINTS}
+                onClick={() => setType(TransactionType.MINTS)}
               >
                 Add
               </Toggle>
               <Toggle
                 variant="outline"
                 size="xs"
-                pressed={type === TransactionTypeV3.Burn}
-                onClick={() => setType(TransactionTypeV3.Burn)}
+                pressed={type === TransactionType.BURNS}
+                onClick={() => setType(TransactionType.BURNS)}
               >
                 Remove
               </Toggle>
@@ -157,7 +152,7 @@ const PoolTransactionsV3: FC<PoolTransactionsV3Props> = ({ pool, poolId }) => {
       </CardHeader>
       <CardContent className="!px-0">
         <DataTable
-          linkFormatter={(row) => Chain.from(row.chainId).getTxUrl(row.txHash)}
+          linkFormatter={(row) => Chain.from(row.chainId)!.getTxUrl(row.txHash)}
           loading={isLoading}
           columns={COLUMNS}
           data={_data}

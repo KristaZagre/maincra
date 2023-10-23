@@ -29,7 +29,7 @@ export async function GET(
         txFrom as maker,
         amount0,
         amount1,
-        amountUsd,
+        amountUsd as amountUSD,
         blockTimestamp as timestamp
       FROM entities WHERE namespace = '${process.env.ROCKSET_ENV}'
 			AND entityType = '${parsedParams.data.type}'

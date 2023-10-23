@@ -4,7 +4,7 @@ import {
   getSimplePools,
   getSimplePoolsUrl,
 } from '../../fetchers/simplePools/simplePools'
-import type { QueryParams } from '../types.js'
+import type { QueryParams } from '../common.js'
 
 export const useSimplePools = (
   args: SimplePoolsArgs,

@@ -2,7 +2,7 @@ import { z } from 'zod'
 import type { GetApiInputFromOutput } from '../misc/GetApiInputFromOutput.js'
 import { cz } from '../misc/zodObjects.js'
 
-enum TransactionType {
+export enum TransactionType {
   SWAPS = 'Swap',
   MINTS = 'Mint',
   BURNS = 'Burn',

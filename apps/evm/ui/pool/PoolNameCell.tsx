@@ -109,7 +109,7 @@ export const PoolNameCell: FC<{pool: SimplePool}> = ({ pool }) => {
   )
 }
 
-export const PoolNameCellPool: FC<Row<SimplePool>> = ({ pool }) => {
+export const PoolNameCellPool: FC<{pool: SimplePool }> = ({ pool }) => {
   const { token0, token1 } = useTokensFromPool(pool)
 
   // const incentives = pool.incentives.filter((i) => i.rewardPerDay > 0)

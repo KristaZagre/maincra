@@ -20,12 +20,12 @@ const COLUMNS = [
   NAME_COLUMN_POSITION_WITH_POOL,
   VALUE_COLUMN,
   APR_COLUMN,
-] satisfies ColumnDef<PositionWithPool, unknown>[]
+] satisfies ColumnDef<V2Position, unknown>[]
 
 interface PositionsTableProps {
   protocol: Protocol
-  onRowClick?(row: PositionWithPool): void
-  rowLink?(row: PositionWithPool): string
+  onRowClick?(row: V2Position): void
+  rowLink?(row: V2Position): string
 }
 
 const tableState = { sorting: [{ id: 'value', desc: true }] }
@@ -70,7 +70,7 @@ export const PositionsTable: FC<PositionsTableProps> = ({
   }, [positions, tokenSymbols, chainIds, protocol])
 
   const rowRenderer = useCallback(
-    (row: Row<PositionWithPool>, rowNode: ReactNode) => {
+    (row: Row<V2Position>, rowNode: ReactNode) => {
       if (onRowClick)
         return (
           <Slot

@@ -4,7 +4,7 @@ import {
   getPoolsCount,
   getPoolsCountUrl,
 } from '../../../fetchers/pools/count/count'
-import type { QueryParams } from '../../types.js'
+import type { QueryParams } from '../../common.js'
 
 export const usePoolsCount = (
   args: PoolsCountArgs,

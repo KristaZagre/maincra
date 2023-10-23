@@ -6,7 +6,7 @@ const transactionOutputSchema = z.object({
   txHash: z.string(),
   amount0: z.string(),
   amount1: z.string(),
-  amountUsd: z.number().nullable(),
+  amountUSD: z.number().nullable(),
   maker: cz.address(),
   timestamp: z.number(),
 })

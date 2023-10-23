@@ -35,38 +35,26 @@ const address = () => z.string().transform(addressTransform)
 /**
  *
  * @returns a zod object for a token containing the following fields:
- * - `token0Id`
- * - `token0Name`
- * - `token0Symbol`
- * - `token0Address`
- * - `token0Decimals`
+ * - `id`
+ * - `address`
+ * - `chainId
+ * - `name`
+ * - `symbol`
+ * - `decimals`
  */
-const token0 = () =>
+const token = () =>
   z.object({
-    token0Id: cz.id(),
-    token0Address: cz.address(),
-    token0Name: z.string(),
-    token0Symbol: z.string(),
-    token0Decimals: z.number().int(),
+    id: cz.id(),
+    chainId: z.number().int(),
+    address: cz.address(),
+    name: z.string(),
+    symbol: z.string(),
+    decimals: z.number().int(),
   })
 
-/**
- *
- * @returns a zod object for a token containing the following fields:
- * - `token1Id`
- * - `token1Name`
- * - `token1Symbol`
- * - `token1Address`
- * - `token1Decimals`
- */
-const token1 = () =>
-  z.object({
-    token1Id: cz.id(),
-    token1Address: cz.address(),
-    token1Name: z.string(),
-    token1Symbol: z.string(),
-    token1Decimals: z.number().int(),
-  })
+// ------------------------------------------------------------------------------------------------
+
+const bigint = () => z.string().transform((val) => BigInt(val))
 
 // ------------------------------------------------------------------------------------------------
 
@@ -75,8 +63,9 @@ export const cz = {
   ids,
   address,
 
-  token0,
-  token1,
+  bigint,
+
+  token,
 
   commaArray,
 }

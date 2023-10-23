@@ -4,10 +4,10 @@ import { ArrowTopRightOnSquareIcon } from '@heroicons/react/20/solid'
 import { Pool } from '@sushiswap/rockset-client'
 import {
   Button,
-  classNames,
   Currency,
   LinkExternal,
   LinkInternal,
+  classNames,
   typographyVariants,
 } from '@sushiswap/ui'
 import {
@@ -22,8 +22,8 @@ import React, { FC, useMemo } from 'react'
 import { Chain } from 'sushi/chain'
 import { Token } from 'sushi/currency'
 
-import { APRHoverCard } from './APRHoverCard'
 import { formatPercent, shortenAddress } from 'sushi'
+import { APRHoverCard } from './APRHoverCard'
 
 type PoolHeader = {
   backUrl: string
@@ -51,22 +51,8 @@ export const PoolHeader: FC<PoolHeader> = ({
     }
 
     return [
-      unwrapToken(
-        new Token({
-          chainId: pool.chainId,
-          address: pool.token0Address,
-          decimals: pool.token0Decimals,
-          symbol: pool.token0Symbol,
-        }),
-      ),
-      unwrapToken(
-        new Token({
-          chainId: pool.chainId,
-          address: pool.token1Address,
-          decimals: pool.token1Decimals,
-          symbol: pool.token1Symbol,
-        }),
-      ),
+      unwrapToken(new Token(pool.token0)),
+      unwrapToken(new Token(pool.token1)),
     ]
   }, [pool])
 
@@ -158,10 +144,7 @@ export const PoolHeader: FC<PoolHeader> = ({
           ) : null}
           <div className="flex items-center gap-1.5">
             <span className="font-semibold tracking-tighter">Fee</span>
-            {pool instanceof SushiSwapV3Pool
-              ? pool.fee / 10000
-              : pool.fee * 100}
-            %
+            {pool.swapFee * 1000}%
           </div>
           <div className="flex items-center gap-1.5">
             <span className="font-semibold tracking-tighter">Network</span>

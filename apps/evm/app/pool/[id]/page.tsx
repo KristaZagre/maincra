@@ -1,12 +1,9 @@
 import { Separator } from '@sushiswap/ui'
+import { getPool } from 'lib/flair/fetchers/pool/id/pool'
 import { notFound } from 'next/navigation'
-import { ChainId } from 'sushi/chain'
+import { ID } from 'sushi/types'
 // import { ManageV2LiquidityCard } from 'ui/pool/ManageV2LiquidityCard'
 import { PoolTransactionsV2 } from 'ui/pool/PoolTransactionsV2'
-import { isAddress } from 'viem'
-
-import { Pool } from '@sushiswap/rockset-client'
-import { ID } from 'sushi/types'
 // import {
 //   PoolPositionProvider,
 //   PoolPositionRewardsProvider,
@@ -25,11 +22,12 @@ export default async function PoolPage({ params }: { params: { id: string } }) {
   // TODO: Add validation, use unsanitize from 'sushi/format'
   const id = params.id.replace('%3A', ':') as ID
 
-  const pool = (await fetch(`http://localhost:3000/pool/api/v1/pool/${id}`, {
-    next: { revalidate: 60 },
-  }).then((data) => data.json())) as Pool
-
-  console.log(pool)
+  const pool = await getPool(
+    { id },
+    {
+      next: { revalidate: 60 },
+    },
+  )
 
   if (!pool) {
     notFound()

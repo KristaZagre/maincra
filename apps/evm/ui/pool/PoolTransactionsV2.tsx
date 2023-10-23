@@ -1,6 +1,10 @@
 'use client'
 
-import { Pool, Transaction as _Transaction } from '@sushiswap/rockset-client'
+import {
+  Pool,
+  Transaction as _Transaction,
+  TransactionType,
+} from '@sushiswap/rockset-client'
 import {
   Card,
   CardContent,
@@ -20,7 +24,8 @@ import { FC, useMemo, useState } from 'react'
 import { Chain, ChainId } from 'sushi/chain'
 import { Amount, Token } from 'sushi/currency'
 
-import { parseArgs } from '@sushiswap/client'
+import { getTransactions } from 'lib/flair/fetchers/pool/id/transactions/transactions'
+import { ID } from 'sushi/types'
 import {
   TX_AMOUNT_IN_V2_COLUMN,
   TX_AMOUNT_OUT_V2_COLUMN,
@@ -28,12 +33,6 @@ import {
   TX_CREATED_TIME_V2_COLUMN,
   TX_SENDER_V2_COLUMN,
 } from './columns'
-
-export enum TransactionType {
-  Mint = 'Mint',
-  Burn = 'Burn',
-  Swap = 'Swap',
-}
 
 interface UseTransactionsV2Opts {
   type: TransactionType
@@ -46,7 +45,7 @@ interface UseTransactionsV2Opts {
 // The fact that there are different subtransactions aggregated under one transaction makes paging a bit difficult
 function useTransactionsV2(
   pool: ExtendedPool,
-  poolId: string,
+  poolId: ID,
   opts: UseTransactionsV2Opts,
 ) {
   return useQuery({
@@ -56,9 +55,10 @@ function useTransactionsV2(
 
       if (!pool || !isSushiSwapV2ChainId(chainId)) return []
 
-      const txs = (await fetch(
-        `/pool/api/v1/pool/${pool.id}/transactions${parseArgs(opts)}`,
-      ).then((data) => data.json())) as _Transaction[]
+      const txs = await getTransactions({
+        id: poolId,
+        type: opts.type,
+      })
 
       const transformed = txs.map((tx) => ({
         ...tx,

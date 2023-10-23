@@ -17,8 +17,8 @@ import {
   useConcentratedLiquidityPoolReserves,
 } from '@sushiswap/wagmi/future/hooks'
 import { useTokenAmountDollarValues } from 'lib/hooks'
-import React, { FC, useState } from 'react'
-import { formatUSD } from 'sushi'
+import React, { FC, useMemo, useState } from 'react'
+import { formatPercent, formatUSD } from 'sushi'
 import { ChainId } from 'sushi/chain'
 
 import { Pool } from '@sushiswap/rockset-client'
@@ -52,9 +52,9 @@ const _Pool: FC<{ pool: Pool }> = ({ pool }) => {
 
   const { data: cPool } = useConcentratedLiquidityPool({
     chainId,
-    token0: extendedPool?.token0,
-    token1: extendedPool?.token1,
-    feeAmount: extendedPool?.fee * 1000000,
+    token0: extendedPool.token0,
+    token1: extendedPool.token1,
+    feeAmount: pool.swapFee * 10000000,
   })
 
   const { data: reserves, isLoading: isReservesLoading } =
@@ -62,6 +62,7 @@ const _Pool: FC<{ pool: Pool }> = ({ pool }) => {
       pool: cPool,
       chainId,
     })
+
   const fiatValues = useTokenAmountDollarValues({ chainId, amounts: reserves })
   // const incentiveAmounts = useMemo(() => poolStats?.incentives.map((el) => el.reward), [poolStats?.incentives])
   // const incentiveAmounts = null
@@ -69,6 +70,27 @@ const _Pool: FC<{ pool: Pool }> = ({ pool }) => {
   //   chainId,
   //   amounts: incentiveAmounts,
   // })
+
+  const { volumeUSD, volumeUSDChangePercent, feeUSD, feeUSDChangePercent } =
+    useMemo(
+      () => ({
+        volumeUSD:
+          granularity === Granularity.Week
+            ? pool.volumeUSD1w
+            : pool.volumeUSD1d ?? 0,
+        volumeUSDChangePercent:
+          granularity === Granularity.Week
+            ? pool.volumeUSDChangePercent1w
+            : pool.volumeUSDChangePercent1d,
+        feeUSD:
+          granularity === Granularity.Week ? pool.feeUSD1w : pool.feeUSD1d ?? 0,
+        feeUSDChangePercent:
+          granularity === Granularity.Week
+            ? pool.feeUSDChangePercent1w
+            : pool.feeUSDChangePercent1d,
+      }),
+      [pool, granularity],
+    )
 
   return (
     <div className="flex flex-col gap-6">
@@ -140,30 +162,16 @@ const _Pool: FC<{ pool: Pool }> = ({ pool }) => {
                   <CardLabel>Volume</CardLabel>
                   {pool ? (
                     <div className="text-xl font-semibold">
-                      {formatUSD(
-                        granularity === Granularity.Week
-                          ? pool.last7DVolumeUsd
-                          : pool.last1DVolumeUsd ?? 0,
-                      )}{' '}
+                      {formatUSD(volumeUSD)}{' '}
                       <span
                         className={classNames(
                           'text-xs',
-                          pool[
-                            granularity === Granularity.Week
-                              ? 'last7DVolumeChangePercent'
-                              : 'last1DVolumeChangePercent'
-                          ] > 0
+                          volumeUSDChangePercent > 0
                             ? 'text-green'
                             : 'text-red',
                         )}
                       >
-                        (
-                        {pool[
-                          granularity === Granularity.Week
-                            ? 'last7DVolumeChangePercent'
-                            : 'last1DVolumeChangePercent'
-                        ].toFixed(2)}
-                        %)
+                        {formatPercent(volumeUSDChangePercent)}
                       </span>
                     </div>
                   ) : (
@@ -174,30 +182,14 @@ const _Pool: FC<{ pool: Pool }> = ({ pool }) => {
                   <CardLabel>Fees</CardLabel>
                   {pool ? (
                     <div className="text-xl font-semibold">
-                      {formatUSD(
-                        granularity === Granularity.Week
-                          ? pool.last7DFeeUsd
-                          : pool.last1DFeeUsd ?? 0,
-                      )}{' '}
+                      {formatUSD(feeUSD)}{' '}
                       <span
                         className={classNames(
                           'text-xs',
-                          pool[
-                            granularity === Granularity.Week
-                              ? 'last7DFeeChangeUsd'
-                              : 'last1DFeeChangeUsd'
-                          ] > 0
-                            ? 'text-green'
-                            : 'text-red',
+                          feeUSDChangePercent > 0 ? 'text-green' : 'text-red',
                         )}
                       >
-                        (
-                        {pool[
-                          granularity === Granularity.Week
-                            ? 'last7DFeeChangeUsd'
-                            : 'last1DFeeChangeUsd'
-                        ].toFixed(2)}
-                        %)
+                        {formatPercent(feeUSDChangePercent)}
                       </span>
                     </div>
                   ) : (
@@ -213,7 +205,7 @@ const _Pool: FC<{ pool: Pool }> = ({ pool }) => {
         <Separator />
       </div>
       {/* <PoolRewardDistributionsCard pool={extendedPool} /> */}
-      <PoolTransactionsV3 pool={extendedPool} poolId={pool.address} />
+      <PoolTransactionsV3 pool={extendedPool} />
     </div>
   )
 }
