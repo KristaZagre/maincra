@@ -109,12 +109,13 @@ export const ChainId = {
   // BASE_TESTNET: 84531,
   POLYGON_ZKEVM: 1101,
   THUNDERCORE: 108,
-  // FILECOIN: 314,
+  FILECOIN: 314,
   HAQQ: 11235,
   CORE: 1116,
   ZKSYNC_ERA: 324,
   LINEA: 59144,
   BASE: 8453,
+  SCROLL: 534352,
 } as const
 export type ChainId = (typeof ChainId)[keyof typeof ChainId]
 
@@ -184,7 +185,8 @@ export const ChainKey = {
   [ChainId.ZKSYNC_ERA]: 'zksync-era',
   [ChainId.LINEA]: 'linea',
   [ChainId.BASE]: 'base',
-  // [ChainId.FILECOIN]: 'filecoin',
+  [ChainId.FILECOIN]: 'filecoin',
+  [ChainId.SCROLL]: 'scroll',
   // [ChainId.SEPOLIA]: 'sepolia',
 } as const
 export type ChainKey = (typeof ChainKey)[keyof typeof ChainKey]

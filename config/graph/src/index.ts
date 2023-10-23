@@ -31,6 +31,7 @@ export const SUSHISWAP_ENABLED_NETWORKS = [
   ChainId.BOBA_AVAX,
   ChainId.BOBA_BNB,
   ChainId.BASE,
+  ChainId.SCROLL,
   // ChainId.PALM,
   // ChainId.HECO,
   // ChainId.OKEX
@@ -56,6 +57,8 @@ export const SUSHISWAP_V3_ENABLED_NETWORKS = [
   ChainId.CORE,
   ChainId.BASE,
   ChainId.LINEA,
+  ChainId.FILECOIN,
+  ChainId.SCROLL,
 ]
 export type SushiSwapV3ChainId = (typeof SUSHISWAP_V3_ENABLED_NETWORKS)[number]
 
@@ -79,7 +82,7 @@ export const STUDIO_HOST = 'api.studio.thegraph.com/query/32073'
 export const THUNDERCORE_HOST = 'graph-node.thundercore.com/subgraphs/name'
 export const CORE_HOST = 'thegraph.coredao.org/subgraphs/name'
 export const LINEA_HOST = 'graph-query.linea.build/subgraphs/name'
-
+export const FILECOIN_HOST = 'sushi.laconic.com/subgraphs/name'
 export const SUSHI_HOST = 'subgraphs.sushi.com/subgraphs/name'
 
 export const CHAIN_NAME: Record<number, string> = {
@@ -113,6 +116,8 @@ export const CHAIN_NAME: Record<number, string> = {
   [ChainId.CORE]: 'Core',
   [ChainId.BASE]: 'Base',
   [ChainId.LINEA]: 'Linea',
+  [ChainId.SCROLL]: 'Scroll',
+  [ChainId.FILECOIN]: 'Filecoin',
 } as const
 
 export const SUBGRAPH_HOST: Record<number, string> = {
@@ -145,6 +150,8 @@ export const SUBGRAPH_HOST: Record<number, string> = {
   [ChainId.CORE]: CORE_HOST,
   [ChainId.BASE]: STUDIO_HOST,
   [ChainId.LINEA]: LINEA_HOST,
+  [ChainId.FILECOIN]: FILECOIN_HOST,
+  [ChainId.SCROLL]: STUDIO_HOST,
 } as const
 
 export const BENTOBOX_SUBGRAPH_NAME = {
@@ -197,6 +204,8 @@ export const BLOCKS_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.CORE]: 'sushiswap/blocks-core',
   [ChainId.BASE]: 'blocks-base/v0.0.1',
   [ChainId.LINEA]: 'sushiswap/blocks-linea',
+  [ChainId.FILECOIN]: 'sushiswap/blocks',
+  [ChainId.SCROLL]: 'blocks-scroll/v0.0.1',
 } as const
 
 export const SECONDS_BETWEEN_BLOCKS: Record<number, number> = {
@@ -225,6 +234,8 @@ export const SECONDS_BETWEEN_BLOCKS: Record<number, number> = {
   [ChainId.BOBA_BNB]: 0.5,
   [ChainId.BTTC]: 2,
   [ChainId.THUNDERCORE]: 1,
+  [ChainId.SCROLL]: 3,
+  [ChainId.FILECOIN]: 30,
 } as const
 
 export const EXCHANGE_SUBGRAPH_NAME: Record<number, string> = {
@@ -265,6 +276,7 @@ export const SUSHISWAP_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.BOBA_AVAX]: 'sushi-0m/sushiswap-boba-avax',
   [ChainId.BOBA_BNB]: 'sushi-0m/sushiswap-boba-bnb',
   [ChainId.BASE]: 'sushiswap-base/v0.0.1',
+  [ChainId.SCROLL]: 'sushiswap-scroll/v0.0.1',
 } as const
 
 export const SUSHISWAP_V3_SUBGRAPH_NAME: Record<number, string> = {
@@ -284,7 +296,9 @@ export const SUSHISWAP_V3_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.THUNDERCORE]: 'sushi-v3/v3-thundercore',
   [ChainId.CORE]: 'sushi-v3/v3-core',
   [ChainId.BASE]: 'v3-base/v0.0.1',
-  [ChainId.LINEA]: 'sushi-v3/v3-linea',
+  [ChainId.LINEA]: 'sushi-v3/v3-linea',  
+  [ChainId.FILECOIN]: 'sushiswap/v3-filecoin',
+  [ChainId.SCROLL]: 'v3-scroll/v0.0.1',
 }
 
 export const TRIDENT_SUBGRAPH_NAME: Record<number, string> = {
