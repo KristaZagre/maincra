@@ -2,11 +2,11 @@ import { Card } from '@sushiswap/ui'
 import { SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import React, { FC, useMemo, useState } from 'react'
 
+import { ExtendedPool } from 'lib/hooks/api/useFlairPoolGraphData'
 import { LiquidityDepthWidget } from './LiquidityDepthWidget'
 import { PoolChartGraph } from './PoolChartGraph'
 import { PoolChartPeriod, PoolChartPeriods } from './PoolChartPeriods'
 import { PoolChartType, PoolChartTypes } from './PoolChartTypes'
-import { ExtendedPool } from 'lib/hooks/api/useFlairPoolGraphData'
 
 const statisticsChart = [
   PoolChartType.Volume,
@@ -54,12 +54,7 @@ export const StatisticsCharts: FC<Charts> = ({ pool, address, chainId }) => {
       {chart === PoolChartType.Depth ? (
         <LiquidityDepthWidget pool={pool} chainId={chainId} address={address} />
       ) : (
-        <PoolChartGraph
-          chart={chart}
-          period={period}
-          address={address}
-          chainId={chainId}
-        />
+        <PoolChartGraph chart={chart} period={period} id={pool.id} />
       )}
     </Card>
   )

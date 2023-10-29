@@ -1,13 +1,13 @@
 import { PlusIcon, UserCircleIcon } from '@heroicons/react-v1/solid'
-import { ChainId } from 'sushi/chain'
-import { Pool, Protocol } from '@sushiswap/client'
-import { formatNumber, formatPercent } from 'sushi'
+import { Pool, PoolProtocol } from '@sushiswap/rockset-client'
 import { LinkInternal } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { List } from '@sushiswap/ui/components/list/List'
 import { incentiveRewardToToken } from 'lib/functions'
 import React, { FC } from 'react'
+import { formatNumber, formatPercent } from 'sushi'
+import { ChainId } from 'sushi/chain'
 
 interface PoolQuickHoverTooltipProps {
   row: Pool
@@ -36,7 +36,7 @@ export const PoolQuickHoverTooltip: FC<PoolQuickHoverTooltipProps> = ({
         <Button icon={PlusIcon} asChild size="sm" variant="secondary">
           <LinkInternal
             href={
-              row.protocol === Protocol.SUSHISWAP_V3
+              row.protocol === PoolProtocol.SUSHISWAP_V3
                 ? `/${row.id}`
                 : `/${row.id}/add`
             }
@@ -44,7 +44,7 @@ export const PoolQuickHoverTooltip: FC<PoolQuickHoverTooltipProps> = ({
             Deposit
           </LinkInternal>
         </Button>
-        {row.protocol === Protocol.SUSHISWAP_V3 && (
+        {row.protocol === PoolProtocol.SUSHISWAP_V3 && (
           <Button icon={UserCircleIcon} asChild size="sm" variant="secondary">
             <LinkInternal href={`/pools/${row.id}`}>My Positions</LinkInternal>
           </Button>

@@ -1,8 +1,5 @@
 'use client'
 
-import { ChainId } from 'sushi/chain'
-// import { Pool } from '@sushiswap/client'
-import { tryParseAmount } from 'sushi/currency'
 import { Pool } from '@sushiswap/rockset-client'
 import {
   CardContent,
@@ -15,10 +12,15 @@ import {
 import { Card, CardDescription } from '@sushiswap/ui/components/card'
 import { incentiveRewardToToken } from 'lib/functions'
 import React, { FC } from 'react'
+import { ChainId } from 'sushi/chain'
+// import { Pool } from '@sushiswap/client'
+import { tryParseAmount } from 'sushi/currency'
 
 export const PoolRewards: FC<{ pool: Pool }> = ({ pool }) => {
-  // const incentives = pool.incentives.filter((incentive) => incentive.rewardPerDay > 0)
-  const incentives = []
+  const incentives = pool.incentives.filter(
+    (incentive) => incentive.rewardPerDay > 0,
+  )
+
   return (
     <Card>
       <CardHeader>

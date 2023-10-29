@@ -1,65 +1,22 @@
-import { ArrowDownIcon, MinusIcon, PlusIcon } from '@heroicons/react-v1/solid'
-import { formatPercent, formatUSD } from 'sushi'
-import { ZERO } from 'sushi'
+import { MinusIcon, PlusIcon } from '@heroicons/react-v1/solid'
 import { LinkInternal } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { List } from '@sushiswap/ui/components/list/List'
-import { useNetwork, useSwitchNetwork } from '@sushiswap/wagmi'
-import React, { FC, useCallback } from 'react'
-import { PositionWithPool } from 'types'
+import React, { FC } from 'react'
+import { formatPercent, formatUSD } from 'sushi'
 
-import { PoolPositionProvider, usePoolPosition } from './PoolPositionProvider'
-import {
-  PoolPositionRewardsProvider,
-  usePoolPositionRewards,
-} from './PoolPositionRewardsProvider'
-import {
-  PoolPositionStakedProvider,
-  usePoolPositionStaked,
-} from './PoolPositionStakedProvider'
+import { V2Position } from '@sushiswap/rockset-client'
+import { usePoolPosition } from './PoolPositionProvider'
 
 interface PositionQuickHoverTooltipProps {
-  row: PositionWithPool
+  row: V2Position
 }
 
 export const PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({
   row,
 }) => {
-  return (
-    <PoolPositionProvider pool={row.pool}>
-      <PoolPositionStakedProvider watch={false} pool={row.pool}>
-        <PoolPositionRewardsProvider pool={row.pool}>
-          <_PositionQuickHoverTooltip row={row} />
-        </PoolPositionRewardsProvider>
-      </PoolPositionStakedProvider>
-    </PoolPositionProvider>
-  )
-}
-
-const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({
-  row,
-}) => {
-  const { switchNetwork } = useSwitchNetwork()
-  const { chain } = useNetwork()
   const { underlying0, underlying1, value1, value0 } = usePoolPosition()
-  const {
-    underlying1: stakedUnderlying1,
-    underlying0: stakedUnderlying0,
-    value0: stakedValue0,
-    value1: stakedValue1,
-  } = usePoolPositionStaked()
-
-  const { pendingRewards, rewardTokens, values, harvest } =
-    usePoolPositionRewards()
-
-  const _harvest = useCallback(() => {
-    if (row.pool.chainId !== chain?.id) {
-      switchNetwork?.(row.pool.chainId)
-    } else if (harvest) {
-      harvest()
-    }
-  }, [chain?.id, harvest, row.pool.chainId, switchNetwork])
 
   return (
     <div className="flex flex-col gap-3 p-2">
@@ -89,48 +46,7 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({
             Withdraw
           </LinkInternal>
         </Button>
-        <Button
-          icon={ArrowDownIcon}
-          size="sm"
-          variant="secondary"
-          onClick={_harvest}
-        >
-          Claim
-        </Button>
       </div>
-
-      {row.pool.incentives && pendingRewards.length > 0 && (
-        <>
-          <List className="!pt-5">
-            <List.Label>Pending rewards</List.Label>
-            <List.Control className="!bg-secondary">
-              {pendingRewards.map((reward, index) =>
-                reward?.currency ? (
-                  <List.Item
-                    key={index}
-                    icon={Currency.Icon}
-                    iconProps={{
-                      currency: reward.currency,
-                    }}
-                    title={
-                      <div className="flex items-baseline gap-2">
-                        {reward?.toSignificant(6) || '0.00'}{' '}
-                        {rewardTokens[index]?.symbol}
-                        <span className="text-[10px] text-gray-600 dark:text-slate-400 text-slate-600">
-                          {' '}
-                          {formatUSD(values[index])}
-                        </span>
-                      </div>
-                    }
-                  />
-                ) : (
-                  <></>
-                ),
-              )}
-            </List.Control>
-          </List>
-        </>
-      )}
 
       <List className="!pt-5">
         <div className="flex justify-between">
@@ -174,49 +90,6 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({
           )}
         </List.Control>
       </List>
-
-      {row.pool.incentives &&
-        stakedUnderlying0?.greaterThan(ZERO) &&
-        stakedUnderlying1?.greaterThan(ZERO) && (
-          <List className="!pt-5">
-            <div className="flex justify-between">
-              <List.Label>Staked Position</List.Label>
-              <List.Label>{formatUSD(stakedValue0 + stakedValue1)}</List.Label>
-            </div>
-            <List.Control className="!bg-secondary">
-              <List.Item
-                icon={Currency.Icon}
-                iconProps={{
-                  currency: stakedUnderlying0?.currency,
-                }}
-                title={
-                  <div className="flex items-baseline gap-2">
-                    {stakedUnderlying0?.toSignificant(6)}{' '}
-                    {stakedUnderlying0?.currency.symbol}
-                    <span className="text-[10px] text-gray-600 dark:text-slate-400 text-slate-600">
-                      {formatUSD(stakedValue1)}
-                    </span>
-                  </div>
-                }
-              />
-              <List.Item
-                icon={Currency.Icon}
-                iconProps={{
-                  currency: stakedUnderlying1?.currency,
-                }}
-                title={
-                  <div className="flex items-baseline gap-2">
-                    {stakedUnderlying1?.toSignificant(6) || '0.00'}{' '}
-                    {stakedUnderlying1?.currency.symbol}
-                    <span className="text-[10px] text-gray-600 dark:text-slate-400 text-slate-600">
-                      {formatUSD(stakedValue1)}
-                    </span>
-                  </div>
-                }
-              />
-            </List.Control>
-          </List>
-        )}
     </div>
   )
 }

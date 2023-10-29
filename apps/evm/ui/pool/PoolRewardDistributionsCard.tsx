@@ -57,7 +57,7 @@ export const PoolRewardDistributionsCard: FC<
                 Native.onChain(pool.chainId).wrapped.address
                   ? 'NATIVE'
                   : pool.token1.wrapped.address
-              }&feeAmount=${pool.fee * 10_000 * 100}`}
+              }&feeAmount=${pool.swapFee * 10_000 * 100}`}
             >
               <Button asChild variant="link">
                 Want to add one?

@@ -1,5 +1,4 @@
 import { SwitchHorizontalIcon } from '@heroicons/react-v1/solid'
-import { Pool } from '@sushiswap/client'
 import { FundSource } from '@sushiswap/hooks'
 import {
   Card,
@@ -10,7 +9,6 @@ import {
   CardGroup,
   CardHeader,
   CardLabel,
-  CardOverlay,
   CardTitle,
   Currency,
   DialogConfirm,
@@ -39,9 +37,7 @@ import {
 } from '@sushiswap/v3-sdk'
 import {
   Address,
-  getMasterChefContractConfig,
   useAccount,
-  useMasterChefWithdraw,
   useSushiSwapV2Pool,
   useTotalSupply,
   useWaitForTransaction,
@@ -57,12 +53,7 @@ import {
   useApproved,
   withCheckerRoot,
 } from '@sushiswap/wagmi/future/systems/Checker/Provider'
-import {
-  APPROVE_TAG_MIGRATE,
-  APPROVE_TAG_UNSTAKE,
-  Bound,
-  Field,
-} from 'lib/constants'
+import { APPROVE_TAG_MIGRATE, Bound, Field } from 'lib/constants'
 import { unwrapToken } from 'lib/functions'
 import { useGraphPool, useTokenAmountDollarValues } from 'lib/hooks'
 import { useSlippageTolerance } from 'lib/hooks/useSlippageTolerance'
@@ -72,9 +63,9 @@ import { Fraction, Percent, ZERO } from 'sushi'
 import { Chain, ChainId } from 'sushi/chain'
 import { Amount, Price, tryParseAmount } from 'sushi/currency'
 
+import { Pool } from '@sushiswap/rockset-client'
 import { useConcentratedDerivedMintInfo } from './ConcentratedLiquidityProvider'
 import { usePoolPosition } from './PoolPositionProvider'
-import { usePoolPositionStaked } from './PoolPositionStakedProvider'
 import { SelectFeeConcentratedWidget } from './SelectFeeConcentratedWidget'
 import { SelectPricesWidget } from './SelectPricesWidget'
 
@@ -83,7 +74,6 @@ export const MODAL_MIGRATE_ID = 'migrate-modal'
 export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
   const { address } = useAccount()
   const [feeAmount, setFeeAmount] = useState<FeeAmount>(FeeAmount.LOWEST)
-  const { approved } = useApproved(APPROVE_TAG_UNSTAKE)
   const [invertPrice, setInvertPrice] = useState(false)
   const [invertTokens, setInvertTokens] = useState(false)
   const [slippageTolerance] = useSlippageTolerance('addLiquidity')
@@ -131,29 +121,6 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
     token1,
   )
   const totalSupply = useTotalSupply(liquidityToken)
-
-  // Harvest & Withdraw
-  const {
-    value0: stakedValue0,
-    value1: stakedValue1,
-    balance: stakedBalance,
-    underlying0: stakedUnderlying0,
-    underlying1: stakedUnderlying1,
-    isLoading: isStakedLoading,
-  } = usePoolPositionStaked()
-
-  const { sendTransaction, isLoading: isWritePending } = useMasterChefWithdraw({
-    chainId: pool.chainId,
-    amount: stakedBalance,
-    pid: pool.incentives?.[0]?.pid,
-    chef: pool.incentives?.[0]?.chefType,
-    enabled: Boolean(
-      approved &&
-        stakedBalance?.greaterThan(ZERO) &&
-        pool.incentives?.[0]?.pid &&
-        pool.incentives?.[0]?.chefType,
-    ),
-  })
 
   // this is just getLiquidityValue with the fee off, but for the passed pair
   const token0Value = useMemo(
@@ -414,86 +381,6 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
   return (
     <DialogProvider>
       <Card>
-        <CardOverlay show={Boolean(stakedBalance?.equalTo(ZERO))}>
-          Already unstaked. You{`'`}re all set! ✅
-        </CardOverlay>
-        <CardHeader>
-          <CardTitle>Unstake & Claim Rewards</CardTitle>
-          <CardDescription>
-            Please unstake & claim your rewards first before migrating.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <CardGroup className="max-w-[500px]">
-            <CardLabel>Staked position</CardLabel>
-            <CardCurrencyAmountItem
-              isLoading={isStakedLoading || !stakedUnderlying0}
-              amount={stakedUnderlying0}
-              fiatValue={formatUSD(stakedValue0)}
-            />
-            <CardCurrencyAmountItem
-              isLoading={isStakedLoading || !stakedUnderlying1}
-              amount={stakedUnderlying1}
-              fiatValue={formatUSD(stakedValue1)}
-            />
-          </CardGroup>
-        </CardContent>
-        <CardFooter>
-          <Checker.Guard
-            fullWidth={false}
-            size="default"
-            guardText="No staked balance found"
-            guardWhen={Boolean(stakedBalance?.equalTo(ZERO))}
-          >
-            <Checker.Connect fullWidth={false} size="default">
-              <Checker.Network
-                fullWidth={false}
-                size="default"
-                chainId={pool.chainId}
-              >
-                <Checker.ApproveERC20
-                  fullWidth={false}
-                  size="default"
-                  id="approve-token0"
-                  amount={stakedBalance}
-                  contract={
-                    getMasterChefContractConfig(
-                      pool.chainId,
-                      pool.incentives[0]?.chefType,
-                    )?.address
-                  }
-                  enabled={Boolean(
-                    getMasterChefContractConfig(
-                      pool.chainId,
-                      pool.incentives[0]?.chefType,
-                    )?.address,
-                  )}
-                >
-                  <Checker.Success tag={APPROVE_TAG_UNSTAKE}>
-                    <Button
-                      fullWidth={false}
-                      size="default"
-                      onClick={() => sendTransaction?.()}
-                      disabled={!approved || isWritePending}
-                      testId="unstake-liquidity"
-                    >
-                      {isWritePending ? (
-                        <Dots>Confirm transaction</Dots>
-                      ) : (
-                        'Unstake & Claim Rewards'
-                      )}
-                    </Button>
-                  </Checker.Success>
-                </Checker.ApproveERC20>
-              </Checker.Network>
-            </Checker.Connect>
-          </Checker.Guard>
-        </CardFooter>
-      </Card>
-      <Card>
-        <CardOverlay show={Boolean(stakedBalance?.greaterThan(ZERO))}>
-          Please unstake first before migrating!
-        </CardOverlay>
         <CardHeader>
           <CardTitle>Migrate position</CardTitle>
           <CardDescription>

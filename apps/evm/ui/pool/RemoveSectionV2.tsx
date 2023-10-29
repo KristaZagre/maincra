@@ -1,8 +1,8 @@
 'use client'
 
 import { calculateSlippageAmount } from '@sushiswap/amm'
-import { Pool } from '@sushiswap/client'
 import { FundSource, useDebounce, useIsMounted } from '@sushiswap/hooks'
+import { Pool } from '@sushiswap/rockset-client'
 import { Dots } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { createToast } from '@sushiswap/ui/components/toast'

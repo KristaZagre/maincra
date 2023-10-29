@@ -1,8 +1,6 @@
 'use client'
 
-import { ChainId } from 'sushi/chain'
 import { Protocol } from '@sushiswap/client'
-import { formatNumber } from 'sushi'
 import { PoolProtocol, SimplePool } from '@sushiswap/rockset-client'
 import { classNames } from '@sushiswap/ui'
 import { Badge } from '@sushiswap/ui/components/badge'
@@ -14,9 +12,10 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@sushiswap/ui/components/tooltip'
-import { Row } from '@tanstack/react-table'
 import { useTokensFromPool } from 'lib/hooks'
 import { FC } from 'react'
+import { formatNumber } from 'sushi'
+import { ChainId } from 'sushi/chain'
 
 const ProtocolBadge: Record<PoolProtocol, JSX.Element> = {
   // [Protocol.BENTOBOX_STABLE]: (
@@ -41,11 +40,10 @@ const ProtocolBadge: Record<PoolProtocol, JSX.Element> = {
   ),
 }
 
-export const PoolNameCell: FC<{pool: SimplePool}> = ({ pool }) => {
+export const PoolNameCell: FC<{ pool: SimplePool }> = ({ pool }) => {
   const { token0, token1 } = useTokensFromPool(pool)
 
-  // const incentives = pool.incentives.filter((i) => i.rewardPerDay > 0)
-  const incentives = []
+  const incentives = pool.incentives.filter((i) => i.rewardPerDay > 0)
 
   return (
     <div className="flex items-center gap-5">
@@ -85,7 +83,7 @@ export const PoolNameCell: FC<{pool: SimplePool}> = ({ pool }) => {
         <div className="flex gap-1">
           {ProtocolBadge[pool.protocol]}
           <div className="bg-gray-200 text-gray-700 dark:bg-slate-800 dark:text-slate-300 text-[10px] px-2 rounded-full">
-            {formatNumber(pool.fee * 100)}%
+            {formatNumber(pool.swapFee * 100)}%
           </div>
           {incentives && incentives.length > 0 && (
             <TooltipProvider>
@@ -109,11 +107,10 @@ export const PoolNameCell: FC<{pool: SimplePool}> = ({ pool }) => {
   )
 }
 
-export const PoolNameCellPool: FC<{pool: SimplePool }> = ({ pool }) => {
+export const PoolNameCellPool: FC<{ pool: SimplePool }> = ({ pool }) => {
   const { token0, token1 } = useTokensFromPool(pool)
 
-  // const incentives = pool.incentives.filter((i) => i.rewardPerDay > 0)
-  const incentives = []
+  const incentives = pool.incentives.filter((i) => i.rewardPerDay > 0)
 
   return (
     <div className="flex items-center gap-5">
@@ -153,7 +150,7 @@ export const PoolNameCellPool: FC<{pool: SimplePool }> = ({ pool }) => {
         <div className="flex gap-1">
           {ProtocolBadge[pool.protocol]}
           <div className="bg-gray-200 text-gray-700 dark:bg-slate-800 dark:text-slate-300 text-[10px] px-2 rounded-full">
-            {formatNumber(pool.fee * 100)}%
+            {formatNumber(pool.swapFee * 100)}%
           </div>
           {incentives && incentives.length > 0 && (
             <TooltipProvider>

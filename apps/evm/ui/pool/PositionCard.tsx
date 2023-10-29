@@ -1,3 +1,4 @@
+import { V2Position } from '@sushiswap/rockset-client'
 import { LinkInternal } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Currency } from '@sushiswap/ui/components/currency'
@@ -12,10 +13,9 @@ import { useTokensFromPool } from 'lib/hooks'
 import React, { FC } from 'react'
 import { formatNumber, formatUSD } from 'sushi'
 import { Chain } from 'sushi/chain'
-import { PositionWithPool } from 'types'
 
 interface PositionCard {
-  position: PositionWithPool
+  position: V2Position
 }
 
 export const PositionCardSkeleton = () => {
@@ -44,12 +44,12 @@ export const PositionCardSkeleton = () => {
 export const PositionCard: FC<PositionCard> = ({ position }) => {
   const { token0, token1 } = useTokensFromPool(position.pool)
   const valueUSD =
-    (Number(position.balance) / Number(position.pool.totalSupply)) *
+    (Number(position.balance) / Number(position.pool.liquidity)) *
     Number(position.pool.liquidityUSD)
   return (
     <div className="relative bg-white dark:bg-slate-800 shadow-md hover:shadow-lg transition-all rounded-2xl p-7 overflow-hidden w-[320px]">
       <span className="uppercase text-xs font-semibold dark:text-slate-400 text-gray-600">
-        {Chain.from(position.chainId)?.name}
+        {Chain.from(position.pool.chainId)?.name}
       </span>
       <h1 className="text-2xl font-semibold dark:text-white text-gray-900">
         {token0.symbol}/{token1.symbol}{' '}

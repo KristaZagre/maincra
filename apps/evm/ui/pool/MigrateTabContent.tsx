@@ -49,7 +49,7 @@ export const MigrateTabContent = () => {
               <Carousel
                 slideWidth={320}
                 slides={positions.filter((position) =>
-                  isSushiSwapV3ChainId(position?.chainId as ChainId),
+                  isSushiSwapV3ChainId(position.pool.chainId as ChainId),
                 )}
                 render={(position) => <PositionCard position={position} />}
                 className="px-2"

@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { cz } from '../../misc/zodObjects.js'
-import type { PoolProtocol } from '../common.js'
+import type { IncentiveType, PoolProtocol } from '../common.js'
 
 export const simplePoolOutputSchema = z.object({
   id: cz.id(),
@@ -11,6 +11,22 @@ export const simplePoolOutputSchema = z.object({
 
   token0: cz.token(),
   token1: cz.token(),
+
+  incentiveApr: z.number().default(0),
+  incentives: z.array(
+    z.object({
+      id: cz.incentiveId(),
+      chainId: cz.chainId(),
+      poolId: cz.id(),
+      apr: z.number(),
+      amount: z.number(),
+      rewardPerDay: z.number(),
+      rewardToken: cz.token(),
+      type: z.string().transform((type) => type as IncentiveType),
+    }),
+  ),
+
+  totalApr1d: z.number().nullable().default(0),
 
   feeApr1d: z.number().catch(0),
   feeUSD1d: z.number().catch(0),

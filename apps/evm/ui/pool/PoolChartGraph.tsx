@@ -65,11 +65,11 @@ export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, id }) => {
         if (cur.timestamp * 1000 >= currentDate - chartPeriods[period]) {
           acc[0].push(cur.timestamp)
           if (chart === PoolChartType.Fees) {
-            acc[1].push(Number(cur.feeUsd))
+            acc[1].push(Number(cur.feeUSD))
           } else if (chart === PoolChartType.Volume) {
-            acc[1].push(Number(cur.volumeUsd))
+            acc[1].push(Number(cur.volumeUSD))
           } else if (chart === PoolChartType.TVL) {
-            acc[1].push(Number(cur.liquidityUsd))
+            acc[1].push(Number(cur.liquidityUSD))
           } else if (chart === PoolChartType.APR) {
             acc[1].push(Number(cur.feeApr))
           }

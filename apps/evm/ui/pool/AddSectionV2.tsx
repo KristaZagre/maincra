@@ -1,7 +1,7 @@
 'use client'
 
-import { Pool } from '@sushiswap/client'
 import { useIsMounted } from '@sushiswap/hooks'
+import { Pool } from '@sushiswap/rockset-client'
 import { Button } from '@sushiswap/ui/components/button'
 import { SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import {

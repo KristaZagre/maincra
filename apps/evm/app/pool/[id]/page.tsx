@@ -70,7 +70,7 @@ export default async function PoolPage({ params }: { params: { id: string } }) {
         <div className="py-4">
           <Separator />
         </div>
-        <PoolTransactionsV2 pool={pool} poolId={pool.address} />
+        <PoolTransactionsV2 pool={pool} />
       </div>
     </>
   )

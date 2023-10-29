@@ -13,9 +13,8 @@ interface PositionCardList {
 }
 
 const value = (position: V2Position) =>
-  (Number(position.balance) /
-    Number(position.pool.liquidity)) *
-  Number(position.pool.liquidityUsd)
+  (Number(position.balance) / Number(position.pool.liquidity)) *
+  Number(position.pool.liquidityUSD)
 
 export const PositionCardList: FC<PositionCardList> = ({ children }) => {
   const { address } = useAccount()

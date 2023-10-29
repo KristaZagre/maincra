@@ -1,14 +1,13 @@
 import { Pool } from '@sushiswap/client'
 import { FundSource } from '@sushiswap/hooks'
-import { ZERO } from 'sushi'
 import { LinkInternal } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import Link from 'next/link'
 import { FC } from 'react'
+import { ZERO } from 'sushi'
 import { getAddress } from 'viem'
 
 import { usePoolPosition } from './PoolPositionProvider'
-import { usePoolPositionStaked } from './PoolPositionStakedProvider'
 
 interface PoolButtonsProps {
   pool: Pool
@@ -16,17 +15,13 @@ interface PoolButtonsProps {
 
 export const PoolButtons: FC<PoolButtonsProps> = ({ pool }) => {
   const { balance } = usePoolPosition()
-  const { balance: stakedBalance } = usePoolPositionStaked()
 
   return (
     <div className="flex flex-col w-full gap-2">
       <div className="flex gap-2">
         <Button
           asChild
-          disabled={Boolean(
-            balance?.[FundSource.WALLET]?.equalTo(ZERO) &&
-              stakedBalance?.equalTo(ZERO),
-          )}
+          disabled={Boolean(balance?.[FundSource.WALLET]?.equalTo(ZERO))}
           size="lg"
           variant="secondary"
           fullWidth

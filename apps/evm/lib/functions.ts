@@ -1,5 +1,5 @@
 import { SushiSwapV2Pool } from '@sushiswap/amm'
-import { Pool } from '@sushiswap/client'
+import { Pool } from '@sushiswap/rockset-client'
 import {
   FeeAmount,
   Position,
@@ -35,7 +35,7 @@ export const isSushiSwapV2Pool = (
 
 export const incentiveRewardToToken = (
   chainId: ChainId,
-  incentive: Pool['incentives'][0],
+  incentive: Pool['incentives'][number],
 ): Token => {
   return new Token({
     chainId,

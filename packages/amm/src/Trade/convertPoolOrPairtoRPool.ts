@@ -1,5 +1,4 @@
 import { Fee, Pool } from '@sushiswap/base-sdk'
-import { Token } from 'sushi/currency'
 import {
   ConstantProductRPool,
   RPool,
@@ -8,6 +7,7 @@ import {
 } from '@sushiswap/tines'
 import { TridentConstantPool, TridentStablePool } from '@sushiswap/trident-sdk'
 import { SushiSwapV2Pool } from '@sushiswap/v2-sdk'
+import { Token } from 'sushi/currency'
 import { Address } from 'viem'
 
 export function getBentoChainId(chainId: string | number | undefined): string {
@@ -47,7 +47,7 @@ export function convertPoolOrPairtoRPool(
         : (pool.assets[1].wrapped as RToken),
       // pool.assets[0].wrapped as RToken,
       // pool.assets[1].wrapped as RToken,
-      pool.fee / 10000,
+      Number(pool.swapGasCost / BigInt(10000)),
       BigInt(pool.reserves[0].quotient.toString()),
       BigInt(pool.reserves[1].quotient.toString()),
     )
@@ -62,7 +62,7 @@ export function convertPoolOrPairtoRPool(
       convertTokensToBento
         ? convertTokenToBento(pool.token1.wrapped)
         : (pool.token1 as RToken),
-      pool.fee / 10000,
+      Number(pool.swapGasCost / BigInt(10000)),
       BigInt(
         pool.reserve0
           .toShare({
