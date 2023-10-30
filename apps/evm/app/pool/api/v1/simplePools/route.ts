@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
   const symbols = parsedParams.data.tokenSymbols
   const onlyIncentivized = parsedParams.data.isIncentivized
   const orderBy = poolOrderByToField[parsedParams.data.orderBy]
-  // AND isWhitelisted = true
+
   const client = await createClient()
   const result = await client.queries.query({
     sql: {
@@ -65,7 +65,7 @@ export async function GET(request: NextRequest) {
           'decimals': t1.decimals,
         } as token1
       FROM 
-          (SELECT * FROM entities WHERE namespace = '${process.env.ROCKSET_ENV}' AND entityType = 'Pool') AS p
+          (SELECT * FROM entities WHERE namespace = '${process.env.ROCKSET_ENV}' AND entityType = 'Pool' AND isWhitelisted = true) AS p
       ${`
         ${onlyIncentivized ? 'INNER JOIN' : 'LEFT JOIN'}
           (SELECT poolId FROM entities WHERE namespace = '${
@@ -74,10 +74,10 @@ export async function GET(request: NextRequest) {
         ON p.entityId = i.poolId
       `}
       JOIN
-        (SELECT * FROM entities WHERE namespace = '${process.env.ROCKSET_ENV}' AND entityType = 'Token') AS t0
+        (SELECT * FROM entities WHERE namespace = '${process.env.ROCKSET_ENV}' AND entityType = 'Token' AND isWhitelisted = true) AS t0
       ON p.token0Id = t0.entityId
       JOIN
-        (SELECT * FROM entities WHERE namespace = '${process.env.ROCKSET_ENV}' AND entityType = 'Token') AS t1
+        (SELECT * FROM entities WHERE namespace = '${process.env.ROCKSET_ENV}' AND entityType = 'Token' AND isWhitelisted = true) AS t1
       ON p.token1Id = t1.entityId
       ${
         protocols ? `AND p.protocol IN (${protocols.map((p) => `'${p}'`)})` : ''
