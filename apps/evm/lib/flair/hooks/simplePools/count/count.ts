@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import {
   getPoolsCount,
   getPoolsCountUrl,
-} from '../../../fetchers/pools/count/count'
+} from '../../../fetchers/simplePools/count/count'
 import type { QueryParams } from '../../common.js'
 
 export const usePoolsCount = (

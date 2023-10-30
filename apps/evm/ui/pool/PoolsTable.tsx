@@ -16,7 +16,7 @@ import {
 } from '@tanstack/react-table'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
 
-import { usePoolsCount } from 'lib/flair/hooks/pools/count/count'
+import { usePoolsCount } from 'lib/flair/hooks/simplePools/count/count'
 import { useSimplePools } from 'lib/flair/hooks/simplePools/simplePools'
 import { usePoolFilters } from './PoolsFiltersProvider'
 import {

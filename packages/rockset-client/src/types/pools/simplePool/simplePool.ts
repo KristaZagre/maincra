@@ -13,27 +13,29 @@ export const simplePoolOutputSchema = z.object({
   token1: cz.token(),
 
   incentiveApr: z.number().default(0),
-  incentives: z.array(
-    z.object({
-      id: cz.incentiveId(),
-      chainId: cz.chainId(),
-      poolId: cz.id(),
-      apr: z.number(),
-      amount: z.number(),
-      rewardPerDay: z.number(),
-      rewardToken: cz.token(),
-      type: z.string().transform((type) => type as IncentiveType),
-    }),
-  ),
+  incentives: z
+    .array(
+      z.object({
+        id: cz.incentiveId(),
+        chainId: cz.chainId(),
+        poolId: cz.id(),
+        apr: z.number(),
+        amount: z.number(),
+        rewardPerDay: z.number(),
+        rewardToken: cz.token(),
+        type: z.string().transform((type) => type as IncentiveType),
+      }),
+    )
+    .optional(),
 
   totalApr1d: z.number().nullable().default(0),
 
   feeApr1d: z.number().catch(0),
   feeUSD1d: z.number().catch(0),
 
-  volumeUSD1d: z.number(),
-  volumeUSD1w: z.number(),
-  volumeUSD1m: z.number(),
+  volumeUSD1d: z.number().catch(0),
+  volumeUSD1w: z.number().catch(0),
+  volumeUSD1m: z.number().catch(0),
 
   liquidity: z.string().nullable().default('0'),
   liquidityUSD: z.number().catch(0),

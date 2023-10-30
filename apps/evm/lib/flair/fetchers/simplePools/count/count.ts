@@ -3,7 +3,7 @@ import { PoolsArgs, PoolsCount } from '@sushiswap/rockset-client'
 import { FLAIR_API_URL } from '../../common'
 
 export const getPoolsCountUrl = (args: PoolsArgs) => {
-  return `${FLAIR_API_URL}/pools/count${parseArgs(args)}`
+  return `${FLAIR_API_URL}/simplePools/count${parseArgs(args)}`
 }
 
 export const getPoolsCount = async (
