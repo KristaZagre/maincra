@@ -35,6 +35,11 @@ export const SUSHISWAP_ENABLED_NETWORKS = [
   ChainId.KAVA,
   ChainId.METIS,
   ChainId.BTTC,
+  ChainId.THUNDERCORE,
+  ChainId.CORE,
+  // ChainId.LINEA,
+  // ChainId.OPTIMISM,
+  // ChainId.POLYGON_ZKEVM,
   // ChainId.PALM,
   // ChainId.HECO,
   // ChainId.OKEX
@@ -287,6 +292,11 @@ export const SUSHISWAP_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.KAVA]: 'sushi-v2/sushiswap-kava',
   [ChainId.METIS]: 'sushi-v2/sushiswap-metis',
   [ChainId.BTTC]: 'sushi-v2/bttc',
+  [ChainId.THUNDERCORE]: 'sushi-v2/sushiswap-thundercore',
+  [ChainId.CORE]: 'sushi-v2/sushiswap-core',
+  // [ChainId.LINEA]: '',
+  // [ChainId.OPTIMISM]: '',
+  // [ChainId.POLYGON_ZKEVM]: '',
 } as const
 
 export const SUSHISWAP_V3_SUBGRAPH_NAME: Record<number, string> = {
