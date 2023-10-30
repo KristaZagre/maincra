@@ -25,8 +25,7 @@ export const simplePoolOutputSchema = z.object({
         rewardToken: cz.token(),
         type: z.string().transform((type) => type as IncentiveType),
       }),
-    )
-    .optional(),
+    ).catch([]),
 
   totalApr1d: z.number().nullable().default(0),
 

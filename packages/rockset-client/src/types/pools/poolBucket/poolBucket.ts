@@ -3,13 +3,13 @@ import { cz } from '../../misc/zodObjects.js'
 
 export const poolBucketOutputSchema = z.object({
   id: cz.id(),
-  feeApr: z.number(),
-  feeUSD: z.number(),
+  feeApr: z.number().nullable(),
+  feeUSD: z.number().nullable(),
   granularity: z.string(),
-  liquidityUSD: z.number(),
+  liquidityUSD: z.number().nullable(),
   timeBucket: z.string(),
   timestamp: z.number(),
-  volumeUSD: z.number(),
+  volumeUSD: z.number().nullable(),
 })
 
 export const transformPoolBucket = (

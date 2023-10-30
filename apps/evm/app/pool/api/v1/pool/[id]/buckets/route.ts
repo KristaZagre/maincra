@@ -27,9 +27,9 @@ export async function GET(
         timeBucket,
         timestamp,
         granularity,
-        volumeUsd as volumeUSD,
-        liquidityUsd as liquidityUSD,
-        feeUsd as feeUSD,
+        volumeUSD,
+        liquidityUSD,
+        feeUSD,
         feeApr
 			FROM
         entities

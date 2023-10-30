@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
   const symbols = parsedParams.data.tokenSymbols
   const onlyIncentivized = parsedParams.data.isIncentivized
   const orderBy = poolOrderByToField[parsedParams.data.orderBy]
-
+  // AND isWhitelisted = true
   const client = await createClient()
   const result = await client.queries.query({
     sql: {
@@ -31,18 +31,18 @@ export async function GET(request: NextRequest) {
         p.chainId,
         CONCAT(t0.symbol, '-', t1.symbol) AS name,
         p.address,
-        p.fee as swapFee,
+        p.swapFee,
         p.protocol,
 
-        p.last1DFeeApr as feeApr1d,
-        p.last1DFeeUsd as feeUSD1d,
+        p.feeApr1d,
+        p.feeUSD1d,
 
-        p.last1DVolumeUsd as volumeUSD1d,
-        p.last7DVolumeUsd as volumeUSD1w,
-        p.last30DVolumeUsd as volumeUSD1m,
+        p.volumeUSD1d,
+        p.volumeUSD1w,
+        p.volumeUSD1m,
 
         p.liquidity,
-        p.liquidityUsd as liquidityUSD,
+        p.liquidityUSD as liquidityUSD,
         
         CASE
           WHEN i.poolId IS NOT NULL THEN true
@@ -65,7 +65,7 @@ export async function GET(request: NextRequest) {
           'decimals': t1.decimals,
         } as token1
       FROM 
-          (SELECT * FROM entities WHERE namespace = '${process.env.ROCKSET_ENV}' AND entityType = 'Pool' AND isWhitelisted = true) AS p
+          (SELECT * FROM entities WHERE namespace = '${process.env.ROCKSET_ENV}' AND entityType = 'Pool') AS p
       ${`
         ${onlyIncentivized ? 'INNER JOIN' : 'LEFT JOIN'}
           (SELECT poolId FROM entities WHERE namespace = '${
@@ -74,10 +74,10 @@ export async function GET(request: NextRequest) {
         ON p.entityId = i.poolId
       `}
       JOIN
-        (SELECT * FROM entities WHERE namespace = '${process.env.ROCKSET_ENV}' AND entityType = 'Token' AND isWhitelisted = true) AS t0
+        (SELECT * FROM entities WHERE namespace = '${process.env.ROCKSET_ENV}' AND entityType = 'Token') AS t0
       ON p.token0Id = t0.entityId
       JOIN
-        (SELECT * FROM entities WHERE namespace = '${process.env.ROCKSET_ENV}' AND entityType = 'Token' AND isWhitelisted = true) AS t1
+        (SELECT * FROM entities WHERE namespace = '${process.env.ROCKSET_ENV}' AND entityType = 'Token') AS t1
       ON p.token1Id = t1.entityId
       ${
         protocols ? `AND p.protocol IN (${protocols.map((p) => `'${p}'`)})` : ''
