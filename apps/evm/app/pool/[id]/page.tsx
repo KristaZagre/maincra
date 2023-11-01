@@ -1,3 +1,4 @@
+import { PoolProtocol } from '@sushiswap/rockset-client'
 import { Separator } from '@sushiswap/ui'
 import { getPool } from 'lib/flair/fetchers/pool/id/pool'
 import { notFound } from 'next/navigation'
@@ -33,7 +34,7 @@ export default async function PoolPage({ params }: { params: { id: string } }) {
     notFound()
   }
 
-  if (pool.protocol === 'SUSHISWAP_V3') {
+  if (pool.protocol === PoolProtocol.SUSHISWAP_V3) {
     return <PoolPageV3 pool={pool} />
   }
 

@@ -21,7 +21,6 @@ interface PoolCompositionProps {
 }
 
 export const PoolComposition: FC<PoolCompositionProps> = ({ pool }) => {
-  console.log(pool)
   const { amount0, amount1 } = useMemo(() => {
     const token0 = new Token(pool.token0)
     const token1 = new Token(pool.token1)

@@ -2,7 +2,6 @@
 
 import { Card } from '@sushiswap/ui'
 import React, { FC, useState } from 'react'
-import { ChainId } from 'sushi/chain'
 
 import { ID } from 'sushi/types'
 import { PoolChartGraph } from './PoolChartGraph'

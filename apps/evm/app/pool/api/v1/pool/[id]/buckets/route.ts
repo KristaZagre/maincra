@@ -14,6 +14,7 @@ export async function GET(
     ...Object.fromEntries(request.nextUrl.searchParams),
     id: params.id,
   })
+
   if (!parsedParams.success) {
     return NextResponse.json(parsedParams.error, { status: 400 })
   }

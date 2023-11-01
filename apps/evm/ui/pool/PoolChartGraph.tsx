@@ -11,13 +11,14 @@ import { SkeletonBox } from '@sushiswap/ui/components/skeleton'
 import { format } from 'date-fns'
 import ReactECharts from 'echarts-for-react'
 import { EChartsOption } from 'echarts-for-react/lib/types'
-import { usePoolGraphData } from 'lib/hooks/api/useFlairPoolGraphData'
 // import { useTheme } from 'next-themes'
 import { FC, useCallback, useMemo } from 'react'
 import { formatPercent, formatUSD } from 'sushi'
 import tailwindConfig from 'tailwind.config.js'
 import resolveConfig from 'tailwindcss/resolveConfig'
 
+import { PoolBucketGranularity } from '@sushiswap/rockset-client'
+import { usePoolBuckets } from 'lib/flair/hooks/pool/id/buckets/buckets'
 import { ID } from 'sushi/types'
 import { PoolChartPeriod, chartPeriods } from './PoolChartPeriods'
 import { PoolChartType } from './PoolChartTypes'
@@ -38,14 +39,14 @@ const tailwind = resolveConfig(tailwindConfig)
 export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, id }) => {
   // const { resolvedTheme } = useTheme()
 
-  const { data: hourBuckets, isLoading: isLoadingHourly } = usePoolGraphData({
+  const { data: hourBuckets, isLoading: isLoadingHourly } = usePoolBuckets({
     id,
-    granularity: 'hour',
+    granularity: PoolBucketGranularity.HOUR,
   })
 
-  const { data: dailyBuckets, isLoading: isLoadingDaily } = usePoolGraphData({
+  const { data: dailyBuckets, isLoading: isLoadingDaily } = usePoolBuckets({
     id,
-    granularity: 'day',
+    granularity: PoolBucketGranularity.DAY,
   })
 
   const isLoading = useMemo(
@@ -140,7 +141,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, id }) => {
                 : formatUSD(params[0].value)
             }</span>
             <span class="text-xs text-gray-500 dark:text-slate-400 font-medium">${
-              date instanceof Date && !isNaN(date?.getTime())
+              date instanceof Date && !Number.isNaN(date?.getTime())
                 ? format(
                     date,
                     `dd MMM yyyy${
@@ -247,7 +248,15 @@ export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, id }) => {
               )}
             </div>
           ) : (
-            <SkeletonText fontSize="sm" />
+            <>
+              {isLoading ? (
+                <SkeletonText fontSize="sm" />
+              ) : (
+                <div className="text-sm text-gray-500 dark:text-slate-500">
+                  No data found.
+                </div>
+              )}
+            </>
           )}
         </CardDescription>
       </CardHeader>

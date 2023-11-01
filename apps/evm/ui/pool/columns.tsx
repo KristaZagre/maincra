@@ -141,7 +141,7 @@ export const NAME_COLUMN_POOL: ColumnDef<SimplePool, unknown> = {
 }
 
 export const TVL_COLUMN: ColumnDef<SimplePool, unknown> = {
-  id: 'liquidityUsd',
+  id: 'liquidityUSD',
   header: 'TVL',
   accessorFn: (row) => row.liquidityUSD,
   cell: (props) =>
@@ -154,7 +154,7 @@ export const TVL_COLUMN: ColumnDef<SimplePool, unknown> = {
 }
 
 export const APR_COLUMN_POOL: ColumnDef<SimplePool, unknown> = {
-  id: 'last1DFeeApr',
+  id: 'feeApr1d',
   header: 'APR',
   accessorFn: (row) => row.feeApr1d,
   cell: (props) => (
@@ -170,7 +170,7 @@ export const APR_COLUMN_POOL: ColumnDef<SimplePool, unknown> = {
 }
 
 export const VOLUME_1D_COLUMN: ColumnDef<SimplePool, unknown> = {
-  id: 'vol1d',
+  id: 'volumeUSD1d',
   header: 'Volume (24h)',
   accessorFn: (row) => row.volumeUSD1d,
   cell: (props) =>
@@ -183,7 +183,7 @@ export const VOLUME_1D_COLUMN: ColumnDef<SimplePool, unknown> = {
 }
 
 export const FEES_COLUMN: ColumnDef<SimplePool, unknown> = {
-  id: 'fee1d',
+  id: 'feeUSD1d',
   header: 'Fees (24h)',
   accessorFn: (row) => row.feeUSD1d,
   cell: (props) =>
@@ -231,7 +231,7 @@ export const NAME_COLUMN_POSITION_WITH_POOL: ColumnDef<V2Position, unknown> = {
 }
 
 export const APR_COLUMN: ColumnDef<V2Position, unknown> = {
-  id: 'apr',
+  id: 'feeApr1d',
   header: 'APR',
   accessorFn: (row) => row.pool.feeApr1d,
   cell: (props) => (
@@ -264,7 +264,7 @@ export const VALUE_COLUMN: ColumnDef<V2Position, unknown> = {
 }
 
 export const VOLUME_COLUMN: ColumnDef<PositionWithPool, unknown> = {
-  id: 'volume',
+  id: 'volumeUSD1d',
   header: 'Volume (24h)',
   cell: (props) =>
     formatUSD(props.row.original.pool.volumeUSD1d).includes('NaN')

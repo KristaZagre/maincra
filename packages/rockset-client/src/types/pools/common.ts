@@ -4,12 +4,12 @@ export enum PoolProtocol {
 }
 
 export enum PoolsOrderBy {
-  LIQUIDITY = 'liquidityUsd',
-  VOLUME_1D = 'vol1d',
-  VOLUME_1W = 'vol1w',
-  VOLUME_1M = 'vol1m',
-  FEE_1D = 'fee1d',
-  APR = 'apr',
+  LIQUIDITY_USD = 'liquidityUSD',
+  VOLUME_1D = 'volumeUSD1d',
+  VOLUME_1W = 'volumeUSD1w',
+  VOLUME_1M = 'volumeUSD1m',
+  FEE_1D = 'feeUSD1d',
+  FEE_APR = 'feeApr1d',
 }
 
 export enum IncentiveType {
@@ -17,10 +17,10 @@ export enum IncentiveType {
 }
 
 export const poolOrderByToField: Record<PoolsOrderBy, string> = {
-  [PoolsOrderBy.LIQUIDITY]: 'liquidityUSD',
-  [PoolsOrderBy.VOLUME_1D]: 'p.last1DVolumeUsd',
-  [PoolsOrderBy.VOLUME_1W]: 'p.last7DVolumeUsd',
-  [PoolsOrderBy.VOLUME_1M]: 'p.last30DVolumeUsd',
-  [PoolsOrderBy.FEE_1D]: 'p.last1DFeeUsd',
-  [PoolsOrderBy.APR]: 'p.last1DFeeApr',
+  [PoolsOrderBy.LIQUIDITY_USD]: 'p.liquidityUSD',
+  [PoolsOrderBy.VOLUME_1D]: 'p.volumeUSD1d',
+  [PoolsOrderBy.VOLUME_1W]: 'p.volumeUSD1w',
+  [PoolsOrderBy.VOLUME_1M]: 'p.volumeUSD1m',
+  [PoolsOrderBy.FEE_1D]: 'p.feeUSD1d',
+  [PoolsOrderBy.FEE_APR]: 'p.feeApr1d',
 }
