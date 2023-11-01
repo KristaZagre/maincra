@@ -10,7 +10,6 @@ export type PoolArgs = BasePoolArgs
 const poolOutputSchema = z.object({
   id: cz.id(),
   chainId: cz.chainId(),
-  blockNumber: z.number().int(),
   name: z.string(),
   address: cz.address(),
   protocol: z.string().transform((p) => p as PoolProtocol),
@@ -117,11 +116,11 @@ const poolOutputSchema = z.object({
 
   reserve0: z.number().catch(0),
   reserve0USD: z.number().catch(0),
-  reserve0BI: z.string().default('0'),
+  reserve0BI: z.string().catch('0'),
 
   reserve1: z.number().catch(0),
   reserve1USD: z.number().catch(0),
-  reserve1BI: z.string().default('0'),
+  reserve1BI: z.string().catch('0'),
 
   sqrtPriceX96: z.string().nullable(),
   tick: z.nullable(z.number()),
