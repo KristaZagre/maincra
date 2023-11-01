@@ -48,10 +48,10 @@ export const basePoolsInputSchema = z.object({
     .string()
     .optional()
     .default('DESC')
-    .transform((val) => {
-      val = val.toUpperCase()
+    .transform((v) => {
+      const val = v.toUpperCase()
 
-      if (basePoolsOrderDirs.includes(val as any)) {
+      if (basePoolsOrderDirs.includes(val as 'DESC' | 'ASC')) {
         return val as typeof basePoolsOrderDirs[number]
       } else {
         throw new Error(
@@ -64,7 +64,7 @@ export const basePoolsInputSchema = z.object({
   orderBy: z
     .string()
     .optional()
-    .default(PoolsOrderBy.LIQUIDITY)
+    .default(PoolsOrderBy.LIQUIDITY_USD)
     .transform((val) => {
       if (Object.values(PoolsOrderBy).includes(val as PoolsOrderBy)) {
         return val as PoolsOrderBy
