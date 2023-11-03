@@ -52,10 +52,14 @@ export async function prices() {
         continue
       }
       const minimumLiquidity = 500 * 10 ** baseToken.decimals // 500 USDC
-      const pools = await getPools(client, chainId)
-      const { rPools, tokens } = await transform(chainId, pools)
-      const tokensToUpdate = calculatePrices(rPools, minimumLiquidity, baseToken, tokens)
-      await updateTokenPrices(client, price, tokensToUpdate)
+      try {
+        const pools = await getPools(client, chainId)
+        const { rPools, tokens } = await transform(chainId, pools)
+        const tokensToUpdate = calculatePrices(rPools, minimumLiquidity, baseToken, tokens)
+        await updateTokenPrices(client, price, tokensToUpdate)
+      } catch(e) {
+        console.error('PRICE Error: ', e)
+      }
     }
     const endTime = performance.now()
     console.log(`COMPLETED (${((endTime - startTime) / 1000).toFixed(1)}s). `)
