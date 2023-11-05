@@ -23,6 +23,7 @@ import {
   useState,
 } from 'react'
 import { ChainId, TestnetChainId } from 'sushi/chain'
+import { isSwapApiEnabledChainId } from 'sushi/config'
 import {
   Amount,
   Native,
@@ -32,7 +33,7 @@ import {
 } from 'sushi/currency'
 import { ZERO } from 'sushi/math'
 import { isAddress } from 'viem'
-import { isSupportedChainId, isSwapApiEnabledChainId } from '../../../config'
+import { isSupportedChainId } from '../../../config'
 import { useCarbonOffset } from '../../../lib/swap/useCarbonOffset'
 import { useSwapApi } from '../../../lib/swap/useSwapApi'
 

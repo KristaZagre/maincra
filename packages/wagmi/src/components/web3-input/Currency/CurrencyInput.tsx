@@ -1,6 +1,5 @@
 'use client'
 
-import { usePrice } from '@sushiswap/react-query'
 import { Button, SelectIcon, TextField, classNames } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { SkeletonBox } from '@sushiswap/ui/components/skeleton'
@@ -16,7 +15,7 @@ import { ChainId } from 'sushi/chain'
 import { Token, Type, tryParseAmount } from 'sushi/currency'
 import { useAccount } from 'wagmi'
 
-import { useBalanceWeb3 } from '../../../hooks'
+import { useBalanceWeb3, usePrice } from '../../../hooks'
 import { TokenSelector } from '../../token-selector/TokenSelector'
 import { BalancePanel } from './BalancePanel'
 import { PricePanel } from './PricePanel'
@@ -77,8 +76,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
   })
 
   const { data: price, isInitialLoading: isPriceLoading } = usePrice({
-    chainId: currency?.chainId,
-    address: currency?.wrapped?.address,
+    currency,
   })
 
   const _value = useMemo(
