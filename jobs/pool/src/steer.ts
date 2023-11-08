@@ -7,6 +7,8 @@ import { updatePoolsWithSteerVaults } from './etl/pool/load.js'
 import { upsertVaults } from './etl/steer/load.js'
 
 export async function steer() {
+  console.log('Starting steer')
+
   try {
     const startTime = performance.now()
     const chainsWithVaults = await extract()
