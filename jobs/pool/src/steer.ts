@@ -1,5 +1,5 @@
 import { Prisma, SteerStrategy, VaultState } from '@sushiswap/database'
-import { STEER_ENABLED_NETWORKS, STEER_SUBGRAPGH_NAME, SteerChainId, SUBGRAPH_HOST } from '@sushiswap/graph-config'
+import { STEER_ENABLED_NETWORKS, STEER_SUBGRAPH_URL, SteerChainId } from '@sushiswap/graph-config'
 import { isPromiseFulfilled } from '@sushiswap/validate'
 
 import { getBuiltGraphSDK } from '../.graphclient/index.js'
@@ -49,7 +49,7 @@ async function getPayload(ipfsHash: string): Promise<Payload> {
 }
 
 async function extractChain(chainId: SteerChainId) {
-  const sdk = getBuiltGraphSDK({ host: SUBGRAPH_HOST[chainId], name: STEER_SUBGRAPGH_NAME[chainId] })
+  const sdk = getBuiltGraphSDK({ url: STEER_SUBGRAPH_URL[chainId] })
 
   const { vaults } = await sdk.SteerVaults()
   const vaultsWithPayloads = await Promise.allSettled(
