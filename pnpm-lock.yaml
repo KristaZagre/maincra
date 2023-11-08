@@ -336,7 +336,7 @@ importers:
         version: 5.15.0(next@13.4.19)(react-dom@18.2.0)(react@18.2.0)
       next-sitemap:
         specifier: 3.1.43
-        version: 3.1.43(@next/env@13.5.4)(next@13.4.19)
+        version: 3.1.43(@next/env@14.0.1)(next@13.4.19)
       react:
         specifier: 18.2.0
         version: 18.2.0
@@ -442,7 +442,7 @@ importers:
         version: 5.15.0(next@13.4.19)(react-dom@18.2.0)(react@18.2.0)
       next-sitemap:
         specifier: 3.1.43
-        version: 3.1.43(@next/env@13.5.4)(next@13.4.19)
+        version: 3.1.43(@next/env@14.0.1)(next@13.4.19)
       react:
         specifier: 18.2.0
         version: 18.2.0
@@ -1085,9 +1085,6 @@ importers:
       '@sushiswap/viem-config':
         specifier: workspace:*
         version: link:../../config/viem
-      '@whatwg-node/fetch':
-        specifier: 0.8.4
-        version: 0.8.4
       deepmerge-ts:
         specifier: ^4.3.0
         version: 4.3.0
@@ -1122,9 +1119,6 @@ importers:
       '@types/node':
         specifier: '18'
         version: 18.17.5
-      eslint:
-        specifier: 8.43.0
-        version: 8.43.0
       react:
         specifier: 18.2.0
         version: 18.2.0
@@ -9152,8 +9146,8 @@ packages:
   /@next/env@13.4.19:
     resolution: {integrity: sha512-FsAT5x0jF2kkhNkKkukhsyYOrRqtSxrEhfliniIq0bwWbuXLgyt3Gv0Ml+b91XwjwArmuP7NxCiGd++GGKdNMQ==}
 
-  /@next/env@13.5.4:
-    resolution: {integrity: sha512-LGegJkMvRNw90WWphGJ3RMHMVplYcOfRWf2Be3td3sUa+1AaxmsYyANsA+znrGCBjXJNi4XAQlSoEfUxs/4kIQ==}
+  /@next/env@14.0.1:
+    resolution: {integrity: sha512-Ms8ZswqY65/YfcjrlcIwMPD7Rg/dVjdLapMcSHG26W6O67EJDF435ShW4H4LXi1xKO1oRc97tLXUpx8jpLe86A==}
     dev: false
 
   /@next/eslint-plugin-next@13.5.4:
@@ -29451,7 +29445,7 @@ packages:
       react-dom: 18.2.0(react@18.2.0)
     dev: false
 
-  /next-sitemap@3.1.43(@next/env@13.5.4)(next@13.4.19):
+  /next-sitemap@3.1.43(@next/env@14.0.1)(next@13.4.19):
     resolution: {integrity: sha512-TshDAP69OjHwvszedQ/jBvOjzqy7Gm9NU3ZIP30X3e1qXsNVOVF5uzi9kQOI6v0uBG08QUOk9wKNSIk3zI/wjQ==}
     engines: {node: '>=14.18'}
     hasBin: true
@@ -29460,7 +29454,7 @@ packages:
       next: '*'
     dependencies:
       '@corex/deepmerge': 4.0.43
-      '@next/env': 13.5.4
+      '@next/env': 14.0.1
       minimist: 1.2.8
       next: 13.4.19(@babel/core@7.23.2)(react-dom@18.2.0)(react@18.2.0)
     dev: false

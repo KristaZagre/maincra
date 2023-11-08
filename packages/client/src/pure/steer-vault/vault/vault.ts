@@ -3,7 +3,6 @@ import { type getSteerVaultFromDB } from '../../../api/steer-vault/vault'
 import { EVM_APP_BASE_URL } from '../../../constants'
 import { type GetApiInputFromOutput } from '../../../types'
 import { type SteerVaultApiSchema } from './schema'
-
 export { type SteerVaultApiSchema }
 export type SteerVault = Awaited<ReturnType<typeof getSteerVaultFromDB>>
 // Slightly opinionated, adding string to support the chainId:address format

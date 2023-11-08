@@ -3,7 +3,6 @@ import { EVM_APP_BASE_URL } from '../../../constants'
 import { parseArgs } from '../../../functions'
 import { type GetApiInputFromOutput } from '../../../types'
 import { type PoolsApiSchema } from './schema'
-
 export { type PoolsApiSchema }
 export type Pools = Awaited<ReturnType<typeof getPoolsFromDB>>
 export type GetPoolsArgs =

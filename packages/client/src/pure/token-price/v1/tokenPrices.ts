@@ -1,7 +1,6 @@
 import type {} from '@sushiswap/database'
 import { getPrices } from '@sushiswap/token-price-api/lib/api'
 import { TokenPricesV1ApiSchema } from '@sushiswap/token-price-api/lib/schemas/v1/index'
-import { fetch } from '@whatwg-node/fetch'
 
 import { TOKEN_PRICE_API } from '../../../constants.js'
 import { parseArgs } from '../../../functions.js'

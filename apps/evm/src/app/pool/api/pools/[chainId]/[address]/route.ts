@@ -1,5 +1,5 @@
 import { PoolApiSchema, getPoolFromDB } from '@sushiswap/client/api'
-import { NextResponse } from 'next/server.js'
+import { NextResponse } from 'next/server'
 
 export async function GET(
   _request: Request,

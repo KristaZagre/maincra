@@ -36,7 +36,21 @@ test.beforeEach(async ({ page, next }) => {
     console.error(error)
   })
 
-  next.onFetch(() => {
+  next.onFetch(async (request) => {
+    if (request.url.includes('ingest.sentry.io')) {
+      // console.log('SENTRY', request.url)
+      return 'abort'
+    }
+
+    // this solves the initial server side load but not the
+    // if (request.url.includes('prisma-data.com')) {
+    //   console.log('PRISMA', request.url)
+    //   const res = await fetch(request)
+    //   return res
+    // }
+
+    console.log('next onFetch', request.url)
+
     return 'continue'
   })
 
