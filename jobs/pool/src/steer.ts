@@ -7,6 +7,8 @@ import { updatePoolsWithSteerVaults } from './etl/pool/load.js'
 import { upsertVaults } from './etl/steer/load.js'
 
 export async function steer() {
+  console.log('Starting steer')
+
   try {
     const startTime = performance.now()
     const chainsWithVaults = await extract()
@@ -96,6 +98,11 @@ function transform(chainsWithVaults: Awaited<ReturnType<typeof extract>>): Prism
       const strategyType = StrategyTypes[vault.payload.strategyConfigData.name]
       if (!strategyType) return []
 
+      let lastAdjustmentTimestamp = Math.floor(vault.payload.strategyConfigData.epochStart)
+      if (lastAdjustmentTimestamp > 5000000000) {
+        lastAdjustmentTimestamp = Math.floor(vault.payload.strategyConfigData.epochStart / 1000)
+      }
+
       return {
         id: `${chainId}:${vault.id}`.toLowerCase(),
         poolId: `${chainId}:${vault.pool}`.toLowerCase(),
@@ -124,7 +131,7 @@ function transform(chainsWithVaults: Awaited<ReturnType<typeof extract>>): Prism
         upperTick: highestTick,
 
         adjustmentFrequency: Number(vault.payload.strategyConfigData.epochLength),
-        lastAdjustmentTimestamp: Math.floor(vault.payload.strategyConfigData.epochStart),
+        lastAdjustmentTimestamp: lastAdjustmentTimestamp,
 
         admin: vault.strategyToken.admin,
         creator: vault.strategyToken.creator.id,

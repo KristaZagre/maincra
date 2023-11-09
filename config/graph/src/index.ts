@@ -404,21 +404,21 @@ export const STEER_ENABLED_NETWORKS = [
 export type SteerChainId = (typeof STEER_ENABLED_NETWORKS)[number]
 
 export const STEER_SUBGRAPH_URL: Record<SteerChainId, string> = {
-  [ChainId.POLYGON]: 'https://api.thegraph.com/subgraphs/name/steerprotocol/steer-protocol-polygon',
-  [ChainId.BSC]: 'https://api.thegraph.com/subgraphs/name/steerprotocol/steer-protocol-bsc',
-  [ChainId.OPTIMISM]: 'https://api.thegraph.com/subgraphs/name/steerprotocol/steer-protocol-optimism',
-  [ChainId.ARBITRUM]: 'https://api.thegraph.com/subgraphs/name/steerprotocol/steer-protocol-arbitrum',
-  // [ChainId.Evmos]: 'https://subgraph.satsuma-prod.com/769a117cc018/steer/steer-protocol-evmos/api',
-  [ChainId.THUNDERCORE]: 'https://subgraph.steer.finance/thundercore/subgraphs/name/steerprotocol/steer-thundercore',
-  [ChainId.METIS]: 'https://subgraph.satsuma-prod.com/769a117cc018/steer/steer-protocol-metis/api',
-  [ChainId.BASE]: 'https://subgraph.satsuma-prod.com/769a117cc018/steer/steer-protocol-base/api',
-  [ChainId.AVALANCHE]: 'https://api.thegraph.com/subgraphs/name/rakeshbhatt10/avalance-test-subgraph',
+  [ChainId.POLYGON]: 'api.thegraph.com/subgraphs/name/steerprotocol/steer-protocol-polygon',
+  [ChainId.BSC]: 'api.thegraph.com/subgraphs/name/steerprotocol/steer-protocol-bsc',
+  [ChainId.OPTIMISM]: 'api.thegraph.com/subgraphs/name/steerprotocol/steer-protocol-optimism',
+  [ChainId.ARBITRUM]: 'api.thegraph.com/subgraphs/name/steerprotocol/steer-protocol-arbitrum',
+  // [ChainId.Evmos]: 'subgraph.satsuma-prod.com/769a117cc018/steer/steer-protocol-evmos/api',
+  [ChainId.THUNDERCORE]: 'subgraph.steer.finance/thundercore/subgraphs/name/steerprotocol/steer-thundercore',
+  [ChainId.METIS]: 'subgraph.satsuma-prod.com/769a117cc018/steer/steer-protocol-metis/api',
+  [ChainId.BASE]: 'subgraph.satsuma-prod.com/769a117cc018/steer/steer-protocol-base/api',
+  [ChainId.AVALANCHE]: 'api.thegraph.com/subgraphs/name/rakeshbhatt10/avalance-test-subgraph',
   [ChainId.POLYGON_ZKEVM]: 'http://13.228.90.202:8000/subgraphs/name/steerprotocol/steer-zkevm',
-  [ChainId.CELO]: 'https://api.thegraph.com/subgraphs/name/rakeshbhatt10/steer-test-celo',
-  [ChainId.KAVA]: 'https://subgraph.steer.finance/kava/subgraphs/name/steerprotocol/steer-kava-evm',
-  [ChainId.LINEA]: 'https://subgraph.steer.finance/linea/subgraphs/name/steerprotocol/steer-linea',
-  [ChainId.SCROLL]: 'https://subgraph.steer.finance/scroll/subgraphs/name/steerprotocol/steer-scroll',
-  // [ChainId.MANTA]: 'https://subgraph.steer.finance/manta/subgraphs/name/steerprotocol/steer-manta'
+  [ChainId.CELO]: 'api.thegraph.com/subgraphs/name/rakeshbhatt10/steer-test-celo',
+  [ChainId.KAVA]: 'subgraph.steer.finance/kava/subgraphs/name/steerprotocol/steer-kava-evm',
+  [ChainId.LINEA]: 'subgraph.steer.finance/linea/subgraphs/name/steerprotocol/steer-linea',
+  [ChainId.SCROLL]: 'subgraph.steer.finance/scroll/subgraphs/name/steerprotocol/steer-scroll',
+  // [ChainId.MANTA]: 'subgraph.steer.finance/manta/subgraphs/name/steerprotocol/steer-manta'
 }
 
 export const DEFAULT_CHAIN_ID = ChainId.ETHEREUM
