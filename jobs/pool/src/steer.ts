@@ -26,8 +26,8 @@ export async function steer() {
 
     const transformed = transform(chainsWithVaults)
 
-    await upsertVaults(transformed)
-    await updatePoolsWithSteerVaults()
+    // await upsertVaults(transformed)
+    // await updatePoolsWithSteerVaults()
 
     const endTime = performance.now()
     console.log(
@@ -128,9 +128,25 @@ const StrategyTypes: Record<string, SteerStrategy> = {
   'Delta Neutral - Stables': SteerStrategy.DeltaNeutralStables,
   'Elastic Expansion Strategy': SteerStrategy.ElasticExpansion,
   'High Low Channel Strategy': SteerStrategy.HighLowChannel,
+  'High Low Channel Strategy - Medium Range': SteerStrategy.HighLowChannel,
+  'High Low Channel Strategy - Narrow Range': SteerStrategy.HighLowChannel,
+  'Moving Volatility Channel': SteerStrategy.MovingVolatilityChannel,
+  'Moving Volatility Channel Strategy': SteerStrategy.MovingVolatilityChannel,
   'Moving Volatility Channel Strategy - Medium':
-    SteerStrategy.MovingVolatilityChannelMedium,
+    SteerStrategy.MovingVolatilityChannel,
+  'Moving Volatility Strategy V2': SteerStrategy.MovingVolatilityChannel,
+  'Moving Volatility Strategy V2.': SteerStrategy.MovingVolatilityChannel,
+  'Channel Multiplier Strategy': SteerStrategy.ChannelMultiplier,
   'Static Stable Strategy': SteerStrategy.StaticStable,
+  'Static Stable Strategy ': SteerStrategy.StaticStable,
+  'Static Stable 1% Strategy': SteerStrategy.StaticStable,
+  'Static Stable 0.3% Strategy': SteerStrategy.StaticStable,
+  'Static Stable 0.05% Strategy': SteerStrategy.StaticStable,
+  'Static Stable Strategy V2': SteerStrategy.StaticStable,
+  'Keltner Algo': SteerStrategy.KeltnerAlgo,
+  'Bollinger Algo': SteerStrategy.BollingerAlgo,
+  'Fixed Percentage Strategy': SteerStrategy.FixedPercentage,
+  'Price Multiplier Strategy': SteerStrategy.PriceMultiplier,
 }
 
 function transform(
@@ -141,6 +157,7 @@ function transform(
       // ! Missing strategies will be ignored
       const strategyType =
         StrategyTypes[vault?.payload?.strategyConfigData.name]
+
       if (!strategyType) return []
 
       const lowTicks = vault.positions.flatMap((position) => position.lowerTick)
