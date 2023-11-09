@@ -56,6 +56,16 @@ export async function upsertVaults(vaults: Prisma.SteerVaultCreateManyInput[]) {
         )}
         ELSE poolId
       END,
+      chainId = CASE
+        ${Prisma.join(
+          vaultsToUpdate.map(
+            (update) =>
+              Prisma.sql`WHEN id = ${update.id} THEN ${update.chainId}`,
+          ),
+          ' ',
+        )}
+        ELSE chainId
+      END,
       feeTier = CASE
         ${Prisma.join(
           vaultsToUpdate.map(
