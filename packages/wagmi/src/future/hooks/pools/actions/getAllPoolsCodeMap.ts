@@ -1,7 +1,6 @@
 import {
   isRouteProcessor3ChainId,
   isRouteProcessor3_1ChainId,
-  isRouteProcessor3_2ChainId,
 } from '@sushiswap/route-processor-sdk'
 import { DataFetcher, LiquidityProviders, PoolCode } from '@sushiswap/router'
 
@@ -26,7 +25,6 @@ export const getAllPoolsCodeMap = async ({
     LiquidityProviders.Trident,
   ]
   if (
-    isRouteProcessor3_2ChainId(chainId) ||
     isRouteProcessor3_1ChainId(chainId) ||
     isRouteProcessor3ChainId(chainId)
   ) {
