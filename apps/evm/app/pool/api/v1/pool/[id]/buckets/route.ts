@@ -4,6 +4,7 @@ import {
   processPoolBucket,
 } from '@sushiswap/rockset-client'
 import { createClient } from '@sushiswap/rockset-client/client'
+import { CORS } from 'app/pool/api/cors'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(
@@ -60,5 +61,12 @@ export async function GET(
 
   const processedBuckets = processArray.filterErrors(results, processPoolBucket)
 
-  return NextResponse.json(processedBuckets)
+  return NextResponse.json(processedBuckets, { 
+    headers: {
+      ...CORS,
+      'Cache-Control': 'public, s-maxage=60',
+      'CDN-Cache-Control': 'public, s-maxage=60',
+      'Vercel-CDN-Cache-Control': 'public, s-maxage=3600',
+      } 
+    })
 }

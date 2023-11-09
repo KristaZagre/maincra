@@ -1,5 +1,6 @@
 import { poolInputSchema, processPool } from '@sushiswap/rockset-client'
 import { createClient } from '@sushiswap/rockset-client/client'
+import { CORS } from 'app/pool/api/cors'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(
@@ -197,8 +198,15 @@ export async function GET(
   const processedPool = processPool(results[0])
 
   if (processedPool.success === true) {
-    return NextResponse.json(processedPool.data)
+    return NextResponse.json(processedPool, { 
+      headers: {
+        ...CORS,
+        'Cache-Control': 'public, s-maxage=60',
+        'CDN-Cache-Control': 'public, s-maxage=60',
+        'Vercel-CDN-Cache-Control': 'public, s-maxage=3600',
+        } 
+      })
   } else {
-    return NextResponse.json(processedPool.error.errors, { status: 500 })
+    return NextResponse.json(processedPool.error.errors, {  status: 500 , headers: CORS })
   }
 }

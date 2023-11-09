@@ -4,6 +4,7 @@ import {
 } from '@sushiswap/rockset-client'
 import { createClient } from '@sushiswap/rockset-client/client'
 import { NextRequest, NextResponse } from 'next/server'
+import { CORS } from '../../../cors'
 
 export async function GET(request: NextRequest) {
   const parsedParams = poolsCountInputSchema.safeParse(
@@ -77,12 +78,13 @@ export async function GET(request: NextRequest) {
   if (processedCount.success === true) {
     return NextResponse.json(processedCount.data, {
       headers: {
+        ...CORS,
         'Cache-Control': 'public, s-maxage=60',
         'CDN-Cache-Control': 'public, s-maxage=60',
         'Vercel-CDN-Cache-Control': 'public, s-maxage=3600',
       },
     })
   } else {
-    return new Response(processedCount.error.message, { status: 500 })
+    return new Response(processedCount.error.message, { headers: CORS, status: 500 })
   }
 }

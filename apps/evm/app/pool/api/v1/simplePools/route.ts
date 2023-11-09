@@ -6,6 +6,7 @@ import {
 } from '@sushiswap/rockset-client'
 import { createClient } from '@sushiswap/rockset-client/client'
 import { NextRequest } from 'next/server'
+import { CORS } from 'app/pool/api/cors'
 
 export async function GET(request: NextRequest) {
   const parsedParams = simplePoolsInputSchema.safeParse(
@@ -110,6 +111,7 @@ export async function GET(request: NextRequest) {
   return Response.json(processedSimplePools, {
     status: 200,
     headers: {
+      ...CORS,
       'Cache-Control': 'public, s-maxage=60',
       'CDN-Cache-Control': 'public, s-maxage=60',
       'Vercel-CDN-Cache-Control': 'public, s-maxage=3600',

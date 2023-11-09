@@ -4,6 +4,7 @@ import {
   v2PositionsInputSchema,
 } from '@sushiswap/rockset-client'
 import { createClient } from '@sushiswap/rockset-client/client'
+import { CORS } from 'app/pool/api/cors'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(request: NextRequest) {
@@ -127,5 +128,12 @@ export async function GET(request: NextRequest) {
     processV2Position,
   )
 
-  return NextResponse.json(processedV2Positions)
+  return NextResponse.json(processedV2Positions, { 
+    headers: {
+      ...CORS,
+      'Cache-Control': 'public, s-maxage=60',
+      'CDN-Cache-Control': 'public, s-maxage=60',
+      'Vercel-CDN-Cache-Control': 'public, s-maxage=3600',
+    }
+  })
 }
