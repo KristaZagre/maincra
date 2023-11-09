@@ -26,8 +26,8 @@ export async function steer() {
 
     const transformed = transform(chainsWithVaults)
 
-    // await upsertVaults(transformed)
-    // await updatePoolsWithSteerVaults()
+    await upsertVaults(transformed)
+    await updatePoolsWithSteerVaults()
 
     const endTime = performance.now()
     console.log(
