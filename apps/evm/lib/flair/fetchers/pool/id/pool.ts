@@ -8,7 +8,7 @@ export const getPoolUrl = (args: PoolArgs) => {
 export const getPool = async (
   args: PoolArgs,
   init?: RequestInit,
-): Promise<Pool> => {
+): Promise<{success: boolean, data: Pool}> => {
   const url = getPoolUrl(args)
   return fetch(url, init).then((data) => data.json())
 }

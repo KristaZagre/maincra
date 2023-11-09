@@ -23,7 +23,7 @@ export default async function PoolPage({ params }: { params: { id: string } }) {
   // TODO: Add validation, use unsanitize from 'sushi/format'
   const id = params.id.replace('%3A', ':') as ID
 
-  const pool = await getPool(
+  const { success, data: pool } = await getPool(
     { id },
     {
       next: { revalidate: 60 },
