@@ -22,7 +22,7 @@ steps:
     args:
       - run
       - deploy
-      - scripts-earn
+      - scripts-steer
       - '--image'
       - 'gcr.io/$PROJECT_ID/$TRIGGER_NAME:latest'
       - '--region'
