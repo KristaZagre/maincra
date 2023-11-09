@@ -141,7 +141,7 @@ export async function getConcentratedLiquidityPoolReserves(
   pools.forEach((pool, i) => {
     const balance0 = balances[i * 2].result
     const balance1 = balances[i * 2 + 1].result
-    if (balances) {
+    if (!balances[i * 2].error && !balances[i * 2 + 1].error) {
       const reserve0 = balance0
       const reserve1 = balance1
       updatedPools.set(pool.id, {

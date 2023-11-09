@@ -1,5 +1,7 @@
+import { ChainId } from '@sushiswap/chain'
 import type { ChainProviderFn } from '@wagmi/core'
 import { alchemyProvider } from '@wagmi/core/providers/alchemy'
+import { jsonRpcProvider } from '@wagmi/core/providers/jsonRpc'
 import { publicProvider } from '@wagmi/core/providers/public'
 
 const alchemyId = process.env['ALCHEMY_ID'] || process.env['NEXT_PUBLIC_ALCHEMY_ID']
@@ -33,7 +35,13 @@ export const allProviders: ChainProviderFn[] = [
   //     }
   //   },
   // }),
-
+  jsonRpcProvider({
+    rpc: (chain) => {
+      if (chain.id === ChainId.GNOSIS) {
+        return { http: 'https://rpc.ankr.com/gnosis' }
+      }
+    },
+  }),
   alchemyProvider({
     apiKey: alchemyId as string,
   }),

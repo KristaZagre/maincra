@@ -46,6 +46,7 @@ import {
   //  optimismGoerli,
   polygon,
   polygonZkEvm,
+  scroll,
   // polygonMumbai,
   // sepolia,
   //  taraxa,
@@ -102,6 +103,7 @@ export {
   // sepolia,
   //  taraxa,
   // taraxaTestnet,
+  scroll,
   zkSync,
   // zkSyncTestnet,
 }
@@ -601,5 +603,9 @@ export const config: Record<number, PublicClientConfig> = {
   [ChainId.BASE]: {
     chain: base,
     transport: fallback([http(`https://lb.drpc.org/ogrpc?network=base&dkey=${drpcId}`)]),
+  },
+  [ChainId.SCROLL]: {
+    chain: scroll,
+    transport: http(scroll.rpcUrls.default.http[0]),
   },
 } as const

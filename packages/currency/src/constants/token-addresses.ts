@@ -405,7 +405,7 @@ export const USDC_ADDRESS = {
   [ChainId.FILECOIN]: axlUSDC_ADDRESS[ChainId.FILECOIN],
   [ChainId.LINEA]: axlUSDC_ADDRESS[ChainId.LINEA],
   [ChainId.BASE]: axlUSDC_ADDRESS[ChainId.BASE],
-  [ChainId.SCROLL]: '0xf55BEC9cafDbE8730f096Aa55dad6D22d44099Df',
+  [ChainId.SCROLL]: '0x06eFdBFf2a14a7c8E15944D1F4A48F9F95F663A4',
 } as const
 
 export const USDT_ADDRESS = {
