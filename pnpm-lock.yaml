@@ -47,7 +47,7 @@ importers:
         version: 3.0.7
       '@wagmi/core':
         specifier: 1.4.3
-        version: 1.4.3(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.2)(zod@3.21.4)
+        version: 1.4.3(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.6)(zod@3.21.4)
       '@whatwg-node/fetch':
         specifier: 0.8.4
         version: 0.8.4
@@ -117,7 +117,7 @@ importers:
         version: 3.0.7
       '@wagmi/core':
         specifier: 1.4.3
-        version: 1.4.3(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.2)(zod@3.21.4)
+        version: 1.4.3(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.6)(zod@3.21.4)
       cors:
         specifier: 2.8.5
         version: 2.8.5
@@ -134,11 +134,11 @@ importers:
         specifier: workspace:*
         version: link:../../packages/sushi
       viem:
-        specifier: 1.16.2
-        version: 1.16.2(typescript@5.2.2)(zod@3.21.4)
+        specifier: 1.16.6
+        version: 1.16.6(typescript@5.2.2)(zod@3.21.4)
       wagmi:
         specifier: 1.4.3
-        version: 1.4.3(@types/react@18.2.14)(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2)(viem@1.16.2)(zod@3.21.4)
+        version: 1.4.3(@types/react@18.2.14)(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2)(viem@1.16.6)(zod@3.21.4)
       zod:
         specifier: 3.21.4
         version: 3.21.4
@@ -181,7 +181,7 @@ importers:
         version: 3.0.7
       '@wagmi/core':
         specifier: 1.4.3
-        version: 1.4.3(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.2)(zod@3.21.4)
+        version: 1.4.3(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.6)(zod@3.21.4)
       deepmerge-ts:
         specifier: ^4.3.0
         version: 4.3.0
@@ -341,7 +341,7 @@ importers:
         version: 3.0.7
       '@wagmi/core':
         specifier: 1.4.3
-        version: 1.4.3(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.2)(zod@3.21.4)
+        version: 1.4.3(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.6)(zod@3.21.4)
       zod:
         specifier: 3.21.4
         version: 3.21.4
@@ -828,7 +828,7 @@ importers:
         version: 0.2.1
       '@wagmi/core':
         specifier: 1.4.3
-        version: 1.4.3(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.2)(zod@3.21.4)
+        version: 1.4.3(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.6)(zod@3.21.4)
       cors:
         specifier: 2.8.5
         version: 2.8.5
@@ -905,11 +905,11 @@ importers:
         specifier: 2.1.5
         version: 2.1.5(react@18.2.0)
       viem:
-        specifier: 1.16.2
-        version: 1.16.2(typescript@5.2.2)(zod@3.21.4)
+        specifier: 1.16.6
+        version: 1.16.6(typescript@5.2.2)(zod@3.21.4)
       wagmi:
         specifier: 1.4.3
-        version: 1.4.3(@types/react@18.2.14)(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2)(viem@1.16.2)(zod@3.21.4)
+        version: 1.4.3(@types/react@18.2.14)(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2)(viem@1.16.6)(zod@3.21.4)
       zod:
         specifier: 3.21.4
         version: 3.21.4
@@ -1155,8 +1155,8 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
       viem:
-        specifier: 1.16.2
-        version: 1.16.2(typescript@5.2.2)(zod@3.21.4)
+        specifier: 1.16.6
+        version: 1.16.6(typescript@5.2.2)(zod@3.21.4)
 
   config/wagmi:
     devDependencies:
@@ -1174,7 +1174,7 @@ importers:
         version: 2.0.2
       '@wagmi/core':
         specifier: 1.4.3
-        version: 1.4.3(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.2)(zod@3.21.4)
+        version: 1.4.3(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.6)(zod@3.21.4)
       sushi:
         specifier: workspace:*
         version: link:../../packages/sushi
@@ -1187,12 +1187,6 @@ importers:
 
   jobs/pool:
     dependencies:
-      '@ethersproject/address':
-        specifier: 5.7.0
-        version: 5.7.0
-      '@ethersproject/bignumber':
-        specifier: 5.7.0
-        version: 5.7.0
       '@graphprotocol/client-add-source-name':
         specifier: 2.0.0
         version: 2.0.0(@graphql-mesh/types@0.93.2)(@graphql-tools/delegate@10.0.2)(@graphql-tools/utils@9.2.1)(@graphql-tools/wrap@10.0.0)(graphql@16.6.0)
@@ -1217,6 +1211,9 @@ importers:
       '@graphql-mesh/http':
         specifier: 0.94.4
         version: 0.94.4(@graphql-mesh/cross-helpers@0.4.0)(@graphql-mesh/runtime@0.94.1)(@graphql-mesh/types@0.93.2)(@graphql-mesh/utils@0.94.1)(graphql@16.6.0)(tslib@2.6.2)
+      '@graphql-mesh/merger-bare':
+        specifier: ^0.96.0
+        version: 0.96.0(@graphql-mesh/store@0.94.1)(@graphql-mesh/types@0.93.2)(@graphql-mesh/utils@0.94.1)(@graphql-tools/utils@9.2.1)(graphql@16.6.0)(tslib@2.6.2)
       '@graphql-mesh/merger-stitching':
         specifier: 0.94.1
         version: 0.94.1(@graphql-mesh/store@0.94.1)(@graphql-mesh/types@0.93.2)(@graphql-mesh/utils@0.94.1)(@graphql-tools/utils@9.2.1)(graphql@16.6.0)(tslib@2.6.2)
@@ -1241,24 +1238,18 @@ importers:
       '@graphql-tools/merge':
         specifier: 9.0.0
         version: 9.0.0(graphql@16.6.0)
-      '@sushiswap/bentobox-sdk':
+      '@sushiswap/client':
         specifier: workspace:*
-        version: link:../../packages/bentobox-sdk
+        version: link:../../packages/client
       '@sushiswap/database':
         specifier: workspace:*
         version: link:../../packages/database
       '@sushiswap/graph-config':
         specifier: workspace:*
         version: link:../../config/graph
-      '@sushiswap/tines':
+      '@sushiswap/steer-sdk':
         specifier: workspace:*
-        version: link:../../packages/tines
-      '@sushiswap/wagmi-config':
-        specifier: workspace:*
-        version: link:../../config/wagmi
-      '@wagmi/core':
-        specifier: 1.4.3
-        version: 1.4.3(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.2)(zod@3.21.4)
+        version: link:../../packages/steer-sdk
       '@whatwg-node/fetch':
         specifier: 0.8.4
         version: 0.8.4
@@ -1268,27 +1259,15 @@ importers:
       date-fns:
         specifier: 2.29.3
         version: 2.29.3
-      ethers:
-        specifier: 5.7.2
-        version: 5.7.2
       express:
         specifier: 4.18.2
         version: 4.18.2
       graphql:
         specifier: 16.6.0
         version: 16.6.0
-      lodash.zip:
-        specifier: 4.2.0
-        version: 4.2.0
       sushi:
         specifier: workspace:*
         version: link:../../packages/sushi
-      viem:
-        specifier: 1.16.2
-        version: 1.16.2(typescript@5.2.2)(zod@3.21.4)
-      zod:
-        specifier: 3.21.4
-        version: 3.21.4
     devDependencies:
       '@sushiswap/jest-config':
         specifier: workspace:*
@@ -1363,8 +1342,8 @@ importers:
         specifier: 1.0.3
         version: 1.0.3
       viem:
-        specifier: 1.16.2
-        version: 1.16.2(typescript@5.2.2)(zod@3.21.4)
+        specifier: 1.16.6
+        version: 1.16.6(typescript@5.2.2)(zod@3.21.4)
       zod:
         specifier: 3.21.4
         version: 3.21.4
@@ -1603,8 +1582,8 @@ importers:
         specifier: workspace:*
         version: link:../sushi
       viem:
-        specifier: 1.16.2
-        version: 1.16.2(typescript@5.2.2)(zod@3.21.4)
+        specifier: 1.16.6
+        version: 1.16.6(typescript@5.2.2)(zod@3.21.4)
     devDependencies:
       '@sushiswap/jest-config':
         specifier: workspace:*
@@ -1720,7 +1699,7 @@ importers:
         version: 2.0.2
       '@wagmi/core':
         specifier: 1.4.3-cjs
-        version: 1.4.3-cjs(react@18.2.0)(typescript@5.2.2)(viem@1.16.2)(zod@3.21.4)
+        version: 1.4.3-cjs(react@18.2.0)(typescript@5.2.2)(viem@1.16.6)(zod@3.21.4)
       graphql:
         specifier: 16.6.0
         version: 16.6.0
@@ -1834,11 +1813,11 @@ importers:
         specifier: workspace:*
         version: link:../sushi
       viem:
-        specifier: 1.16.2
-        version: 1.16.2(typescript@5.2.2)(zod@3.21.4)
+        specifier: 1.16.6
+        version: 1.16.6(typescript@5.2.2)(zod@3.21.4)
       wagmi:
         specifier: 1.4.3
-        version: 1.4.3(@types/react@18.2.14)(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2)(viem@1.16.2)(zod@3.21.4)
+        version: 1.4.3(@types/react@18.2.14)(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2)(viem@1.16.6)(zod@3.21.4)
       zod:
         specifier: 3.21.4
         version: 3.21.4
@@ -1956,8 +1935,8 @@ importers:
         specifier: 1.0.3
         version: 1.0.3
       viem:
-        specifier: 1.16.2
-        version: 1.16.2(typescript@5.2.2)(zod@3.21.4)
+        specifier: 1.16.6
+        version: 1.16.6(typescript@5.2.2)(zod@3.21.4)
       zod:
         specifier: 3.21.4
         version: 3.21.4
@@ -2132,8 +2111,8 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
       viem:
-        specifier: 1.16.2
-        version: 1.16.2(typescript@5.2.2)(zod@3.21.4)
+        specifier: 1.16.6
+        version: 1.16.6(typescript@5.2.2)(zod@3.21.4)
       vitest:
         specifier: 0.34.6
         version: 0.34.6
@@ -2200,8 +2179,8 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
       viem:
-        specifier: 1.16.2
-        version: 1.16.2(typescript@5.2.2)(zod@3.21.4)
+        specifier: 1.16.6
+        version: 1.16.6(typescript@5.2.2)(zod@3.21.4)
 
   packages/token-lists:
     dependencies:
@@ -2507,7 +2486,7 @@ importers:
         version: 5.2.2
       wagmi:
         specifier: 1.4.3
-        version: 1.4.3(@types/react@18.2.14)(react-dom@18.2.0)(react-native@0.72.5)(react@18.2.0)(typescript@5.2.2)(viem@1.16.2)
+        version: 1.4.3(@types/react@18.2.14)(react-dom@18.2.0)(react-native@0.72.5)(react@18.2.0)(typescript@5.2.2)(viem@1.16.6)
 
   packages/v2-sdk:
     dependencies:
@@ -2718,8 +2697,8 @@ importers:
         specifier: workspace:*
         version: link:../sushi
       viem:
-        specifier: 1.16.2
-        version: 1.16.2(typescript@5.2.2)(zod@3.21.4)
+        specifier: 1.16.6
+        version: 1.16.6(typescript@5.2.2)(zod@3.21.4)
       zod:
         specifier: 3.21.4
         version: 3.21.4
@@ -2748,7 +2727,7 @@ importers:
         version: 18.2.6
       '@wagmi/core':
         specifier: 1.4.3
-        version: 1.4.3(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.2)(zod@3.21.4)
+        version: 1.4.3(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.6)(zod@3.21.4)
       react:
         specifier: 18.2.0
         version: 18.2.0
@@ -2760,7 +2739,7 @@ importers:
         version: 5.2.2
       wagmi:
         specifier: 1.4.3
-        version: 1.4.3(@types/react@18.2.14)(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2)(viem@1.16.2)(zod@3.21.4)
+        version: 1.4.3(@types/react@18.2.14)(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2)(viem@1.16.6)(zod@3.21.4)
 
   protocols/route-processor:
     devDependencies:
@@ -2906,8 +2885,8 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
       viem:
-        specifier: 1.16.2
-        version: 1.16.2(typescript@5.2.2)(zod@3.21.4)
+        specifier: 1.16.6
+        version: 1.16.6(typescript@5.2.2)(zod@3.21.4)
 
   protocols/tines-sandbox:
     devDependencies:
@@ -3080,8 +3059,8 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
       viem:
-        specifier: 1.16.2
-        version: 1.16.2(typescript@5.2.2)(zod@3.21.4)
+        specifier: 1.16.6
+        version: 1.16.6(typescript@5.2.2)(zod@3.21.4)
 
 packages:
 
@@ -3151,8 +3130,8 @@ packages:
     transitivePeerDependencies:
       - encoding
 
-  /@artilleryio/int-commons@2.0.1:
-    resolution: {integrity: sha512-iRaUAapHHY2LQB7z3SQF97rDTf2Or7M7tI/61XBZgby3rQ0sl0+Jt0R8HFmLstBTKcSQ99ItAZYb+583/CZuzg==}
+  /@artilleryio/int-commons@2.0.2:
+    resolution: {integrity: sha512-IfdHOtprbuoLY8zlfdmJdEn/bt7NEJPTDc9tGjy2ya76uVdarU495E+nGG4PrDnzhDF8R56uUmEW66aRRzEoTA==}
     dependencies:
       async: 2.6.4
       cheerio: 1.0.0-rc.12
@@ -3165,10 +3144,10 @@ packages:
       - supports-color
     dev: true
 
-  /@artilleryio/int-core@2.1.0:
-    resolution: {integrity: sha512-wzGZ7/0s89ZctSJb8KeOZgBc3sLlvWUHqVwAlkr6hh/nMqx00Txc+r5y5qbtrF5sZvaYTLrWUXglpGaCalNYRQ==}
+  /@artilleryio/int-core@2.2.0:
+    resolution: {integrity: sha512-cZSSONpntDDwgRQUMe/6BryPiZRNoejT9nRSWsn2EDVqOaOkb4rNcEKuA0PqwGQM8ompBZsLBorf9UmYQ2b3Ow==}
     dependencies:
-      '@artilleryio/int-commons': 2.0.1
+      '@artilleryio/int-commons': 2.0.2
       '@artilleryio/sketches-js': 2.1.1
       agentkeepalive: 4.5.0
       arrivals: 2.1.2
@@ -8670,6 +8649,27 @@ packages:
     transitivePeerDependencies:
       - '@graphql-mesh/store'
 
+  /@graphql-mesh/merger-bare@0.96.0(@graphql-mesh/store@0.94.1)(@graphql-mesh/types@0.93.2)(@graphql-mesh/utils@0.94.1)(@graphql-tools/utils@9.2.1)(graphql@16.6.0)(tslib@2.6.2):
+    resolution: {integrity: sha512-b+lzSMiH7OMIW81eJYEAdtVXFBXOd7UgwJncFh2r2Je3CR6OMu+9FBiQELrXeXz82zY26LPrqbUiE76aMfJk4g==}
+    engines: {node: '>=16.0.0'}
+    peerDependencies:
+      '@graphql-mesh/types': ^0.96.0
+      '@graphql-mesh/utils': ^0.96.0
+      '@graphql-tools/utils': ^9.2.1 || ^10.0.0
+      graphql: 16.6.0
+      tslib: ^2.4.0
+    dependencies:
+      '@graphql-mesh/merger-stitching': 0.96.0(@graphql-mesh/store@0.94.1)(@graphql-mesh/types@0.93.2)(@graphql-mesh/utils@0.94.1)(@graphql-tools/utils@9.2.1)(graphql@16.6.0)(tslib@2.6.2)
+      '@graphql-mesh/types': 0.93.2(@graphql-mesh/store@0.94.1)(@graphql-tools/utils@9.2.1)(graphql@16.6.0)(tslib@2.6.2)
+      '@graphql-mesh/utils': 0.94.1(@graphql-mesh/cross-helpers@0.4.0)(@graphql-mesh/types@0.93.2)(@graphql-tools/utils@9.2.1)(graphql@16.6.0)(tslib@2.6.2)
+      '@graphql-tools/schema': 10.0.0(graphql@16.6.0)
+      '@graphql-tools/utils': 9.2.1(graphql@16.6.0)
+      graphql: 16.6.0
+      tslib: 2.6.2
+    transitivePeerDependencies:
+      - '@graphql-mesh/store'
+    dev: false
+
   /@graphql-mesh/merger-stitching@0.18.4(graphql@16.6.0)(react-native@0.72.5):
     resolution: {integrity: sha512-c4sX2h1sxECcEBdfFBxqY9L6NpikFYQX/TvS8vWpaCRJ59cDP5MVV9XIacIAZGOP78YVmwuLtasZNi/2TMZEAA==}
     peerDependencies:
@@ -8755,6 +8755,28 @@ packages:
       '@graphql-tools/utils': 9.2.1(graphql@16.6.0)
       graphql: 16.6.0
       tslib: 2.5.0
+    dev: false
+
+  /@graphql-mesh/merger-stitching@0.96.0(@graphql-mesh/store@0.94.1)(@graphql-mesh/types@0.93.2)(@graphql-mesh/utils@0.94.1)(@graphql-tools/utils@9.2.1)(graphql@16.6.0)(tslib@2.6.2):
+    resolution: {integrity: sha512-JjPYtYwTtZGwYjRwjP3Cqyf7tl8ZUJhEJQFdYMpde0jYwolnLwhGPstUVRngZseCyNuhOt0L8uOnzeZPniTA2Q==}
+    engines: {node: '>=16.0.0'}
+    peerDependencies:
+      '@graphql-mesh/store': ^0.96.0
+      '@graphql-mesh/types': ^0.96.0
+      '@graphql-mesh/utils': ^0.96.0
+      '@graphql-tools/utils': ^9.2.1 || ^10.0.0
+      graphql: 16.6.0
+      tslib: ^2.4.0
+    dependencies:
+      '@graphql-mesh/store': 0.94.1(@graphql-mesh/cross-helpers@0.4.0)(@graphql-mesh/types@0.93.2)(@graphql-mesh/utils@0.94.1)(@graphql-tools/utils@9.2.1)(graphql@16.6.0)(tslib@2.6.2)
+      '@graphql-mesh/types': 0.93.2(@graphql-mesh/store@0.94.1)(@graphql-tools/utils@9.2.1)(graphql@16.6.0)(tslib@2.6.2)
+      '@graphql-mesh/utils': 0.94.1(@graphql-mesh/cross-helpers@0.4.0)(@graphql-mesh/types@0.93.2)(@graphql-tools/utils@9.2.1)(graphql@16.6.0)(tslib@2.6.2)
+      '@graphql-tools/delegate': 10.0.2(graphql@16.6.0)
+      '@graphql-tools/schema': 10.0.0(graphql@16.6.0)
+      '@graphql-tools/stitch': 9.0.1(graphql@16.6.0)
+      '@graphql-tools/utils': 9.2.1(graphql@16.6.0)
+      graphql: 16.6.0
+      tslib: 2.6.2
     dev: false
 
   /@graphql-mesh/runtime@0.46.2(graphql@16.6.0)(react-native@0.72.5):
@@ -11662,9 +11684,25 @@ packages:
       '@opentelemetry/api': 1.6.0
     dev: true
 
+  /@opentelemetry/api-logs@0.43.0:
+    resolution: {integrity: sha512-0CXMOYPXgAdLM2OzVkiUfAL6QQwWVhnMfUXCqLsITY42FZ9TxAhZIHkoc4mfVxvPuXsBnRYGR8UQZX86p87z4A==}
+    engines: {node: '>=14'}
+    dependencies:
+      '@opentelemetry/api': 1.6.0
+    dev: true
+
   /@opentelemetry/api@1.6.0:
     resolution: {integrity: sha512-OWlrQAnWn9577PhVgqjUvMr1pg57Bc4jv0iL4w0PRuOSRvq67rvHW9Ie/dZVMvCzhSCB+UxhcY/PmCmFj33Q+g==}
     engines: {node: '>=8.0.0'}
+    dev: true
+
+  /@opentelemetry/context-async-hooks@1.18.1(@opentelemetry/api@1.6.0):
+    resolution: {integrity: sha512-HHfJR32NH2x0b69CACCwH8m1dpNALoCTtpgmIWMNkeMGNUeKT48d4AX4xsF4uIRuUoRTbTgtSBRvS+cF97qwCQ==}
+    engines: {node: '>=14'}
+    peerDependencies:
+      '@opentelemetry/api': '>=1.0.0 <1.8.0'
+    dependencies:
+      '@opentelemetry/api': 1.6.0
     dev: true
 
   /@opentelemetry/core@1.15.2(@opentelemetry/api@1.6.0):
@@ -11733,6 +11771,21 @@ packages:
       '@opentelemetry/sdk-metrics': 1.15.2(@opentelemetry/api@1.6.0)
     dev: true
 
+  /@opentelemetry/exporter-trace-otlp-grpc@0.43.0(@opentelemetry/api@1.6.0):
+    resolution: {integrity: sha512-h/oofzwyONMcAeBXD6+E6+foFQg9CPadBFcKAGoMIyVSK7iZgtK5DLEwAF4jz5MhfxWNmwZjHXFRc0GqCRx/tA==}
+    engines: {node: '>=14'}
+    peerDependencies:
+      '@opentelemetry/api': ^1.0.0
+    dependencies:
+      '@grpc/grpc-js': 1.9.2
+      '@opentelemetry/api': 1.6.0
+      '@opentelemetry/core': 1.17.0(@opentelemetry/api@1.6.0)
+      '@opentelemetry/otlp-grpc-exporter-base': 0.43.0(@opentelemetry/api@1.6.0)
+      '@opentelemetry/otlp-transformer': 0.43.0(@opentelemetry/api@1.6.0)
+      '@opentelemetry/resources': 1.17.0(@opentelemetry/api@1.6.0)
+      '@opentelemetry/sdk-trace-base': 1.17.0(@opentelemetry/api@1.6.0)
+    dev: true
+
   /@opentelemetry/exporter-trace-otlp-http@0.41.2(@opentelemetry/api@1.6.0):
     resolution: {integrity: sha512-Y0fGLipjZXLMelWtlS1/MDtrPxf25oM408KukRdkN31a1MEFo4h/ZkNwS7ZfmqHGUa+4rWRt2bi6JBiqy7Ytgw==}
     engines: {node: '>=14'}
@@ -11785,6 +11838,16 @@ packages:
       '@opentelemetry/core': 1.15.2(@opentelemetry/api@1.6.0)
     dev: true
 
+  /@opentelemetry/otlp-exporter-base@0.43.0(@opentelemetry/api@1.6.0):
+    resolution: {integrity: sha512-LXNtRFVuPRXB9q0qdvrLikQ3NtT9Jmv255Idryz3RJPhOh/Fa03sBASQoj3D55OH3xazmA90KFHfhJ/d8D8y4A==}
+    engines: {node: '>=14'}
+    peerDependencies:
+      '@opentelemetry/api': ^1.0.0
+    dependencies:
+      '@opentelemetry/api': 1.6.0
+      '@opentelemetry/core': 1.17.0(@opentelemetry/api@1.6.0)
+    dev: true
+
   /@opentelemetry/otlp-grpc-exporter-base@0.41.2(@opentelemetry/api@1.6.0):
     resolution: {integrity: sha512-OErK8dYjXG01XIMIpmOV2SzL9ctkZ0Nyhf2UumICOAKtgLvR5dG1JMlsNVp8Jn0RzpsKc6Urv7JpP69wzRXN+A==}
     engines: {node: '>=14'}
@@ -11795,6 +11858,19 @@ packages:
       '@opentelemetry/api': 1.6.0
       '@opentelemetry/core': 1.15.2(@opentelemetry/api@1.6.0)
       '@opentelemetry/otlp-exporter-base': 0.41.2(@opentelemetry/api@1.6.0)
+      protobufjs: 7.2.4
+    dev: true
+
+  /@opentelemetry/otlp-grpc-exporter-base@0.43.0(@opentelemetry/api@1.6.0):
+    resolution: {integrity: sha512-oOpqtDJo9BBa1+nD6ID1qZ55ZdTwEwSSn2idMobw8jmByJKaanVLdr9SJKsn5T9OBqo/c5QY2brMf0TNZkobJQ==}
+    engines: {node: '>=14'}
+    peerDependencies:
+      '@opentelemetry/api': ^1.0.0
+    dependencies:
+      '@grpc/grpc-js': 1.9.2
+      '@opentelemetry/api': 1.6.0
+      '@opentelemetry/core': 1.17.0(@opentelemetry/api@1.6.0)
+      '@opentelemetry/otlp-exporter-base': 0.43.0(@opentelemetry/api@1.6.0)
       protobufjs: 7.2.4
     dev: true
 
@@ -11823,6 +11899,21 @@ packages:
       '@opentelemetry/sdk-logs': 0.41.2(@opentelemetry/api-logs@0.41.2)(@opentelemetry/api@1.6.0)
       '@opentelemetry/sdk-metrics': 1.15.2(@opentelemetry/api@1.6.0)
       '@opentelemetry/sdk-trace-base': 1.15.2(@opentelemetry/api@1.6.0)
+    dev: true
+
+  /@opentelemetry/otlp-transformer@0.43.0(@opentelemetry/api@1.6.0):
+    resolution: {integrity: sha512-KXYmgzWdVBOD5NvPmGW1nEMJjyQ8gK3N8r6pi4HvmEhTp0v4T13qDSax4q0HfsqmbPJR355oqQSJUnu1dHNutw==}
+    engines: {node: '>=14'}
+    peerDependencies:
+      '@opentelemetry/api': '>=1.3.0 <1.7.0'
+    dependencies:
+      '@opentelemetry/api': 1.6.0
+      '@opentelemetry/api-logs': 0.43.0
+      '@opentelemetry/core': 1.17.0(@opentelemetry/api@1.6.0)
+      '@opentelemetry/resources': 1.17.0(@opentelemetry/api@1.6.0)
+      '@opentelemetry/sdk-logs': 0.43.0(@opentelemetry/api-logs@0.43.0)(@opentelemetry/api@1.6.0)
+      '@opentelemetry/sdk-metrics': 1.17.0(@opentelemetry/api@1.6.0)
+      '@opentelemetry/sdk-trace-base': 1.17.0(@opentelemetry/api@1.6.0)
     dev: true
 
   /@opentelemetry/resources@1.15.2(@opentelemetry/api@1.6.0):
@@ -11858,6 +11949,19 @@ packages:
       '@opentelemetry/api-logs': 0.41.2
       '@opentelemetry/core': 1.15.2(@opentelemetry/api@1.6.0)
       '@opentelemetry/resources': 1.15.2(@opentelemetry/api@1.6.0)
+    dev: true
+
+  /@opentelemetry/sdk-logs@0.43.0(@opentelemetry/api-logs@0.43.0)(@opentelemetry/api@1.6.0):
+    resolution: {integrity: sha512-JyJ2BBRKm37Mc4cSEhFmsMl5ASQn1dkGhEWzAAMSlhPtLRTv5PfvJwhR+Mboaic/eDLAlciwsgijq8IFlf6IgQ==}
+    engines: {node: '>=14'}
+    peerDependencies:
+      '@opentelemetry/api': '>=1.4.0 <1.7.0'
+      '@opentelemetry/api-logs': '>=0.39.1'
+    dependencies:
+      '@opentelemetry/api': 1.6.0
+      '@opentelemetry/api-logs': 0.43.0
+      '@opentelemetry/core': 1.17.0(@opentelemetry/api@1.6.0)
+      '@opentelemetry/resources': 1.17.0(@opentelemetry/api@1.6.0)
     dev: true
 
   /@opentelemetry/sdk-metrics@1.15.2(@opentelemetry/api@1.6.0):
@@ -13820,7 +13924,7 @@ packages:
     resolution: {integrity: sha512-gYw0ki/EAuV1oSyMxpqandHjnthZjYYy+YWpTAzf8BqfXM3ItcZLpjxfg+3+mXW8HIO+3jw6T9iiqEXsqHaMMw==}
     dependencies:
       '@safe-global/safe-gateway-typescript-sdk': 3.9.0
-      viem: 1.16.2(typescript@5.2.2)(zod@3.21.4)
+      viem: 1.16.6(typescript@5.2.2)(zod@3.21.4)
     transitivePeerDependencies:
       - bufferutil
       - encoding
@@ -13832,7 +13936,7 @@ packages:
     resolution: {integrity: sha512-XJbEPuaVc7b9n23MqlF6c+ToYIS3f7P2Sel8f3cSBQ9WORE4xrSuvhMpK9fDSFqJ7by/brc+rmJR/5HViRr0/w==}
     dependencies:
       '@safe-global/safe-gateway-typescript-sdk': 3.9.0
-      viem: 1.16.2(typescript@5.2.2)(zod@3.21.4)
+      viem: 1.16.6(typescript@5.2.2)(zod@3.21.4)
     transitivePeerDependencies:
       - bufferutil
       - encoding
@@ -17983,7 +18087,7 @@ packages:
       - utf-8-validate
       - zod
 
-  /@wagmi/connectors@3.1.2(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.2)(zod@3.21.4):
+  /@wagmi/connectors@3.1.2(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.6)(zod@3.21.4):
     resolution: {integrity: sha512-IlLKErqCzQRBUcCvXGPowcczbWcvJtEG006gPsAoePNJEXCHEWoKASghgu+L/bqD7006Z6mW6zlTNjcSQJvFAg==}
     peerDependencies:
       typescript: 5.2.2
@@ -18003,7 +18107,7 @@ packages:
       abitype: 0.8.7(typescript@5.2.2)(zod@3.21.4)
       eventemitter3: 4.0.7
       typescript: 5.2.2
-      viem: 1.16.2(typescript@5.2.2)(zod@3.21.4)
+      viem: 1.16.6(typescript@5.2.2)(zod@3.21.4)
     transitivePeerDependencies:
       - '@react-native-async-storage/async-storage'
       - '@types/react'
@@ -18042,7 +18146,7 @@ packages:
       - utf-8-validate
       - zod
 
-  /@wagmi/core@1.4.3(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.2)(zod@3.21.4):
+  /@wagmi/core@1.4.3(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.6)(zod@3.21.4):
     resolution: {integrity: sha512-CIV9jwv5ue+WpqmA3FvwGa+23cppe7oIaz6TRnlGm0Hm0wDImSaQSWqcsFyOPvleD29oOIJ8e3KnHINEvI64AA==}
     peerDependencies:
       typescript: 5.2.2
@@ -18051,11 +18155,11 @@ packages:
       typescript:
         optional: true
     dependencies:
-      '@wagmi/connectors': 3.1.2(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.2)(zod@3.21.4)
+      '@wagmi/connectors': 3.1.2(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.6)(zod@3.21.4)
       abitype: 0.8.7(typescript@5.2.2)(zod@3.21.4)
       eventemitter3: 4.0.7
       typescript: 5.2.2
-      viem: 1.16.2(typescript@5.2.2)(zod@3.21.4)
+      viem: 1.16.6(typescript@5.2.2)(zod@3.21.4)
       zustand: 4.4.1(@types/react@18.2.14)(react@18.2.0)
     transitivePeerDependencies:
       - '@react-native-async-storage/async-storage'
@@ -18069,7 +18173,7 @@ packages:
       - utf-8-validate
       - zod
 
-  /@wagmi/core@1.4.3-cjs(react@18.2.0)(typescript@5.2.2)(viem@1.16.2)(zod@3.21.4):
+  /@wagmi/core@1.4.3-cjs(react@18.2.0)(typescript@5.2.2)(viem@1.16.6)(zod@3.21.4):
     resolution: {integrity: sha512-NCGW0Y8TAZ5zTcS5shXcvpDhzcWCc8MPXKjrEz8J1qu4Y8YkVkDRR3JF+MprRCvF8k3gt1nrLatnwEGnY1izmg==}
     peerDependencies:
       typescript: 5.2.2
@@ -18078,11 +18182,11 @@ packages:
       typescript:
         optional: true
     dependencies:
-      '@wagmi/connectors': 3.1.2(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.2)(zod@3.21.4)
+      '@wagmi/connectors': 3.1.2(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.6)(zod@3.21.4)
       abitype: 0.8.7(typescript@5.2.2)(zod@3.21.4)
       eventemitter3: 4.0.7
       typescript: 5.2.2
-      viem: 1.16.2(typescript@5.2.2)(zod@3.21.4)
+      viem: 1.16.6(typescript@5.2.2)(zod@3.21.4)
       zustand: 4.4.1(@types/react@18.2.14)(react@18.2.0)
     transitivePeerDependencies:
       - '@react-native-async-storage/async-storage'
@@ -19527,8 +19631,8 @@ packages:
       - supports-color
     dev: true
 
-  /artillery-plugin-apdex@1.0.0:
-    resolution: {integrity: sha512-Ki2tWv+kK2ed6leSr1D4Ng8uZy/vQHBoXpeL/teB5QGa2lVPNwRLZGJMXeMHAMPrO4lsR8K/PyZ/SbMWxuIZjw==}
+  /artillery-plugin-apdex@1.0.1:
+    resolution: {integrity: sha512-hXYHzkTv3RvapSBuO6YBjIvpsKhngrhBDLfiLuR9NoQhPpOO87K0TAKc9Tt73P36eOH1MOA/D5RCg5Bh1sbH8g==}
     dev: true
 
   /artillery-plugin-ensure@1.2.0:
@@ -19561,14 +19665,16 @@ packages:
       - supports-color
     dev: true
 
-  /artillery-plugin-publish-metrics@2.7.0:
-    resolution: {integrity: sha512-c9tTHGODvvmiCMobQI02fTaiJPfihZEi2Avb4lHgLXic0TS69W6VqoHnKOXm+7DseUuc4KOPZ5wEx7MoX7IBUw==}
+  /artillery-plugin-publish-metrics@2.8.0:
+    resolution: {integrity: sha512-EqC3S2fNNJeHmxGMblWSP3Cwc/R7EDTo96o2qO0TPWxztasDEJbQgxUgKXSgAY1dadZAZ5TJDrwPPBlQz3xMEQ==}
     dependencies:
       '@aws-sdk/client-cloudwatch': 3.393.0
       '@opentelemetry/api': 1.6.0
+      '@opentelemetry/context-async-hooks': 1.18.1(@opentelemetry/api@1.6.0)
       '@opentelemetry/exporter-metrics-otlp-grpc': 0.41.2(@opentelemetry/api@1.6.0)
       '@opentelemetry/exporter-metrics-otlp-http': 0.41.2(@opentelemetry/api@1.6.0)
       '@opentelemetry/exporter-metrics-otlp-proto': 0.41.2(@opentelemetry/api@1.6.0)
+      '@opentelemetry/exporter-trace-otlp-grpc': 0.43.0(@opentelemetry/api@1.6.0)
       '@opentelemetry/exporter-trace-otlp-http': 0.41.2(@opentelemetry/api@1.6.0)
       '@opentelemetry/exporter-trace-otlp-proto': 0.41.2(@opentelemetry/api@1.6.0)
       '@opentelemetry/exporter-zipkin': 1.17.0(@opentelemetry/api@1.6.0)
@@ -19600,8 +19706,8 @@ packages:
     engines: {node: '>= 18.16.1'}
     hasBin: true
     dependencies:
-      '@artilleryio/int-commons': 2.0.1
-      '@artilleryio/int-core': 2.1.0
+      '@artilleryio/int-commons': 2.0.2
+      '@artilleryio/int-core': 2.2.0
       '@artilleryio/platform-fargate': 2.0.0(@types/node@18.17.5)(typescript@5.2.2)
       '@aws-sdk/credential-providers': 3.391.0
       '@oclif/core': 2.11.8(@types/node@18.17.5)(typescript@5.2.2)
@@ -19609,11 +19715,11 @@ packages:
       '@oclif/plugin-not-found': 2.3.37(@types/node@18.17.5)(typescript@5.2.2)
       archiver: 5.3.2
       artillery-engine-playwright: 0.3.1
-      artillery-plugin-apdex: 1.0.0
+      artillery-plugin-apdex: 1.0.1
       artillery-plugin-ensure: 1.2.0
       artillery-plugin-expect: 2.3.2
       artillery-plugin-metrics-by-endpoint: 1.2.0
-      artillery-plugin-publish-metrics: 2.7.0
+      artillery-plugin-publish-metrics: 2.8.0
       async: 2.6.4
       aws-sdk: 2.1438.0
       chalk: 2.4.2
@@ -37906,8 +38012,8 @@ packages:
       - utf-8-validate
       - zod
 
-  /viem@1.16.2(typescript@5.2.2)(zod@3.21.4):
-    resolution: {integrity: sha512-ZQ8kemNvRVwucwcsj4/SjKohK+wZv9Vxx/gXAlwqGMCW7r+niOeECtFku/1L7UPTmPgdmq4kic9R71t6XQDmGw==}
+  /viem@1.16.6(typescript@5.2.2)(zod@3.21.4):
+    resolution: {integrity: sha512-jcWcFQ+xzIfDwexwPJRvCuCRJKEkK9iHTStG7mpU5MmuSBpACs4nATBDyXNFtUiyYTFzLlVEwWkt68K0nCSImg==}
     peerDependencies:
       typescript: 5.2.2
     peerDependenciesMeta:
@@ -38127,7 +38233,7 @@ packages:
       - zod
     dev: false
 
-  /wagmi@1.4.3(@types/react@18.2.14)(react-dom@18.2.0)(react-native@0.72.5)(react@18.2.0)(typescript@5.2.2)(viem@1.16.2):
+  /wagmi@1.4.3(@types/react@18.2.14)(react-dom@18.2.0)(react-native@0.72.5)(react@18.2.0)(typescript@5.2.2)(viem@1.16.6):
     resolution: {integrity: sha512-3LjbqqVRe6WW/WD07QCd5Itmo4nUfLsXuoc8F7nw9NslNUg8SFEb+g/jZ4665V0xh5ZRqPBJ7XOXASpdM2Y/5Q==}
     peerDependencies:
       react: '>=17.0.0'
@@ -38140,12 +38246,12 @@ packages:
       '@tanstack/query-sync-storage-persister': 4.27.1
       '@tanstack/react-query': 4.28.0(react-dom@18.2.0)(react-native@0.72.5)(react@18.2.0)
       '@tanstack/react-query-persist-client': 4.28.0(@tanstack/react-query@4.28.0)
-      '@wagmi/core': 1.4.3(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.2)(zod@3.21.4)
+      '@wagmi/core': 1.4.3(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.6)(zod@3.21.4)
       abitype: 0.8.7(typescript@5.2.2)(zod@3.21.4)
       react: 18.2.0
       typescript: 5.2.2
       use-sync-external-store: 1.2.0(react@18.2.0)
-      viem: 1.16.2(typescript@5.2.2)(zod@3.21.4)
+      viem: 1.16.6(typescript@5.2.2)(zod@3.21.4)
     transitivePeerDependencies:
       - '@react-native-async-storage/async-storage'
       - '@types/react'
@@ -38160,7 +38266,7 @@ packages:
       - zod
     dev: true
 
-  /wagmi@1.4.3(@types/react@18.2.14)(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2)(viem@1.16.2)(zod@3.21.4):
+  /wagmi@1.4.3(@types/react@18.2.14)(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2)(viem@1.16.6)(zod@3.21.4):
     resolution: {integrity: sha512-3LjbqqVRe6WW/WD07QCd5Itmo4nUfLsXuoc8F7nw9NslNUg8SFEb+g/jZ4665V0xh5ZRqPBJ7XOXASpdM2Y/5Q==}
     peerDependencies:
       react: '>=17.0.0'
@@ -38173,12 +38279,12 @@ packages:
       '@tanstack/query-sync-storage-persister': 4.27.1
       '@tanstack/react-query': 4.28.0(react-dom@18.2.0)(react-native@0.72.5)(react@18.2.0)
       '@tanstack/react-query-persist-client': 4.28.0(@tanstack/react-query@4.28.0)
-      '@wagmi/core': 1.4.3(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.2)(zod@3.21.4)
+      '@wagmi/core': 1.4.3(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.6)(zod@3.21.4)
       abitype: 0.8.7(typescript@5.2.2)(zod@3.21.4)
       react: 18.2.0
       typescript: 5.2.2
       use-sync-external-store: 1.2.0(react@18.2.0)
-      viem: 1.16.2(typescript@5.2.2)(zod@3.21.4)
+      viem: 1.16.6(typescript@5.2.2)(zod@3.21.4)
     transitivePeerDependencies:
       - '@react-native-async-storage/async-storage'
       - '@types/react'

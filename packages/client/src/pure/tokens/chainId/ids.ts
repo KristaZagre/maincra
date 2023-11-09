@@ -1,5 +1,5 @@
 import type { getTokenIdsByChainId } from '@sushiswap/tokens-api/lib/api.js'
-import { TokenIdsApiSchema } from '@sushiswap/tokens-api/lib/schemas/chainId/ids'
+import { TokenIdsApiSchema } from '@sushiswap/tokens-api/lib/schemas/chainId/ids.js'
 
 import { TOKENS_API } from '../../../constants.js'
 import { type GetApiInputFromOutput } from '../../../types.js'

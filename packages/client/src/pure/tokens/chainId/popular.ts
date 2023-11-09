@@ -1,5 +1,5 @@
 import type { getPopularTokens as _getPopularTokens } from '@sushiswap/tokens-api/lib/api.js'
-import { PopularTokensApiSchema } from '@sushiswap/tokens-api/lib/schemas/chainId/popular'
+import { PopularTokensApiSchema } from '@sushiswap/tokens-api/lib/schemas/chainId/popular.js'
 
 import { TOKENS_API } from '../../../constants.js'
 import { type GetApiInputFromOutput } from '../../../types.js'

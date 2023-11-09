@@ -1,6 +1,6 @@
 import type {} from '@sushiswap/database'
 import type { getEarnPools as getEarnPoolsOriginal } from '@sushiswap/pools-api/lib/api/index.js'
-import { PoolsApiSchema } from '@sushiswap/pools-api/lib/schemas/pools'
+import { PoolsApiSchema } from '@sushiswap/pools-api/lib/schemas/pools.js'
 
 import { POOL_API } from '../../constants.js'
 import { parseArgs } from '../../functions.js'

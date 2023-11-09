@@ -2,8 +2,7 @@ import { getPools, getTokenPricesChain } from '@sushiswap/client'
 import { Prisma, SteerStrategy, VaultState } from '@sushiswap/database'
 import {
   STEER_ENABLED_NETWORKS,
-  STEER_SUBGRAPGH_NAME,
-  SUBGRAPH_HOST,
+  STEER_SUBGRAPH_URL,
   SteerChainId,
 } from '@sushiswap/graph-config'
 import {
@@ -13,13 +12,14 @@ import {
 import { TickMath } from '@sushiswap/v3-sdk'
 import { isPromiseFulfilled } from 'sushi'
 import { getIdFromChainIdAddress } from 'sushi/format'
-import { Address } from 'viem'
 
 import { getBuiltGraphSDK } from '../.graphclient/index.js'
 import { updatePoolsWithSteerVaults } from './etl/pool/load.js'
 import { upsertVaults } from './etl/steer/load.js'
 
 export async function steer() {
+  console.log('Starting steer')
+
   try {
     const startTime = performance.now()
     const chainsWithVaults = await extract()
@@ -42,8 +42,7 @@ export async function steer() {
 
 async function extractChain(chainId: SteerChainId) {
   const sdk = getBuiltGraphSDK({
-    host: SUBGRAPH_HOST[chainId],
-    name: STEER_SUBGRAPGH_NAME[chainId],
+    url: STEER_SUBGRAPH_URL[chainId],
   })
 
   const prices = await getTokenPricesChain({ chainId })
@@ -81,7 +80,7 @@ async function extractChain(chainId: SteerChainId) {
       const [payloadP, aprP] = await Promise.allSettled([
         getSteerStrategyPayload({ payloadHash: vault.payloadIpfs }),
         getSteerVaultAprs({
-          vaultId: getIdFromChainIdAddress(chainId, vault.id as Address),
+          vaultId: getIdFromChainIdAddress(chainId, vault.id as `0x${string}`),
         }),
       ])
 
@@ -164,6 +163,13 @@ function transform(
         TickMath.MAX_TICK,
       )
 
+      let lastAdjustmentTimestamp = Math.floor(
+        vault.payload.strategyConfigData.epochStart,
+      )
+      if (lastAdjustmentTimestamp > 1000000000000) {
+        lastAdjustmentTimestamp = Math.floor(lastAdjustmentTimestamp / 1000)
+      }
+
       return {
         id: `${chainId}:${vault.id}`.toLowerCase(),
         address: vault.id.toLowerCase(),
@@ -207,9 +213,7 @@ function transform(
         adjustmentFrequency: Number(
           vault.payload.strategyConfigData.epochLength,
         ),
-        lastAdjustmentTimestamp: Math.floor(
-          vault.payload.strategyConfigData.epochStart,
-        ),
+        lastAdjustmentTimestamp,
 
         admin: vault.strategyToken.admin,
         creator: vault.strategyToken.creator.id,

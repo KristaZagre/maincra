@@ -1,5 +1,5 @@
 import type { getToken as _getToken } from '@sushiswap/tokens-api/lib/api.js'
-import { TokenApiSchema } from '@sushiswap/tokens-api/lib/schemas/chainId/address'
+import { TokenApiSchema } from '@sushiswap/tokens-api/lib/schemas/chainId/address.js'
 import type { ChainId } from 'sushi/chain'
 
 import { TOKENS_API } from '../../../constants.js'
