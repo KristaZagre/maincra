@@ -14,7 +14,7 @@ export default async function MigratePage({
   params,
 }: { params: { id: string } }) {
   // TODO: Validate id
-  const pool = await getPool(
+  const { success, data: pool } = await getPool(
     { id: params.id as ID },
     { next: { revalidate: 60 } },
   )

@@ -7,6 +7,6 @@ export const usePool = (args: PoolArgs, queryParams?: QueryParams<Pool>) => {
   return useQuery({
     ...queryParams,
     queryKey: [getPoolUrl(args)],
-    queryFn: () => getPool(args),
+    queryFn: () => getPool(args).then((data) => data.data),
   })
 }
