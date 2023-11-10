@@ -1,28 +1,56 @@
 'use client'
 
-import stringify from 'fast-json-stable-stringify'
-import { FC } from 'react'
-import useSWR from 'swr'
+import { FC, useMemo } from 'react'
 
+import {
+  AnalyticsBucket,
+  AnalyticsBucketGranularity,
+} from '@sushiswap/rockset-client'
+import { useAnalyticBuckets } from 'lib/flair/hooks/analytics/buckets/buckets'
 import { SUPPORTED_CHAIN_IDS } from '../../config'
 import { TVLChart } from './tvl-chart'
 import { VolumeChart } from './volume-chart'
 
-const fetcher = ({ url }: { url: string }) => {
-  const _url = new URL(url, window.location.origin)
-  _url.searchParams.set('networks', stringify(SUPPORTED_CHAIN_IDS))
-
-  return fetch(_url.href)
-    .then((res) => res.json())
-    .catch((e) => console.log(stringify(e)))
-}
-
 export const GlobalStatsCharts: FC = () => {
-  const { data } = useSWR({ url: '/analytics/api/charts' }, fetcher)
+  const { data, isLoading } = useAnalyticBuckets({
+    granularity: AnalyticsBucketGranularity.DAY,
+    chainIds: SUPPORTED_CHAIN_IDS,
+  })
+  const transformedData = useMemo(
+    () => (!isLoading && data !== undefined ? convertData(data) : []),
+    [isLoading, data],
+  )
+  console.log({ transformedData })
+
   return (
     <section className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-      <TVLChart x={data?.[0]?.[0]} y={data?.[0]?.[1]} />
-      <VolumeChart x={data?.[1]?.[0]} y={data?.[1]?.[1]} />
+      <TVLChart x={transformedData?.[0]?.[0]} y={transformedData?.[0]?.[1]} />
+      <VolumeChart
+        x={transformedData?.[1]?.[0]}
+        y={transformedData?.[1]?.[1]}
+      />
     </section>
   )
+}
+
+// temporarily transforming data, should rewrite TVL/Volume charts to accept the data as is
+function convertData(inputData: AnalyticsBucket[]): number[][][] {
+  const timestamps: number[] = []
+  const liquidityValues: number[] = []
+  const volumeValues: number[] = []
+
+  for (let i = 0; i < inputData.length; i++) {
+    timestamps.push(inputData[i].timestamp)
+    if (inputData[i].liquidityUSD !== null) {
+      liquidityValues.push(inputData[i].liquidityUSD as number)
+    }
+    if (inputData[i].volumeUSD !== null) {
+      volumeValues.push(inputData[i].volumeUSD as number)
+    }
+  }
+
+  return [
+    [timestamps, liquidityValues],
+    [timestamps, volumeValues],
+  ]
 }

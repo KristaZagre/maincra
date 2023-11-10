@@ -1,9 +1,9 @@
 import { parseArgs } from '@sushiswap/client'
 import { Pool, PoolsArgs } from '@sushiswap/rockset-client'
-import { FLAIR_API_URL } from '../common'
+import { FLAIR_POOL_API_URL } from '../common'
 
 export const getPoolsUrl = (args: PoolsArgs) => {
-  return `${FLAIR_API_URL}/pools${parseArgs(args)}`
+  return `${FLAIR_POOL_API_URL}/pools${parseArgs(args)}`
 }
 
 export const getPools = async (
