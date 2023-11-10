@@ -1,4 +1,4 @@
-import { AnalyticsBucket, BucketsArgs } from '@sushiswap/rockset-client'
+import { AnalyticBucketsArgs, AnalyticToken } from '@sushiswap/rockset-client'
 import { useQuery } from '@tanstack/react-query'
 import type { QueryParams } from 'lib/flair/hooks/common'
 import {
@@ -7,8 +7,8 @@ import {
 } from '../../../fetchers/analytics/buckets/buckets'
 
 export const useAnalyticBuckets = (
-  args: BucketsArgs,
-  queryParams?: QueryParams<AnalyticsBucket[]>,
+  args: AnalyticBucketsArgs,
+  queryParams?: QueryParams<AnalyticToken[]>,
 ) => {
   return useQuery({
     ...queryParams,

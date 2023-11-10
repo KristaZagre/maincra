@@ -3,7 +3,7 @@
 import { FC, useMemo } from 'react'
 
 import {
-  AnalyticsBucket,
+  AnalyticToken,
   AnalyticsBucketGranularity,
 } from '@sushiswap/rockset-client'
 import { useAnalyticBuckets } from 'lib/flair/hooks/analytics/buckets/buckets'
@@ -34,7 +34,7 @@ export const GlobalStatsCharts: FC = () => {
 }
 
 // temporarily transforming data, should rewrite TVL/Volume charts to accept the data as is
-function convertData(inputData: AnalyticsBucket[]): number[][][] {
+function convertData(inputData: AnalyticToken[]): number[][][] {
   const timestamps: number[] = []
   const liquidityValues: number[] = []
   const volumeValues: number[] = []

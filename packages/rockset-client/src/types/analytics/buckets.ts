@@ -8,7 +8,7 @@ export enum AnalyticsBucketGranularity {
   MONTH = 'month',
 }
 
-export const bucketsInputSchema = z.object({
+export const analyticBucketsInputSchema = z.object({
   granularity: z.nativeEnum(AnalyticsBucketGranularity),
   chainIds: cz
     .commaArray()
@@ -16,7 +16,7 @@ export const bucketsInputSchema = z.object({
     .optional(),
 })
 
-export type BucketsArgs = GetApiInputFromOutput<
-  typeof bucketsInputSchema['_input'],
-  typeof bucketsInputSchema['_output']
+export type AnalyticBucketsArgs = GetApiInputFromOutput<
+  typeof analyticBucketsInputSchema['_input'],
+  typeof analyticBucketsInputSchema['_output']
 >

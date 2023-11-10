@@ -1,5 +1,5 @@
 import {
-  bucketsInputSchema,
+  analyticBucketsInputSchema,
   processArray,
   processBucket,
 } from '@sushiswap/rockset-client'
@@ -8,7 +8,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { CORS } from '../cors'
 
 export async function GET(request: NextRequest) {
-  const parsedParams = bucketsInputSchema.safeParse({
+  const parsedParams = analyticBucketsInputSchema.safeParse({
     ...Object.fromEntries(request.nextUrl.searchParams),
   })
 
@@ -32,10 +32,10 @@ export async function GET(request: NextRequest) {
         JOIN
             entities p ON ps.poolId = p.entityId
         WHERE
-            ps.namespace = 'sushiswap-dev'
+            ps.namespace = '${process.env.ROCKSET_ENV}'
             AND ps.entityType = 'PoolStat'
             AND ps.granularity = 'day'
-            AND p.namespace = 'sushiswap-dev'
+           AND p.namespace = '${process.env.ROCKSET_ENV}'
             AND p.entityType = 'Pool'
             AND p.isWhitelisted = true
             ${chainIds ? `AND p.chainId IN (${chainIds.join(', ')})` : ''}
