@@ -1,4 +1,5 @@
 import {
+  TransactionType,
   processArray,
   processTransaction,
   transactionsInputSchema,
@@ -27,7 +28,7 @@ export async function GET(
       SELECT
         chainId,
         txHash,
-        user as maker,
+        ${parsedParams.data.type === TransactionType.SWAPS ? 'txFrom' : 'user'} as maker,
         amount0,
         amount1,
         amountUSD,
