@@ -65,7 +65,7 @@ export const PoolsTable: FC<PositionsTableProps> = ({ onRowClick }) => {
       isIncentivized: farmsOnly || undefined, // will filter farms out if set to false, undefined will be filtered out by the parser
       isWhitelisted: true, // can be added to filters later, need to put it here so fallback works
       orderBy: sorting[0]?.id as PoolsOrderBy,
-      orderDir: sorting[0] ? (sorting[0].desc ? 'ASC' : 'ASC') : 'DESC',
+      orderDir: sorting[0] ? (sorting[0].desc ? 'DESC' : 'ASC') : 'DESC',
       protocols,
     }
     // }, [chainIds, tokenSymbols, protocols, farmsOnly, sorting])

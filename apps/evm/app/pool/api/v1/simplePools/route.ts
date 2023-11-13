@@ -95,7 +95,7 @@ export async function GET(request: NextRequest) {
               )}) AND t1.symbol IN (${symbols.map((s) => `'${s}'`)}))`
           : ''
       }
-      ORDER BY ${orderBy} ${parsedParams.data.orderDir}
+      ORDER BY (CASE WHEN ${orderBy} IS NULL THEN 0 ELSE ${orderBy} END) ${parsedParams.data.orderDir}
       OFFSET ${parsedParams.data.pageIndex * parsedParams.data.pageSize} ROWS 
       FETCH NEXT ${parsedParams.data.pageSize} ROWS ONLY;
       `,
