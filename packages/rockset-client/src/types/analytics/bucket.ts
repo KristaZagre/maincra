@@ -12,7 +12,7 @@ export const transformBucket = (input: z.infer<typeof bucketOutputSchema>) => {
   return input
 }
 
-export type AnalyticsBucket = ReturnType<typeof transformBucket>
+export type AnalyticBucket = ReturnType<typeof transformBucket>
 
 export const processBucket = (input: unknown) => {
   const parsed = bucketOutputSchema.safeParse(input)

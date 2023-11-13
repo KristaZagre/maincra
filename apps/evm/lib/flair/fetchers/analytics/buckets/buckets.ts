@@ -1,5 +1,5 @@
 import { parseArgs } from '@sushiswap/client'
-import { AnalyticBucketsArgs, AnalyticToken } from '@sushiswap/rockset-client'
+import { AnalyticBucket, AnalyticBucketsArgs } from '@sushiswap/rockset-client'
 import { FLAIR_ANALYTICS_API_URL } from 'lib/flair/fetchers/common'
 
 export const getBucketsUrl = (args: AnalyticBucketsArgs) => {
@@ -9,7 +9,7 @@ export const getBucketsUrl = (args: AnalyticBucketsArgs) => {
 export const getBuckets = async (
   args: AnalyticBucketsArgs,
   init?: RequestInit,
-): Promise<AnalyticToken[]> => {
+): Promise<AnalyticBucket[]> => {
   const url = getBucketsUrl(args)
   return fetch(url, init).then((data) => data.json())
 }
