@@ -1,6 +1,3 @@
-import { routeProcessor2Abi } from 'sushi/abi'
-import { ChainId } from 'sushi/chain'
-import { Native, Token } from 'sushi/currency'
 import {
   Extractor,
   FactoryV2,
@@ -17,7 +14,7 @@ import {
   Router,
 } from '@sushiswap/router'
 import { BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
-import { getBigInt, RouteStatus } from '@sushiswap/tines'
+import { RouteStatus, getBigInt } from '@sushiswap/tines'
 import {
   SUSHISWAP_V2_FACTORY_ADDRESS,
   SUSHISWAP_V2_INIT_CODE_HASH,
@@ -26,14 +23,19 @@ import {
   POOL_INIT_CODE_HASH,
   SUSHISWAP_V3_FACTORY_ADDRESS,
   SUSHISWAP_V3_INIT_CODE_HASH,
+  SUSHISWAP_V3_TICK_LENS,
   SushiSwapV3ChainId,
 } from '@sushiswap/v3-sdk'
 import { config } from '@sushiswap/viem-config'
-import { Address, createPublicClient, http, Transport } from 'viem'
+import { routeProcessor2Abi } from 'sushi/abi'
+import { ChainId } from 'sushi/chain'
+import { Native, Token } from 'sushi/currency'
+import { http, Address, Transport, createPublicClient } from 'viem'
 import {
-  arbitrum,
-  celo,
   Chain,
+  arbitrum,
+  arbitrumNova,
+  celo,
   mainnet,
   optimism,
   polygon,
@@ -44,6 +46,8 @@ export const RP3Address = {
   [ChainId.ETHEREUM]: '0x827179dD56d07A7eeA32e3873493835da2866976' as Address,
   [ChainId.POLYGON]: '0x0a6e511Fe663827b9cA7e2D2542b20B37fC217A6' as Address,
   [ChainId.ARBITRUM]: '0xfc506AaA1340b4dedFfd88bE278bEe058952D674' as Address,
+  [ChainId.ARBITRUM_NOVA]:
+    '0x05689fCfeE31FCe4a67FbC7Cab13E74F80A4E288' as Address,
   [ChainId.OPTIMISM]: '0x4C5D5234f232BD2D76B96aA33F5AE4FCF0E4BFAb' as Address,
   [ChainId.CELO]: '0x2f686751b19a9d91cc3d57d90150Bc767f050066' as Address,
   [ChainId.POLYGON_ZKEVM]:
@@ -189,8 +193,8 @@ async function startInfinitTest(args: {
       nativeProvider
         .getCurrentPoolList()
         .forEach((p) => poolMap.set(p.pool.address, p))
-      const fromToken = Native.onChain(chainId),
-        toToken = tokens[i]
+      const fromToken = Native.onChain(chainId)
+      const toToken = tokens[i]
       const route = Router.findBestRoute(
         poolMap,
         chainId,
@@ -257,7 +261,7 @@ async function startInfinitTest(args: {
   }
 }
 
-it.skip('Extractor Ethereum infinit work test', async () => {
+it.skip('Extractor Ethereum infinite work test', async () => {
   await startInfinitTest({
     providerURL: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
     chain: mainnet,
@@ -272,7 +276,7 @@ it.skip('Extractor Ethereum infinit work test', async () => {
   })
 })
 
-it.skip('Extractor Polygon infinit work test', async () => {
+it.skip('Extractor Polygon infinite work test', async () => {
   await startInfinitTest({
     providerURL: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`,
     chain: polygon,
@@ -295,9 +299,11 @@ it.skip('Extractor Polygon infinit work test', async () => {
   })
 })
 
-it.skip('Extractor Arbitrum infinit work test', async () => {
+// const drpcId = process.env['DRPC_ID'] || process.env['NEXT_PUBLIC_DRPC_ID']
+it.skip('Extractor Arbitrum infinite work test', async () => {
   await startInfinitTest({
     providerURL: `https://arb-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`,
+    //providerURL: `https://lb.drpc.org/ogrpc?network=arbitrum&dkey=${drpcId}`,
     chain: arbitrum,
     factoriesV2: [],
     factoriesV3: [uniswapV3Factory(ChainId.ARBITRUM)],
@@ -310,7 +316,23 @@ it.skip('Extractor Arbitrum infinit work test', async () => {
   })
 })
 
-it.skip('Extractor Optimism infinit work test', async () => {
+it.skip('Extractor Arbitrum Nova infinite work test', async () => {
+  await startInfinitTest({
+    providerURL: `https://lb.drpc.org/ogrpc?network=arbitrum-nova&dkey=${drpcId}`,
+    chain: arbitrumNova,
+    factoriesV2: [sushiswapV2Factory(ChainId.ARBITRUM_NOVA)],
+    factoriesV3: [sushiswapV3Factory(ChainId.ARBITRUM_NOVA)],
+    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.ARBITRUM_NOVA],
+    cacheDir: './cache',
+    logDepth: 300,
+    logging: true,
+    logType: LogFilterType.Native,
+    RP3Address: RP3Address[ChainId.ARBITRUM_NOVA],
+    account: '0xc882b111a75c0c657fc507c04fbfcd2cc984f071',
+  })
+})
+
+it.skip('Extractor Optimism infinite work test', async () => {
   await startInfinitTest({
     providerURL: `https://opt-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`,
     chain: optimism,
@@ -325,7 +347,7 @@ it.skip('Extractor Optimism infinit work test', async () => {
   })
 })
 
-it.skip('Extractor Celo infinit work test', async () => {
+it.skip('Extractor Celo infinite work test', async () => {
   await startInfinitTest({
     providerURL: 'https://forno.celo.org',
     chain: celo,
@@ -339,7 +361,7 @@ it.skip('Extractor Celo infinit work test', async () => {
   })
 })
 
-it.skip('Extractor Polygon zkevm infinit work test', async () => {
+it.skip('Extractor Polygon zkevm infinite work test', async () => {
   await startInfinitTest({
     providerURL: `https://polygonzkevm-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`,
     chain: polygonZkEvm,
@@ -363,7 +385,7 @@ it.skip('Extractor Polygon zkevm infinit work test', async () => {
   })
 })
 
-it.skip('Extractor AVALANCH infinit work test', async () => {
+it.skip('Extractor AVALANCH infinite work test', async () => {
   await startInfinitTest({
     transport: config[ChainId.AVALANCHE].transport,
     chain: config[ChainId.AVALANCHE].chain as Chain,
@@ -386,7 +408,7 @@ it.skip('Extractor AVALANCH infinit work test', async () => {
   })
 })
 
-it.skip('Extractor Base infinit work test', async () => {
+it.skip('Extractor Base infinite work test', async () => {
   await startInfinitTest({
     ...config[ChainId.BASE],
     chain: config[ChainId.BASE].chain as Chain,

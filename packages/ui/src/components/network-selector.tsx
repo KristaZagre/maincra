@@ -10,7 +10,7 @@ import {
   CommandInput,
   CommandItem,
 } from './command'
-import { NetworkIcon } from './icons/NetworkIcon'
+import { NetworkIcon } from './icons'
 import { Popover, PopoverContent, PopoverPrimitive } from './popover'
 
 export type NetworkSelectorOnSelectCallback<T extends number = ChainId> = (
@@ -23,8 +23,12 @@ const PREFERRED_CHAINID_ORDER: ChainId[] = [
   ChainId.ARBITRUM,
   ChainId.BASE,
   ChainId.POLYGON,
-  ChainId.LINEA,
+  ChainId.POLYGON_ZKEVM,
+  ChainId.SCROLL,
   ChainId.OPTIMISM,
+  ChainId.LINEA,
+  ChainId.CORE,
+  ChainId.FILECOIN,
   ChainId.BSC,
   ChainId.THUNDERCORE,
   ChainId.GNOSIS,
@@ -41,7 +45,7 @@ export interface NetworkSelectorProps<T extends number = ChainId> {
   children: ReactNode
 }
 
-const NEW_CHAINS: number[] = [ChainId.LINEA] satisfies ChainId[]
+const NEW_CHAINS: number[] = [ChainId.FILECOIN] satisfies ChainId[]
 
 const NetworkSelector = <T extends number>({
   onSelect,
@@ -62,11 +66,15 @@ const NetworkSelector = <T extends number>({
       <PopoverPrimitive.Trigger asChild>{children}</PopoverPrimitive.Trigger>
       <PopoverContent className="!w-60 !p-0 !overflow-x-hidden !overflow-y-scroll scroll">
         <Command>
-          <CommandInput placeholder="Search network" />
+          <CommandInput
+            testdata-id="network-selector-input"
+            placeholder="Search network"
+          />
           <CommandEmpty>No network found.</CommandEmpty>
           <CommandGroup>
             {_networks.map((el) => (
               <CommandItem
+                className="cursor-pointer"
                 testdata-id={`network-selector-${el}`}
                 value={`${Chain.from(el)?.name}__${el}`}
                 key={el}

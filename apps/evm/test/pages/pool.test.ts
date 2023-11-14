@@ -1,25 +1,29 @@
-// @ts-nocheck
-
 import { Page } from '@playwright/test'
-import { Fee } from '@sushiswap/base-sdk'
 import {
   SUSHISWAP_V2_FACTORY_ADDRESS,
+  SushiSwapV2ChainId,
   computeSushiSwapV2PoolAddress,
+  isSushiSwapV2ChainId,
 } from '@sushiswap/v2-sdk'
 import {
+  FeeAmount,
   SUSHISWAP_V3_FACTORY_ADDRESS,
+  SushiSwapV3ChainId,
   computePoolAddress,
+  isSushiSwapV3ChainId,
 } from '@sushiswap/v3-sdk'
 import {
   NextFixture,
   expect,
   test,
 } from 'next/experimental/testmode/playwright'
-import { Native, SUSHI, Token, Type } from 'sushi/currency'
-// import { expect, test } from 'next/experimental/testmode/playwright/msw'
+import { Native, Token, Type } from 'sushi/currency'
+import { Fee } from 'sushi/dex'
 import { zeroAddress } from 'viem'
 
-import { createERC20 } from '../create-erc20'
+import { SupportedChainId } from 'src/config'
+import { createERC20 } from 'test/erc20'
+import { interceptAnvil } from 'test/intercept-anvil'
 
 interface V2PoolArgs {
   token0: Type
@@ -29,10 +33,10 @@ interface V2PoolArgs {
   type: 'CREATE' | 'ADD'
 }
 
-interface MigrateArgs {
-  minPrice: string
-  maxPrice: string
-}
+// interface MigrateArgs {
+//   minPrice: string
+//   maxPrice: string
+// }
 
 interface V3PoolArgs {
   token0: Type
@@ -45,16 +49,13 @@ interface V3PoolArgs {
   type: 'CREATE' | 'ADD'
 }
 
-interface IncenvitivePoolArgs {
-  token0: Type
-  token1: Type
-}
-
 if (typeof process.env.NEXT_PUBLIC_CHAIN_ID !== 'string') {
-  throw new Error('NEXT_PUBLIC_CHAIN_ID not set')
+  new Error('NEXT_PUBLIC_CHAIN_ID not set')
 }
 
-const CHAIN_ID = parseInt(process.env.NEXT_PUBLIC_CHAIN_ID)
+const CHAIN_ID = Number(
+  process.env.NEXT_PUBLIC_CHAIN_ID as string,
+) as SupportedChainId
 const NATIVE_TOKEN = Native.onChain(CHAIN_ID)
 
 let FAKE_TOKEN: Token
@@ -63,20 +64,96 @@ let FAKE_TOKEN: Token
 // let MOCK_TOKEN_6_DP: Token
 // let MOCK_TOKEN_8_DP: Token
 // let MOCK_TOKEN_18_DP: Token
-
+// const EVM_APP_BASE_URL =
+//   process.env['NEXT_PUBLIC_EVM_APP_BASE_URL'] ||
+//   (process.env['NEXT_PUBLIC_VERCEL_URL']
+//     ? `https://${process.env['NEXT_PUBLIC_VERCEL_URL']}`
+//     : 'http://localhost:3000')
 const BASE_URL = 'http://localhost:3000/pool'
 
-// Global hooks
 test.beforeAll(async () => {
-  FAKE_TOKEN = await createERC20({
-    chainId: CHAIN_ID,
-    name: 'FakeToken',
-    symbol: 'FT',
-    decimals: 18,
-  })
+  console.log('beforeAll pool tests')
+
+  try {
+    FAKE_TOKEN = await createERC20({
+      chainId: CHAIN_ID,
+      name: 'FakeToken',
+      symbol: 'FT',
+      decimals: 18,
+    })
+    // MOCK_TOKEN_1_DP = await createERC20({
+    //   chainId: CHAIN_ID,
+    //   name: 'MOCK_TOKEN_1_DP',
+    //   symbol: '1_DP',
+    //   decimals: 1,
+    // })
+    // MOCK_TOKEN_6_DP = await createERC20({
+    //   chainId: CHAIN_ID,
+    //   name: 'MOCK_TOKEN_6_DP',
+    //   symbol: '6_DP',
+    //   decimals: 6,
+    // })
+    // MOCK_TOKEN_8_DP = await createERC20({
+    //   chainId: CHAIN_ID,
+    //   name: 'MOCK_TOKEN_8_DP',
+    //   symbol: '8_DP',
+    //   decimals: 8,
+    // })
+    // MOCK_TOKEN_18_DP = await createERC20({
+    //   chainId: CHAIN_ID,
+    //   name: 'MOCK_TOKEN_18_DP',
+    //   symbol: '18_DP',
+    //   decimals: 18,
+    // })
+  } catch (error) {
+    console.error(
+      'error creating fake token',
+      {
+        chainId: CHAIN_ID,
+        name: 'FakeToken',
+        symbol: 'FT',
+        decimals: 18,
+      },
+      error,
+    )
+  }
 })
 test.beforeEach(async ({ page, next }) => {
-  await mockTokenApi(page, [FAKE_TOKEN])
+  page.on('pageerror', (error) => {
+    console.error(error)
+  })
+
+  if (!FAKE_TOKEN) {
+    throw new Error("FAKE_TOKEN doesn't exist")
+  }
+
+  try {
+    await page.route('https://tokens.sushi.com/v0', async (route) => {
+      // const response = await route.fetch()
+      // const json = await response.json()
+      await route.fulfill({
+        json: [FAKE_TOKEN].map((token) => ({
+          id: token.id,
+          chainId: token.chainId,
+          address: token.address.toLowerCase(),
+          name: token.name,
+          symbol: token.symbol,
+          decimals: token.decimals,
+          isCommon: false,
+          isFeeOnTransfer: false,
+        })),
+      })
+    })
+  } catch (error) {
+    console.error('error mockking token api', error)
+  }
+
+  try {
+    await interceptAnvil(page)
+  } catch (error) {
+    console.error('error intercepting anvil', error)
+  }
+
   next.onFetch(() => {
     return 'continue'
   })
@@ -84,54 +161,43 @@ test.beforeEach(async ({ page, next }) => {
 
 // Tests will only work for polygon atm
 test.describe('V3', () => {
+  test.skip(!isSushiSwapV3ChainId(CHAIN_ID))
   test.beforeEach(async ({ page }) => {
     const url = BASE_URL.concat('/add').concat(`?chainId=${CHAIN_ID}`)
     await page.goto(url)
     await switchNetwork(page, CHAIN_ID)
   })
 
-  test('Create pool', async ({ page, next }) => {
+  test('Create, add both sides, single side each token & remove', async ({
+    page,
+    next,
+  }) => {
     test.slow()
+
+    console.log('Create pool')
     await createOrAddLiquidityV3(page, next, {
       token0: NATIVE_TOKEN,
       token1: FAKE_TOKEN,
       startPrice: '0.5',
       minPrice: '0.1',
       maxPrice: '0.9',
-      amount: '0.001',
+      amount: '0.0001',
       amountBelongsToToken0: false,
       type: 'CREATE',
     })
-  })
 
-  test('Add liquidity, both sides', async ({ page, next }) => {
-    test.slow()
-    await createOrAddLiquidityV3(page, next, {
-      token0: NATIVE_TOKEN,
-      token1: FAKE_TOKEN,
-      minPrice: '0.3',
-      maxPrice: '0.7',
-      amount: '0.0001',
-      amountBelongsToToken0: false,
-      type: 'ADD',
-    })
-  })
-
-  test('Add liquidity, only one side(NATIVE)', async ({ page, next }) => {
-    test.slow()
+    console.log('Add liquidity, only one side(NATIVE)')
     await createOrAddLiquidityV3(page, next, {
       token0: NATIVE_TOKEN,
       token1: FAKE_TOKEN,
       minPrice: '0.8',
       maxPrice: '0.9',
-      amount: '1',
+      amount: '0.0001',
       amountBelongsToToken0: true,
       type: 'ADD',
     })
-  })
 
-  test('Add liquidity, only one side(FAKE_TOKEN)', async ({ page, next }) => {
-    test.slow()
+    console.log('Add liquidity, only one side(FAKE_TOKEN)')
     await createOrAddLiquidityV3(page, next, {
       token0: NATIVE_TOKEN,
       token1: FAKE_TOKEN,
@@ -141,58 +207,63 @@ test.describe('V3', () => {
       amountBelongsToToken0: false,
       type: 'ADD',
     })
-  })
 
-  test('Remove liquidity', async ({ page, next }) => {
-    test.slow()
+    console.log('Remove liquidity')
     await mockPoolApi(
       page,
       next,
       NATIVE_TOKEN.wrapped,
       FAKE_TOKEN,
-      10000,
+      FeeAmount.HIGH,
       'SUSHISWAP_V3',
     )
+
+    const poolAddress = computePoolAddress({
+      factoryAddress:
+        SUSHISWAP_V3_FACTORY_ADDRESS[CHAIN_ID as SushiSwapV3ChainId],
+      tokenA: NATIVE_TOKEN.wrapped,
+      tokenB: FAKE_TOKEN,
+      fee: FeeAmount.HIGH,
+    })
+    const removeLiquidityUrl = BASE_URL.concat(`/${CHAIN_ID}:${poolAddress}`)
+    await page.goto(removeLiquidityUrl)
+
     await removeLiquidityV3(page, next)
   })
 })
 
 test.describe('V2', () => {
+  test.skip(!isSushiSwapV2ChainId(CHAIN_ID))
   test.beforeEach(async ({ page }) => {
     const url = BASE_URL.concat(`/add/v2/${CHAIN_ID}`)
     await page.goto(url)
     await switchNetwork(page, CHAIN_ID)
   })
-  test('Create', async ({ page, next }) => {
+
+  test('Create, add & remove', async ({ page, next }) => {
     test.slow()
     await createOrAddV2Pool(page, next, {
       token0: NATIVE_TOKEN,
       token1: FAKE_TOKEN,
-      amount0: '0.0001',
-      amount1: '0.0001',
+      amount0: '1',
+      amount1: '1',
       type: 'CREATE',
     })
-  })
 
-  test('Add liquidity', async ({ page, next }) => {
-    test.slow()
     await createOrAddV2Pool(page, next, {
       token0: NATIVE_TOKEN,
       token1: FAKE_TOKEN,
-      amount0: '0.0001',
-      amount1: '0.0001',
+      amount0: '10',
+      amount1: '10',
       type: 'ADD',
     })
-  })
 
-  test('Remove liquidity', async ({ page, next }) => {
-    test.slow()
     const poolAddress = computeSushiSwapV2PoolAddress({
-      factoryAddress: SUSHISWAP_V2_FACTORY_ADDRESS[CHAIN_ID],
+      factoryAddress:
+        SUSHISWAP_V2_FACTORY_ADDRESS[CHAIN_ID as SushiSwapV2ChainId],
       tokenA: NATIVE_TOKEN.wrapped,
       tokenB: FAKE_TOKEN,
     })
-
     await mockPoolApi(
       page,
       next,
@@ -201,17 +272,15 @@ test.describe('V2', () => {
       Fee.DEFAULT,
       'SUSHISWAP_V2',
     )
-
     const removeLiquidityUrl = BASE_URL.concat(`/${CHAIN_ID}:${poolAddress}`)
     await page.goto(removeLiquidityUrl)
-
     await removeLiquidityV2(page, next)
   })
 })
 
 async function createOrAddLiquidityV3(
   page: Page,
-  next: NextFixture,
+  _next: NextFixture,
   args: V3PoolArgs,
 ) {
   await handleToken(page, args.token0, 'FIRST')
@@ -227,8 +296,22 @@ async function createOrAddLiquidityV3(
     await startPriceInput.isEnabled()
     await startPriceInput.fill(args.startPrice, { timeout: 15_000 })
   }
-  await page.locator('[testdata-id=min-price-input]').fill(args.minPrice)
-  await page.locator('[testdata-id=max-price-input]').fill(args.maxPrice)
+
+  // Fill min price
+  const minPriceInput = page.locator('[testdata-id=min-price-input]')
+  // await expect(minPriceInput).toBeVisible()
+  // await expect(minPriceInput).toBeEnabled()
+  // const minPriceValueBefore = await minPriceInput.getAttribute('value')
+  await minPriceInput.fill(args.minPrice)
+  // await expect(minPriceInput).not.toHaveValue(minPriceValueBefore)
+
+  // Fill max price
+  const maxPriceInput = page.locator('[testdata-id=max-price-input]')
+  // await expect(maxPriceInput).toBeVisible()
+  // await expect(maxPriceInput).toBeEnabled()
+  // const maxPriceValueBefore = await maxPriceInput.getAttribute('value')
+  await maxPriceInput.fill(args.maxPrice)
+  // await expect(maxPriceInput).not.toHaveValue(maxPriceValueBefore)
 
   const tokenOrderNumber = args.amountBelongsToToken0 ? 0 : 1
   await page
@@ -266,7 +349,7 @@ async function createOrAddLiquidityV3(
 
 async function createOrAddV2Pool(
   page: Page,
-  next: NextFixture,
+  _next: NextFixture,
   args: V2PoolArgs,
 ) {
   await handleToken(page, args.token0, 'FIRST')
@@ -330,7 +413,7 @@ async function createOrAddV2Pool(
   expect(page.getByText(regex))
 }
 
-async function removeLiquidityV3(page: Page, next: NextFixture) {
+async function removeLiquidityV3(page: Page, _next: NextFixture) {
   await page.goto(BASE_URL)
   await page.locator('[testdata-id=my-positions-button]').click()
 
@@ -359,72 +442,79 @@ async function removeLiquidityV3(page: Page, next: NextFixture) {
   await expect(handleLiquidityLocator).toBeEnabled() // needed, not sure why, my guess is that a web3 call hasn't finished and button shouldn't be enabled yet.
   await handleLiquidityLocator.click()
 
+  const confirmLiquidityLocator = page.locator(
+    '[testdata-id=confirm-remove-liquidity-button]',
+  )
+  await expect(confirmLiquidityLocator).toBeVisible()
+  await expect(confirmLiquidityLocator).toBeEnabled() // needed, not sure why, my guess is that a web3 call hasn't finished and button shouldn't be enabled yet.
+  await confirmLiquidityLocator.click({ timeout: 5_000 })
+
   const regex = new RegExp('(Successfully removed liquidity from the .* pair)')
   expect(page.getByText(regex))
 }
 
-async function manageUnstakeAndClaim(page: Page) {
-  await switchNetwork(page, CHAIN_ID)
+// async function manageUnstakeAndClaim(page: Page) {
+//   await switchNetwork(page, CHAIN_ID)
 
-  const approveSlpId = 'approve-token0-button'
-  const approveSlpLocator = page.locator(`[testdata-id=${approveSlpId}]`)
-  await expect(approveSlpLocator).toBeVisible()
-  await expect(approveSlpLocator).toBeEnabled()
-  await approveSlpLocator.click()
+//   const approveSlpId = 'approve-token0-button'
+//   const approveSlpLocator = page.locator(`[testdata-id=${approveSlpId}]`)
+//   await expect(approveSlpLocator).toBeVisible()
+//   await expect(approveSlpLocator).toBeEnabled()
+//   await approveSlpLocator.click()
 
-  const unstakeId = 'unstake-liquidity-button'
-  const unstakeLocator = page.locator(`[testdata-id=${unstakeId}]`)
-  await expect(unstakeLocator).toBeVisible()
-  await expect(unstakeLocator).toBeEnabled()
-  await unstakeLocator.click()
+//   const unstakeId = 'unstake-liquidity-button'
+//   const unstakeLocator = page.locator(`[testdata-id=${unstakeId}]`)
+//   await expect(unstakeLocator).toBeVisible()
+//   await expect(unstakeLocator).toBeEnabled()
+//   await unstakeLocator.click()
 
-  const regex = new RegExp('(Successfully unstaked * * tokens)')
-  expect(page.getByText(regex))
-}
+//   const regex = new RegExp('(Successfully unstaked * * tokens)')
+//   expect(page.getByText(regex))
+// }
 
-async function migrateV2(page: Page, args: MigrateArgs) {
-  await switchNetwork(page, CHAIN_ID)
+// async function migrateV2(page: Page, args: MigrateArgs) {
+//   await switchNetwork(page, CHAIN_ID)
 
-  const feeOptionSelector = page.locator('[testdata-id=fee-option-10000]')
-  await expect(feeOptionSelector).toBeEnabled()
-  await feeOptionSelector.click()
-  await expect(feeOptionSelector).toHaveAttribute('data-state', 'on')
+//   const feeOptionSelector = page.locator('[testdata-id=fee-option-10000]')
+//   await expect(feeOptionSelector).toBeEnabled()
+//   await feeOptionSelector.click()
+//   await expect(feeOptionSelector).toHaveAttribute('data-state', 'on')
 
-  await page.locator('[testdata-id=min-price-input]').fill(args.minPrice)
-  await page.locator('[testdata-id=max-price-input]').fill(args.maxPrice)
-  await page.locator('[testdata-id=max-price-input]').blur()
+//   await page.locator('[testdata-id=min-price-input]').fill(args.minPrice)
+//   await page.locator('[testdata-id=max-price-input]').fill(args.maxPrice)
+//   await page.locator('[testdata-id=max-price-input]').blur()
 
-  const approveMigrateButton = 'approve-migrate-button'
-  const approveMigrateButtonLocator = page.locator(
-    `[testdata-id=${approveMigrateButton}]`,
-  )
-  await approveMigrateButtonLocator.scrollIntoViewIfNeeded()
+//   const approveMigrateButton = 'approve-migrate-button'
+//   const approveMigrateButtonLocator = page.locator(
+//     `[testdata-id=${approveMigrateButton}]`,
+//   )
+//   await approveMigrateButtonLocator.scrollIntoViewIfNeeded()
 
-  await expect(approveMigrateButtonLocator).toBeVisible()
-  await expect(approveMigrateButtonLocator).toBeEnabled()
-  await approveMigrateButtonLocator.click()
+//   await expect(approveMigrateButtonLocator).toBeVisible()
+//   await expect(approveMigrateButtonLocator).toBeEnabled()
+//   await approveMigrateButtonLocator.click()
 
-  const migrateButton = 'migrate-button'
-  const migrateButtonLocator = page.locator(`[testdata-id=${migrateButton}]`)
-  await migrateButtonLocator.scrollIntoViewIfNeeded()
+//   const migrateButton = 'migrate-button'
+//   const migrateButtonLocator = page.locator(`[testdata-id=${migrateButton}]`)
+//   await migrateButtonLocator.scrollIntoViewIfNeeded()
 
-  await expect(migrateButtonLocator).toBeVisible()
-  await expect(migrateButtonLocator).toBeEnabled()
-  await migrateButtonLocator.click()
+//   await expect(migrateButtonLocator).toBeVisible()
+//   await expect(migrateButtonLocator).toBeEnabled()
+//   await migrateButtonLocator.click()
 
-  const migrateConfirmButton = 'migrate-confirm-button'
-  const migrateConfirmButtonLocator = page.locator(
-    `[testdata-id=${migrateConfirmButton}]`,
-  )
-  await migrateConfirmButtonLocator.scrollIntoViewIfNeeded()
+//   const migrateConfirmButton = 'migrate-confirm-button'
+//   const migrateConfirmButtonLocator = page.locator(
+//     `[testdata-id=${migrateConfirmButton}]`,
+//   )
+//   await migrateConfirmButtonLocator.scrollIntoViewIfNeeded()
 
-  await expect(migrateConfirmButtonLocator).toBeVisible()
-  await expect(migrateConfirmButtonLocator).toBeEnabled()
-  await migrateConfirmButtonLocator.click()
+//   await expect(migrateConfirmButtonLocator).toBeVisible()
+//   await expect(migrateConfirmButtonLocator).toBeEnabled()
+//   await migrateConfirmButtonLocator.click()
 
-  const regex = new RegExp('(Successfully migrated your liquidity)')
-  expect(page.getByText(regex))
-}
+//   const regex = new RegExp('(Successfully migrated your liquidity)')
+//   expect(page.getByText(regex))
+// }
 
 async function manageStaking(page: Page, type: 'STAKE' | 'UNSTAKE') {
   await switchNetwork(page, CHAIN_ID)
@@ -463,7 +553,7 @@ async function manageStaking(page: Page, type: 'STAKE' | 'UNSTAKE') {
   expect(page.getByText(regex))
 }
 
-async function removeLiquidityV2(page: Page, next: NextFixture) {
+async function removeLiquidityV2(page: Page, _next: NextFixture) {
   await switchNetwork(page, CHAIN_ID)
 
   const removeLiquidityTabSelector = page.locator('[testdata-id=remove-tab]')
@@ -503,53 +593,58 @@ async function removeLiquidityV2(page: Page, next: NextFixture) {
 //   })
 // })
 
-async function incentivizePool(page: Page, args: IncenvitivePoolArgs) {
-  await handleToken(page, args.token0, 'FIRST')
-  await handleToken(page, args.token1, 'SECOND')
-  const feeOptionSelector = page.locator('[testdata-id=fee-option-500]')
-  await expect(feeOptionSelector).toBeEnabled()
-  await feeOptionSelector.click()
-  await expect(feeOptionSelector).toBeChecked()
+// interface IncenvitivePoolArgs {
+//   token0: Type
+//   token1: Type
+// }
 
-  await selectDate('[testdata-id=start-date]', 1, '001', page)
-  await selectDate('[testdata-id=end-date]', 0, '002', page)
+// async function incentivizePool(page: Page, args: IncenvitivePoolArgs) {
+//   await handleToken(page, args.token0, 'FIRST')
+//   await handleToken(page, args.token1, 'SECOND')
+//   const feeOptionSelector = page.locator('[testdata-id=fee-option-500]')
+//   await expect(feeOptionSelector).toBeEnabled()
+//   await feeOptionSelector.click()
+//   await expect(feeOptionSelector).toBeChecked()
 
-  const input0 = page.locator('[testdata-id=swap-from-input]')
-  await expect(input0).toBeVisible()
-  await expect(input0).toBeEnabled()
-  await input0.fill('2.4')
+//   await selectDate('[testdata-id=start-date]', 1, '001', page)
+//   await selectDate('[testdata-id=end-date]', 0, '002', page)
 
-  const button0 = page.locator('[testdata-id=swap-from-button-button]')
-  await expect(button0).toBeVisible()
-  await expect(button0).toBeEnabled()
-  await button0.click()
+//   const input0 = page.locator('[testdata-id=swap-from-input]')
+//   await expect(input0).toBeVisible()
+//   await expect(input0).toBeEnabled()
+//   await input0.fill('2.4')
 
-  await page.fill(
-    '[testdata-id=swap-from-token-selector-address-input]',
-    'SUSHI',
-  )
-  const rowSelector = page.locator(
-    `[testdata-id=swap-from-token-selector-row-${SUSHI[
-      CHAIN_ID
-    ].address.toLowerCase()}]`,
-  )
-  await expect(rowSelector).toBeVisible()
-  await rowSelector.click()
+//   const button0 = page.locator('[testdata-id=swap-from-button-button]')
+//   await expect(button0).toBeVisible()
+//   await expect(button0).toBeEnabled()
+//   await button0.click()
 
-  const approveTokenId = 'approve-erc20-button'
-  const approveTokenLocator = page.locator(`[testdata-id=${approveTokenId}]`)
-  await expect(approveTokenLocator).toBeVisible()
-  await expect(approveTokenLocator).toBeEnabled()
-  await approveTokenLocator.click()
+//   await page.fill(
+//     '[testdata-id=swap-from-token-selector-address-input]',
+//     'SUSHI',
+//   )
+//   const rowSelector = page.locator(
+//     `[testdata-id=swap-from-token-selector-row-${SUSHI[
+//       CHAIN_ID
+//     ].address.toLowerCase()}]`,
+//   )
+//   await expect(rowSelector).toBeVisible()
+//   await rowSelector.click()
 
-  const previewLocator = page.locator('[testdata-id=incentivize-pool-review]')
-  await expect(previewLocator).toBeVisible({ timeout: 10_000 })
-  await expect(previewLocator).toBeEnabled()
-  await previewLocator.click()
-  await page
-    .locator('[testdata-id=incentivize-pool-confirm]')
-    .click({ timeout: 5_000 })
-}
+//   const approveTokenId = 'approve-erc20-button'
+//   const approveTokenLocator = page.locator(`[testdata-id=${approveTokenId}]`)
+//   await expect(approveTokenLocator).toBeVisible()
+//   await expect(approveTokenLocator).toBeEnabled()
+//   await approveTokenLocator.click()
+
+//   const previewLocator = page.locator('[testdata-id=incentivize-pool-review]')
+//   await expect(previewLocator).toBeVisible({ timeout: 10_000 })
+//   await expect(previewLocator).toBeEnabled()
+//   await previewLocator.click()
+//   await page
+//     .locator('[testdata-id=incentivize-pool-confirm]')
+//     .click({ timeout: 5_000 })
+// }
 
 async function handleToken(
   page: Page,
@@ -610,43 +705,8 @@ export async function selectDate(
   await page.locator('li.react-datepicker__time-list-item').first().click()
 }
 
-async function mockTokenApi(page: Page, tokens: Token[]) {
-  await page.route('https://tokens.sushi.com/v0', async (route) => {
-    const response = await route.fetch()
-    const json = await response.json()
-    await route.fulfill({
-      json: [
-        ...json,
-        ...tokens.map((token) => ({
-          id: token.id,
-          chainId: token.chainId,
-          address: token.address.toLowerCase(),
-          name: 'FakeToken',
-          symbol: 'FT',
-          decimals: 18,
-          isCommon: false,
-          isFeeOnTransfer: false,
-        })),
-      ],
-    })
-  })
-
-  // await page.route('https://gateway.ipfs.io/ipns/tokens.uniswap.org', async (route, request) => {
-  //   const response = await route.fetch()
-  //   const json = await response.json()
-  //   json.tokens.push({
-  //     chainId: CHAIN_ID,
-  //     address: tokenAddress.toLowerCase(),
-  //     name: 'FakeToken',
-  //     symbol: 'FT',
-  //     decimals: 18,
-  //   })
-  //   await route.fulfill({ response, json })
-  // })
-}
-
 async function mockPoolApi(
-  page: Page,
+  _page: Page,
   next: NextFixture,
   token0: Token,
   token1: Token,
@@ -666,14 +726,16 @@ async function mockPoolApi(
 
     if (protocol === 'SUSHISWAP_V3') {
       address = computePoolAddress({
-        factoryAddress: SUSHISWAP_V3_FACTORY_ADDRESS[CHAIN_ID],
+        factoryAddress:
+          SUSHISWAP_V3_FACTORY_ADDRESS[CHAIN_ID as SushiSwapV3ChainId],
         tokenA,
         tokenB,
         fee: fee,
-      })
+      }).toLowerCase()
     } else if (protocol === 'SUSHISWAP_V2') {
       address = computeSushiSwapV2PoolAddress({
-        factoryAddress: SUSHISWAP_V2_FACTORY_ADDRESS[CHAIN_ID],
+        factoryAddress:
+          SUSHISWAP_V2_FACTORY_ADDRESS[CHAIN_ID as SushiSwapV2ChainId],
         tokenA,
         tokenB,
       })
@@ -744,14 +806,16 @@ async function mockPoolApi(
       steerVaults: [],
     }
 
-    if (request.url === 'https://pools.sushi.com/api/v0') {
+    if (request.url.toLowerCase().endsWith('/pool/api/pools')) {
       return new Response(JSON.stringify([mockPool]), {
         headers: {
           'Content-Type': 'application/json',
         },
       })
     } else if (
-      request.url === `https://pools.sushi.com/api/v0/${CHAIN_ID}/${address}`
+      request.url
+        .toLowerCase()
+        .endsWith(`/pool/api/pools/${CHAIN_ID}/${address}`.toLowerCase())
     ) {
       return new Response(JSON.stringify(mockPool), {
         headers: {

@@ -45,6 +45,7 @@ import {
   UNI_ADDRESS,
   USDC_ADDRESS,
   USDT_ADDRESS,
+  USD_PLUS_ADDRESS,
   WBTC_ADDRESS,
   WETH9_ADDRESS,
   WNATIVE_ADDRESS,
@@ -589,6 +590,14 @@ export const WNATIVE = {
   [ChainId.ZKSYNC_ERA]: WETH9[ChainId.ZKSYNC_ERA],
   [ChainId.LINEA]: WETH9[ChainId.LINEA],
   [ChainId.BASE]: WETH9[ChainId.BASE],
+  [ChainId.SCROLL]: WETH9[ChainId.SCROLL],
+  [ChainId.FILECOIN]: new Token({
+    chainId: ChainId.FILECOIN,
+    address: WNATIVE_ADDRESS[ChainId.FILECOIN],
+    decimals: 18,
+    symbol: 'WFIL',
+    name: 'Wrapped FIL',
+  }),
 } as const
 
 export const SUSHI = addressMapToTokenMap(
@@ -618,6 +627,16 @@ export const axlUSDC: Record<keyof typeof axlUSDC_ADDRESS, Token> =
     },
     axlUSDC_ADDRESS,
   ) as Record<keyof typeof axlUSDC_ADDRESS, Token>
+
+export const USD_PLUS: Record<keyof typeof USD_PLUS_ADDRESS, Token> =
+  addressMapToTokenMap(
+    {
+      decimals: 6,
+      symbol: 'USD+',
+      name: 'USD+',
+    },
+    USD_PLUS_ADDRESS,
+  ) as Record<keyof typeof USD_PLUS_ADDRESS, Token>
 
 export const USDC: Record<keyof typeof USDC_ADDRESS, Token> = {
   ...(addressMapToTokenMap(

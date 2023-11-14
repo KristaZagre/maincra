@@ -365,6 +365,59 @@ export default [
     }
   },
   {
+    "name": "Filecoin",
+    "chain": "FIL",
+    "icon": "filecoin",
+    "rpc": [
+      "https://api.node.glif.io/",
+      "https://rpc.ankr.com/filecoin",
+      "https://filecoin-mainnet.chainstacklabs.com/rpc/v1"
+    ],
+    "faucets": [],
+    "nativeCurrency": {
+      "name": "filecoin",
+      "symbol": "FIL",
+      "decimals": 18
+    },
+    "infoURL": "https://filecoin.io",
+    "shortName": "filecoin",
+    "chainId": 314,
+    "networkId": 314,
+    "slip44": 461,
+    "explorers": [
+      {
+        "name": "Filfox",
+        "url": "https://filfox.info/en",
+        "standard": "none"
+      },
+      {
+        "name": "Beryx",
+        "url": "https://beryx.zondax.ch",
+        "standard": "none"
+      },
+      {
+        "name": "Glif Explorer",
+        "url": "https://explorer.glif.io",
+        "standard": "EIP3091"
+      },
+      {
+        "name": "Dev.storage",
+        "url": "https://dev.storage",
+        "standard": "none"
+      },
+      {
+        "name": "Filscan",
+        "url": "https://filscan.io",
+        "standard": "none"
+      },
+      {
+        "name": "Filscout",
+        "url": "https://filscout.io/en",
+        "standard": "none"
+      }
+    ]
+  },
+  {
     "chainId": 324,
     "explorers": [
       {
@@ -778,6 +831,37 @@ export default [
     },
     "name": "Mumbai",
     "shortName": "maticmum"
+  },
+  {
+    "chainId": 534352,
+    "explorers": [
+      {
+        "name": "Blockscout",
+        "url": "https://blockscout.scroll.io",
+        "standard": "EIP3091"
+      },
+      {
+        "name": "Scrollscan",
+        "url": "https://scrollscan.com",
+        "standard": "EIP3091"
+      }
+    ],
+    "nativeCurrency": {
+      "name": "Ether",
+      "symbol": "ETH",
+      "decimals": 18
+    },
+    "name": "Scroll",
+    "shortName": "scr",
+    "parent": {
+      "type": "L2",
+      "chain": "eip155-1",
+      "bridges": [
+        {
+          "url": "https://scroll.io/bridge"
+        }
+      ]
+    }
   },
   {
     "chainId": 1666600000,
