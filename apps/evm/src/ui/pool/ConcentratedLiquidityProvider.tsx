@@ -352,7 +352,7 @@ export function useConcentratedDerivedMintInfo({
       return undefined
     }
   }, [feeAmount, invalidPrice, price, tokenA, tokenB])
-
+  console.log({feeAmount})
   // if pool exists use it, if not use the mock pool
   const poolForPosition: SushiSwapV3Pool | undefined = pool ?? mockPool
 

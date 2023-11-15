@@ -5,7 +5,7 @@ import { SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import React, { FC, useMemo } from 'react'
 import { Bound } from 'src/lib/constants'
 
-import { ExtendedPool } from 'lib/hooks/api/useFlairPoolGraphData'
+import { ExtendedPool } from 'src/lib/hooks/api/useFlairPoolGraphData'
 import { useConcentratedDerivedMintInfo } from './ConcentratedLiquidityProvider'
 import LiquidityChartRangeInput from './LiquidityChartRangeInput'
 import { useDensityChartData } from './LiquidityChartRangeInput/hooks'
@@ -29,7 +29,7 @@ export const LiquidityDepthWidget: FC<LiquidityDepthWidget> = ({
     token0: pool.token0,
     token1: pool.token1,
     baseToken: pool.token0,
-    feeAmount: pool.swapFee * 1000000,
+    feeAmount: pool.feeAmount,
     existingPosition: undefined,
   })
 
@@ -37,7 +37,7 @@ export const LiquidityDepthWidget: FC<LiquidityDepthWidget> = ({
     chainId,
     token0: pool.token0,
     token1: pool.token1,
-    feeAmount: pool.swapFee * 1000000,
+    feeAmount: pool.feeAmount
   })
 
   const current = useMemo(() => {
@@ -54,7 +54,7 @@ export const LiquidityDepthWidget: FC<LiquidityDepthWidget> = ({
           chainId={chainId}
           currencyA={pool.token0}
           currencyB={pool.token1}
-          feeAmount={pool.swapFee * 1000000}
+          feeAmount={pool.feeAmount}
           ticksAtLimit={{ [Bound.LOWER]: false, [Bound.UPPER]: false }}
           price={
             price

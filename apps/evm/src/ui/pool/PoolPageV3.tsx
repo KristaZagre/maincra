@@ -1,7 +1,7 @@
 'use client'
 
 // import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
-import { CardLabel, Separator, SkeletonText, classNames } from '@sushiswap/ui'
+import { CardLabel, Container, LinkInternal, Message, Separator, SkeletonText, classNames } from '@sushiswap/ui'
 import {
   Card,
   CardContent,
@@ -29,6 +29,7 @@ import { PoolTransactionsV3 } from './PoolTransactionsV3'
 // import { PoolRewardDistributionsCard } from './PoolRewardDistributionsCard'
 import { PoolsFiltersProvider } from './PoolsFiltersProvider'
 import { StatisticsCharts } from './StatisticsChart'
+import { PoolRewardDistributionsCard } from './PoolRewardDistributionsCard'
 
 enum Granularity {
   Day = 0,
@@ -54,7 +55,7 @@ const _Pool: FC<{ pool: Pool }> = ({ pool }) => {
     chainId,
     token0: extendedPool.token0,
     token1: extendedPool.token1,
-    feeAmount: pool.swapFee * 10000000,
+    feeAmount: extendedPool.feeAmount,
   })
 
   const { data: reserves, isLoading: isReservesLoading } =
@@ -93,7 +94,25 @@ const _Pool: FC<{ pool: Pool }> = ({ pool }) => {
     )
 
   return (
+    <Container maxWidth="5xl" className="px-2 sm:px-4">
     <div className="flex flex-col gap-6">
+      {pool.hasEnabledSteerVault && (
+        <Message variant="info" size="sm">
+          {`This pool has been activated to leverage our smart pool feature. Smart pools are designed to optimize the
+      allocation of liquidity within customized price ranges, thereby improving trading efficiency. They achieve
+      this by enhancing liquidity depth around the current price, which results in higher fee earnings for liquidity
+      providers (LPs) and allows the market to dictate the distribution of LPs' positions based on rational
+      decisions.`}{' '}
+          To create a smart pool position, click{' '}
+          <LinkInternal
+            shallow={true}
+            href={`/pool/${pool.id}/smart`}
+            className="underline"
+          >
+            here
+          </LinkInternal>
+        </Message>
+      )}
       <PoolsFiltersProvider>
         <ConcentratedPositionsTable
           chainId={pool.chainId as ChainId}
@@ -204,9 +223,10 @@ const _Pool: FC<{ pool: Pool }> = ({ pool }) => {
       <div className="py-4">
         <Separator />
       </div>
-      {/* <PoolRewardDistributionsCard pool={extendedPool} /> */}
+      <PoolRewardDistributionsCard pool={extendedPool} />
       <PoolTransactionsV3 pool={extendedPool} />
     </div>
+  </Container>
   )
 }
 

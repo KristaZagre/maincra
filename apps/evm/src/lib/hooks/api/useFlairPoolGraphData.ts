@@ -1,6 +1,6 @@
 'use client'
 
-import { Pool, PoolBucket } from '@sushiswap/rockset-client'
+import { Pool, PoolBucket, PoolProtocol } from '@sushiswap/rockset-client'
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { Amount, Native, Token } from 'sushi/currency'
@@ -39,11 +39,11 @@ export const useExtendedPool = ({ pool }: { pool: Pool }) => {
       ...pool,
       reserve0:
         token0 && pool
-          ? Amount.fromRawAmount(token0, Math.ceil(pool.reserve0))
+          ? Amount.fromRawAmount(token0, Math.ceil(Number(pool.reserve0BI)))
           : null,
       reserve1:
         token1 && pool
-          ? Amount.fromRawAmount(token1, Math.ceil(pool.reserve1))
+          ? Amount.fromRawAmount(token1, Math.ceil(Number(pool.reserve1BI)))
           : null,
       totalSupply:
         liquidityToken && pool
@@ -55,6 +55,7 @@ export const useExtendedPool = ({ pool }: { pool: Pool }) => {
       token0,
       token1,
       liquidityToken,
+      feeAmount: pool.protocol === PoolProtocol.SUSHISWAP_V3 ? Math.ceil(pool.swapFee * 10000000) : pool.swapFee,
     }
   }, [pool])
 }

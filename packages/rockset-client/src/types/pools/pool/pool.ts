@@ -30,6 +30,7 @@ const poolOutputSchema = z.object({
       }),
     )
     .default([]),
+  hasEnabledSteerVault: z.boolean().nullable().default(false), // Might not be needed
   wasIncentivized: z.boolean().nullable().default(false), // Might not be needed
   isIncentivized: z.boolean(),
 

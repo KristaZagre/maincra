@@ -41,6 +41,7 @@ export const simplePoolOutputSchema = z.object({
 
   protocol: z.string().transform((p) => p as PoolProtocol),
   isIncentivized: z.boolean(),
+  hasEnabledSteerVault: z.boolean().catch(false),
 })
 
 export const transformSimplePool = (

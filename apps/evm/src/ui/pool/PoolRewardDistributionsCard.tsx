@@ -21,7 +21,7 @@ import { getAddress } from 'viem'
 
 import { isAngleEnabledChainId } from '../../config'
 import { DistributionDataTable } from './DistributionDataTable'
-import { ExtendedPool } from 'lib/hooks/api/useFlairPoolGraphData'
+import { ExtendedPool } from 'src/lib/hooks/api/useFlairPoolGraphData'
 
 interface PoolRewardDistributionsCardParams {
   pool: ExtendedPool
