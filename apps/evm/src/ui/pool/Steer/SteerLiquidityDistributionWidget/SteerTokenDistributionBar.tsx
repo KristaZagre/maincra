@@ -1,10 +1,10 @@
-import { Pool } from '@sushiswap/client'
+import { Vault } from '@sushiswap/rockset-client'
 import { getTokenRatios } from '@sushiswap/steer-sdk'
 import { useQuery } from '@tanstack/react-query'
 import React from 'react'
 
 interface SteerTokenDistributionBarProps {
-  vault: Pool['steerVaults'][0]
+  vault: Vault
 }
 
 export function SteerTokenDistributionBar({

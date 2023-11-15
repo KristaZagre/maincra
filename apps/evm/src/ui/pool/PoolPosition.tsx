@@ -1,6 +1,5 @@
 'use client'
 
-import { Pool } from '@sushiswap/client'
 import {
   Card,
   CardContent,
@@ -13,6 +12,7 @@ import { formatUSD } from 'sushi'
 
 import { PoolPositionDesktop } from './PoolPositionDesktop'
 import { usePoolPosition } from './PoolPositionProvider'
+import { Pool } from '@sushiswap/rockset-client'
 
 interface PoolPositionProps {
   pool: Pool

@@ -12,9 +12,6 @@ export enum PoolsOrderBy {
   FEE_APR = 'feeApr1d',
 }
 
-export enum IncentiveType {
-  MERKL = 'merkl',
-}
 
 export const poolOrderByToField: Record<PoolsOrderBy, string> = {
   [PoolsOrderBy.LIQUIDITY_USD]: 'p.liquidityUSD',

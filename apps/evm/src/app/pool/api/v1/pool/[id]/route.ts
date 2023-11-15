@@ -7,7 +7,6 @@ export async function GET(
   _request: NextRequest,
   { params }: { params: { id: string } },
 ) {
-  console.log({params})
   const parsedParams = poolInputSchema.safeParse({
     id: params.id,
   })

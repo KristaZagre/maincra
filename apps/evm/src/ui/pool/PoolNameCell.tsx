@@ -17,17 +17,7 @@ import { FC } from 'react'
 import { formatNumber } from 'sushi'
 import { ChainId } from 'sushi/chain'
 
-const ProtocolBadge: Record<PoolProtocol, JSX.Element> = {
-  // [Protocol.BENTOBOX_STABLE]: (
-  //   <div className="whitespace-nowrap bg-green/20 text-green text-[10px] px-2 rounded-full">
-  //     Trident Stable
-  //   </div>
-  // ),
-  // [Protocol.BENTOBOX_CLASSIC]: (
-  //   <div className="whitespace-nowrap bg-green/20 text-green text-[10px] px-2 rounded-full">
-  //     Trident Classic
-  //   </div>
-  // ),
+export const ProtocolBadge: Record<PoolProtocol, JSX.Element> = {
   [Protocol.SUSHISWAP_V2]: (
     <div className="whitespace-nowrap bg-pink/20 text-pink text-[10px] px-2 rounded-full">
       V2
@@ -85,7 +75,7 @@ export const PoolNameCell: FC<{ pool: SimplePool }> = ({ pool }) => {
           <div className="bg-gray-200 text-gray-700 dark:bg-slate-800 dark:text-slate-300 text-[10px] px-2 rounded-full">
             {formatNumber(pool.swapFee * 100)}%
           </div>
-          {original.pool.isIncentivized && (
+          {pool.isIncentivized && (
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -101,7 +91,7 @@ export const PoolNameCell: FC<{ pool: SimplePool }> = ({ pool }) => {
               </Tooltip>
             </TooltipProvider>
           )}
-          {original.pool.hasEnabledSteerVault && (
+          {pool.hasEnabledSteerVault && (
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>

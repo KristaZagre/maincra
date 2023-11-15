@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import { cz } from '../../misc/zodObjects.js'
-import type { IncentiveType, PoolProtocol } from '../common.js'
+import type { PoolProtocol } from '../common.js'
+import type { IncentiveType } from '../../index.js'
 
 export const simplePoolOutputSchema = z.object({
   id: cz.id(),

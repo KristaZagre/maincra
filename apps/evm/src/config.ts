@@ -1,6 +1,7 @@
 import { SushiSwapV2ChainIds } from '@sushiswap/v2-sdk'
 import { SushiSwapV3ChainIds } from '@sushiswap/v3-sdk'
 import { ChainId, TESTNET_CHAIN_IDS } from 'sushi/chain'
+import { Currency } from 'sushi/currency'
 
 export const ANGLE_ENABLED_NETWORKS = [
   ChainId.ETHEREUM,

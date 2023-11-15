@@ -4,9 +4,7 @@ import { unstable_cache } from 'next/cache'
 import notFound from 'src/app/pool/not-found'
 import { ID, unsanitize } from 'sushi'
 import {
-  PoolPositionProvider,
-  PoolPositionRewardsProvider,
-  PoolPositionStakedProvider,
+  PoolPositionProvider
 } from '../../../../../ui/pool'
 import { ConcentratedLiquidityProvider } from '../../../../../ui/pool/ConcentratedLiquidityProvider'
 import { MigrateTab } from '../../../../../ui/pool/MigrateTab'
@@ -16,7 +14,7 @@ export default async function MigratePage({
   params,
 }: { params: { id: string } }) {
   const poolId = unsanitize(params.id)
-  const pool = await unstable_cache(
+  const { success, data: pool } = await unstable_cache(
     async () => getPool({id: poolId as ID}),
     ['pool', poolId],
     {

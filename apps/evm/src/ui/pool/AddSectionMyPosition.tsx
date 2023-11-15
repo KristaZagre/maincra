@@ -1,4 +1,4 @@
-import { Pool } from '@sushiswap/rockset-client'
+// import { Pool } from '@sushiswap/rockset-client'
 import { classNames } from '@sushiswap/ui'
 import { Currency as UICurrency } from '@sushiswap/ui/components/currency'
 import React, { FC } from 'react'
@@ -7,6 +7,7 @@ import { ChainId } from 'sushi/chain'
 
 import { AddSectionMyPositionUnstaked } from './AddSectionMyPositionUnstaked'
 import { incentiveRewardToToken } from 'src/lib/functions'
+import { Pool } from '@sushiswap/rockset-client'
 
 export const AddSectionMyPosition: FC<{ pool: Pool }> = ({ pool }) => {
   return (

@@ -1,14 +1,14 @@
 'use client'
 
-import { Pool } from '@sushiswap/client'
 import { Chip, SkeletonBox, classNames } from '@sushiswap/ui'
 import { SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import React, { FC, useMemo } from 'react'
 import { Token } from 'sushi/currency'
 import { useConcentratedActiveLiquidity } from '../../../../lib/hooks/useConcentratedActiveLiquidity'
+import { Vault } from '@sushiswap/rockset-client'
 
 interface SteerLiquidityInRangeChipProps {
-  vault: Pool['steerVaults'][0]
+  vault: Vault
 }
 
 export const SteerLiquidityInRangeChip: FC<SteerLiquidityInRangeChipProps> = ({

@@ -1,12 +1,13 @@
 'use client'
 
-import { Pool } from '@sushiswap/client'
+
 import { Pair } from '@sushiswap/graph-client'
 import { useMemo } from 'react'
 import { Amount } from 'sushi/currency'
 import useSWR from 'swr'
 
 import { useTokensFromPool } from '../useTokensFromPool'
+import { Pool } from '@sushiswap/rockset-client'
 
 export function getGraphPoolUrl(poolId: string) {
   return `/pools/api/graphPool/${poolId}`

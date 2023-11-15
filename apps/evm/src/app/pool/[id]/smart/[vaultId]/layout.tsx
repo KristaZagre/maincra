@@ -1,4 +1,4 @@
-import { getPool, getSteerVault } from '@sushiswap/client'
+import { getSteerVault } from '@sushiswap/client'
 import { Breadcrumb, Container, LinkInternal } from '@sushiswap/ui'
 import { unstable_cache } from 'next/cache'
 import { headers } from 'next/headers'
@@ -6,6 +6,8 @@ import { notFound } from 'next/navigation'
 import React from 'react'
 import { unsanitize } from 'sushi/format'
 import { PoolHeader } from '../../../../../ui/pool/PoolHeader'
+import { getPool } from 'src/lib/flair/fetchers/pool/id/pool'
+import { ID } from 'sushi'
 
 export default async function Layout({
   children,
@@ -15,8 +17,8 @@ export default async function Layout({
   params: { id: string; vaultId: string }
 }) {
   const poolId = unsanitize(params.id)
-  const pool = await unstable_cache(
-    async () => getPool(poolId),
+  const { success, data: pool } = await unstable_cache(
+    async () => getPool({id: poolId as ID}),
     ['pool', poolId],
     {
       revalidate: 60 * 15,

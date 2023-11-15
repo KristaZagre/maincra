@@ -1,10 +1,10 @@
 'use client'
 
-import { Pool } from '@sushiswap/client'
 import { Carousel } from '@sushiswap/ui'
 import { FC, useCallback, useMemo } from 'react'
 
 import { SteerPoolCard } from './SteerPoolCard'
+import { Pool, Vault } from '@sushiswap/rockset-client'
 
 export const SteerCarousel: FC<{ pool: Pool }> = ({ pool }) => {
   const enabledVaults = useMemo(
@@ -12,7 +12,7 @@ export const SteerCarousel: FC<{ pool: Pool }> = ({ pool }) => {
     [pool.steerVaults],
   )
   const render = useCallback(
-    (vault: Pool['steerVaults'][0]) => {
+    (vault: Vault) => {
       return <SteerPoolCard key={vault.id} pool={pool} vault={vault} />
     },
     [pool],
@@ -25,7 +25,7 @@ export const SteerCarousel: FC<{ pool: Pool }> = ({ pool }) => {
           containerWidth={1090}
           slides={enabledVaults}
           render={render}
-          className="px-2 mt-0 pt-0"
+          className="px-2 pt-0 mt-0"
         />
       ) : (
         <>No smart pools found.</>

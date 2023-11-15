@@ -1,6 +1,5 @@
 'use client'
 
-import { Pool } from '@sushiswap/client'
 import {
   CardDescription,
   Currency,
@@ -18,6 +17,7 @@ import { tryParseAmount } from 'sushi/currency'
 import { formatPercent } from 'sushi/format'
 
 import { incentiveRewardToToken } from '../../lib/functions'
+import { Pool } from '@sushiswap/rockset-client'
 
 interface APRHoverCardProps {
   children: ReactNode

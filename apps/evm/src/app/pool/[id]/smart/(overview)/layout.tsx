@@ -1,4 +1,4 @@
-import { getPool } from '@sushiswap/client'
+
 import {
   Breadcrumb,
   CardDescription,
@@ -14,14 +14,16 @@ import React from 'react'
 import { unsanitize } from 'sushi/format'
 
 import { PoolHeader } from '../../../../../ui/pool/PoolHeader'
+import { getPool } from 'src/lib/flair/fetchers/pool/id/pool'
+import { ID } from 'sushi'
 
 export default async function Layout({
   children,
   params,
 }: { children: React.ReactNode; params: { id: string } }) {
   const poolId = unsanitize(params.id)
-  const pool = await unstable_cache(
-    async () => getPool(poolId),
+  const { success, data: pool } = await unstable_cache(
+    async () => getPool({id: poolId as ID}),
     ['pool', poolId],
     {
       revalidate: 60 * 15,
@@ -40,7 +42,7 @@ export default async function Layout({
       <Container maxWidth="5xl" className="px-4">
         <Breadcrumb />
       </Container>
-      <Container maxWidth="5xl" className="pt-10 px-4">
+      <Container maxWidth="5xl" className="px-4 pt-10">
         <PoolHeader
           backUrl={referer?.includes('/pool?') ? referer.toString() : '/pool'}
           address={pool.address}
@@ -53,7 +55,7 @@ export default async function Layout({
             <Container maxWidth="5xl" className="px-2 sm:px-4">
               <LinkInternal
                 href={`/pool/${params.id}`}
-                className="text-blue hover:underline text-sm"
+                className="text-sm text-blue hover:underline"
               >
                 ← Pool details
               </LinkInternal>

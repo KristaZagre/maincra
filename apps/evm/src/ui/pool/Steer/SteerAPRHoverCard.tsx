@@ -1,4 +1,4 @@
-import { SimplePool } from '@sushiswap/rockset-client'
+import { SimplePool, Vault } from '@sushiswap/rockset-client'
 import {
   CardContent,
   CardDescription,
@@ -20,12 +20,12 @@ import { ChainId } from 'sushi/chain'
 import { tryParseAmount } from 'sushi/currency'
 
 import { incentiveRewardToToken } from '../../../lib/functions'
-import { Pool } from '@sushiswap/client'
+
 
 interface SteerAPRHoverCardProps {
   children: ReactNode
   pool: SimplePool
-  vault: Pool['steerVaults'][0]
+  vault: Vault
 }
 
 export const SteerAPRHoverCard: FC<SteerAPRHoverCardProps> = ({
@@ -71,14 +71,15 @@ export const SteerAPRHoverCard: FC<SteerAPRHoverCardProps> = ({
                   if (!amount) return null
 
                   return (
-                    <li key={el.pid} className="flex items-center gap-1">
-                      <Currency.Icon
-                        currency={amount?.currency}
-                        width={12}
-                        height={12}
-                      />
-                      {amount?.toSignificant(6)} {amount?.currency.symbol}
-                    </li>
+                    // <li key={el.pid} className="flex items-center gap-1">
+                    //   <Currency.Icon
+                    //     currency={amount?.currency}
+                    //     width={12}
+                    //     height={12}
+                    //   />
+                    //   {amount?.toSignificant(6)} {amount?.currency.symbol}
+                    // </li>
+                    <></>
                   )
                 })}
               </ul>

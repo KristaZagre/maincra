@@ -2,7 +2,7 @@ import { Card } from '@sushiswap/ui'
 import { SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import React, { FC, useMemo, useState } from 'react'
 
-import { ExtendedPool } from 'lib/hooks/api/useFlairPoolGraphData'
+import { ExtendedPool } from 'src/lib/hooks/api/useFlairPoolGraphData'
 import { LiquidityDepthWidget } from './LiquidityDepthWidget'
 import { PoolChartGraph } from './PoolChartGraph'
 import { PoolChartPeriod, PoolChartPeriods } from './PoolChartPeriods'

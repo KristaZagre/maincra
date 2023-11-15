@@ -1,6 +1,5 @@
 'use client'
 
-import { Pool } from '@sushiswap/client'
 import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
 import { SkeletonBox } from '@sushiswap/ui'
 import { SushiSwapV3ChainId, tickToPrice } from '@sushiswap/v3-sdk'
@@ -10,6 +9,7 @@ import { useConcentratedDerivedMintInfo } from '../../ConcentratedLiquidityProvi
 import { useDensityChartData } from '../../LiquidityChartRangeInput/hooks'
 import { SteerStrategyGeneric } from '../SteerStrategies'
 import { SteerStrategyLiquidityDistributionChart } from './SteerStrategyLiquidityDistributionChart'
+import { Pool } from '@sushiswap/rockset-client'
 
 interface SteerStrategyLiquidityDistribution {
   pool: Pool

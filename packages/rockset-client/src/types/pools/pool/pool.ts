@@ -1,7 +1,8 @@
 import { z } from 'zod'
 import { cz } from '../../misc/zodObjects.js'
 import { type BasePoolArgs, basePoolInputSchema } from '../basePool.js'
-import type { IncentiveType, PoolProtocol } from '../common.js'
+import type { PoolProtocol } from '../common.js'
+import { incentiveOutputSchema, vaultOutputSchema } from '../../index.js'
 
 export const poolInputSchema = basePoolInputSchema
 
@@ -18,18 +19,10 @@ const poolOutputSchema = z.object({
   incentiveApr: z.number().catch(0),
   incentives: z
     .array(
-      z.object({
-        id: cz.incentiveId(),
-        chainId: cz.chainId(),
-        poolId: cz.id(),
-        apr: z.number(),
-        amount: z.number(),
-        rewardPerDay: z.number(),
-        rewardToken: cz.token(),
-        type: z.string().transform((type) => type as IncentiveType),
-      }),
+      incentiveOutputSchema,
     )
     .default([]),
+  steerVaults: z.array(vaultOutputSchema).catch([]),
   hasEnabledSteerVault: z.boolean().nullable().default(false), // Might not be needed
   wasIncentivized: z.boolean().nullable().default(false), // Might not be needed
   isIncentivized: z.boolean(),

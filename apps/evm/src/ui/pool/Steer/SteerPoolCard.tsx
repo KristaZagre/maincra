@@ -1,6 +1,5 @@
 'use client'
 
-import { Pool } from '@sushiswap/client'
 import {
   Card,
   CardContent,
@@ -21,10 +20,11 @@ import { APRHoverCard } from '../APRHoverCard'
 import { SteerAPRChart } from './SteerAPRChart'
 import { SteerLiquidityDistributionWidget } from './SteerLiquidityDistributionWidget/SteerLiquidityDistributionWidget'
 import { SteerStrategyConfig } from './constants'
+import { Pool, Vault } from '@sushiswap/rockset-client'
 
 interface SteerPoolCardProps {
   pool: Pool
-  vault: Pool['steerVaults'][0]
+  vault: Vault
 }
 
 export const SteerPoolCard: FC<SteerPoolCardProps> = ({ pool, vault }) => {
@@ -38,7 +38,7 @@ export const SteerPoolCard: FC<SteerPoolCardProps> = ({ pool, vault }) => {
         <CardHeader>
           {/* <div className="flex gap-2 pb-3">
             <Chip className="bg-blue/20 text-blue">
-              <ShieldCheckIcon className="h-3 w-3" />
+              <ShieldCheckIcon className="w-3 h-3" />
               Lowest risk
             </Chip>
           </div> */}

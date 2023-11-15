@@ -22,7 +22,7 @@ import {
   getTransactions,
   getTransactionsUrl,
 } from 'src/lib/flair/fetchers/pool/id/transactions/transactions'
-import { ExtendedPool } from 'lib/hooks/api/useFlairPoolGraphData'
+import { ExtendedPool } from 'src/lib/hooks/api/useFlairPoolGraphData'
 import { Amount } from 'sushi/currency'
 import {
   TX_AMOUNT_IN_V3_COLUMN,

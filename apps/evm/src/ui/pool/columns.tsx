@@ -160,11 +160,12 @@ export const APR_COLUMN_POOL: ColumnDef<SimplePool, unknown> = {
   header: 'APR',
   accessorFn: (row) => row.feeApr1d,
   cell: (props) => (
-    <APRHoverCard pool={props.row.original}>
-      <span className="underline decoration-dotted">
-        {formatPercent(props.row.original.feeApr1d)}
-      </span>
-    </APRHoverCard>
+    // <APRHoverCard pool={props.row.original}>
+    //   <span className="underline decoration-dotted">
+    //     {formatPercent(props.row.original.feeApr1d)}
+    //   </span>
+    // </APRHoverCard>
+    <></>
   ),
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
@@ -265,11 +266,12 @@ export const APR_COLUMN: ColumnDef<V2Position, unknown> = {
   header: 'APR',
   accessorFn: (row) => row.pool.feeApr1d,
   cell: (props) => (
-    <APRHoverCard pool={props.row.original.pool}>
-      <span className="underline decoration-dotted">
-        {formatPercent(props.row.original.pool.feeApr1d)}
-      </span>
-    </APRHoverCard>
+    // <APRHoverCard pool={props.row.original.pool}>
+    //   <span className="underline decoration-dotted">
+    //     {formatPercent(props.row.original.pool.feeApr1d)}
+    //   </span>
+    // </APRHoverCard>
+    <></>
   ),
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
@@ -297,9 +299,10 @@ export const VOLUME_COLUMN: ColumnDef<PositionWithPool, unknown> = {
   id: 'volumeUSD1d',
   header: 'Volume (24h)',
   cell: (props) =>
-    formatUSD(props.row.original.pool.volumeUSD1d).includes('NaN')
-      ? '$0.00'
-      : formatUSD(props.row.original.pool.volumeUSD1d),
+    // formatUSD(props.row.original.pool.volumeUSD1d).includes('NaN')
+    //   ? '$0.00'
+    //   : formatUSD(props.row.original.pool.volumeUSD1d),
+    {},
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
   },

@@ -4,8 +4,9 @@ import { SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 export type SwapChainId = SushiSwapV2ChainId | SushiSwapV3ChainId
 
 import { UserPosition } from '@sushiswap/graph-client'
-import { SimplePool } from '@sushiswap/rockset-client'
+import { Pool } from '@sushiswap/client'
+// import { SimplePool } from '@sushiswap/rockset-client'
 
 export interface PositionWithPool extends Omit<UserPosition, 'pool'> {
-  pool: SimplePool
+  pool: Pool
 }

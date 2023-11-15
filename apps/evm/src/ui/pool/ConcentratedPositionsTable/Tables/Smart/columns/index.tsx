@@ -9,7 +9,8 @@ import { SteerStrategyCell } from './SteerStrategyCell'
 export const STEER_NAME_COLUMN: ColumnDef<SteerPosition, unknown> = {
   id: 'name',
   header: 'Name',
-  cell: (props) => <PoolNameCellPool pool={props.row.original.vault.pool} />,
+  // cell: (props) => <PoolNameCellPool pool={props.row.original.vault.pool} />,
+  cell : (props => <></>),
   meta: {
     skeleton: (
       <div className="flex items-center w-full gap-2">

@@ -1,12 +1,12 @@
-import { Pool } from '@sushiswap/client'
 import { CardTitle } from '@sushiswap/ui'
 import React, { FC } from 'react'
 
 import { SteerLiquidityInRangeChip } from './SteerLiquidityInRangeChip'
 import { SteerTokenDistributionBar } from './SteerTokenDistributionBar'
+import { Vault } from '@sushiswap/rockset-client'
 
 interface SteerLiquidityDistributionWidgetProps {
-  vault: Pool['steerVaults'][0]
+  vault: Vault
 }
 
 export const SteerLiquidityDistributionWidget: FC<

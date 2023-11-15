@@ -69,6 +69,7 @@ import { useConcentratedDerivedMintInfo } from './ConcentratedLiquidityProvider'
 import { usePoolPosition } from './PoolPositionProvider'
 import { SelectFeeConcentratedWidget } from './SelectFeeConcentratedWidget'
 import { SelectPricesWidget } from './SelectPricesWidget'
+import { Pool } from '@sushiswap/rockset-client'
 
 export const MODAL_MIGRATE_ID = 'migrate-modal'
 

@@ -1,4 +1,4 @@
-import { Pool } from '@sushiswap/client'
+
 import {
   CardCurrencyAmountItem,
   CardGroup,
@@ -8,6 +8,7 @@ import { FC } from 'react'
 import { formatUSD } from 'sushi'
 
 import { usePoolPosition } from './PoolPositionProvider'
+import { Pool } from '@sushiswap/rockset-client'
 
 interface PoolPositionProps {
   pool: Pool

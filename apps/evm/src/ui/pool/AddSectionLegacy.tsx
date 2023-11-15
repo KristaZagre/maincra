@@ -1,6 +1,5 @@
 'use client'
 
-import { Pool } from '@sushiswap/rockset-client'
 import { useIsMounted } from '@sushiswap/hooks'
 import { Button } from '@sushiswap/ui'
 import { SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
@@ -20,6 +19,8 @@ import { useTokensFromPool } from '../../lib/hooks'
 
 import { AddSectionReviewModalLegacy } from './AddSectionReviewModalLegacy'
 import { AddSectionWidget } from './AddSectionWidget'
+import { Pool } from '@sushiswap/rockset-client'
+
 
 export const AddSectionLegacy: FC<{ pool: Pool }> = ({ pool: _pool }) => {
   const chainId = _pool.chainId as SushiSwapV2ChainId

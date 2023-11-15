@@ -37,7 +37,7 @@ export const SteerBaseStrategy: SteerStrategyComponent = ({
   generic: { priceExtremes, tokenRatios, adjustment, positions },
 }) => {
   return (
-    <div className="grid md:grid-cols-2 gap-4">
+    <div className="grid gap-4 md:grid-cols-2">
       <div>
         <Card>
           <CardHeader>
@@ -106,7 +106,7 @@ export const SteerBaseStrategy: SteerStrategyComponent = ({
           </Tabs>
         </Card>
       </div>
-      <div>
+      {/* <div>
         <Card>
           <CardHeader>
             <CardTitle>{SteerStrategyConfig[vault.strategy].name}</CardTitle>
@@ -178,7 +178,7 @@ export const SteerBaseStrategy: SteerStrategyComponent = ({
             <Stat className="px-6 py-3">
               <StatLabel size="sm">Deviation</StatLabel>
               <StatValue size="sm">2</StatValue>
-            </Stat> */}
+            </Stat> 
             <Stat className="px-6 py-3">
               <StatLabel size="sm">Performance fee</StatLabel>
               <StatValue size="sm">
@@ -220,7 +220,7 @@ export const SteerBaseStrategy: SteerStrategyComponent = ({
             </Stat>
           </div>
         </Card>
-      </div>
+      </div> */}
     </div>
   )
 }

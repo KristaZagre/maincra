@@ -1,6 +1,5 @@
 'use client'
 
-import { Pool, Protocol } from '@sushiswap/client'
 import {
   Card,
   CardContent,
@@ -17,11 +16,8 @@ import {
 import Link from 'next/link'
 import { FC } from 'react'
 
-import { AddSectionLegacy } from './AddSectionLegacy'
 import { PoolPositionProvider } from './PoolPositionProvider'
-import { PoolPositionRewardsProvider } from './PoolPositionRewardsProvider'
-import { PoolPositionStakedProvider } from './PoolPositionStakedProvider'
-import { RemoveSectionLegacy } from './RemoveSectionLegacy'
+import { Pool } from '@sushiswap/rockset-client'
 
 
 
@@ -74,7 +70,7 @@ export const ManageV2LiquidityCard: FC<ManageV2LiquidityCardProps> = ({
           <Separator />
         </div>
         <PoolPositionProvider pool={pool}>
-          <PoolPositionStakedProvider pool={pool}>
+          {/* <PoolPositionStakedProvider pool={pool}>
             <PoolPositionRewardsProvider pool={pool}>
               <TabsContent value="add">
                 <CardContent>
@@ -87,7 +83,7 @@ export const ManageV2LiquidityCard: FC<ManageV2LiquidityCardProps> = ({
                 </CardContent>
               </TabsContent>
             </PoolPositionRewardsProvider>
-          </PoolPositionStakedProvider>
+          </PoolPositionStakedProvider> */}
         </PoolPositionProvider>
       </Tabs>
     </Card>

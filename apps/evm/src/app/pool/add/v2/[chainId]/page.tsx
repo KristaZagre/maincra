@@ -353,8 +353,8 @@ const _Add: FC<AddProps> = ({
                             amount={parsedInput1}
                             contract={SUSHISWAP_V2_ROUTER_ADDRESS[chainId]}
                           >
-                            <Checker.Success tag={APPROVE_TAG_ADD_V2}>
-                              <AddSectionReviewModalV2
+                            <Checker.Success tag={APPROVE_TAG_ADD_LEGACY}>
+                              <AddSectionReviewModalLegacy
                                 poolAddress={pool?.liquidityToken.address}
                                 poolState={poolState as SushiSwapV2PoolState}
                                 chainId={chainId}
@@ -373,7 +373,7 @@ const _Add: FC<AddProps> = ({
                                 >
                                   {title}
                                 </Button>
-                              </AddSectionReviewModalV2>
+                              </AddSectionReviewModalLegacy>
                             </Checker.Success>
                           </Checker.ApproveERC20>
                         </Checker.ApproveERC20>
