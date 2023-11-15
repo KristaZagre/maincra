@@ -1,11 +1,10 @@
-import { getPool } from '@sushiswap/client'
 import { Breadcrumb, Container } from '@sushiswap/ui'
-import { getPool } from 'lib/flair/fetchers/pool/id/pool'
+import { getPool } from 'src/lib/flair/fetchers/pool/id/pool'
 import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
 import React from 'react'
 import { ID } from 'sushi/types'
-import { PoolHeader } from '../../../ui/pool/PoolHeader'
+import { PoolHeader } from 'src/ui/pool/PoolHeader'
 
 export const metadata = {
   title: 'Pool 💦',
@@ -17,13 +16,13 @@ export default async function Layout({
 }: { children: React.ReactNode; params: { id: string } }) {
   // TODO: Add validation, use unsanitize from 'sushi/format'
   const id = params.id.replace('%3A', ':') as ID
-
   const { success, data: pool } = await getPool(
     { id },
     {
       next: { revalidate: 60 },
     },
   )
+
   if (!pool) {
     notFound()
   }

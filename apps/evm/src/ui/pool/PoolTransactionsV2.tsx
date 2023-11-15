@@ -19,12 +19,12 @@ import { PaginationState } from '@tanstack/react-table'
 import {
   ExtendedPool,
   useExtendedPool,
-} from 'lib/hooks/api/useFlairPoolGraphData'
+} from 'src/lib/hooks/api/useFlairPoolGraphData'
 import { FC, useMemo, useState } from 'react'
 import { Chain, ChainId } from 'sushi/chain'
 import { Amount } from 'sushi/currency'
 
-import { getTransactions } from 'lib/flair/fetchers/pool/id/transactions/transactions'
+import { getTransactions } from 'src/lib/flair/fetchers/pool/id/transactions/transactions'
 import { ID } from 'sushi/types'
 import {
   TX_AMOUNT_IN_V2_COLUMN,

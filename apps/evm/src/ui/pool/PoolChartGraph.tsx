@@ -18,7 +18,7 @@ import tailwindConfig from 'tailwind.config.js'
 import resolveConfig from 'tailwindcss/resolveConfig'
 
 import { PoolBucketGranularity } from '@sushiswap/rockset-client'
-import { usePoolBuckets } from 'lib/flair/hooks/pool/id/buckets/buckets'
+import { usePoolBuckets } from 'src/lib/flair/hooks/pool/id/buckets/buckets'
 import { ID } from 'sushi/types'
 import { PoolChartPeriod, chartPeriods } from './PoolChartPeriods'
 import { PoolChartType } from './PoolChartTypes'

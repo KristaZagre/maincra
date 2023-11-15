@@ -1,13 +1,26 @@
 'use client'
 
-import { SimplePool } from '@sushiswap/rockset-client'
+import { Pool } from '@sushiswap/client'
 import { useMemo } from 'react'
 import { Native, Token } from 'sushi/currency'
 
-export const useTokensFromPool = (pool: Pick<SimplePool, 'id' | 'token0' | 'token1'>) => {
+export const useTokensFromPool = (pool: Pool) => {
   return useMemo(() => {
-    const _token0 = new Token(pool.token0)
-    const _token1 = new Token(pool.token1)
+    const _token0 = new Token({
+      address: pool.token0.address,
+      name: pool.token0.name,
+      decimals: Number(pool.token0.decimals),
+      symbol: pool.token0.symbol,
+      chainId: pool.chainId,
+    })
+
+    const _token1 = new Token({
+      address: pool.token1.address,
+      name: pool.token1.name,
+      decimals: Number(pool.token1.decimals),
+      symbol: pool.token1.symbol,
+      chainId: pool.chainId,
+    })
 
     const [token0, token1, liquidityToken] = [
       _token0.wrapped.address ===
@@ -23,7 +36,7 @@ export const useTokensFromPool = (pool: Pick<SimplePool, 'id' | 'token0' | 'toke
         name: 'SLP Token',
         decimals: 18,
         symbol: 'SLP',
-        chainId: pool.token0.chainId,
+        chainId: pool.chainId,
       }),
     ]
 

@@ -4,7 +4,7 @@ import {
   v2PositionsInputSchema,
 } from '@sushiswap/rockset-client'
 import { createClient } from '@sushiswap/rockset-client/client'
-import { CORS } from 'app/pool/api/cors'
+import { CORS } from '../../../cors'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(request: NextRequest) {

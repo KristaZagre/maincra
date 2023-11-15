@@ -2,7 +2,7 @@ import { Protocol } from '@sushiswap/client'
 import { V2Position } from '@sushiswap/rockset-client'
 import { useAccount } from '@sushiswap/wagmi'
 import { SUPPORTED_CHAIN_IDS } from 'src/config'
-import { useV2Positions } from 'lib/flair/hooks/positions/v2/v2'
+import { useV2Positions } from 'src/lib/flair/hooks/positions/v2/v2'
 import React, { FC, ReactNode } from 'react'
 
 interface PositionCardList {

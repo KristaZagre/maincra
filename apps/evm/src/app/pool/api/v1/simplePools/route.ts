@@ -6,7 +6,7 @@ import {
 } from '@sushiswap/rockset-client'
 import { createClient } from '@sushiswap/rockset-client/client'
 import { NextRequest } from 'next/server'
-import { CORS } from 'app/pool/api/cors'
+import { CORS } from '../../cors'
 
 export async function GET(request: NextRequest) {
   const parsedParams = simplePoolsInputSchema.safeParse(

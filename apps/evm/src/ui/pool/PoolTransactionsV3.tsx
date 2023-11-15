@@ -21,7 +21,7 @@ import { Chain, ChainId } from 'sushi/chain'
 import {
   getTransactions,
   getTransactionsUrl,
-} from 'lib/flair/fetchers/pool/id/transactions/transactions'
+} from 'src/lib/flair/fetchers/pool/id/transactions/transactions'
 import { ExtendedPool } from 'lib/hooks/api/useFlairPoolGraphData'
 import { Amount } from 'sushi/currency'
 import {

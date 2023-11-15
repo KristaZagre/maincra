@@ -1,14 +1,8 @@
 'use client'
 
-<<<<<<<< HEAD:apps/evm/src/ui/pool/AddSectionV2.tsx
-import { useIsMounted } from '@sushiswap/hooks'
 import { Pool } from '@sushiswap/rockset-client'
-import { Button } from '@sushiswap/ui/components/button'
-========
-import { Pool } from '@sushiswap/client'
 import { useIsMounted } from '@sushiswap/hooks'
 import { Button } from '@sushiswap/ui'
->>>>>>>> master:apps/evm/src/ui/pool/AddSectionLegacy.tsx
 import { SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import {
   Address,
@@ -16,15 +10,6 @@ import {
   getSushiSwapRouterContractConfig,
   useSushiSwapV2Pool,
 } from '@sushiswap/wagmi'
-<<<<<<<< HEAD:apps/evm/src/ui/pool/AddSectionV2.tsx
-import { Checker } from '@sushiswap/wagmi/future/systems'
-import { CheckerProvider } from '@sushiswap/wagmi/future/systems/Checker/Provider'
-import { APPROVE_TAG_ADD_V2 } from 'lib/constants'
-import { useTokensFromPool } from 'lib/hooks'
-import { FC, useCallback, useMemo, useState } from 'react'
-import { ChainId } from 'sushi/chain'
-import { tryParseAmount } from 'sushi/currency'
-========
 import { Checker } from '@sushiswap/wagmi/systems'
 import { CheckerProvider } from '@sushiswap/wagmi/systems/Checker/Provider'
 import { FC, useCallback, useMemo, useState } from 'react'
@@ -32,12 +17,11 @@ import { APPROVE_TAG_ADD_LEGACY } from 'src/lib/constants'
 import { ChainId } from 'sushi/chain'
 import { tryParseAmount } from 'sushi/currency'
 import { useTokensFromPool } from '../../lib/hooks'
->>>>>>>> master:apps/evm/src/ui/pool/AddSectionLegacy.tsx
 
-import { AddSectionReviewModalV2 } from './AddSectionReviewModalV2'
+import { AddSectionReviewModalLegacy } from './AddSectionReviewModalLegacy'
 import { AddSectionWidget } from './AddSectionWidget'
 
-export const AddSectionV2: FC<{ pool: Pool }> = ({ pool: _pool }) => {
+export const AddSectionLegacy: FC<{ pool: Pool }> = ({ pool: _pool }) => {
   const chainId = _pool.chainId as SushiSwapV2ChainId
   const isMounted = useIsMounted()
   const { token0, token1 } = useTokensFromPool(_pool)
@@ -159,8 +143,8 @@ export const AddSectionV2: FC<{ pool: Pool }> = ({ pool: _pool }) => {
                         .address as Address
                     }
                   >
-                    <Checker.Success tag={APPROVE_TAG_ADD_V2}>
-                      <AddSectionReviewModalV2
+                    <Checker.Success tag={APPROVE_TAG_ADD_LEGACY}>
+                      <AddSectionReviewModalLegacy
                         poolAddress={pool?.liquidityToken.address}
                         poolState={poolState}
                         chainId={_pool.chainId as SushiSwapV2ChainId}
@@ -175,7 +159,7 @@ export const AddSectionV2: FC<{ pool: Pool }> = ({ pool: _pool }) => {
                         <Button size="default" fullWidth>
                           Add Liquidity
                         </Button>
-                      </AddSectionReviewModalV2>
+                      </AddSectionReviewModalLegacy>
                     </Checker.Success>
                   </Checker.ApproveERC20>
                 </Checker.ApproveERC20>

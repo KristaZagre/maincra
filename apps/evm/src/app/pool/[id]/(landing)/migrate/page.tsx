@@ -10,7 +10,7 @@ import {
 } from '../../../../../ui/pool'
 import { ConcentratedLiquidityProvider } from '../../../../../ui/pool/ConcentratedLiquidityProvider'
 import { MigrateTab } from '../../../../../ui/pool/MigrateTab'
-import { getPool } from 'lib/flair/fetchers/pool/id/pool'
+import { getPool } from 'src/lib/flair/fetchers/pool/id/pool'
 
 export default async function MigratePage({
   params,

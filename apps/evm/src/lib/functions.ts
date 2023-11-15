@@ -1,5 +1,5 @@
+import { Pool, Protocol } from '@sushiswap/client'
 import { SushiSwapV2Pool } from '@sushiswap/v2-sdk'
-import { Pool } from '@sushiswap/rockset-client'
 import {
   FeeAmount,
   Position,
@@ -27,6 +27,8 @@ import { Bound } from './constants'
 import { useTicks } from './hooks'
 import { TickProcessed } from './hooks/useConcentratedActiveLiquidity'
 
+
+
 export const isSushiSwapV2Pool = (
   pool: SushiSwapV2Pool | null,
 ): pool is SushiSwapV2Pool => {
@@ -35,7 +37,7 @@ export const isSushiSwapV2Pool = (
 
 export const incentiveRewardToToken = (
   chainId: ChainId,
-  incentive: Pool['incentives'][number],
+  incentive: Pool['incentives'][0],
 ): Token => {
   return new Token({
     chainId,

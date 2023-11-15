@@ -1,12 +1,13 @@
 import { poolInputSchema, processPool } from '@sushiswap/rockset-client'
 import { createClient } from '@sushiswap/rockset-client/client'
-import { CORS } from 'app/pool/api/cors'
+import { CORS } from '../../../cors'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(
   _request: NextRequest,
   { params }: { params: { id: string } },
 ) {
+  console.log({params})
   const parsedParams = poolInputSchema.safeParse({
     id: params.id,
   })

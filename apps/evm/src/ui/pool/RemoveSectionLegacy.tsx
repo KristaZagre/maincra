@@ -1,13 +1,7 @@
 'use client'
 
-<<<<<<<< HEAD:apps/evm/src/ui/pool/RemoveSectionV2.tsx
-import { calculateSlippageAmount } from '@sushiswap/amm'
-import { FundSource, useDebounce, useIsMounted } from '@sushiswap/hooks'
 import { Pool } from '@sushiswap/rockset-client'
-========
-import { Pool } from '@sushiswap/client'
 import { useDebounce, useIsMounted } from '@sushiswap/hooks'
->>>>>>>> master:apps/evm/src/ui/pool/RemoveSectionLegacy.tsx
 import { Dots } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { createToast } from '@sushiswap/ui/components/toast'
@@ -33,49 +27,33 @@ import { Checker } from '@sushiswap/wagmi/systems'
 import {
   useApproved,
   withCheckerRoot,
-<<<<<<<< HEAD:apps/evm/src/ui/pool/RemoveSectionV2.tsx
-} from '@sushiswap/wagmi/future/systems/Checker/Provider'
-import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
-import { APPROVE_TAG_REMOVE_V2 } from 'lib/constants'
-========
 } from '@sushiswap/wagmi/systems/Checker/Provider'
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { APPROVE_TAG_REMOVE_LEGACY } from 'src/lib/constants'
->>>>>>>> master:apps/evm/src/ui/pool/RemoveSectionLegacy.tsx
 import {
   useTokensFromPool,
   useTransactionDeadline,
   useUnderlyingTokenBalanceFromPool,
-<<<<<<<< HEAD:apps/evm/src/ui/pool/RemoveSectionV2.tsx
-} from 'lib/hooks'
-import { useSlippageTolerance } from 'lib/hooks/useSlippageTolerance'
-import { FC, useCallback, useEffect, useMemo, useState } from 'react'
-import { Percent } from 'sushi'
-import { calculateGasMargin } from 'sushi'
-import { ChainId } from 'sushi/chain'
-import { Amount, Native } from 'sushi/currency'
-========
 } from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { gasMargin, slippageAmount } from 'sushi/calculate'
 import { ChainId } from 'sushi/chain'
 import { Amount, Native } from 'sushi/currency'
 import { Percent } from 'sushi/math'
->>>>>>>> master:apps/evm/src/ui/pool/RemoveSectionLegacy.tsx
 import { encodeFunctionData } from 'viem'
 
 import { usePoolPosition } from './PoolPositionProvider'
 import { RemoveSectionWidget } from './RemoveSectionWidget'
 
-interface RemoveSectionV2Props {
+interface RemoveSectionLegacyProps {
   pool: Pool
 }
 
-export const RemoveSectionV2: FC<RemoveSectionV2Props> = withCheckerRoot(
-  ({ pool: _pool }) => {
+export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
+  withCheckerRoot(({ pool: _pool }) => {
     const { token0, token1, liquidityToken } = useTokensFromPool(_pool)
     const { chain } = useNetwork()
-    const { approved } = useApproved(APPROVE_TAG_REMOVE_V2)
+    const { approved } = useApproved(APPROVE_TAG_REMOVE_LEGACY)
     const isMounted = useIsMounted()
     const { address } = useAccount()
     const deadline = useTransactionDeadline(_pool.chainId)
@@ -375,7 +353,7 @@ export const RemoveSectionV2: FC<RemoveSectionV2Props> = withCheckerRoot(
                       ).address as Address
                     }
                   >
-                    <Checker.Success tag={APPROVE_TAG_REMOVE_V2}>
+                    <Checker.Success tag={APPROVE_TAG_REMOVE_LEGACY}>
                       <Button
                         size="default"
                         onClick={() => sendTransaction?.()}
@@ -400,5 +378,4 @@ export const RemoveSectionV2: FC<RemoveSectionV2Props> = withCheckerRoot(
         </RemoveSectionWidget>
       </div>
     )
-  },
-)
+  })

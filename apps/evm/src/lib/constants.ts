@@ -6,11 +6,13 @@ export const L2_DEADLINE_FROM_NOW = BigInt(60) * BigInt(5)
 
 // export const POOL_VERSION_MAP: Record<PoolVersion, string> = {
 //   LEGACY: 'Legacy',
+//   TRIDENT: 'Trident',
 //   V3: 'V3',
 // }
 
 // export const AVAILABLE_VERSION_MAP: Partial<typeof POOL_VERSION_MAP> = {
 //   LEGACY: 'Legacy',
+//   TRIDENT: 'Trident',
 //   V3: 'V3',
 // }
 
@@ -60,8 +62,11 @@ export enum Field {
   CURRENCY_B = 'CURRENCY_B',
 }
 
-export const APPROVE_TAG_ADD_V2 = 'APPROVE_TAG_ADD_V2'
-export const APPROVE_TAG_REMOVE_V2 = 'APPROVE_TAG_REMOVE_V2'
+export const APPROVE_TAG_ADD_LEGACY = 'APPROVE_TAG_ADD_LEGACY'
+export const APPROVE_TAG_ADD_TRIDENT = 'APPROVE_TAG_ADD_TRIDENT'
+export const APPROVE_TAG_REMOVE_TRIDENT = 'APPROVE_TAG_REMOVE_TRIDENT'
+export const APPROVE_TAG_REMOVE_LEGACY = 'APPROVE_TAG_REMOVE_LEGACY'
+export const APPROVE_TAG_CREATE_TRIDENT = 'APPROVE_TAG_CREATE_TRIDENT'
 export const APPROVE_TAG_STAKE = 'APPROVE_TAG_STAKE'
 export const APPROVE_TAG_UNSTAKE = 'APPROVE_TAG_UNSTAKE'
 export const APPROVE_TAG_MIGRATE = 'APPROVE_TAG_MIGRATE'

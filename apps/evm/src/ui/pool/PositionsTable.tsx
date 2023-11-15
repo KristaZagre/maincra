@@ -9,7 +9,7 @@ import { SUPPORTED_CHAIN_IDS } from 'src/config'
 // import { PositionWithPool } from 'src/types'
 
 import { V2Position } from '@sushiswap/rockset-client'
-import { useV2Positions } from 'lib/flair/hooks/positions/v2/v2'
+import { useV2Positions } from 'src/lib/flair/hooks/positions/v2/v2'
 import { usePoolFilters } from './PoolsFiltersProvider'
 import {
   APR_COLUMN,

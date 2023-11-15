@@ -1,5 +1,6 @@
 'use client'
 
+import { Pool, Protocol } from '@sushiswap/client'
 import {
   Card,
   CardContent,
@@ -16,12 +17,12 @@ import {
 import Link from 'next/link'
 import { FC } from 'react'
 
-import { Pool } from '@sushiswap/rockset-client'
-import { PoolPositionProvider } from './PoolPositionProvider'
-import { PoolPositionStakedProvider } from './PoolPositionStakedProvider'
-import { PoolPositionRewardsProvider } from './PoolPositionRewardsProvider'
 import { AddSectionLegacy } from './AddSectionLegacy'
+import { PoolPositionProvider } from './PoolPositionProvider'
+import { PoolPositionRewardsProvider } from './PoolPositionRewardsProvider'
+import { PoolPositionStakedProvider } from './PoolPositionStakedProvider'
 import { RemoveSectionLegacy } from './RemoveSectionLegacy'
+
 
 
 interface ManageV2LiquidityCardProps {

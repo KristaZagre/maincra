@@ -184,6 +184,34 @@ export const VOLUME_1D_COLUMN: ColumnDef<SimplePool, unknown> = {
   },
 }
 
+export const VOLUME_7D_COLUMN: ColumnDef<SimplePool, unknown> = {
+  id: 'volumeUSD1w',
+  header: 'Volume (7d)',
+  accessorFn: (row) => row.volumeUSD1w,
+  cell: (props) =>
+    formatUSD(props.row.original.volumeUSD1w).includes('NaN')
+      ? '$0.00'
+      : formatUSD(props.row.original.volumeUSD1w),
+  meta: {
+    skeleton: <SkeletonText fontSize="lg" />,
+  },
+}
+
+
+export const VOLUME_1M_COLUMN: ColumnDef<SimplePool, unknown> = {
+  id: 'volumeUSD1m',
+  header: 'Volume (30d)',
+  accessorFn: (row) => row.volumeUSD1m,
+  cell: (props) =>
+    formatUSD(props.row.original.volumeUSD1m).includes('NaN')
+      ? '$0.00'
+      : formatUSD(props.row.original.volumeUSD1m),
+  meta: {
+    skeleton: <SkeletonText fontSize="lg" />,
+  },
+}
+
+
 export const FEES_COLUMN: ColumnDef<SimplePool, unknown> = {
   id: 'feeUSD1d',
   header: 'Fees (24h)',

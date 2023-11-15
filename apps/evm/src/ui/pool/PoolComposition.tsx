@@ -11,7 +11,7 @@ import {
   CardLabel,
   CardTitle,
 } from '@sushiswap/ui/components/card'
-import { useTokenAmountDollarValues } from 'lib/hooks'
+import { useTokenAmountDollarValues } from 'src/lib/hooks'
 import React, { FC, useMemo } from 'react'
 import { formatUSD } from 'sushi'
 import { Amount, Token } from 'sushi/currency'

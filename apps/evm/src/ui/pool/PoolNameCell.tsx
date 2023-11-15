@@ -12,7 +12,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@sushiswap/ui/components/tooltip'
-import { useTokensFromPool } from 'lib/hooks'
+import { useTokensFromPool } from 'src/lib/hooks'
 import { FC } from 'react'
 import { formatNumber } from 'sushi'
 import { ChainId } from 'sushi/chain'
