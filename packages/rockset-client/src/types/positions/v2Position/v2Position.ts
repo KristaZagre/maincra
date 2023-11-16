@@ -3,13 +3,13 @@ import { simplePoolOutputSchema, transformSimplePool } from '../../index.js'
 
 export const v2PositionOutputSchema = z.object({
   pool: simplePoolOutputSchema,
-  balance: z.string(),
-  amountWithdrawnUSD: z.number(),
-  amountDepositedUSD: z.number(),
-  token0AmountDeposited: z.number().or(z.string()),
-  token0AmountWithdrawn: z.number().or(z.string()),
-  token1AmountDeposited: z.number().or(z.string()),
-  token1AmountWithdrawn: z.number().or(z.string()),
+  balance: z.string().catch('0'),
+  amountWithdrawnUSD: z.number().catch(0),
+  amountDepositedUSD: z.number().catch(0),
+  token0AmountDeposited: z.string().catch('0'),
+  token0AmountWithdrawn: z.string().catch('0'),
+  token1AmountDeposited: z.string().catch('0'),
+  token1AmountWithdrawn: z.string().catch('0'),
 })
 
 export const transformV2Position = (

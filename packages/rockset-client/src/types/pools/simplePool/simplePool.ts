@@ -28,7 +28,7 @@ export const simplePoolOutputSchema = z.object({
       }),
     ).catch([]),
 
-  totalApr1d: z.number().nullable().default(0),
+  totalApr1d: z.number().catch(0),
 
   feeApr1d: z.number().catch(0),
   feeUSD1d: z.number().catch(0),
@@ -37,7 +37,7 @@ export const simplePoolOutputSchema = z.object({
   volumeUSD1w: z.number().catch(0),
   volumeUSD1m: z.number().catch(0),
 
-  liquidity: z.string().nullable().default('0'),
+  liquidity: z.string().nullable().default('1000'),
   liquidityUSD: z.number().catch(0),
 
   protocol: z.string().transform((p) => p as PoolProtocol),

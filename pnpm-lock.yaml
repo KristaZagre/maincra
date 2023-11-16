@@ -182,95 +182,6 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
 
-  apis/pools:
-    dependencies:
-      '@sushiswap/database':
-        specifier: workspace:*
-        version: link:../../packages/database
-      '@sushiswap/wagmi-config':
-        specifier: workspace:*
-        version: link:../../config/wagmi
-      '@vercel/node':
-        specifier: 3.0.7
-        version: 3.0.7
-      '@wagmi/core':
-        specifier: 1.4.3
-        version: 1.4.3(react@18.2.0)(typescript@5.2.2)(viem@1.17.2)(zod@3.22.4)
-      deepmerge-ts:
-        specifier: ^4.3.0
-        version: 4.3.0
-      sushi:
-        specifier: workspace:*
-        version: link:../../packages/sushi
-      zod:
-        specifier: 3.22.4
-        version: 3.22.4
-    devDependencies:
-      '@sushiswap/jest-config':
-        specifier: workspace:*
-        version: link:../../config/jest
-      '@tsconfig/esm':
-        specifier: 1.0.4
-        version: 1.0.4
-      '@tsconfig/strictest':
-        specifier: 2.0.2
-        version: 2.0.2
-      '@types/node':
-        specifier: '18'
-        version: 18.17.5
-      dotenv:
-        specifier: 16.3.1
-        version: 16.3.1
-      typescript:
-        specifier: 5.2.2
-        version: 5.2.2
-      vercel:
-        specifier: 32.4.1
-        version: 32.4.1
-
-  apis/steer-vault:
-    dependencies:
-      '@sushiswap/database':
-        specifier: workspace:*
-        version: link:../../packages/database
-      '@sushiswap/pools-api':
-        specifier: workspace:*
-        version: link:../pools
-      '@vercel/node':
-        specifier: 3.0.7
-        version: 3.0.7
-      deepmerge-ts:
-        specifier: ^4.3.0
-        version: 4.3.0
-      sushi:
-        specifier: workspace:*
-        version: link:../../packages/sushi
-      zod:
-        specifier: 3.22.4
-        version: 3.22.4
-    devDependencies:
-      '@sushiswap/jest-config':
-        specifier: workspace:*
-        version: link:../../config/jest
-      '@tsconfig/esm':
-        specifier: 1.0.4
-        version: 1.0.4
-      '@tsconfig/strictest':
-        specifier: 2.0.2
-        version: 2.0.2
-      '@types/node':
-        specifier: '18'
-        version: 18.17.5
-      dotenv:
-        specifier: 16.3.1
-        version: 16.3.1
-      typescript:
-        specifier: 5.2.2
-        version: 5.2.2
-      vercel:
-        specifier: 32.4.1
-        version: 32.4.1
-
   apis/token-list:
     dependencies:
       '@sushiswap/chainlink-token-list':
@@ -5822,19 +5733,9 @@ packages:
     resolution: {integrity: sha512-ZbR/EViY3gg2rmEAQTKPa6mXl4aR1/+cFcQe4r1segCjEbTAxT6PWu40odbu/KlZKSysEb2O/BWIC2lJgSJOMQ==}
     engines: {node: '>=16'}
 
-  /@edge-runtime/primitives@3.1.1:
-    resolution: {integrity: sha512-ROO22py+KdAfzqWZu6CtVMC4qV6mS0W1jPI51jGXE+uenyBUN7cQTWB9ReQc8Bm4cnjqmhajvpqEx3j7Y9iSOg==}
-    engines: {node: '>=16'}
-
   /@edge-runtime/primitives@4.0.5:
     resolution: {integrity: sha512-t7QiN5d/KpXgCvIfSt6Nm9Hj3WVdNgc5CpOD73jasY+9EvTI7Ngdj5cXvjcHrPcmYWJZMySPgeEeoL/1N/Llag==}
     engines: {node: '>=16'}
-
-  /@edge-runtime/vm@3.1.1:
-    resolution: {integrity: sha512-6NJRRG04/91qnWLZj+wZm27q6fJkTbkZdIJdo/Ig++GTxkAv8Wh/45nIcz9Xg7AzIAMpAkflFdiCrCoZ3hp1Iw==}
-    engines: {node: '>=16'}
-    dependencies:
-      '@edge-runtime/primitives': 3.1.1
 
   /@edge-runtime/vm@3.1.7:
     resolution: {integrity: sha512-hUMFbDQ/nZN+1TLMi6iMO1QFz9RSV8yGG8S42WFPFma1d7VSNE0eMdJUmwjmtav22/iQkzHMmu6oTSfAvRGS8g==}
@@ -16564,9 +16465,6 @@ packages:
       server-only: 0.0.1
     dev: false
 
-  /@vercel/build-utils@7.2.2:
-    resolution: {integrity: sha512-CUMgVKTJCba5tGe+KZaVvwGUCsuSeuNEmPIzMggIMDtzdqllRu8+QjjIhEI+unHoYvUgGfen6Z5lMeMo9Ne0qQ==}
-
   /@vercel/build-utils@7.2.3:
     resolution: {integrity: sha512-mo1w4SXUN+obQlg9wMTdc9xLJnrfubpreZmOTyK70icOcCEOXP5sKm044/PM2GZrzkWIXYYAfcMxNnOmWQMR0g==}
 
@@ -16580,9 +16478,6 @@ packages:
     dependencies:
       '@vercel/edge-config-fs': 0.1.0
     dev: false
-
-  /@vercel/error-utils@2.0.1:
-    resolution: {integrity: sha512-ZUVpRFArh5eyKpJmdfEuCaMpZKQvZgUq0pQ7PdK8m5FgRYEvF4I0TMJH3JnkbYaMMUH82aYWZr+/hFJtEBcmTQ==}
 
   /@vercel/error-utils@2.0.2:
     resolution: {integrity: sha512-Sj0LFafGpYr6pfCqrQ82X6ukRl5qpmVrHM/191kNYFqkkB9YkjlMAj6QcEsvCG259x4QZ7Tya++0AB85NDPbKQ==}
@@ -16622,17 +16517,6 @@ packages:
       web-vitals: 0.2.4
     dev: true
 
-  /@vercel/gatsby-plugin-vercel-builder@2.0.7:
-    resolution: {integrity: sha512-hzaWLdBeb/QnGRE17ldaxeXMTLroaiJTlaW2G3HwvaK8sXA9e+jmcfAw8fjN3BNMnkFU523CnE7InqmjKH4TfQ==}
-    dependencies:
-      '@sinclair/typebox': 0.25.24
-      '@vercel/build-utils': 7.2.2
-      '@vercel/routing-utils': 3.0.0
-      esbuild: 0.14.47
-      etag: 1.8.1
-      fs-extra: 11.1.0
-    dev: true
-
   /@vercel/gatsby-plugin-vercel-builder@2.0.9:
     resolution: {integrity: sha512-TwGki2MRL4o75ji/4MOjjpfKP6vq87oME/qpBpcWl+CYt/mx3NaWnNwjhEoEkakrZrrHp0Aw9HYBeAksWsjudw==}
     dependencies:
@@ -16653,15 +16537,6 @@ packages:
     dependencies:
       '@vercel/static-config': 3.0.0
       ts-morph: 12.0.0
-    dev: true
-
-  /@vercel/next@4.0.10:
-    resolution: {integrity: sha512-+Z+R7Dev1OFU9Rm8R4h34W0/RdSHeZ4dvkv50lS7TneRj1Ab1zLlqupyG0tEdSP5/Nvb/OZ4ixvTiLqw9oo8oA==}
-    dependencies:
-      '@vercel/nft': 0.24.2
-    transitivePeerDependencies:
-      - encoding
-      - supports-color
     dev: true
 
   /@vercel/next@4.0.14:
@@ -16693,34 +16568,6 @@ packages:
       - encoding
       - supports-color
 
-  /@vercel/node@3.0.7:
-    resolution: {integrity: sha512-0KrDGi6z+qPtCyC7wSHmHDU/ot352AJpAeAO1OIEYqYFsYwzvwuyu7TbGGwiUbtolij4/EBUCls3YmwADM/vKw==}
-    dependencies:
-      '@edge-runtime/node-utils': 2.2.1
-      '@edge-runtime/primitives': 3.1.1
-      '@edge-runtime/vm': 3.1.1
-      '@types/node': 14.18.33
-      '@vercel/build-utils': 7.2.2
-      '@vercel/error-utils': 2.0.1
-      '@vercel/nft': 0.24.2
-      '@vercel/static-config': 3.0.0
-      async-listen: 3.0.0
-      edge-runtime: 2.5.1
-      esbuild: 0.14.47
-      etag: 1.8.1
-      exit-hook: 2.2.1
-      node-fetch: 2.6.9
-      path-to-regexp: 6.2.1
-      ts-morph: 12.0.0
-      ts-node: 10.9.1(@types/node@14.18.33)(typescript@5.2.2)
-      typescript: 5.2.2
-      undici: 5.23.0
-    transitivePeerDependencies:
-      - '@swc/core'
-      - '@swc/wasm'
-      - encoding
-      - supports-color
-
   /@vercel/node@3.0.9:
     resolution: {integrity: sha512-vDkxXdO6aZQWrvYOZpUtz7WTcpdUn2cgjmqdEztjK3tnXAp988FcCNTivGG/uDUmsQPIQ/XQvUjkBRLlIWTSeA==}
     dependencies:
@@ -16749,23 +16596,8 @@ packages:
       - encoding
       - supports-color
 
-  /@vercel/python@4.0.2:
-    resolution: {integrity: sha512-mmUeR3GBuDnaJK3IIHRoPl3bNevcWO3N/YrNAx+zxLPSHzfzmCLZbFVVXbzoKBi/cALiOPcApVhlQXwU26y7xg==}
-    dev: true
-
   /@vercel/python@4.1.0:
     resolution: {integrity: sha512-EIQXK5zL6fce0Barh74gc7xyLtRyvgmLZDIVQ8yJLtFxPlPCRY3GXkdJ7Jdcw8Pd0uuVF0vIHatv18xSLbcwtg==}
-    dev: true
-
-  /@vercel/redwood@2.0.4:
-    resolution: {integrity: sha512-f0dzR8xQ34MKTzLmUygfu6vngCaRozN0z2Aao1sQ7sIC0+UExgiL0qJ9syejWwDv7IxK4yZ0w1WvztrHtAMa9Q==}
-    dependencies:
-      '@vercel/nft': 0.24.2
-      '@vercel/routing-utils': 3.0.0
-      semver: 6.3.1
-    transitivePeerDependencies:
-      - encoding
-      - supports-color
     dev: true
 
   /@vercel/redwood@2.0.5:
@@ -16790,25 +16622,6 @@ packages:
       - supports-color
     dev: true
 
-  /@vercel/remix-builder@2.0.9:
-    resolution: {integrity: sha512-/wgZrnKGZYJ8Z1tgAQc2UUhF+51tGwSHw9PnAhnaY5KclLiBrnXSjKqUAXW8GyaM4IB1ZjPXoI5oARKKUGu8kQ==}
-    dependencies:
-      '@vercel/nft': 0.24.2
-      '@vercel/static-config': 3.0.0
-      ts-morph: 12.0.0
-    transitivePeerDependencies:
-      - encoding
-      - supports-color
-    dev: true
-
-  /@vercel/routing-utils@3.0.0:
-    resolution: {integrity: sha512-u+SoHnL+RzRQIRP+YxvigzzKXQcbgYQF9qCTIuWuoLw5h9thIYWcDJvz3KxrUzxjGZ3dWboXA29KAlT6eeaeFw==}
-    dependencies:
-      path-to-regexp: 6.1.0
-    optionalDependencies:
-      ajv: 6.12.6
-    dev: true
-
   /@vercel/routing-utils@3.1.0:
     resolution: {integrity: sha512-Ci5xTjVTJY/JLZXpCXpLehMft97i9fH34nu9PGav6DtwkVUF6TOPX86U0W0niQjMZ5n6/ZP0BwcJK2LOozKaGw==}
     dependencies:
@@ -16826,15 +16639,6 @@ packages:
     dependencies:
       '@vercel/gatsby-plugin-vercel-analytics': 1.0.11
       '@vercel/gatsby-plugin-vercel-builder': 2.0.9
-      '@vercel/static-config': 3.0.0
-      ts-morph: 12.0.0
-    dev: true
-
-  /@vercel/static-build@2.0.8:
-    resolution: {integrity: sha512-46//Pxez7mc+UdOZgNv6y9lPSBehMdvCxajb/nvquptDMNH543Itospu9lyt448EQoS7HVE1NSPI21iiCboqvA==}
-    dependencies:
-      '@vercel/gatsby-plugin-vercel-analytics': 1.0.11
-      '@vercel/gatsby-plugin-vercel-builder': 2.0.7
       '@vercel/static-config': 3.0.0
       ts-morph: 12.0.0
     dev: true
@@ -16975,39 +16779,6 @@ packages:
       loupe: 2.3.6
       pretty-format: 29.7.0
     dev: true
-
-  /@wagmi/connectors@3.1.2(react@18.2.0)(typescript@5.2.2)(viem@1.17.2)(zod@3.22.4):
-    resolution: {integrity: sha512-IlLKErqCzQRBUcCvXGPowcczbWcvJtEG006gPsAoePNJEXCHEWoKASghgu+L/bqD7006Z6mW6zlTNjcSQJvFAg==}
-    peerDependencies:
-      typescript: 5.2.2
-      viem: '>=0.3.35'
-    peerDependenciesMeta:
-      typescript:
-        optional: true
-    dependencies:
-      '@coinbase/wallet-sdk': 3.7.1
-      '@ledgerhq/connect-kit-loader': 1.1.2
-      '@safe-global/safe-apps-provider': 0.17.1(typescript@5.2.2)(zod@3.22.4)
-      '@safe-global/safe-apps-sdk': 8.1.0(typescript@5.2.2)(zod@3.22.4)
-      '@walletconnect/ethereum-provider': 2.10.1(@walletconnect/modal@2.6.2)
-      '@walletconnect/legacy-provider': 2.0.0
-      '@walletconnect/modal': 2.6.2(@types/react@18.2.14)(react@18.2.0)
-      '@walletconnect/utils': 2.10.1
-      abitype: 0.8.7(typescript@5.2.2)(zod@3.22.4)
-      eventemitter3: 4.0.7
-      typescript: 5.2.2
-      viem: 1.17.2(typescript@5.2.2)(zod@3.22.4)
-    transitivePeerDependencies:
-      - '@react-native-async-storage/async-storage'
-      - '@types/react'
-      - bufferutil
-      - encoding
-      - lokijs
-      - react
-      - supports-color
-      - utf-8-validate
-      - zod
-    dev: false
 
   /@wagmi/connectors@3.1.3(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.17.2):
     resolution: {integrity: sha512-UgwsQKQDFObJVJMf9pDfFoXTv710o4zrTHyhIWKBTMMkLpCMsMxN5+ZaDhBYt/BgoRinfRYQo8uwuwLhxE6Log==}
@@ -17171,34 +16942,6 @@ packages:
       - utf-8-validate
       - zod
 
-  /@wagmi/core@1.4.3(react@18.2.0)(typescript@5.2.2)(viem@1.17.2)(zod@3.22.4):
-    resolution: {integrity: sha512-CIV9jwv5ue+WpqmA3FvwGa+23cppe7oIaz6TRnlGm0Hm0wDImSaQSWqcsFyOPvleD29oOIJ8e3KnHINEvI64AA==}
-    peerDependencies:
-      typescript: 5.2.2
-      viem: '>=0.3.35'
-    peerDependenciesMeta:
-      typescript:
-        optional: true
-    dependencies:
-      '@wagmi/connectors': 3.1.2(react@18.2.0)(typescript@5.2.2)(viem@1.17.2)(zod@3.22.4)
-      abitype: 0.8.7(typescript@5.2.2)(zod@3.22.4)
-      eventemitter3: 4.0.7
-      typescript: 5.2.2
-      viem: 1.17.2(typescript@5.2.2)(zod@3.22.4)
-      zustand: 4.4.1(@types/react@18.2.14)(react@18.2.0)
-    transitivePeerDependencies:
-      - '@react-native-async-storage/async-storage'
-      - '@types/react'
-      - bufferutil
-      - encoding
-      - immer
-      - lokijs
-      - react
-      - supports-color
-      - utf-8-validate
-      - zod
-    dev: false
-
   /@wagmi/core@1.4.5(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.17.2):
     resolution: {integrity: sha512-N9luRb1Uk4tBN9kaYcQSWKE9AsRt/rvZaFt5IZech4JPzNN2sQlfhKd9GEjOXYRDqEPHdDvos7qyBKiDNTz4GA==}
     peerDependencies:
@@ -17336,32 +17079,6 @@ packages:
       - utf-8-validate
       - zod
 
-  /@walletconnect/core@2.10.1:
-    resolution: {integrity: sha512-WAoXfmj+Zy5q48TnrKUjmHXJCBahzKwbul+noepRZf7JDtUAZ9IOWpUjg+UPRbfK5EiWZ0TF42S6SXidf7EHoQ==}
-    dependencies:
-      '@walletconnect/heartbeat': 1.2.1
-      '@walletconnect/jsonrpc-provider': 1.0.13
-      '@walletconnect/jsonrpc-types': 1.0.3
-      '@walletconnect/jsonrpc-utils': 1.0.8
-      '@walletconnect/jsonrpc-ws-connection': 1.0.13
-      '@walletconnect/keyvaluestorage': 1.0.2
-      '@walletconnect/logger': 2.0.1
-      '@walletconnect/relay-api': 1.0.9
-      '@walletconnect/relay-auth': 1.0.4
-      '@walletconnect/safe-json': 1.0.2
-      '@walletconnect/time': 1.0.2
-      '@walletconnect/types': 2.10.1
-      '@walletconnect/utils': 2.10.1
-      events: 3.3.0
-      lodash.isequal: 4.5.0
-      uint8arrays: 3.1.1
-    transitivePeerDependencies:
-      - '@react-native-async-storage/async-storage'
-      - bufferutil
-      - lokijs
-      - utf-8-validate
-    dev: false
-
   /@walletconnect/core@2.10.2:
     resolution: {integrity: sha512-JQz/xp3SLEpTeRQctdck2ugSBVEpMxoSE+lFi2voJkZop1hv6P+uqr6E4PzjFluAjeAnKlT1xvra0aFWjPWVcw==}
     dependencies:
@@ -17408,32 +17125,6 @@ packages:
     resolution: {integrity: sha512-T426LLZtHj8e8rYnKfzsw1aG6+M0BT1ZxayMdv/p8yM0MU+eJDISqNY3/bccxRr4LrF9csq02Rhqt08Ibl0VRg==}
     dependencies:
       tslib: 1.14.1
-
-  /@walletconnect/ethereum-provider@2.10.1(@walletconnect/modal@2.6.2):
-    resolution: {integrity: sha512-Yhoz8EXkKzxOlBT6G+elphqCx/gkH6RxD9/ZAiy9lLc8Ng5p1gvKCVVP5zsGNE9FbkKmHd+J9JJRzn2Bw2yqtQ==}
-    peerDependencies:
-      '@walletconnect/modal': '>=2'
-    peerDependenciesMeta:
-      '@walletconnect/modal':
-        optional: true
-    dependencies:
-      '@walletconnect/jsonrpc-http-connection': 1.0.7
-      '@walletconnect/jsonrpc-provider': 1.0.13
-      '@walletconnect/jsonrpc-types': 1.0.3
-      '@walletconnect/jsonrpc-utils': 1.0.8
-      '@walletconnect/modal': 2.6.2(@types/react@18.2.14)(react@18.2.0)
-      '@walletconnect/sign-client': 2.10.1
-      '@walletconnect/types': 2.10.1
-      '@walletconnect/universal-provider': 2.10.1
-      '@walletconnect/utils': 2.10.1
-      events: 3.3.0
-    transitivePeerDependencies:
-      - '@react-native-async-storage/async-storage'
-      - bufferutil
-      - encoding
-      - lokijs
-      - utf-8-validate
-    dev: false
 
   /@walletconnect/ethereum-provider@2.10.2(@walletconnect/modal@2.6.2):
     resolution: {integrity: sha512-QMYFZ6+rVq2CJLdIPdKK0j1Qm66UA27oQU5V2SrL8EVwl7wFfm0Bq7fnL+qAWeDpn612dNeNErpk/ROa1zWlWg==}
@@ -17644,25 +17335,6 @@ packages:
     dependencies:
       tslib: 1.14.1
 
-  /@walletconnect/sign-client@2.10.1:
-    resolution: {integrity: sha512-iG3eJGi1yXeG3xGeVSSMf8wDFyx239B0prLQfy1uYDtYFb2ynnH/09oqAZyKn96W5nfQzUgM2Mz157PVdloH3Q==}
-    dependencies:
-      '@walletconnect/core': 2.10.1
-      '@walletconnect/events': 1.0.1
-      '@walletconnect/heartbeat': 1.2.1
-      '@walletconnect/jsonrpc-utils': 1.0.8
-      '@walletconnect/logger': 2.0.1
-      '@walletconnect/time': 1.0.2
-      '@walletconnect/types': 2.10.1
-      '@walletconnect/utils': 2.10.1
-      events: 3.3.0
-    transitivePeerDependencies:
-      - '@react-native-async-storage/async-storage'
-      - bufferutil
-      - lokijs
-      - utf-8-validate
-    dev: false
-
   /@walletconnect/sign-client@2.10.2:
     resolution: {integrity: sha512-vviSLV3f92I0bReX+OLr1HmbH0uIzYEQQFd1MzIfDk9PkfFT/LLAHhUnDaIAMkIdippqDcJia+5QEtT4JihL3Q==}
     dependencies:
@@ -17686,20 +17358,6 @@ packages:
     dependencies:
       tslib: 1.14.1
 
-  /@walletconnect/types@2.10.1:
-    resolution: {integrity: sha512-7pccAhajQdiH2kYywjE1XI64IqRI+4ioyGy0wvz8d0UFQ/DSG3MLKR8jHf5aTOafQQ/HRLz6xvlzN4a7gIVkUQ==}
-    dependencies:
-      '@walletconnect/events': 1.0.1
-      '@walletconnect/heartbeat': 1.2.1
-      '@walletconnect/jsonrpc-types': 1.0.3
-      '@walletconnect/keyvaluestorage': 1.0.2
-      '@walletconnect/logger': 2.0.1
-      events: 3.3.0
-    transitivePeerDependencies:
-      - '@react-native-async-storage/async-storage'
-      - lokijs
-    dev: false
-
   /@walletconnect/types@2.10.2:
     resolution: {integrity: sha512-luNV+07Wdla4STi9AejseCQY31tzWKQ5a7C3zZZaRK/di+rFaAAb7YW04OP4klE7tw/mJRGPTlekZElmHxO8kQ==}
     dependencies:
@@ -17712,26 +17370,6 @@ packages:
     transitivePeerDependencies:
       - '@react-native-async-storage/async-storage'
       - lokijs
-
-  /@walletconnect/universal-provider@2.10.1:
-    resolution: {integrity: sha512-81QxTH/X4dRoYCz0U9iOrBYOcj7N897ONcB57wsGhEkV7Rc9htmWJq2CzeOuxvVZ+pNZkE+/aw9LrhizO1Ltxg==}
-    dependencies:
-      '@walletconnect/jsonrpc-http-connection': 1.0.7
-      '@walletconnect/jsonrpc-provider': 1.0.13
-      '@walletconnect/jsonrpc-types': 1.0.3
-      '@walletconnect/jsonrpc-utils': 1.0.8
-      '@walletconnect/logger': 2.0.1
-      '@walletconnect/sign-client': 2.10.1
-      '@walletconnect/types': 2.10.1
-      '@walletconnect/utils': 2.10.1
-      events: 3.3.0
-    transitivePeerDependencies:
-      - '@react-native-async-storage/async-storage'
-      - bufferutil
-      - encoding
-      - lokijs
-      - utf-8-validate
-    dev: false
 
   /@walletconnect/universal-provider@2.10.2:
     resolution: {integrity: sha512-wFgI0LbQ3D56sgaUMsgOHCM5m8WLxiC71BGuCKQfApgsbNMVKugYVy2zWHyUyi8sqTQHI+uSaVpDev4UHq9LEw==}
@@ -17751,28 +17389,6 @@ packages:
       - encoding
       - lokijs
       - utf-8-validate
-
-  /@walletconnect/utils@2.10.1:
-    resolution: {integrity: sha512-DM0dKgm9O58l7VqJEyV2OVv16XRePhDAReI23let6WdW1dSpw/Y/A89Lp99ZJOjLm2FxyblMRF3YRaZtHwBffw==}
-    dependencies:
-      '@stablelib/chacha20poly1305': 1.0.1
-      '@stablelib/hkdf': 1.0.1
-      '@stablelib/random': 1.0.2
-      '@stablelib/sha256': 1.0.1
-      '@stablelib/x25519': 1.0.3
-      '@walletconnect/relay-api': 1.0.9
-      '@walletconnect/safe-json': 1.0.2
-      '@walletconnect/time': 1.0.2
-      '@walletconnect/types': 2.10.1
-      '@walletconnect/window-getters': 1.0.1
-      '@walletconnect/window-metadata': 1.0.1
-      detect-browser: 5.3.0
-      query-string: 7.1.3
-      uint8arrays: 3.1.1
-    transitivePeerDependencies:
-      - '@react-native-async-storage/async-storage'
-      - lokijs
-    dev: false
 
   /@walletconnect/utils@2.10.2:
     resolution: {integrity: sha512-syxXRpc2yhSknMu3IfiBGobxOY7fLfLTJuw+ppKaeO6WUdZpIit3wfuGOcc0Ms3ZPFCrGfyGOoZsCvgdXtptRg==}
@@ -22836,21 +22452,6 @@ packages:
       tslib: 2.3.0
       zrender: 5.4.4
     dev: false
-
-  /edge-runtime@2.5.1:
-    resolution: {integrity: sha512-E0kY1Dqvwvk9yh7dvR56KnCjXf/dlbrrGjO5Sjnz9Ja3WqYT3csv2B8O4erxJiOWfWy9NTukBk4Kb3yrR66gBw==}
-    engines: {node: '>=16'}
-    hasBin: true
-    dependencies:
-      '@edge-runtime/format': 2.2.0
-      '@edge-runtime/vm': 3.1.1
-      async-listen: 3.0.1
-      mri: 1.2.0
-      picocolors: 1.0.0
-      pretty-bytes: 5.6.0
-      pretty-ms: 7.0.1
-      signal-exit: 4.0.2
-      time-span: 4.0.0
 
   /edge-runtime@2.5.7:
     resolution: {integrity: sha512-gA4qSVP0sNwJlkdQ2nahDPASlSl8twUd17o+JolPa1EtXpLTGzIpOETvodgJwXIxa+zaD8bnAXCdsWrx2PhlVQ==}
@@ -32921,10 +32522,6 @@ packages:
     engines: {node: '>=10.13.0'}
     hasBin: true
 
-  /pretty-bytes@5.6.0:
-    resolution: {integrity: sha512-FFw039TmrBqFK8ma/7OL3sDz/VytdtJr044/QUJtH0wK9lb9jLq9tJyIxUwtQJHwar2BqtiA4iCWSwo9JLkzFg==}
-    engines: {node: '>=6'}
-
   /pretty-format@26.6.2:
     resolution: {integrity: sha512-7AeGuCYNGmycyQbCqd/3PWH4eOoX/OiCa0uphp57NVTeAGdJGaAliecxwBDHYQCIvrW7aDBZCYeNTP/WX69mkg==}
     engines: {node: '>= 10'}
@@ -37993,30 +37590,6 @@ packages:
   /vary@1.1.2:
     resolution: {integrity: sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==}
     engines: {node: '>= 0.8'}
-
-  /vercel@32.4.1:
-    resolution: {integrity: sha512-cULmLvceDaluXz2usPtPYhb9y/jwjWolAjBBbG1DLGQmxVlnHVHTOJrYPaq2ioujQpU0yi92+RQPdzjzOY6aEg==}
-    engines: {node: '>= 16'}
-    hasBin: true
-    dependencies:
-      '@vercel/build-utils': 7.2.2
-      '@vercel/fun': 1.1.0
-      '@vercel/go': 3.0.3
-      '@vercel/hydrogen': 1.0.1
-      '@vercel/next': 4.0.10
-      '@vercel/node': 3.0.7
-      '@vercel/python': 4.0.2
-      '@vercel/redwood': 2.0.4
-      '@vercel/remix-builder': 2.0.9
-      '@vercel/ruby': 2.0.2
-      '@vercel/static-build': 2.0.8
-      chokidar: 3.3.1
-    transitivePeerDependencies:
-      - '@swc/core'
-      - '@swc/wasm'
-      - encoding
-      - supports-color
-    dev: true
 
   /vercel@32.5.3:
     resolution: {integrity: sha512-fK5n0qSmckJlzPgZ7yD3Q1+L13o2FeN9hsZbJcr/kIglA0zRj7OoSEK30LWlxJ44T/Uw0MOgVpK8vkAl+Aqpdw==}

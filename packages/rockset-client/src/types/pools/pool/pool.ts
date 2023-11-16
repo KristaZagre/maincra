@@ -60,7 +60,7 @@ const poolOutputSchema = z.object({
   feeUSDChange1m: z.number().catch(0),
   feeUSDChangePercent1m: z.number().catch(0),
 
-  liquidity: z.string().nullable().default('0'),
+  liquidity: z.string().nullable().default('1000'),
 
   liquidityUSD: z.number().catch(0),
 
