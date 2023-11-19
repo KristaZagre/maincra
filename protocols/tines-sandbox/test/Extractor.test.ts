@@ -346,6 +346,15 @@ it.skip('Extractor Arbitrum Nova infinite work test', async () => {
     logType: LogFilterType.Native,
     RP3Address: RP3Address[ChainId.ARBITRUM_NOVA],
     account: '0xc882b111a75c0c657fc507c04fbfcd2cc984f071',
+    // checkTokens: [
+    //   new Token({
+    //     chainId: 42170,
+    //     decimals: 18,
+    //     symbol: 'PGLD',
+    //     name: 'Pirate Gold',
+    //     address: '0x3C2e532a334149D6a2E43523f2427e2fA187c5f0',
+    //   }),
+    // ],
   })
 })
 
