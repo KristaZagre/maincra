@@ -45,6 +45,7 @@ import {
   optimism,
   polygon,
   polygonZkEvm,
+  telos,
 } from 'viem/chains'
 
 export const RP3Address = {
@@ -485,5 +486,21 @@ it.skip('Extractor BSC infinite work test', async () => {
     logDepth: 300,
     logging: true,
     RP3Address: RP3Address[ChainId.BSC],
+  })
+})
+
+it.skip('Extractor Telos infinite work test', async () => {
+  await startInfinitTest({
+    transport: http('http://rpc3.us.telos.net:7000/evm'),
+    //transport: http('https://rpc1.eu.telos.net/evm'),
+    chain: telos,
+    factoriesV2: [sushiswapV2Factory(ChainId.TELOS)],
+    factoriesV3: [],
+    tickHelperContract: TickLensContract[ChainId.TELOS],
+    cacheDir: './cache',
+    logDepth: 300,
+    logging: true,
+    //logType: LogFilterType.Native,
+    RP3Address: RP3Address[ChainId.TELOS],
   })
 })
