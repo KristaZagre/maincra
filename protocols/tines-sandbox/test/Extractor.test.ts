@@ -1,5 +1,6 @@
 import {
   Extractor,
+  FactoryAlgebra,
   FactoryV2,
   FactoryV3,
   LogFilterType,
@@ -74,6 +75,7 @@ export const TickLensContract = {
   [ChainId.AVALANCHE]: '0xDdC1b5920723F774d2Ec2C3c9355251A20819776' as Address,
   [ChainId.BASE]: '0xF4d73326C13a4Fc5FD7A064217e12780e9Bd62c3' as Address,
   [ChainId.BSC]: '0xD9270014D396281579760619CCf4c3af0501A47C' as Address,
+  [ChainId.TELOS]: '0x9dE2dEA5c68898eb4cb2DeaFf357DFB26255a4aa' as Address,
 }
 
 export const UniswapV2FactoryAddress: Record<number, string> = {
@@ -141,6 +143,7 @@ async function startInfinitTest(args: {
   chain: Chain
   factoriesV2: FactoryV2[]
   factoriesV3: FactoryV3[]
+  factoriesAlgebra?: FactoryAlgebra[]
   tickHelperContract: Address
   cacheDir: string
   logDepth: number
@@ -500,16 +503,89 @@ it.skip('Extractor BSC infinite work test', async () => {
 
 it.skip('Extractor Telos infinite work test', async () => {
   await startInfinitTest({
-    transport: http('http://rpc3.us.telos.net:7000/evm'),
-    //transport: http('https://rpc1.eu.telos.net/evm'),
+    //transport: http('http://rpc3.us.telos.net:7000/evm'),
+    transport: http('https://rpc3.us.telos.net/evm'),
+    //transport: http('https://rpc1.us.telos.net/evm'),
     chain: telos,
-    factoriesV2: [sushiswapV2Factory(ChainId.TELOS)],
+    factoriesV2: [], //sushiswapV2Factory(ChainId.TELOS)],
     factoriesV3: [],
+    factoriesAlgebra: [
+      {
+        address: '0xa09babf9a48003ae9b9333966a8bda94d820d0d9',
+        provider: LiquidityProviders.AlgebraIntegral,
+      },
+    ],
     tickHelperContract: TickLensContract[ChainId.TELOS],
     cacheDir: './cache',
     logDepth: 300,
     logging: true,
     //logType: LogFilterType.Native,
     RP3Address: RP3Address[ChainId.TELOS],
+    maxCallsInOneBatch: 2,
+    /*checkTokens: [
+      new Token({
+        chainId: ChainId.TELOS,
+        address: '0xD102cE6A4dB07D247fcc28F366A623Df0938CA9E',
+        name: 'Wrapped TLOS',
+        symbol: 'WTLOS',
+        decimals: 18,
+      }),
+      new Token({
+        chainId: ChainId.TELOS,
+        address: '0x818ec0A7Fe18Ff94269904fCED6AE3DaE6d6dC0b',
+        name: 'USD Coin 1',
+        symbol: 'USDC1',
+        decimals: 6,
+      }),
+      new Token({
+        chainId: ChainId.TELOS,
+        address: '0xeFAeeE334F0Fd1712f9a8cc375f427D9Cdd40d73',
+        name: 'Tether USD',
+        symbol: 'USDT',
+        decimals: 6,
+      }),
+      new Token({
+        chainId: ChainId.TELOS,
+        address: '0xA0fB8cd450c8Fd3a11901876cD5f17eB47C6bc50',
+        name: 'Ether',
+        symbol: 'ETH',
+        decimals: 18,
+      }),
+      new Token({
+        chainId: ChainId.TELOS,
+        address: '0x8D97Cea50351Fb4329d591682b148D43a0C3611b',
+        name: 'USD Coin 2',
+        symbol: 'USDC2',
+        decimals: 6,
+      }),
+      new Token({
+        chainId: ChainId.TELOS,
+        address: '0x7627b27594bc71e6Ab0fCE755aE8931EB1E12DAC',
+        name: 'Bitcoin',
+        symbol: 'BTC.b',
+        decimals: 8,
+      }),
+      new Token({
+        chainId: ChainId.TELOS,
+        address: '0xaC45EDe2098bc989Dfe0798B4630872006e24c3f',
+        name: 'Swapsicle SLUSH Token',
+        symbol: 'SLUSH',
+        decimals: 18,
+      }),
+      new Token({
+        chainId: ChainId.TELOS,
+        address: '0xB4B01216a5Bc8F1C8A33CD990A1239030E60C905',
+        name: 'Staked TLOS',
+        symbol: 'STLOS',
+        decimals: 18,
+      }),
+      new Token({
+        chainId: ChainId.TELOS,
+        address: '0xfB319EA5DDEd8cFe8Bcf9c720ed380b98874Bf63',
+        name: 'Robinos',
+        symbol: 'RBN',
+        decimals: 6,
+      }),
+    ],*/
   })
 })
