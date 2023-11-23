@@ -84,6 +84,7 @@ export const THUNDERCORE_HOST = 'graph-node.thundercore.com/subgraphs/name'
 export const CORE_HOST = 'thegraph.coredao.org/subgraphs/name'
 export const LINEA_HOST = 'graph-query.linea.build/subgraphs/name'
 export const FILECOIN_HOST = 'sushi.laconic.com/subgraphs/name'
+export const HAQQ_HOST = 'haqq.graph.p2p.org/subgraphs/name'
 export const SUSHI_HOST = 'subgraphs.sushi.com/subgraphs/name'
 
 export const CHAIN_NAME: Record<number, string> = {
@@ -119,6 +120,7 @@ export const CHAIN_NAME: Record<number, string> = {
   [ChainId.LINEA]: 'Linea',
   [ChainId.SCROLL]: 'Scroll',
   [ChainId.FILECOIN]: 'Filecoin',
+  [ChainId.HAQQ]: 'Haqq',
 } as const
 
 export const SUBGRAPH_HOST: Record<number, string> = {
@@ -153,6 +155,7 @@ export const SUBGRAPH_HOST: Record<number, string> = {
   [ChainId.LINEA]: LINEA_HOST,
   [ChainId.FILECOIN]: FILECOIN_HOST,
   [ChainId.SCROLL]: STUDIO_HOST,
+  [ChainId.HAQQ]: HAQQ_HOST,
 } as const
 
 export const BENTOBOX_SUBGRAPH_NAME = {
@@ -207,6 +210,7 @@ export const BLOCKS_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.LINEA]: 'sushiswap/blocks-linea',
   [ChainId.FILECOIN]: 'sushiswap/blocks',
   [ChainId.SCROLL]: 'blocks-scroll/v0.0.1',
+  [ChainId.HAQQ]: 'sushi/blocks-haqq',
 } as const
 
 export const SECONDS_BETWEEN_BLOCKS: Record<number, number> = {
@@ -301,6 +305,7 @@ export const SUSHISWAP_V3_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.LINEA]: 'sushi-v3/v3-linea',
   [ChainId.FILECOIN]: 'sushiswap/v3-filecoin',
   [ChainId.SCROLL]: 'v3-scroll/v0.0.1',
+  [ChainId.HAQQ]: 'sushi/v3-haqq',
 }
 
 export const TRIDENT_SUBGRAPH_NAME: Record<number, string> = {
