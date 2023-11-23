@@ -60,6 +60,7 @@ export const SUSHISWAP_V3_ENABLED_NETWORKS = [
   ChainId.LINEA,
   ChainId.FILECOIN,
   ChainId.SCROLL,
+  ChainId.HAQQ,
 ]
 export type SushiSwapV3ChainId = (typeof SUSHISWAP_V3_ENABLED_NETWORKS)[number]
 
