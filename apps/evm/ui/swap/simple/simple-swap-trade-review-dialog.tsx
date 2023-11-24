@@ -13,9 +13,6 @@ import {
   isRouteProcessor3_2ChainId,
   isRouteProcessor3ChainId,
   isRouteProcessorChainId,
-  ROUTE_PROCESSOR_3_1_ADDRESS,
-  ROUTE_PROCESSOR_3_2_ADDRESS,
-  ROUTE_PROCESSOR_3_ADDRESS,
   ROUTE_PROCESSOR_ADDRESS,
 } from '@sushiswap/route-processor-sdk'
 import { Bridge, LiquidityProviders } from '@sushiswap/router'
@@ -83,15 +80,7 @@ export const SimpleSwapTradeReviewDialog: FC<{
     isSuccess: isPrepareSuccess,
   } = usePrepareContractWrite({
     chainId: chainId,
-    address: isRouteProcessor3_2ChainId(chainId)
-      ? ROUTE_PROCESSOR_3_2_ADDRESS[chainId]
-      : isRouteProcessor3_1ChainId(chainId)
-      ? ROUTE_PROCESSOR_3_1_ADDRESS[chainId]
-      : isRouteProcessor3ChainId(chainId)
-      ? ROUTE_PROCESSOR_3_ADDRESS[chainId]
-      : isRouteProcessorChainId(chainId)
-      ? ROUTE_PROCESSOR_ADDRESS[chainId]
-      : undefined,
+    address: isRouteProcessorChainId(chainId) ? ROUTE_PROCESSOR_ADDRESS[chainId] : undefined,
     abi: (isRouteProcessor3_2ChainId(chainId) ||
     isRouteProcessor3_1ChainId(chainId) ||
     isRouteProcessor3ChainId(chainId)
