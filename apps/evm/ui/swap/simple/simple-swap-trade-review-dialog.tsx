@@ -1,6 +1,6 @@
 'use client'
 
-import { routeProcessor3Abi, routeProcessorAbi } from '@sushiswap/abi'
+import { routeProcessorAbi } from '@sushiswap/abi'
 import { Chain } from '@sushiswap/chain'
 import { Native } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
@@ -81,13 +81,7 @@ export const SimpleSwapTradeReviewDialog: FC<{
   } = usePrepareContractWrite({
     chainId: chainId,
     address: isRouteProcessorChainId(chainId) ? ROUTE_PROCESSOR_ADDRESS[chainId] : undefined,
-    abi: (isRouteProcessor3_2ChainId(chainId) ||
-    isRouteProcessor3_1ChainId(chainId) ||
-    isRouteProcessor3ChainId(chainId)
-      ? routeProcessor3Abi
-      : isRouteProcessorChainId(chainId)
-      ? routeProcessorAbi
-      : undefined) as any,
+    abi: (isRouteProcessorChainId(chainId) ? routeProcessorAbi : undefined) as any,
     functionName: trade?.functionName,
     args: trade?.writeArgs as any,
     enabled: Boolean(
