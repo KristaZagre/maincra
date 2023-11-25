@@ -1,6 +1,6 @@
 'use client'
 
-import { routeProcessorAbi } from '@sushiswap/abi'
+import { routeProcessor3Abi } from '@sushiswap/abi'
 import { Chain } from '@sushiswap/chain'
 import { Native } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
@@ -9,11 +9,9 @@ import { useSlippageTolerance } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
 import { UseTradeReturn } from '@sushiswap/react-query'
 import {
-  isRouteProcessor3_1ChainId,
-  isRouteProcessor3_2ChainId,
   isRouteProcessor3ChainId,
   isRouteProcessorChainId,
-  ROUTE_PROCESSOR_ADDRESS,
+  ROUTE_PROCESSOR_3_ADDRESS,
 } from '@sushiswap/route-processor-sdk'
 import { Bridge, LiquidityProviders } from '@sushiswap/router'
 import {
@@ -80,16 +78,13 @@ export const SimpleSwapTradeReviewDialog: FC<{
     isSuccess: isPrepareSuccess,
   } = usePrepareContractWrite({
     chainId: chainId,
-    address: isRouteProcessorChainId(chainId) ? ROUTE_PROCESSOR_ADDRESS[chainId] : undefined,
-    abi: (isRouteProcessorChainId(chainId) ? routeProcessorAbi : undefined) as any,
+    address: isRouteProcessor3ChainId(chainId) ? ROUTE_PROCESSOR_3_ADDRESS[chainId] : undefined,
+    abi: (isRouteProcessor3ChainId(chainId) ? routeProcessor3Abi : undefined) as any,
     functionName: trade?.functionName,
     args: trade?.writeArgs as any,
     enabled: Boolean(
       trade?.writeArgs &&
-        (isRouteProcessorChainId(chainId) ||
-          isRouteProcessor3ChainId(chainId) ||
-          isRouteProcessor3_1ChainId(chainId) ||
-          isRouteProcessor3_2ChainId(chainId)) &&
+        isRouteProcessorChainId(chainId) &&
         approved &&
         trade?.route?.status !== 'NoWay' &&
         chain?.id === chainId
