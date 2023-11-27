@@ -33,6 +33,8 @@ export const SUPPORTED_CHAINS = [
   ChainId.POLYGON_ZKEVM,
   ChainId.LINEA,
   ChainId.SCROLL,
+  ChainId.FILECOIN,
+  ChainId.HAQQ,
 ] as const
 
 export type SupportedChainIds = typeof SUPPORTED_CHAINS

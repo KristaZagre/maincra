@@ -3,6 +3,7 @@
 import React, { ReactNode, useMemo, useState } from 'react'
 import { Chain, ChainId } from 'sushi/chain'
 
+import Link from 'next/link'
 import {
   Command,
   CommandEmpty,
@@ -10,7 +11,7 @@ import {
   CommandInput,
   CommandItem,
 } from './command'
-import { NetworkIcon } from './icons'
+import { AptosCircle, NetworkIcon } from './icons'
 import { Popover, PopoverContent, PopoverPrimitive } from './popover'
 
 export type NetworkSelectorOnSelectCallback<T extends number = ChainId> = (
@@ -28,6 +29,7 @@ const PREFERRED_CHAINID_ORDER: ChainId[] = [
   ChainId.OPTIMISM,
   ChainId.LINEA,
   ChainId.CORE,
+  ChainId.FILECOIN,
   ChainId.BSC,
   ChainId.THUNDERCORE,
   ChainId.GNOSIS,
@@ -44,7 +46,10 @@ export interface NetworkSelectorProps<T extends number = ChainId> {
   children: ReactNode
 }
 
-const NEW_CHAINS: number[] = [ChainId.SCROLL] satisfies ChainId[]
+const NEW_CHAINS: number[] = [
+  ChainId.FILECOIN,
+  ChainId.HAQQ,
+] satisfies ChainId[]
 
 const NetworkSelector = <T extends number>({
   onSelect,
@@ -71,6 +76,21 @@ const NetworkSelector = <T extends number>({
           />
           <CommandEmpty>No network found.</CommandEmpty>
           <CommandGroup>
+            <CommandItem className="cursor-pointer">
+              <Link
+                href="https://aptos.sushi.com"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                <div className="flex items-center gap-2">
+                  <AptosCircle width={22} height={22} />
+                  Aptos
+                  <div className="text-[10px] italic rounded-full px-[6px] bg-gradient-to-r from-blue to-pink text-white font-bold">
+                    NEW
+                  </div>
+                </div>
+              </Link>
+            </CommandItem>
             {_networks.map((el) => (
               <CommandItem
                 className="cursor-pointer"
