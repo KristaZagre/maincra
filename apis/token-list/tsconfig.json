@@ -7,4 +7,13 @@
     "resolveJsonModule": true,
     "noEmit": true
   }
+}{
+  "extends": ["@tsconfig/strictest/tsconfig", "@tsconfig/esm/tsconfig"],
+  "include": ["api"],
+  "exclude": ["node_modules", ".vercel"],
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "noEmit": true
+  }
 }
