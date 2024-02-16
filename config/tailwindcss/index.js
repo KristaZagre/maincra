@@ -1,23 +1,4 @@
-const aspectRatio = require('@tailwindcss/aspect-ratio')
-const forms = require('@tailwindcss/forms')
-const typography = require('@tailwindcss/typography')
-const defaultTheme = require('tailwindcss/defaultTheme')
-
-/**
- * @type {import('tailwindcss').Config}
- * @see https://tailwindcss.com/docs/configuration
- *
- */
-module.exports = {
-  content: [
-    './app/**/*.{js,ts,jsx,tsx,mdx}',
-    './common/**/*.{js,ts,jsx,tsx,mdx}',
-    './components/**/*.{js,ts,jsx,tsx,mdx}',
-    './pages/**/*.{js,ts,jsx,tsx,mdx}',
-    './ui/**/*.{js,ts,jsx,tsx,mdx}',
-    './src/app/**/*.{js,ts,jsx,tsx,mdx}',
-    './src/common/**/*.{js,ts,jsx,tsx,mdx}',
-    './src/components/**/*.{js,ts,jsx,tsx,mdx}',
+sx,mdx}',
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
     './src/ui/**/*.{js,ts,jsx,tsx,mdx}',
     '../../packages/wagmi/src/**/*.{ts,tsx,mdx}',
